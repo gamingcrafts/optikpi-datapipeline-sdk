@@ -2,21 +2,22 @@
   "name": "@optikpi/datapipeline-sdk",
   "version": "1.0.0",
   "description": "Official JavaScript SDK for Optikpi Data Pipeline API",
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
+  "main": "js/dist/index.js",
+  "module": "js/dist/index.esm.js",
+  "types": "js/dist/index.d.ts",
   "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
+    "js/dist",
+    "js/README.md",
+    "js/LICENSE"
   ],
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "lint": "eslint src/**/*.js",
-    "format": "prettier --write src/**/*.js"
+    "build": "cd js && npm run build",
+    "dev": "cd js && npm run dev",
+    "test": "cd js && npm test",
+    "test:watch": "cd js && npm run test:watch",
+    "lint": "cd js && npm run lint",
+    "format": "cd js && npm run format",
+    "install:js": "cd js && npm install"
   },
   "keywords": [
     "optikpi",
@@ -68,4 +69,3 @@
     "not dead"
   ]
 }
-
