@@ -1,0 +1,31 @@
+{
+  "name": "optikpi-api-client-example",
+  "version": "1.0.0",
+  "description": "JavaScript client example for Optikpi API integration",
+  "main": "test-customer-endpoint.js",
+  "scripts": {
+    "test": "node test-customer-endpoint.js",
+    "test:all": "node test-all-endpoints.js",
+    "test:failures": "node test-validation-failures.js",
+    "test:simple-failures": "node test-simple-failures.js",
+    "test:account": "node test-account-endpoint.js",
+    "test:deposit": "node test-deposit-endpoint.js",
+    "test:withdraw": "node test-withdraw-endpoint.js",
+    "test:gaming": "node test-gaming-endpoint.js"
+  },
+  "dependencies": {
+    "@optikpi/datapipeline-sdk": "git+https://github.com/gamingcrafts/optikpi-datapipeline-sdk.git"
+  },
+  "devDependencies": {
+    "dotenv": "^16.3.1"
+  },
+  "keywords": [
+    "optikpi",
+    "api",
+    "client",
+    "hmac",
+    "hkdf"
+  ],
+  "author": "Optikpi",
+  "license": "MIT"
+} 
