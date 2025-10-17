@@ -1,10 +1,12 @@
 package com.optikpi.datapipeline;
 
-import com.optikpi.datapipeline.model.CustomerProfile;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
-import static org.junit.jupiter.api.Assertions.*;
+import com.optikpi.datapipeline.model.CustomerProfile;
 
 /**
  * Integration tests for the Data Pipeline SDK

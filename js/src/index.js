@@ -55,6 +55,10 @@ class OptikpiDataPipelineSDK {
     return this.client.sendGamingActivityEvent(data);
   }
 
+  async sendExtendedAttributes(data) {
+    return this.client.sendExtendedAttributes(data);
+  }
+
   async sendBatch(batchData) {
     return this.client.sendBatch(batchData);
   }

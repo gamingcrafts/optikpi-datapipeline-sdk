@@ -23,31 +23,24 @@ const sdk = new OptikpiDataPipelineSDK({
   baseURL: API_BASE_URL
 });
 
-// Deposit event data
-const DEPOSIT_EVENT = {
+// Gaming activity event data
+const GAMING_EVENT = {
   "account_id": ACCOUNT_ID,
   "workspace_id": WORKSPACE_ID,
-  "user_id": "user123456",
-  "event_category": "Deposit",
-  "event_name": "Successful Deposit",
-  "event_id": "evt_dep_987654321",
-  "event_time": "2024-01-15T14:45:00Z",
-  "amount": 500.00,
-  "currency": "USD",
-  "payment_method": "bank",
-  "transaction_id": "txn_123456789",
-  "status": "completed",
-  "metadata": {
-    "bank_name": "Chase Bank",
-    "account_last4": "1234"
-  }
+  "user_id": "user123411",
+  "event_category": "Gaming Activity",
+  "event_name": "Play Casino Game",
+  "event_id": "1234",
+  "event_time": "2024-01-15T10:30:00Z"
 };
 
-// Test deposit endpoint
-async function testDepositEndpoint() {
+// SDK handles HMAC authentication automatically
+
+// Test gaming endpoint
+async function testGamingEndpoint() {
   try {
-    console.log('🚀 Testing Deposit Events Endpoint');
-    console.log('==================================');
+    console.log('🎮 Testing Gaming Activity Events Endpoint');
+    console.log('==========================================');
     
     console.log('Configuration:');
     console.log(`API Base URL: ${API_BASE_URL}`);
@@ -56,23 +49,23 @@ async function testDepositEndpoint() {
     console.log(`Auth Token: ${AUTH_TOKEN.substring(0, 8)}...`);
     
     console.log('\nMaking API request using SDK...');
-    console.log('Deposit Event Data:', JSON.stringify(DEPOSIT_EVENT, null, 2));
+    console.log('Gaming Event Data:', JSON.stringify(GAMING_EVENT, null, 2));
     
     // Make the API call using SDK
     const startTime = Date.now();
-    const result = await sdk.sendDepositEvent(DEPOSIT_EVENT);
+    const result = await sdk.sendGamingActivityEvent(GAMING_EVENT);
     const endTime = Date.now();
     
     if (result.success) {
       console.log('\n✅ Success!');
-      console.log('==================================');
+      console.log('==========================================');
       console.log(`HTTP Status: ${result.status}`);
       console.log(`Response Time: ${endTime - startTime}ms`);
       console.log(`SDK Success: ${result.success}`);
       console.log('Response Data:', JSON.stringify(result.data, null, 2));
     } else {
       console.log('\n❌ API Error!');
-      console.log('==================================');
+      console.log('==========================================');
       console.log(`HTTP Status: ${result.status}`);
       console.log(`Response Time: ${endTime - startTime}ms`);
       console.log(`SDK Success: ${result.success}`);
@@ -81,7 +74,7 @@ async function testDepositEndpoint() {
     
   } catch (error) {
     console.error('\n❌ SDK Error occurred!');
-    console.error('==================================');
+    console.error('==========================================');
     console.error('Error:', error.message);
     console.error('Stack:', error.stack);
   }
@@ -89,11 +82,11 @@ async function testDepositEndpoint() {
 
 // Run the test
 if (require.main === module) {
-  testDepositEndpoint();
+  testGamingEndpoint();
 }
 
 module.exports = {
-  testDepositEndpoint,
-  DEPOSIT_EVENT,
+  testGamingEndpoint,
+  GAMING_EVENT,
   sdk
-}; 
+};

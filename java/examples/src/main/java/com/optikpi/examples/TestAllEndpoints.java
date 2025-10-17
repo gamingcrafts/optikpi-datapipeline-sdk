@@ -1,15 +1,21 @@
 package com.optikpi.examples;
 
-import com.optikpi.datapipeline.OptikpiDataPipelineSDK;
-import com.optikpi.datapipeline.ClientConfig;
-import com.optikpi.datapipeline.model.*;
-import io.github.cdimascio.dotenv.Dotenv;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.optikpi.datapipeline.BatchData;
+import com.optikpi.datapipeline.ClientConfig;
+import com.optikpi.datapipeline.OptikpiDataPipelineSDK;
+import com.optikpi.datapipeline.model.AccountEvent;
+import com.optikpi.datapipeline.model.CustomerProfile;
+import com.optikpi.datapipeline.model.DepositEvent;
+import com.optikpi.datapipeline.model.GamingActivityEvent;
+import com.optikpi.datapipeline.model.WithdrawEvent;
+
+import io.github.cdimascio.dotenv.Dotenv;
 
 /**
  * Example: Test All Endpoints

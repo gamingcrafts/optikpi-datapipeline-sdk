@@ -2,13 +2,14 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.optikpi/datapipeline-sdk.svg)](https://maven.apache.org/)
 [![NPM Version](https://img.shields.io/npm/v/@optikpi/datapipeline-sdk.svg)](https://www.npmjs.com/package/@optikpi/datapipeline-sdk)
+[![PyPI version](https://badge.fury.io/py/optikpi-datapipeline-sdk.svg)](https://badge.fury.io/py/optikpi-datapipeline-sdk)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-Official SDKs for the Optikpi Data Pipeline API. This repository contains both JavaScript and Java implementations, providing comprehensive, type-safe ways to integrate with Optikpi's data pipeline services for gaming and financial data processing.
+Official SDKs for the Optikpi Data Pipeline API. This repository contains JavaScript, Java, and Python implementations, providing comprehensive, type-safe ways to integrate with Optikpi's data pipeline services for gaming and financial data processing.
 
 ## 🚀 Features
 
-- **Multi-Language Support**: JavaScript (Node.js/Browser) and Java implementations
+- **Multi-Language Support**: JavaScript (Node.js/Browser), Java, and Python implementations
 - **Easy Integration**: Simple, intuitive API design across all languages
 - **Secure Authentication**: HMAC-based authentication with HKDF key derivation
 - **Data Validation**: Built-in validation for all data models
@@ -31,6 +32,12 @@ Official SDKs for the Optikpi Data Pipeline API. This repository contains both J
 - **Package**: `com.optikpi:datapipeline-sdk`
 - **Directory**: [`java/`](java/)
 - **Documentation**: [Java SDK README](java/README.md)
+
+### Python SDK
+- **Platform**: Python 3.8+
+- **Package**: `optikpi-datapipeline-sdk`
+- **Directory**: [`python/`](python/)
+- **Documentation**: [Python SDK README](python/README.md)
 
 ## 🚀 Quick Start
 
@@ -96,9 +103,38 @@ customer.setAccountStatus("Active");
 var response = sdk.sendCustomerProfile(customer);
 ```
 
+### Python
+
+```bash
+# Local SDK installation
+cd python
+poetry install
+```
+
+```python
+from index import OptikpiDataPipelineSDK
+
+sdk = OptikpiDataPipelineSDK({
+    'authToken': 'your_auth_token',
+    'accountId': 'your_account_id',
+    'workspaceId': 'your_workspace_id'
+})
+
+# Send customer profile
+response = sdk.send_customer_profile({
+    'account_id': 'acc_12345',
+    'workspace_id': 'ws_67890',
+    'user_id': 'user_001',
+    'username': 'john_doe',
+    'email': 'john.doe@example.com',
+    'full_name': 'John Doe',
+    'account_status': 'Active'
+})
+```
+
 ## 📊 Supported Data Types
 
-Both SDKs support the following data models:
+All SDKs support the following data models:
 
 - **Customer Profiles**: User account information and preferences
 - **Account Events**: Login, logout, verification, profile updates
@@ -117,7 +153,7 @@ OPTIKPI_ACCOUNT_ID=your_account_id
 OPTIKPI_WORKSPACE_ID=your_workspace_id
 
 # Optional
-OPTIKPI_BASE_URL=https://demo.optikpi.com/apigw/ingest
+OPTIKPI_BASE_URL=https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest
 OPTIKPI_TIMEOUT=30000
 OPTIKPI_RETRIES=3
 ```
@@ -126,7 +162,7 @@ OPTIKPI_RETRIES=3
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `baseUrl` | String | `https://demo.optikpi.com/apigw/ingest` | API base URL |
+| `baseUrl` | String | `https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest` | API base URL |
 | `timeout` | Number | `30000` | Request timeout in milliseconds |
 | `retries` | Number | `3` | Number of retry attempts |
 | `retryDelay` | Number | `1000` | Delay between retries in milliseconds |
@@ -149,13 +185,23 @@ mvn clean compile
 mvn exec:java -Dexec.mainClass="com.optikpi.examples.TestCustomerEndpoint"
 ```
 
+### Python Examples
+
+```bash
+cd python
+poetry install
+poetry run python examples/test-customer-endpoint.py
+```
+
 ## 🛠️ Development
 
 ### Prerequisites
 
 - Node.js 14+ (for JavaScript SDK)
 - Java 11+ (for Java SDK)
+- Python 3.8+ (for Python SDK)
 - Maven 3.6+ (for Java SDK)
+- Poetry (for Python SDK)
 
 ### Building
 
@@ -168,6 +214,9 @@ npm run build:js
 
 # Build Java SDK only
 npm run build:java
+
+# Build Python SDK only
+cd python && poetry build
 ```
 
 ### Testing
@@ -181,6 +230,9 @@ npm run test:js
 
 # Test Java SDK only
 npm run test:java
+
+# Test Python SDK only
+cd python && poetry run pytest
 ```
 
 ### Running Examples
@@ -191,11 +243,14 @@ npm run examples:js
 
 # Java examples
 npm run examples:java
+
+# Python examples
+cd python && poetry run python examples/test-all-endpoints.py
 ```
 
 ## 🔒 Security
 
-Both SDKs implement secure authentication using:
+All SDKs implement secure authentication using:
 - HMAC-SHA256 signatures
 - HKDF key derivation
 - Secure header transmission
@@ -205,6 +260,7 @@ Both SDKs implement secure authentication using:
 
 - [JavaScript SDK Documentation](js/README.md)
 - [Java SDK Documentation](java/README.md)
+- [Python SDK Documentation](python/README.md)
 - [API Reference](https://github.com/gamingcrafts/optikpi-datapipeline-sdk)
 - [Examples](examples/)
 
@@ -247,24 +303,32 @@ optikpi-datapipeline-sdk/
 │   ├── examples/         # Example applications
 │   ├── target/           # Built files
 │   └── README.md         # Java documentation
+├── python/               # Python SDK
+│   ├── src/              # Source code
+│   ├── examples/         # Example applications
+│   ├── tests/            # Unit tests
+│   └── README.md         # Python documentation
 ├── package.json          # Root package configuration
 └── README.md             # This file
 ```
 
 ## 🌟 Features Comparison
 
-| Feature | JavaScript | Java |
-|---------|------------|------|
-| Type Safety | TypeScript support | Full type safety |
-| Validation | Built-in | Jakarta Validation |
-| HTTP Client | Axios | OkHttp |
-| JSON Processing | Native | Jackson |
-| Logging | Console/Logger | SLF4J |
-| Testing | Jest | JUnit 5 |
-| Package Manager | npm | Maven |
-| Browser Support | ✅ | ❌ |
-| Node.js Support | ✅ | ❌ |
-| JVM Support | ❌ | ✅ |
+| Feature | JavaScript | Java | Python |
+|---------|------------|------|--------|
+| Type Safety | TypeScript support | Full type safety | Type hints |
+| Validation | Built-in | Jakarta Validation | Built-in |
+| HTTP Client | Axios | OkHttp | Requests |
+| JSON Processing | Native | Jackson | Native |
+| Logging | Console/Logger | SLF4J | Logging module |
+| Testing | Jest | JUnit 5 | pytest |
+| Package Manager | npm | Maven | Poetry |
+| Browser Support | ✅ | ❌ | ❌ |
+| Node.js Support | ✅ | ❌ | ❌ |
+| JVM Support | ❌ | ✅ | ❌ |
+| Linux/Unix Support | ✅ | ✅ | ✅ |
+| Windows Support | ✅ | ✅ | ✅ |
+| macOS Support | ✅ | ✅ | ✅ |
 
 ---
 

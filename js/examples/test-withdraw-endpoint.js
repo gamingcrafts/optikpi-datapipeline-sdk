@@ -23,31 +23,28 @@ const sdk = new OptikpiDataPipelineSDK({
   baseURL: API_BASE_URL
 });
 
-// Deposit event data
-const DEPOSIT_EVENT = {
+// Withdraw event data
+const WITHDRAW_EVENT = {
   "account_id": ACCOUNT_ID,
   "workspace_id": WORKSPACE_ID,
   "user_id": "user123456",
-  "event_category": "Deposit",
-  "event_name": "Successful Deposit",
-  "event_id": "evt_dep_987654321",
+  "event_category": "Withdraw",
+  "event_name": "Successful Withdrawal",
+  "event_id": "evt_wd_987654321",
   "event_time": "2024-01-15T14:45:00Z",
-  "amount": 500.00,
+  "amount": 250.00,
   "currency": "USD",
-  "payment_method": "bank",
-  "transaction_id": "txn_123456789",
+  "payment_method": "bank_transfer",
+  "transaction_id": "txn_wd_123456789",
   "status": "completed",
-  "metadata": {
-    "bank_name": "Chase Bank",
-    "account_last4": "1234"
-  }
+  "failure_reason": null
 };
 
-// Test deposit endpoint
-async function testDepositEndpoint() {
+// Test withdraw endpoint
+async function testWithdrawEndpoint() {
   try {
-    console.log('🚀 Testing Deposit Events Endpoint');
-    console.log('==================================');
+    console.log('🚀 Testing Withdraw Events Endpoint');
+    console.log('===================================');
     
     console.log('Configuration:');
     console.log(`API Base URL: ${API_BASE_URL}`);
@@ -55,24 +52,25 @@ async function testDepositEndpoint() {
     console.log(`Workspace ID: ${WORKSPACE_ID}`);
     console.log(`Auth Token: ${AUTH_TOKEN.substring(0, 8)}...`);
     
+    // Generate HMAC signature
     console.log('\nMaking API request using SDK...');
-    console.log('Deposit Event Data:', JSON.stringify(DEPOSIT_EVENT, null, 2));
-    
-    // Make the API call using SDK
-    const startTime = Date.now();
-    const result = await sdk.sendDepositEvent(DEPOSIT_EVENT);
-    const endTime = Date.now();
+       console.log('Gaming Event Data:', JSON.stringify(WITHDRAW_EVENT, null, 2));
+       
+       // Make the API call using SDK
+       const startTime = Date.now();
+       const result = await sdk.sendWithdrawEvent(WITHDRAW_EVENT);
+       const endTime = Date.now();
     
     if (result.success) {
       console.log('\n✅ Success!');
-      console.log('==================================');
+      console.log('==========================================');
       console.log(`HTTP Status: ${result.status}`);
       console.log(`Response Time: ${endTime - startTime}ms`);
       console.log(`SDK Success: ${result.success}`);
       console.log('Response Data:', JSON.stringify(result.data, null, 2));
     } else {
       console.log('\n❌ API Error!');
-      console.log('==================================');
+      console.log('==========================================');
       console.log(`HTTP Status: ${result.status}`);
       console.log(`Response Time: ${endTime - startTime}ms`);
       console.log(`SDK Success: ${result.success}`);
@@ -81,7 +79,7 @@ async function testDepositEndpoint() {
     
   } catch (error) {
     console.error('\n❌ SDK Error occurred!');
-    console.error('==================================');
+    console.error('==========================================');
     console.error('Error:', error.message);
     console.error('Stack:', error.stack);
   }
@@ -89,11 +87,10 @@ async function testDepositEndpoint() {
 
 // Run the test
 if (require.main === module) {
-  testDepositEndpoint();
+  testWithdrawEndpoint();
 }
 
 module.exports = {
-  testDepositEndpoint,
-  DEPOSIT_EVENT,
-  sdk
-}; 
+  testWithdrawEndpoint,
+  WITHDRAW_EVENT
+};

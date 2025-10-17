@@ -260,6 +260,31 @@ class DataPipelineClient {
   }
 
   /**
+   * Sends extended attributes data
+   * @param {Object|Array} data - Extended attributes data or array of attributes
+   * @returns {Promise<Object>} API response
+   */
+  async sendExtendedAttributes(data) {
+    try {
+      const response = await this.axios.post('/extattributes', data);
+      return {
+        success: true,
+        status: response.status,
+        data: response.data,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
+
+  /**
    * Sends multiple events in batch
    * @param {Object} batchData - Object containing different event types
    * @returns {Promise<Object>} Batch response results
@@ -300,6 +325,13 @@ class DataPipelineClient {
       promises.push(
         this.sendGamingActivityEvent(batchData.gamingEvents)
           .then(result => { results.gamingEvents = result; })
+      );
+    }
+
+    if (batchData.extendedAttributes) {
+      promises.push(
+        this.sendExtendedAttributes(batchData.extendedAttributes)
+          .then(result => { results.extendedAttributes = result; })
       );
     }
 
