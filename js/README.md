@@ -20,17 +20,7 @@ A comprehensive JavaScript SDK for integrating with the Optikpi Data Pipeline AP
 
 ### NPM
 ```bash
-npm install @optikpi/datapipeline-sdk
-```
-
-### Yarn
-```bash
-yarn add @optikpi/datapipeline-sdk
-```
-
-### CDN (Browser)
-```html
-<script src="https://unpkg.com/@optikpi/datapipeline-sdk@1.0.0/dist/index.umd.js"></script>
+npm install 
 ```
 
 ## 🎯 Quick Start
@@ -38,13 +28,13 @@ yarn add @optikpi/datapipeline-sdk
 ### 1. Initialize the SDK
 
 ```javascript
-const { OptikpiDataPipelineSDK } = require('@optikpi/datapipeline-sdk');
+const OptikpiDataPipelineSDK = require('../src/index');
 
 const sdk = new OptikpiDataPipelineSDK({
   authToken: 'your-auth-token',
   accountId: 'your-account-id',
   workspaceId: 'your-workspace-id',
-  baseURL: 'https://your-api-gateway-url/apigw/ingest'
+  baseURL: 'https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest'
 });
 ```
 
@@ -113,7 +103,7 @@ const batchResult = await sdk.sendBatch(batchData);
 | `authToken` | string | ✅ | - | Your authentication token |
 | `accountId` | string | ✅ | - | Your account ID |
 | `workspaceId` | string | ✅ | - | Your workspace ID |
-| `baseURL` | string | ❌ | `https://demo.optikpi.com/apigw/ingest` | API base URL |
+| `baseURL` | string | ❌ | `https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest` | API base URL |
 | `timeout` | number | ❌ | `30000` | Request timeout in milliseconds |
 | `retries` | number | ❌ | `3` | Number of retry attempts |
 | `retryDelay` | number | ❌ | `1000` | Delay between retries in milliseconds |

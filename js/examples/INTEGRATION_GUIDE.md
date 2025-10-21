@@ -47,12 +47,12 @@ This guide provides comprehensive instructions for third-party developers to int
 
 ### 2. Install the SDK
 ```bash
-npm install @optikpi/datapipeline-sdk
+npm install 
 ```
 
 ### 3. Test Your Connection
 ```javascript
-const OptikpiDataPipelineSDK = require('@optikpi/datapipeline-sdk').default;
+const OptikpiDataPipelineSDK = require('../src/index');
 
 const sdk = new OptikpiDataPipelineSDK({
   authToken: 'your-auth-token',
@@ -129,7 +129,7 @@ For enhanced security, all requests require HMAC signature validation using **HK
 
 ### Base URL
 ```
-https://your-api-gateway-url/apigw/ingest
+https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest
 ```
 
 ### Available Endpoints
@@ -304,13 +304,13 @@ Before making API calls, you need:
 
 ### SDK Setup
 ```javascript
-const OptikpiDataPipelineSDK = require('@optikpi/datapipeline-sdk').default;
+const OptikpiDataPipelineSDK = require('../src/index');
 
 const sdk = new OptikpiDataPipelineSDK({
   authToken: 'your-auth-token',
   accountId: 'your-account-id',
   workspaceId: 'your-workspace-id',
-  baseURL: 'https://your-api-gateway-url/apigw/ingest'
+  baseURL: 'https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest'
 });
 ```
 
@@ -411,7 +411,7 @@ try {
 #!/bin/bash
 
 # Configuration
-API_BASE_URL="https://your-api-gateway-url/apigw/ingest"
+API_BASE_URL="https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest"
 AUTH_TOKEN="your-auth-token-here"
 ACCOUNT_ID="68911b7ad58ad825ec00c5ef"
 WORKSPACE_ID="68911b7ad825ec00c5ef"
@@ -510,7 +510,7 @@ curl -X POST "${API_BASE_URL}/customers/${ACCOUNT_ID}/${WORKSPACE_ID}" \
 #!/bin/bash
 
 # Configuration
-API_BASE_URL="https://your-api-gateway-url/apigw/ingest"
+API_BASE_URL="https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest"
 AUTH_TOKEN="your-auth-token-here"
 ACCOUNT_ID="68911b7ad58ad825ec00c5ef"
 WORKSPACE_ID="68911b7ad825ec00c5ef"
@@ -568,7 +568,7 @@ curl -X POST "${API_BASE_URL}/events/account/${ACCOUNT_ID}/${WORKSPACE_ID}" \
 #!/bin/bash
 
 # Configuration
-API_BASE_URL="https://your-api-gateway-url/apigw/ingest"
+API_BASE_URL="https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest"
 AUTH_TOKEN="your-auth-token-here"
 ACCOUNT_ID="68911b7ad58ad825ec00c5ef"
 WORKSPACE_ID="68911b7ad825ec00c5ef"
@@ -627,7 +627,7 @@ curl -X POST "${API_BASE_URL}/events/deposit/${ACCOUNT_ID}/${WORKSPACE_ID}" \
 #!/bin/bash
 
 # Configuration
-API_BASE_URL="https://your-api-gateway-url/apigw/ingest"
+API_BASE_URL="https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest"
 AUTH_TOKEN="your-auth-token-here"
 ACCOUNT_ID="68911b7ad58ad825ec00c5ef"
 WORKSPACE_ID="68911b7ad825ec00c5ef"
@@ -687,7 +687,7 @@ curl -X POST "${API_BASE_URL}/events/withdraw/${ACCOUNT_ID}/${WORKSPACE_ID}" \
 #!/bin/bash
 
 # Configuration
-API_BASE_URL="https://your-api-gateway-url/apigw/ingest"
+API_BASE_URL="https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest"
 AUTH_TOKEN="your-auth-token-here"
 ACCOUNT_ID="68911b7ad58ad825ec00c5ef"
 WORKSPACE_ID="68911b7ad825ec00c5ef"
@@ -748,7 +748,7 @@ curl -X POST "${API_BASE_URL}/events/gaming-activity/${ACCOUNT_ID}/${WORKSPACE_I
 #!/bin/bash
 
 # Configuration
-API_BASE_URL="https://your-api-gateway-url/apigw/ingest"
+API_BASE_URL="https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest"
 AUTH_TOKEN="your-auth-token-here"
 
 # Health check (no HMAC required for GET requests)
@@ -889,10 +889,10 @@ Here's a complete JavaScript script using the SDK that demonstrates all API endp
 // Data Pipeline API Integration Script
 // Complete example with all endpoints using SDK
 
-const OptikpiDataPipelineSDK = require('@optikpi/datapipeline-sdk').default;
+const OptikpiDataPipelineSDK = require('../src/index');
 
 # Configuration
-API_BASE_URL="https://your-api-gateway-url/apigw/ingest"
+API_BASE_URL="https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest"
 AUTH_TOKEN="your-auth-token-here"
 ACCOUNT_ID="68911b7ad58ad825ec00c5ef"
 WORKSPACE_ID="68911b7ad825ec00c5ef"
@@ -1075,7 +1075,7 @@ By using the Optikpi Data Pipeline SDK instead of manual curl commands, you get:
 
 ## 📚 Next Steps
 
-1. **Install the SDK**: `npm install @optikpi/datapipeline-sdk`
+1. **Install the SDK**: `npm install`
 2. **Review Examples**: Check the updated client examples in this folder
 3. **Start Integrating**: Use the SDK examples as templates for your integration
 4. **Get Support**: Contact our team for SDK-specific assistance
