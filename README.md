@@ -23,19 +23,16 @@ Official SDKs for the Optikpi Data Pipeline API. This repository contains JavaSc
 
 ### JavaScript SDK
 - **Platform**: Node.js and Browser
-- **Package**: `@optikpi/datapipeline-sdk`
 - **Directory**: [`js/`](js/)
 - **Documentation**: [JavaScript SDK README](js/README.md)
 
 ### Java SDK
 - **Platform**: Java 11+
-- **Package**: `com.optikpi:datapipeline-sdk`
 - **Directory**: [`java/`](java/)
 - **Documentation**: [Java SDK README](java/README.md)
 
 ### Python SDK
 - **Platform**: Python 3.8+
-- **Package**: `optikpi-datapipeline-sdk`
 - **Directory**: [`python/`](python/)
 - **Documentation**: [Python SDK README](python/README.md)
 
@@ -44,11 +41,11 @@ Official SDKs for the Optikpi Data Pipeline API. This repository contains JavaSc
 ### JavaScript
 
 ```bash
-npm install @optikpi/datapipeline-sdk
+npm install
 ```
 
 ```javascript
-const { OptikpiDataPipelineSDK } = require('@optikpi/datapipeline-sdk');
+const OptikpiDataPipelineSDK = require('../src/index');
 
 const sdk = new OptikpiDataPipelineSDK({
   authToken: 'your_auth_token',

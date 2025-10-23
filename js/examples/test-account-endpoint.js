@@ -47,7 +47,6 @@ if (!validation.isValid) {
   console.error('❌ Validation errors:', validation.errors);
   process.exit(1);
 }
-
 console.log('✅ Account event validated successfully!');
 
 // Test account endpoint

@@ -58,7 +58,7 @@ const sdk = new OptikpiDataPipelineSDK({
   authToken: 'your-auth-token',
   accountId: 'your-account-id',
   workspaceId: 'your-workspace-id',
-  baseURL: 'https://your-api-gateway-url/apigw/ingest'
+  baseURL: 'https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest'
 });
 
 // Health check
@@ -69,14 +69,20 @@ console.log('API Status:', health.success ? 'Healthy' : 'Unhealthy');
 ### 4. Send Your First Data
 ```javascript
 // Simple customer profile
-const customerData = {
+const customerData = new CustomerProfile({
   account_id: 'your-account-id',
   workspace_id: 'your-workspace-id',
   user_id: 'user123',
   username: 'john_doe',
   email: 'john@example.com',
   // ... other required fields
-};
+});
+const validation = customerData.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+console.log('✅ Customer event validated successfully!');
 
 const result = await sdk.sendCustomerProfile(customerData);
 if (result.success) {
@@ -330,7 +336,7 @@ const sdk = new OptikpiDataPipelineSDK({
 
 ```javascript
 // Customer data
-const customerData = {
+const customerData = new CustomerProfile({
   account_id: "68911b7ad58ad825ec00c5ef",
   workspace_id: "68911b7ad58ad825ec00c5ef",
   user_id: "user123456",
@@ -372,7 +378,13 @@ const customerData = {
   email_verification: "Verified",
   bank_verification: "NotVerified",
   iddoc_verification: "Verified"
-};
+});
+const validation = customerData.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+console.log('✅ Customer event validated successfully!');
 
 // Send customer profile using SDK
 try {
@@ -417,64 +429,78 @@ ACCOUNT_ID="68911b7ad58ad825ec00c5ef"
 WORKSPACE_ID="68911b7ad825ec00c5ef"
 
 # Multiple customers data
-CUSTOMERS_DATA='[
+const CUSTOMERS_DATA = [
   {
-    "account_id": "68911b7ad58ad825ec00c5ef",
-    "workspace_id": "68911b7ad825ec00c5ef",
-    "user_id": "user123456",
-    "username": "john_doe",
-    "full_name": "John Doe",
-    "date_of_birth": "1990-01-15",
-    "email": "john.doe@example.com",
-    "phone_number": "+1234567890",
-    "currency": "USD",
-    "subscription": "Subscribed",
-    "deposit_limits": 1000.00,
-    "loss_limits": 500.00,
-    "wagering_limits": 2000.00,
-    "session_time_limits": 120,
-    "cooling_off_period": 7,
-    "self_exclusion_period": 30,
-    "account_status": "Active",
-    "vip_status": "Regular",
-    "loyalty_program_tiers": "Bronze",
-    "financial_risk_level": 0.3,
-    "referral_link_code": "REF789",
-    "creation_timestamp": "2024-01-15T10:30:00Z",
-    "phone_verification": "Verified",
-    "email_verification": "Verified",
-    "bank_verification": "NotVerified",
-    "iddoc_verification": "Verified"
+    account_id: "68911b7ad58ad825ec00c5ef",
+    workspace_id: "68911b7ad58ad825ec00c5ef",
+    user_id: "user123456",
+    username: "john_doe",
+    full_name: "John Doe",
+    date_of_birth: "1990-01-15",
+    email: "john.doe@example.com",
+    phone_number: "+1234567890",
+    currency: "USD",
+    subscription: "Subscribed",
+    deposit_limits: 1000.0,
+    loss_limits: 500.0,
+    wagering_limits: 2000.0,
+    session_time_limits: 120,
+    cooling_off_period: 7,
+    self_exclusion_period: 30,
+    account_status: "Active",
+    vip_status: "Regular",
+    loyalty_program_tiers: "Bronze",
+    financial_risk_level: 0.3,
+    referral_link_code: "REF789",
+    creation_timestamp: "2024-01-15T10:30:00Z",
+    phone_verification: "Verified",
+    email_verification: "Verified",
+    bank_verification: "NotVerified",
+    iddoc_verification: "Verified",
   },
   {
-    "account_id": "68911b7ad58ad825ec00c5ef",
-    "workspace_id": "68911b7ad825ec00c5ef",
-    "user_id": "user789012",
-    "username": "jane_smith",
-    "full_name": "Jane Smith",
-    "date_of_birth": "1985-05-20",
-    "email": "jane.smith@example.com",
-    "phone_number": "+1987654321",
-    "currency": "USD",
-    "subscription": "Subscribed",
-    "deposit_limits": 2000.00,
-    "loss_limits": 1000.00,
-    "wagering_limits": 5000.00,
-    "session_time_limits": 180,
-    "cooling_off_period": 14,
-    "self_exclusion_period": 60,
-    "account_status": "Active",
-    "vip_status": "VIP",
-    "loyalty_program_tiers": "Gold",
-    "financial_risk_level": 0.1,
-    "referral_link_code": "REF456",
-    "creation_timestamp": "2024-01-16T14:20:00Z",
-    "phone_verification": "Verified",
-    "email_verification": "Verified",
-    "bank_verification": "Verified",
-    "iddoc_verification": "Verified"
+    account_id: "68911b7ad58ad825ec00c5ef",
+    workspace_id: "68911b7ad58ad825ec00c5ef",
+    user_id: "user789012",
+    username: "jane_smith",
+    full_name: "Jane Smith",
+    date_of_birth: "1985-05-20",
+    email: "jane.smith@example.com",
+    phone_number: "+1987654321",
+    currency: "USD",
+    subscription: "Subscribed",
+    deposit_limits: 2000.0,
+    loss_limits: 1000.0,
+    wagering_limits: 5000.0,
+    session_time_limits: 180,
+    cooling_off_period: 14,
+    self_exclusion_period: 60,
+    account_status: "Active",
+    vip_status: "VIP",
+    loyalty_program_tiers: "Gold",
+    financial_risk_level: 0.1,
+    referral_link_code: "REF456",
+    creation_timestamp: "2024-01-16T14:20:00Z",
+    phone_verification: "Verified",
+    email_verification: "Verified",
+    bank_verification: "Verified",
+    iddoc_verification: "Verified",
+  },
+];
+
+// ✅ Validate each customer in the array
+for (const customerData of CUSTOMERS_DATA) {
+  console.log(`\n🔍 Validating customer: ${customerData.username}`);
+  const customer = new CustomerProfile(customerData);
+  const validation = customer.validate();
+
+  if (!validation.isValid) {
+    console.error(`❌ Validation errors for ${customerData.username}:`, validation.errors);
+    process.exit(1);
   }
-]'
+
+  console.log(`✅ Customer ${customerData.username} validated successfully!`);
+}
 
 # Generate HMAC signature
 SALT="${ACCOUNT_ID}${WORKSPACE_ID}"
@@ -516,7 +542,7 @@ ACCOUNT_ID="68911b7ad58ad825ec00c5ef"
 WORKSPACE_ID="68911b7ad825ec00c5ef"
 
 # Account event data
-ACCOUNT_EVENT='{
+const account=new AccountEvent'({
   "account_id": "68911b7ad58ad825ec00c5ef",
   "workspace_id": "68911b7ad825ec00c5ef",
   "user_id": "user123456",
@@ -532,14 +558,21 @@ ACCOUNT_EVENT='{
     "registration_source": "website",
     "referral_code": "REF789"
   }
-}'
+})'
+// Validate the account event
+const validation = account.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+console.log('✅ Account event validated successfully!');
 
 # Generate HMAC signature
 SALT="${ACCOUNT_ID}${WORKSPACE_ID}"
 INFO="hmac-signing"
 PRK=$(echo -n "$AUTH_TOKEN" | openssl dgst -sha256 -hmac "$SALT" | cut -d' ' -f2)
 DERIVED_KEY=$(echo -n "${INFO}01" | openssl dgst -sha256 -hmac "$PRK" | cut -d' ' -f2)
-HMAC_SIGNATURE=$(echo -n "$ACCOUNT_EVENT" | openssl dgst -sha256 -hmac "$DERIVED_KEY" | cut -d' ' -f2)
+HMAC_SIGNATURE=$(echo -n "$account" | openssl dgst -sha256 -hmac "$DERIVED_KEY" | cut -d' ' -f2)
 
 # Make API call
 curl -X POST "${API_BASE_URL}/events/account/${ACCOUNT_ID}/${WORKSPACE_ID}" \
@@ -547,7 +580,7 @@ curl -X POST "${API_BASE_URL}/events/account/${ACCOUNT_ID}/${WORKSPACE_ID}" \
   -H "x-optikpi-token: ${AUTH_TOKEN}" \
   -H "x-hmac-signature: ${HMAC_SIGNATURE}" \
   -H "x-hmac-algorithm: sha256" \
-  -d "$ACCOUNT_EVENT" \
+  -d "$account" \
   -w "\nHTTP Status: %{http_code}\nResponse Time: %{time_total}s\n"
 ```
 
@@ -574,7 +607,7 @@ ACCOUNT_ID="68911b7ad58ad825ec00c5ef"
 WORKSPACE_ID="68911b7ad825ec00c5ef"
 
 # Deposit event data
-DEPOSIT_EVENT='{
+const deposit=new DepositEvent'({
   "account_id": "68911b7ad58ad825ec00c5ef",
   "workspace_id": "68911b7ad825ec00c5ef",
   "user_id": "user123456",
@@ -591,14 +624,21 @@ DEPOSIT_EVENT='{
     "bank_name": "Chase Bank",
     "account_last4": "1234"
   }
-}'
+})'
+// Validate the account event
+const validation = deposit.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+console.log('✅ Deposit event validated successfully!');
 
 # Generate HMAC signature
 SALT="${ACCOUNT_ID}${WORKSPACE_ID}"
 INFO="hmac-signing"
 PRK=$(echo -n "$AUTH_TOKEN" | openssl dgst -sha256 -hmac "$SALT" | cut -d' ' -f2)
 DERIVED_KEY=$(echo -n "${INFO}01" | openssl dgst -sha256 -hmac "$PRK" | cut -d' ' -f2)
-HMAC_SIGNATURE=$(echo -n "$DEPOSIT_EVENT" | openssl dgst -sha256 -hmac "$DERIVED_KEY" | cut -d' ' -f2)
+HMAC_SIGNATURE=$(echo -n "$deposit" | openssl dgst -sha256 -hmac "$DERIVED_KEY" | cut -d' ' -f2)
 
 # Make API call
 curl -X POST "${API_BASE_URL}/events/deposit/${ACCOUNT_ID}/${WORKSPACE_ID}" \
@@ -606,7 +646,7 @@ curl -X POST "${API_BASE_URL}/events/deposit/${ACCOUNT_ID}/${WORKSPACE_ID}" \
   -H "x-optikpi-token: ${AUTH_TOKEN}" \
   -H "x-hmac-signature: ${HMAC_SIGNATURE}" \
   -H "x-hmac-algorithm: sha256" \
-  -d "$DEPOSIT_EVENT" \
+  -d "$deposit" \
   -w "\nHTTP Status: %{http_code}\nResponse Time: %{time_total}s\n"
 ```
 
@@ -633,7 +673,7 @@ ACCOUNT_ID="68911b7ad58ad825ec00c5ef"
 WORKSPACE_ID="68911b7ad825ec00c5ef"
 
 # Withdraw event data
-WITHDRAW_EVENT='{
+const withdraw=new WithdrawEvent'({
   "account_id": "68911b7ad58ad825ec00c5ef",
   "workspace_id": "68911b7ad825ec00c5ef",
   "user_id": "user123456",
@@ -651,14 +691,22 @@ WITHDRAW_EVENT='{
     "account_last4": "5678",
     "processing_time": "2-3 business days"
   }
-}'
+})'
+
+// Validate the account event
+const validation = withdraw.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+console.log('✅ Withdraw event validated successfully!');
 
 # Generate HMAC signature
 SALT="${ACCOUNT_ID}${WORKSPACE_ID}"
 INFO="hmac-signing"
 PRK=$(echo -n "$AUTH_TOKEN" | openssl dgst -sha256 -hmac "$SALT" | cut -d' ' -f2)
 DERIVED_KEY=$(echo -n "${INFO}01" | openssl dgst -sha256 -hmac "$PRK" | cut -d' ' -f2)
-HMAC_SIGNATURE=$(echo -n "$WITHDRAW_EVENT" | openssl dgst -sha256 -hmac "$DERIVED_KEY" | cut -d' ' -f2)
+HMAC_SIGNATURE=$(echo -n "$withdraw" | openssl dgst -sha256 -hmac "$DERIVED_KEY" | cut -d' ' -f2)
 
 # Make API call
 curl -X POST "${API_BASE_URL}/events/withdraw/${ACCOUNT_ID}/${WORKSPACE_ID}" \
@@ -666,7 +714,7 @@ curl -X POST "${API_BASE_URL}/events/withdraw/${ACCOUNT_ID}/${WORKSPACE_ID}" \
   -H "x-optikpi-token: ${AUTH_TOKEN}" \
   -H "x-hmac-signature: ${HMAC_SIGNATURE}" \
   -H "x-hmac-algorithm: sha256" \
-  -d "$WITHDRAW_EVENT" \
+  -d "$withdraw" \
   -w "\nHTTP Status: %{http_code}\nResponse Time: %{time_total}s\n"
 ```
 
@@ -693,7 +741,7 @@ ACCOUNT_ID="68911b7ad58ad825ec00c5ef"
 WORKSPACE_ID="68911b7ad825ec00c5ef"
 
 # Gaming activity event data
-GAMING_EVENT='{
+const gaming=new GamingActivityEvent'({
   "account_id": "68911b7ad58ad825ec00c5ef",
   "workspace_id": "68911b7ad825ec00c5ef",
   "user_id": "user123456",
@@ -712,14 +760,21 @@ GAMING_EVENT='{
     "bet_lines": 20,
     "multiplier": 2.5
   }
-}'
+})'
+// Validate the account event
+const validation = gaming.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+console.log('✅ Gaming event validated successfully!');
 
 # Generate HMAC signature
 SALT="${ACCOUNT_ID}${WORKSPACE_ID}"
 INFO="hmac-signing"
 PRK=$(echo -n "$AUTH_TOKEN" | openssl dgst -sha256 -hmac "$SALT" | cut -d' ' -f2)
 DERIVED_KEY=$(echo -n "${INFO}01" | openssl dgst -sha256 -hmac "$PRK" | cut -d' ' -f2)
-HMAC_SIGNATURE=$(echo -n "$GAMING_EVENT" | openssl dgst -sha256 -hmac "$DERIVED_KEY" | cut -d' ' -f2)
+HMAC_SIGNATURE=$(echo -n "$gaming" | openssl dgst -sha256 -hmac "$DERIVED_KEY" | cut -d' ' -f2)
 
 # Make API call
 curl -X POST "${API_BASE_URL}/events/gaming-activity/${ACCOUNT_ID}/${WORKSPACE_ID}" \
@@ -727,7 +782,7 @@ curl -X POST "${API_BASE_URL}/events/gaming-activity/${ACCOUNT_ID}/${WORKSPACE_I
   -H "x-optikpi-token: ${AUTH_TOKEN}" \
   -H "x-hmac-signature: ${HMAC_SIGNATURE}" \
   -H "x-hmac-algorithm: sha256" \
-  -d "$GAMING_EVENT" \
+  -d "$gaming" \
   -w "\nHTTP Status: %{http_code}\nResponse Time: %{time_total}s\n"
 ```
 
@@ -947,46 +1002,84 @@ make_api_call() {
 }
 
 # Test data
-CUSTOMER_DATA='{
-  "account_id": "68911b7ad58ad825ec00c5ef",
-  "workspace_id": "68911b7ad825ec00c5ef",
-  "user_id": "user123456",
-  "username": "john_doe",
-  "full_name": "John Doe",
-  "date_of_birth": "1990-01-15",
-  "email": "john.doe@example.com",
-  "phone_number": "+1234567890",
-  "currency": "USD",
-  "subscription": "Subscribed",
-  "deposit_limits": 1000.00,
-  "loss_limits": 500.00,
-  "wagering_limits": 2000.00,
-  "session_time_limits": 120,
-  "cooling_off_period": 7,
-  "self_exclusion_period": 30,
-  "account_status": "Active",
-  "vip_status": "Regular",
-  "loyalty_program_tiers": "Bronze",
-  "financial_risk_level": 0.3,
-  "referral_link_code": "REF789",
-  "creation_timestamp": "2024-01-15T10:30:00Z",
-  "phone_verification": "Verified",
-  "email_verification": "Verified",
-  "bank_verification": "NotVerified",
-  "iddoc_verification": "Verified"
-}'
-
-ACCOUNT_EVENT='{
+# Customer event data
+const customerData = new CustomerProfile({
+  account_id: "68911b7ad58ad825ec00c5ef",
+  workspace_id: "68911b7ad58ad825ec00c5ef",
+  user_id: "user123456",
+  username: "john_doe",
+  full_name: "John Doe",
+  first_name: "John",
+  last_name: "Doe",
+  date_of_birth: "1990-01-15",
+  email: "john.doe@example.com",
+  phone_number: "+1234567890",
+  gender: "Male",
+  country: "United States",
+  city: "New York",
+  language: "en",
+  currency: "USD",
+  marketing_email_preference: "Opt-in",
+  notifications_preference: "Opt-in",
+  subscription: "Subscribed",
+  privacy_settings: "private",
+  deposit_limits: 1000.00,
+  loss_limits: 500.00,
+  wagering_limits: 2000.00,
+  session_time_limits: 120,
+  cooling_off_period: 7,
+  self_exclusion_period: 30,
+  reality_checks_notification: "daily",
+  account_status: "Active",
+  vip_status: "Regular",
+  loyalty_program_tiers: "Bronze",
+  bonus_abuser: "Not flagged",
+  financial_risk_level: 0.3,
+  acquisition_source: "Google Ads",
+  partner_id: "partner123",
+  affliate_id: "affiliate456",
+  referral_link_code: "REF789",
+  referral_limit_reached: "Not Reached",
+  creation_timestamp: "2024-01-15T10:30:00Z",
+  phone_verification: "Verified",
+  email_verification: "Verified",
+  bank_verification: "NotVerified",
+  iddoc_verification: "Verified"
+});
+const validation = customerData.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+console.log('✅ Customer event validated successfully!');
+# Account event data
+const account=new AccountEvent'({
   "account_id": "68911b7ad58ad825ec00c5ef",
   "workspace_id": "68911b7ad825ec00c5ef",
   "user_id": "user123456",
   "event_category": "Account",
   "event_name": "Player Registration",
   "event_id": "evt_123456789",
-  "event_time": "2024-01-15T10:30:00Z"
-}'
+  "event_time": "2024-01-15T10:30:00Z",
+  "device": "desktop",
+  "ip_address": "192.168.1.100",
+  "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+  "status": "verified",
+  "metadata": {
+    "registration_source": "website",
+    "referral_code": "REF789"
+  }
+})'
+// Validate the account event
+const validation = account.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+console.log('✅ Account event validated successfully!');
 
-DEPOSIT_EVENT='{
+# Deposit event data
+const deposit=new DepositEvent'({
   "account_id": "68911b7ad58ad825ec00c5ef",
   "workspace_id": "68911b7ad825ec00c5ef",
   "user_id": "user123456",
@@ -995,10 +1088,25 @@ DEPOSIT_EVENT='{
   "event_id": "evt_dep_987654321",
   "event_time": "2024-01-15T14:45:00Z",
   "amount": 500.00,
-  "currency": "USD"
-}'
+  "currency": "USD",
+  "payment_method": "bank",
+  "transaction_id": "txn_123456789",
+  "status": "completed",
+  "metadata": {
+    "bank_name": "Chase Bank",
+    "account_last4": "1234"
+  }
+})'
+// Validate the account event
+const validation = deposit.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+console.log('✅ Deposit event validated successfully!');
 
-WITHDRAW_EVENT='{
+# Withdraw event data
+const withdraw=new WithdrawEvent'({
   "account_id": "68911b7ad58ad825ec00c5ef",
   "workspace_id": "68911b7ad825ec00c5ef",
   "user_id": "user123456",
@@ -1007,10 +1115,27 @@ WITHDRAW_EVENT='{
   "event_id": "evt_wd_456789123",
   "event_time": "2024-01-15T16:20:00Z",
   "amount": 250.00,
-  "currency": "USD"
-}'
+  "currency": "USD",
+  "payment_method": "bank",
+  "transaction_id": "txn_wd_987654321",
+  "status": "pending",
+  "metadata": {
+    "bank_name": "Wells Fargo",
+    "account_last4": "5678",
+    "processing_time": "2-3 business days"
+  }
+})'
 
-GAMING_EVENT='{
+// Validate the account event
+const validation = withdraw.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+console.log('✅ Withdraw event validated successfully!');
+
+# Gaming activity event data
+const gaming=new GamingActivityEvent'({
   "account_id": "68911b7ad58ad825ec00c5ef",
   "workspace_id": "68911b7ad825ec00c5ef",
   "user_id": "user123456",
@@ -1020,15 +1145,30 @@ GAMING_EVENT='{
   "event_time": "2024-01-15T18:30:00Z",
   "wager_amount": 10.00,
   "win_amount": 25.00,
-  "game_title": "Mega Fortune Slots"
-}'
+  "game_title": "Mega Fortune Slots",
+  "game_category": "Slots",
+  "session_duration": 45,
+  "metadata": {
+    "game_id": "mega_fortune_001",
+    "provider": "NetEnt",
+    "bet_lines": 20,
+    "multiplier": 2.5
+  }
+})'
+// Validate the account event
+const validation = gaming.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+console.log('✅ Gaming event validated successfully!');
 
 # Run tests
-make_api_call "/customers/${ACCOUNT_ID}/${WORKSPACE_ID}" "$CUSTOMER_DATA" "Customer Profile"
-make_api_call "/events/account/${ACCOUNT_ID}/${WORKSPACE_ID}" "$ACCOUNT_EVENT" "Account Event"
-make_api_call "/events/deposit/${ACCOUNT_ID}/${WORKSPACE_ID}" "$DEPOSIT_EVENT" "Deposit Event"
-make_api_call "/events/withdraw/${ACCOUNT_ID}/${WORKSPACE_ID}" "$WITHDRAW_EVENT" "Withdraw Event"
-make_api_call "/events/gaming-activity/${ACCOUNT_ID}/${WORKSPACE_ID}" "$GAMING_EVENT" "Gaming Activity Event"
+make_api_call "/customers/${ACCOUNT_ID}/${WORKSPACE_ID}" "$customer" "Customer Profile"
+make_api_call "/events/account/${ACCOUNT_ID}/${WORKSPACE_ID}" "$account" "Account Event"
+make_api_call "/events/deposit/${ACCOUNT_ID}/${WORKSPACE_ID}" "$deposit" "Deposit Event"
+make_api_call "/events/withdraw/${ACCOUNT_ID}/${WORKSPACE_ID}" "$withdraw" "Withdraw Event"
+make_api_call "/events/gaming-activity/${ACCOUNT_ID}/${WORKSPACE_ID}" "$gaming" "Gaming Activity Event"
 
 # Health check
 echo -e "\n${YELLOW}Testing: Health Check${NC}"

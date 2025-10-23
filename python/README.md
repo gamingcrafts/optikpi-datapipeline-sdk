@@ -68,36 +68,59 @@ sdk = OptikpiDataPipelineSDK({
 ### 2. Send Customer Profile
 
 ```python
-customer_data = {
-    'account_id': 'your-account-id',
-    'workspace_id': 'your-workspace-id',
-    'user_id': 'user123',
-    'username': 'john_doe',
-    'email': 'john.doe@example.com',
-    'full_name': 'John Doe',
-    'country': 'United States',
-    'currency': 'USD',
-    'subscription': 'Subscribed',
-    'deposit_limits': 1000.00,
-    'loss_limits': 500.00,
-    'wagering_limits': 2000.00,
-    'session_time_limits': 120,
-    'cooling_off_period': 7,
-    'self_exclusion_period': 30,
-    'account_status': 'Active',
-    'vip_status': 'Regular',
-    'loyalty_program_tiers': 'Bronze',
-    'financial_risk_level': 0.3,
-    'referral_link_code': 'REF789',
-    'creation_timestamp': '2024-01-15T10:30:00Z',
-    'phone_verification': 'Verified',
-    'email_verification': 'Verified',
-    'bank_verification': 'NotVerified',
-    'iddoc_verification': 'Verified'
-}
+customer = CustomerProfile(
+    account_id="string (required)",
+    workspace_id="string (required)",
+    user_id="string (required)",
+    username="string (required)",
+    full_name="string (required)",
+    first_name="string (optional)",
+    last_name="string (optional)",
+    date_of_birth="YYYY-MM-DD",
+    email="example@email.com",
+    phone_number="+1234567890",
+    gender="Male",
+    country="India",
+    city="Chennai",
+    language="English",
+    currency="INR",
+    marketing_email_preference="Opt-in",
+    notifications_preference="Opt-in",
+    subscription="Subscribed",
+    privacy_settings="public",
+    deposit_limits=1000,
+    loss_limits=500,
+    wagering_limits=1500,
+    session_time_limits=120,
+    cooling_off_period=7,
+    self_exclusion_period=30,
+    reality_checks_notification="weekly",
+    account_status="Active",
+    vip_status="Regular",
+    loyalty_program_tiers="Gold",
+    bonus_abuser="Not flagged",
+    financial_risk_level=0.3,
+    acquisition_source="Google Ads",
+    partner_id="partner123",
+    affliate_id="affiliate456",
+    referral_link_code="ref123",
+    referral_limit_reached="Not Reached",
+    creation_timestamp="2024-01-15T10:30:00Z",
+    phone_verification="Verified",
+    email_verification="Verified",
+    bank_verification="Verified",
+    iddoc_verification="Verified"
+)
+validation = customer.validate()
+
+if not validation.get("isValid", False):
+    print("❌ Validation errors:", validation.get("errors", []))
+    sys.exit(1)
+
+print("✅ Customer event validated successfully!")
 
 try:
-    result = sdk.send_customer_profile(customer_data)
+    result = sdk.send_customer_profile(customer)
     if result['success']:
         print('Customer profile sent successfully:', result['data'])
     else:
@@ -109,20 +132,34 @@ except Exception as error:
 ### 3. Send Event Data
 
 ```python
-deposit_event = {
-    'account_id': 'your-account-id',
-    'workspace_id': 'your-workspace-id',
-    'user_id': 'user123',
-    'event_category': 'Deposit',
-    'event_name': 'Successful Deposit',
-    'event_id': 'evt_dep_123',
-    'event_time': '2024-01-15T14:45:00Z',
-    'amount': 100.00,
-    'payment_method': 'bank',
-    'transaction_id': 'txn_123'
-}
+deposit = DepositEvent(
+    account_id=ACCOUNT_ID,
+    workspace_id=WORKSPACE_ID,
+    user_id="user123456",
+    event_category="Deposit",
+    event_name="Successful Deposit",
+    event_id="evt_dep_987654321",
+    event_time="2024-01-15T14:45:00Z",
+    amount=500.00,
+    currency="USD",
+    payment_method="bank",
+    transaction_id="txn_123456789",
+    status="success",
+    metadata={
+        "bank_name": "Chase Bank",
+        "account_last4": "1234"
+    }
+)
 
-result = sdk.send_deposit_event(deposit_event)
+validation = deposit.validate()
+
+if not validation.get("isValid", False):
+    print("❌ Validation errors:", validation.get("errors", []))
+    sys.exit(1)
+
+print("✅ Deposit event validated successfully!")
+
+result = sdk.send_deposit_event(deposit)
 ```
 
 ### 4. Batch Operations
@@ -222,13 +259,13 @@ The SDK includes comprehensive data models with built-in validation:
 ```python
 from models.CustomerProfile import CustomerProfile
 
-customer = CustomerProfile({
-    'account_id': 'your-account-id',
-    'workspace_id': 'your-workspace-id',
-    'user_id': 'user123',
-    'email': 'user@example.com',
+customer = CustomerProfile(
+    account_id= 'your-account-id',
+    workspace_id= 'your-workspace-id',
+    user_id= 'user123',
+    email='user@example.com',
     # ... other fields
-})
+)
 
 validation = customer.validate()
 if not validation['is_valid']:
@@ -241,15 +278,29 @@ from models.AccountEvent import AccountEvent
 from models.DepositEvent import DepositEvent
 from models.GamingActivityEvent import GamingActivityEvent
 
-account_event = AccountEvent({
-    'account_id': 'your-account-id',
-    'workspace_id': 'your-workspace-id',
-    'user_id': 'user123',
-    'event_name': 'Player Registration',
-    'event_id': 'evt_123',
-    'event_time': '2024-01-15T10:30:00Z'
-})
-```
+account = AccountEvent(
+    account_id=ACCOUNT_ID,
+    workspace_id=WORKSPACE_ID,
+    user_id="chandru123",
+    event_category="Account",
+    event_name="Player Registration",
+    event_id="evt_123456789",
+    event_time="2024-01-15T10:30:00Z",
+    device="desktop",
+    status="verified",
+    affiliate_id="aff_123",
+    partner_id="partner_456",
+    campaign_code="CAMPAIGN_001",
+    reason="Registration completed successfully"
+)
+
+validation = account.validate()
+
+if not validation.get("isValid", False):
+    print("❌ Validation errors:", validation.get("errors", []))
+    sys.exit(1)
+
+print("✅ Account event validated successfully!")
 
 ## 🔐 Authentication
 
@@ -410,7 +461,7 @@ Create a `.env` file:
 OPTIKPI_AUTH_TOKEN=your-auth-token-here
 OPTIKPI_ACCOUNT_ID=your-account-id
 OPTIKPI_WORKSPACE_ID=your-workspace-id
-OPTIKPI_API_URL=https://your-api-gateway-url/apigw/ingest
+OPTIKPI_API_URL=https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest
 ```
 
 ### Error Handling Example
@@ -544,9 +595,3 @@ The SDK is optimized for high-throughput scenarios:
 - [ ] CLI tool for testing
 - [ ] Docker container examples
 - [ ] More comprehensive examples
-
-## ⭐ Star History
-
-If you find this SDK useful, please consider giving it a star on GitHub!
-
-[![Star History Chart](https://api.star-history.com/svg?repos=optikpi/datapipeline-sdk-python&type=Date)](https://star-history.com/#optikpi/datapipeline-sdk-python&Date)

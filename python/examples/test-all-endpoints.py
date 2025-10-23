@@ -14,6 +14,11 @@ from dotenv import load_dotenv
 sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "python"))
 
 from index import OptikpiDataPipelineSDK
+from models.AccountEvent import AccountEvent
+from models.CustomerProfile import CustomerProfile
+from models.DepositEvent import DepositEvent
+from models.GamingActivityEvent import GamingActivityEvent
+from models.WithdrawEvent import WithdrawEvent
 
 
 # Load environment variables
@@ -42,105 +47,125 @@ sdk = OptikpiDataPipelineSDK({
 
 # Test data for different endpoints
 TEST_DATA = {
-    'customer': {
-        "account_id": ACCOUNT_ID,
-        "workspace_id": WORKSPACE_ID,
-        "user_id": "user123456",
-        "username": "john_doe",
-        "full_name": "John Doe",
-        "first_name": "John",
-        "last_name": "Doe",
-        "date_of_birth": "1990-01-15",
-        "email": "john.doe@example.com",
-        "phone_number": "+1234567890",
-        "gender": "Male",
-        "country": "United States",
-        "city": "New York",
-        "language": "en",
-        "currency": "USD",
-        "marketing_email_preference": "Opt-in",
-        "notifications_preference": "Opt-in",
-        "subscription": "Subscribed",
-        "privacy_settings": "private",
-        "deposit_limits": 1000.00,
-        "loss_limits": 500.00,
-        "wagering_limits": 2000.00,
-        "session_time_limits": 120,
-        "cooling_off_period": 7,
-        "self_exclusion_period": 30,
-        "reality_checks_notification": "daily",
-        "account_status": "Active",
-        "vip_status": "Regular",
-        "loyalty_program_tiers": "Bronze",
-        "bonus_abuser": "Not flagged",
-        "financial_risk_level": 0.3,
-        "acquisition_source": "Google Ads",
-        "partner_id": "partner123",
-        "affliate_id": "affiliate456",
-        "referral_link_code": "REF789",
-        "referral_limit_reached": "Not Reached",
-        "creation_timestamp": "2024-01-15T10:30:00Z",
-        "phone_verification": "Verified",
-        "email_verification": "Verified",
-        "bank_verification": "NotVerified",
-        "iddoc_verification": "Verified"
-    },
-    'account': {
-        "account_id": ACCOUNT_ID,
-        "workspace_id": WORKSPACE_ID,
-        "user_id": "user123456",
-        "event_category": "Account",
-        "event_name": "Player Registration",
-        "event_id": "evt_123456789",
-        "event_time": "2024-01-15T10:30:00Z",
-        "device": "desktop",
-        "status": "verified",
-        "affiliate_id": "aff_123",
-        "partner_id": "partner_456",
-        "campaign_code": "CAMPAIGN_001",
-        "reason": "Registration completed successfully"
-    },
-    'deposit': {
-        "account_id": ACCOUNT_ID,
-        "workspace_id": WORKSPACE_ID,
-        "user_id": "user123456",
-        "event_category": "Deposit",
-        "event_name": "Successful Deposit",
-        "event_id": "evt_dep_987654321",
-        "event_time": "2024-01-15T14:45:00Z",
-        "amount": 500.00,
-        "payment_method": "bank",
-        "transaction_id": "txn_123456789",
-        "payment_provider_id": "provider123",
-        "payment_provider_name": "Bank Transfer"
-    },
-    'withdraw': {
-        "account_id": ACCOUNT_ID,
-        "workspace_id": WORKSPACE_ID,
-        "user_id": "user123456",
-        "event_category": "Withdraw",
-        "event_name": "Successful Withdrawal",
-        "event_id": "evt_with_123456789",
-        "event_time": "2024-01-15T15:30:00Z",
-        "amount": 300.00,
-        "payment_method": "bank",
-        "transaction_id": "txn_123456790"
-    },
-    'gaming': {
-        "account_id": ACCOUNT_ID,
-        "workspace_id": WORKSPACE_ID,
-        "user_id": "user123456",
-        "event_category": "Gaming Activity",
-        "event_name": "Play Casino Game",
-        "event_id": "evt_gaming_123456789",
-        "event_time": "2024-01-15T16:00:00Z",
-        "wager_amount": 50.00,
-        "win_amount": 75.00,
-        "game_id": "game_123",
-        "game_title": "Blackjack",
-        "provider": "Provider A"
-    }
+    "customer": CustomerProfile(
+        account_id=ACCOUNT_ID,
+        workspace_id=WORKSPACE_ID,
+        user_id="user123456",
+        username="john_doe",
+        full_name="John Doe",
+        first_name="John",
+        last_name="Doe",
+        date_of_birth="1990-01-15",
+        email="john.doe@example.com",
+        phone_number="+1234567890",
+        gender="Male",
+        country="United States",
+        city="New York",
+        language="en",
+        currency="USD",
+        marketing_email_preference="Opt-in",
+        notifications_preference="Opt-in",
+        subscription="Subscribed",
+        privacy_settings="private",
+        deposit_limits=1000.00,
+        loss_limits=500.00,
+        wagering_limits=2000.00,
+        session_time_limits=120,
+        cooling_off_period=7,
+        self_exclusion_period=30,
+        reality_checks_notification="daily",
+        account_status="Active",
+        vip_status="Regular",
+        loyalty_program_tiers="Bronze",
+        bonus_abuser="Not flagged",
+        financial_risk_level=0.3,
+        acquisition_source="Google Ads",
+        partner_id="partner123",
+        affliate_id="affiliate456",
+        referral_link_code="REF789",
+        referral_limit_reached="Not Reached",
+        creation_timestamp="2024-01-15T10:30:00Z",
+        phone_verification="Verified",
+        email_verification="Verified",
+        bank_verification="NotVerified",
+        iddoc_verification="Verified"
+    ),
+    "account": AccountEvent(
+        account_id=ACCOUNT_ID,
+        workspace_id=WORKSPACE_ID,
+        user_id="user123456",
+        event_category="Account",
+        event_name="Player Registration",
+        event_id="evt_123456789",
+        event_time="2024-01-15T10:30:00Z",
+        device="desktop",
+        status="verified",
+        affiliate_id="aff_123",
+        partner_id="partner_456",
+        campaign_code="CAMPAIGN_001",
+        reason="Registration completed successfully"
+    ),
+    "deposit": DepositEvent(
+        account_id=ACCOUNT_ID,
+        workspace_id=WORKSPACE_ID,
+        user_id="user123456",
+        event_category="Deposit",
+        event_name="Successful Deposit",
+        event_id="evt_dep_987654321",
+        event_time="2024-01-15T14:45:00Z",
+        amount=500.00,
+        payment_method="bank",
+        transaction_id="txn_123456789",
+        payment_provider_id="provider123",
+        payment_provider_name="Bank Transfer"
+    ),
+    "withdraw": WithdrawEvent(
+        account_id=ACCOUNT_ID,
+        workspace_id=WORKSPACE_ID,
+        user_id="user123456",
+        event_category="Withdraw",
+        event_name="Successful Withdrawal",
+        event_id="evt_with_123456789",
+        event_time="2024-01-15T15:30:00Z",
+        amount=300.00,
+        payment_method="bank",
+        transaction_id="txn_123456790"
+    ),
+    "gaming": GamingActivityEvent(
+        account_id=ACCOUNT_ID,
+        workspace_id=WORKSPACE_ID,
+        user_id="user123456",
+        event_category="Gaming Activity",
+        event_name="Play Casino Game",
+        event_id="evt_gaming_123456789",
+        event_time="2024-01-15T16:00:00Z",
+        wager_amount=50.00,
+        win_amount=75.00,
+        game_id="game_123",
+        game_title="Blackjack",
+        provider="Provider A"
+    )
 }
+events_to_validate = [
+    {"key": "customer", "label": "Customer"},
+    {"key": "account", "label": "Account"},
+    {"key": "deposit", "label": "Deposit"},
+    {"key": "withdraw", "label": "Withdraw"},
+    {"key": "gaming", "label": "Gaming"}
+]
+
+for event in events_to_validate:
+    key = event["key"]
+    label = event["label"]
+    
+    validation = TEST_DATA[key].validate()
+    
+    if not validation["isValid"]:
+        print(f"❌ {label} validation errors:", validation["errors"])
+        exit(1)
+    
+    print(f"✅ {label} event validated successfully!")
+
 
 
 def make_api_request(endpoint, data, method):
@@ -244,36 +269,40 @@ def test_all_endpoints():
     print(f'Account ID: {ACCOUNT_ID}')
     print(f'Workspace ID: {WORKSPACE_ID}')
     print(f'Auth Token: {AUTH_TOKEN[:8]}...')
-    
+    customer_dict = TEST_DATA['customer'].to_dict()
+    account_dict = TEST_DATA['account'].to_dict()
+    deposit_dict = TEST_DATA['deposit'].to_dict()
+    withdraw_dict = TEST_DATA['withdraw'].to_dict()
+    gaming_dict = TEST_DATA['gaming'].to_dict()
     endpoints = [
         {
             'name': 'Customer Profile',
             'endpoint': '/customers',
-            'data': TEST_DATA['customer'],
+            'data': customer_dict,
             'method': 'customer'
         },
         {
             'name': 'Account Event',
             'endpoint': '/events/account',
-            'data': TEST_DATA['account'],
+            'data': account_dict,
             'method': 'account'
         },
         {
             'name': 'Deposit Event',
             'endpoint': '/events/deposit',
-            'data': TEST_DATA['deposit'],
+            'data': deposit_dict,
             'method': 'deposit'
         },
         {
             'name': 'Withdrawal Event',
             'endpoint': '/events/withdraw',
-            'data': TEST_DATA['withdraw'],
+            'data': withdraw_dict,
             'method': 'withdraw'
         },
         {
             'name': 'Gaming Activity',
             'endpoint': '/events/gaming-activity',
-            'data': TEST_DATA['gaming'],
+            'data': gaming_dict,
             'method': 'gaming'
         }
     ]

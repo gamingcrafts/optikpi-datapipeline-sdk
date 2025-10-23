@@ -1,5 +1,6 @@
 require('dotenv').config();
 const OptikpiDataPipelineSDK = require('../src/index');
+const { DepositEvent } = require('../src/models');
 
 // Configuration - Read from environment variables
 const API_BASE_URL = process.env.API_BASE_URL;
@@ -24,7 +25,7 @@ const sdk = new OptikpiDataPipelineSDK({
 });
 
 // Deposit event data
-const DEPOSIT_EVENT = {
+const deposit = new DepositEvent({
   "account_id": ACCOUNT_ID,
   "workspace_id": WORKSPACE_ID,
   "user_id": "user123456",
@@ -36,12 +37,21 @@ const DEPOSIT_EVENT = {
   "currency": "USD",
   "payment_method": "bank",
   "transaction_id": "txn_123456789",
-  "status": "completed",
+  "status": "success",
   "metadata": {
     "bank_name": "Chase Bank",
     "account_last4": "1234"
   }
-};
+});
+
+// Validate the account event
+const validation = deposit.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+console.log('✅ Deposit event validated successfully!');
+
 
 // Test deposit endpoint
 async function testDepositEndpoint() {
@@ -56,11 +66,11 @@ async function testDepositEndpoint() {
     console.log(`Auth Token: ${AUTH_TOKEN.substring(0, 8)}...`);
     
     console.log('\nMaking API request using SDK...');
-    console.log('Deposit Event Data:', JSON.stringify(DEPOSIT_EVENT, null, 2));
+    console.log('Deposit Event Data:', JSON.stringify(deposit, null, 2));
     
     // Make the API call using SDK
     const startTime = Date.now();
-    const result = await sdk.sendDepositEvent(DEPOSIT_EVENT);
+    const result = await sdk.sendDepositEvent(deposit);
     const endTime = Date.now();
     
     if (result.success) {
@@ -94,6 +104,6 @@ if (require.main === module) {
 
 module.exports = {
   testDepositEndpoint,
-  DEPOSIT_EVENT,
+  deposit,
   sdk
 }; 

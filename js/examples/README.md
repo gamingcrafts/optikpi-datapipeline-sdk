@@ -17,7 +17,7 @@ This folder contains JavaScript examples for integrating with the Optikpi API us
    cp env.example .env
    
    # Edit .env with your actual values
-   API_BASE_URL=https://your-api-gateway-url/apigw/ingest
+   API_BASE_URL=https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest
    AUTH_TOKEN=your-auth-token-here
    ACCOUNT_ID=your-account-id
    WORKSPACE_ID=your-workspace-id
@@ -26,7 +26,7 @@ This folder contains JavaScript examples for integrating with the Optikpi API us
    **Option B: Direct Configuration**
    Edit the configuration variables in the test files:
    ```javascript
-   const API_BASE_URL = "https://demo.optikpi.com/apigw/ingest";
+   const API_BASE_URL = "https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest";
    const AUTH_TOKEN = "your-auth-token-here";
    const ACCOUNT_ID = "your-account-id";
    const WORKSPACE_ID = "your-workspace-id";

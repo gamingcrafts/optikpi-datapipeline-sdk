@@ -1,5 +1,6 @@
 require('dotenv').config();
 const OptikpiDataPipelineSDK = require('../src/index');
+const { GamingActivityEvent } = require('../src/models');
 
 // Configuration - Read from environment variables
 const API_BASE_URL = process.env.API_BASE_URL;
@@ -24,15 +25,26 @@ const sdk = new OptikpiDataPipelineSDK({
 });
 
 // Gaming activity event data
-const GAMING_EVENT = {
+const gaming =new GamingActivityEvent ({
   "account_id": ACCOUNT_ID,
   "workspace_id": WORKSPACE_ID,
   "user_id": "user123411",
   "event_category": "Gaming Activity",
   "event_name": "Play Casino Game",
   "event_id": "1234",
-  "event_time": "2024-01-15T10:30:00Z"
-};
+  "event_time": "2024-01-15T10:30:00Z",
+  "game_id": "123",
+  "game_title": "poker"
+});
+
+// Validate the account event
+const validation = gaming.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+
+console.log('✅ Gaming event validated successfully!');
 
 // SDK handles HMAC authentication automatically
 
@@ -49,11 +61,11 @@ async function testGamingEndpoint() {
     console.log(`Auth Token: ${AUTH_TOKEN.substring(0, 8)}...`);
     
     console.log('\nMaking API request using SDK...');
-    console.log('Gaming Event Data:', JSON.stringify(GAMING_EVENT, null, 2));
+    console.log('Gaming Event Data:', JSON.stringify(gaming, null, 2));
     
     // Make the API call using SDK
     const startTime = Date.now();
-    const result = await sdk.sendGamingActivityEvent(GAMING_EVENT);
+    const result = await sdk.sendGamingActivityEvent(gaming);
     const endTime = Date.now();
     
     if (result.success) {
@@ -87,6 +99,6 @@ if (require.main === module) {
 
 module.exports = {
   testGamingEndpoint,
-  GAMING_EVENT,
+  gaming,
   sdk
 };

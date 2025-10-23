@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "python"))
 
 from index import OptikpiDataPipelineSDK
+from models.CustomerProfile import CustomerProfile
 
 
 # Load environment variables
@@ -41,49 +42,57 @@ sdk = OptikpiDataPipelineSDK({
 })
 
 # Customer data
-CUSTOMER_DATA = {
-    "account_id": ACCOUNT_ID,
-    "workspace_id": WORKSPACE_ID,
-    "user_id": "user123456",
-    "username": "john_doe",
-    "full_name": "John Doe",
-    "first_name": "John",
-    "last_name": "Doe",
-    "date_of_birth": "1990-01-15",
-    "email": "john.doe@example.com",
-    "phone_number": "+1234567890",
-    "gender": "Male",
-    "country": "United States",
-    "city": "New York",
-    "language": "en",
-    "currency": "USD",
-    "marketing_email_preference": "Opt-in",
-    "notifications_preference": "Opt-in",
-    "subscription": "Subscribed",
-    "privacy_settings": "private",
-    "deposit_limits": 1000.00,
-    "loss_limits": 500.00,
-    "wagering_limits": 2000.00,
-    "session_time_limits": 120,
-    "cooling_off_period": 7,
-    "self_exclusion_period": 30,
-    "reality_checks_notification": "daily",
-    "account_status": "Active",
-    "vip_status": "Regular",
-    "loyalty_program_tiers": "Bronze",
-    "bonus_abuser": "Not flagged",
-    "financial_risk_level": 0.3,
-    "acquisition_source": "Google Ads",
-    "partner_id": "partner123",
-    "affliate_id": "affiliate456",
-    "referral_link_code": "REF789",
-    "referral_limit_reached": "Not Reached",
-    "creation_timestamp": "2024-01-15T10:30:00Z",
-    "phone_verification": "Verified",
-    "email_verification": "Verified",
-    "bank_verification": "NotVerified",
-    "iddoc_verification": "Verified"
-}
+customer = CustomerProfile(
+    account_id=ACCOUNT_ID,
+    workspace_id=WORKSPACE_ID,
+    user_id="user123456",
+    username="john_doe",
+    full_name="John Doe",
+    first_name="John",
+    last_name="Doe",
+    date_of_birth="1990-01-15",
+    email="john.doe@example.com",
+    phone_number="+1234567890",
+    gender="Male",
+    country="United States",
+    city="New York",
+    language="en",
+    currency="USD",
+    marketing_email_preference="Opt-in",
+    notifications_preference="Opt-in",
+    subscription="Subscribed",
+    privacy_settings="private",
+    deposit_limits=1000.00,
+    loss_limits=500.00,
+    wagering_limits=2000.00,
+    session_time_limits=120,
+    cooling_off_period=7,
+    self_exclusion_period=30,
+    reality_checks_notification="daily",
+    account_status="Active",
+    vip_status="Regular",
+    loyalty_program_tiers="Bronze",
+    bonus_abuser="Not flagged",
+    financial_risk_level=0.3,
+    acquisition_source="Google Ads",
+    partner_id="partner123",
+    affliate_id="affiliate456",
+    referral_link_code="REF789",
+    referral_limit_reached="Not Reached",
+    creation_timestamp="2024-01-15T10:30:00Z",
+    phone_verification="Verified",
+    email_verification="Verified",
+    bank_verification="NotVerified",
+    iddoc_verification="Verified"
+)
+validation = customer.validate()
+
+if not validation.get("isValid", False):
+    print("❌ Validation errors:", validation.get("errors", []))
+    sys.exit(1)
+
+print("✅ Customer event validated successfully!")
+
 
 # SDK handles HMAC authentication automatically
 
@@ -106,11 +115,12 @@ def test_customer_endpoint():
         print(f'Auth Token: {AUTH_TOKEN[:8]}...')
         
         print('\nMaking API request using SDK...')
-        print(f'Customer Data: {json.dumps(CUSTOMER_DATA, indent=2)}')
+        customer_dict = customer.to_dict()
+        print(f'Customer Event Data: {json.dumps(customer_dict, indent=2)}')
         
         # Make the API call using SDK
         start_time = time.time()
-        result = sdk.send_customer_profile(CUSTOMER_DATA)
+        result = sdk.send_customer_profile(customer_dict)
         end_time = time.time()
         
         response_time = int((end_time - start_time) * 1000)

@@ -8,7 +8,7 @@ const { generateHmacSignature } = require('../utils/crypto');
 class DataPipelineClient {
   constructor(config = {}) {
     this.config = {
-      baseURL: config.baseURL || 'https://demo.optikpi.com/apigw/ingest',
+      baseURL: config.baseURL,
       authToken: config.authToken,
       accountId: config.accountId,
       workspaceId: config.workspaceId,

@@ -1,5 +1,6 @@
 require('dotenv').config();
 const OptikpiDataPipelineSDK = require('../src/index');
+const { WithdrawEvent } = require('../src/models');
 
 // Configuration - Read from environment variables
 const API_BASE_URL = process.env.API_BASE_URL;
@@ -24,7 +25,7 @@ const sdk = new OptikpiDataPipelineSDK({
 });
 
 // Withdraw event data
-const WITHDRAW_EVENT = {
+const withdraw = new WithdrawEvent({
   "account_id": ACCOUNT_ID,
   "workspace_id": WORKSPACE_ID,
   "user_id": "user123456",
@@ -34,11 +35,18 @@ const WITHDRAW_EVENT = {
   "event_time": "2024-01-15T14:45:00Z",
   "amount": 250.00,
   "currency": "USD",
-  "payment_method": "bank_transfer",
+  "payment_method": "bank",
   "transaction_id": "txn_wd_123456789",
-  "status": "completed",
+  "status": "success",
   "failure_reason": null
-};
+});
+
+const validation = withdraw.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+console.log('✅ Withdraw event validated successfully!');
 
 // Test withdraw endpoint
 async function testWithdrawEndpoint() {
@@ -54,11 +62,11 @@ async function testWithdrawEndpoint() {
     
     // Generate HMAC signature
     console.log('\nMaking API request using SDK...');
-       console.log('Gaming Event Data:', JSON.stringify(WITHDRAW_EVENT, null, 2));
+       console.log('Gaming Event Data:', JSON.stringify(withdraw, null, 2));
        
        // Make the API call using SDK
        const startTime = Date.now();
-       const result = await sdk.sendWithdrawEvent(WITHDRAW_EVENT);
+       const result = await sdk.sendWithdrawEvent(withdraw);
        const endTime = Date.now();
     
     if (result.success) {
@@ -92,5 +100,5 @@ if (require.main === module) {
 
 module.exports = {
   testWithdrawEndpoint,
-  WITHDRAW_EVENT
+  withdraw
 };

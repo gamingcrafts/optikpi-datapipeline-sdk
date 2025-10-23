@@ -41,7 +41,7 @@ const sdk = new OptikpiDataPipelineSDK({
 ### 2. Send Customer Profile
 
 ```javascript
-const customerData = {
+const customerData = new CustomerProfile({
   account_id: 'your-account-id',
   workspace_id: 'your-workspace-id',
   user_id: 'user123',
@@ -50,7 +50,13 @@ const customerData = {
   full_name: 'John Doe',
   country: 'United States',
   currency: 'USD'
-};
+});
+const validation = customerData.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+console.log('✅ Customer event validated successfully!');
 
 try {
   const result = await sdk.sendCustomerProfile(customerData);
@@ -67,7 +73,7 @@ try {
 ### 3. Send Event Data
 
 ```javascript
-const depositEvent = {
+const deposit=new DepositEvent({
   account_id: 'your-account-id',
   workspace_id: 'your-workspace-id',
   user_id: 'user123',
@@ -77,7 +83,14 @@ const depositEvent = {
   amount: 100.00,
   payment_method: 'bank',
   transaction_id: 'txn_123'
-};
+});
+// Validate the account event
+const validation = deposit.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+console.log('✅ Deposit event validated successfully!');
 
 const result = await sdk.sendDepositEvent(depositEvent);
 ```
@@ -170,7 +183,7 @@ The SDK includes comprehensive data models with built-in validation:
 
 ### CustomerProfile
 ```javascript
-const { CustomerProfile } = require('@optikpi/datapipeline-sdk');
+const { CustomerProfile } =  require('../src/models');
 
 const customer = new CustomerProfile({
   account_id: 'your-account-id',
@@ -187,7 +200,7 @@ if (!validation.isValid) {
 
 ### Event Models
 ```javascript
-const { AccountEvent, DepositEvent, GamingActivityEvent } = require('@optikpi/datapipeline-sdk');
+const { AccountEvent, DepositEvent, GamingActivityEvent } =  require('../src/models');
 
 const accountEvent = new AccountEvent({
   account_id: 'your-account-id',
@@ -252,7 +265,8 @@ npm run format
 ### Complete Integration Example
 
 ```javascript
-const { OptikpiDataPipelineSDK, CustomerProfile, DepositEvent } = require('@optikpi/datapipeline-sdk');
+const {OptikpiDataPipelineSDK} = require('../src/index');
+const {CustomerProfile, DepositEvent } =  require('../src/models');
 
 class CustomerDataService {
   constructor() {
@@ -302,6 +316,13 @@ class CustomerDataService {
         payment_method: paymentMethod,
         transaction_id: transactionId
       });
+      // Validate the account event
+      const validation = deposit.validate();
+      if (!validation.isValid) {
+        console.error('❌ Validation errors:', validation.errors);
+        process.exit(1);
+      }
+      console.log('✅ Deposit event validated successfully!');
 
       const result = await this.sdk.sendDepositEvent(depositEvent.toJSON());
       

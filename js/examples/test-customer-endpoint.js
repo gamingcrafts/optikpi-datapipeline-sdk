@@ -1,6 +1,6 @@
 require('dotenv').config();
 const OptikpiDataPipelineSDK = require('../src/index');
-const { AccountEvent } = require('../src/models');
+const { CustomerProfile } = require('../src/models');
 
 // Configuration - Read from environment variables
 const API_BASE_URL = process.env.API_BASE_URL;
@@ -25,7 +25,7 @@ const sdk = new OptikpiDataPipelineSDK({
 });
 
 // Customer data
-const CUSTOMER_DATA = {
+const customer = new CustomerProfile({
   "account_id": ACCOUNT_ID,
   "workspace_id": WORKSPACE_ID,
   "user_id": "user123456",
@@ -67,7 +67,14 @@ const CUSTOMER_DATA = {
   "email_verification": "Verified",
   "bank_verification": "NotVerified",
   "iddoc_verification": "Verified"
-};
+});
+
+const validation = customer.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+console.log('✅ Customer event validated successfully!');
 
 // SDK handles HMAC authentication automatically
 
@@ -84,11 +91,11 @@ async function testCustomerEndpoint() {
     console.log(`Auth Token: ${AUTH_TOKEN.substring(0, 8)}...`);
     
     console.log('\nMaking API request using SDK...');
-    console.log('Customer Data:', JSON.stringify(CUSTOMER_DATA, null, 2));
+    console.log('Customer Data:', JSON.stringify(customer, null, 2));
     
     // Make the API call using SDK
     const startTime = Date.now();
-    const result = await sdk.sendCustomerProfile(CUSTOMER_DATA);
+    const result = await sdk.sendCustomerProfile(customer);
     const endTime = Date.now();
     
     if (result.success) {
@@ -122,6 +129,6 @@ if (require.main === module) {
 
 module.exports = {
   testCustomerEndpoint,
-  CUSTOMER_DATA,
+  customer,
   sdk
 }; 

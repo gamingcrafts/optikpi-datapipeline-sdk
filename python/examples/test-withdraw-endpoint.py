@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "python"))
 
 from index import OptikpiDataPipelineSDK
+from models.WithdrawEvent import WithdrawEvent
 
 
 # Load environment variables
@@ -41,21 +42,29 @@ sdk = OptikpiDataPipelineSDK({
 })
 
 # Withdraw event data
-WITHDRAW_EVENT = {
-  "account_id": ACCOUNT_ID,
-  "workspace_id": WORKSPACE_ID,
-  "user_id": "user123456",
-  "event_category": "Withdraw",
-  "event_name": "Successful Withdrawal",
-  "event_id": "evt_wd_987654321",
-  "event_time": "2024-01-15T14:45:00Z",
-  "amount": 250.00,
-  "currency": "USD",
-  "payment_method": "bank_transfer",
-  "transaction_id": "txn_wd_123456789",
-  "status": "completed",
-  "failure_reason":None
-}
+withdraw = WithdrawEvent(
+    account_id=ACCOUNT_ID,
+    workspace_id=WORKSPACE_ID,
+    user_id="user123456",
+    event_category="Withdraw",
+    event_name="Successful Withdrawal",
+    event_id="evt_wd_987654321",
+    event_time="2024-01-15T14:45:00Z",
+    amount=250.00,
+    currency="USD",
+    payment_method="bank",
+    transaction_id="txn_wd_123456789",
+    status="success",
+    withdrawal_reason=None  # Make sure your class uses 'withdrawal_reason' instead of 'failure_reason'
+)
+
+validation = withdraw.validate()
+
+if not validation.get("isValid", False):
+    print("❌ Validation errors:", validation.get("errors", []))
+    sys.exit(1)
+
+print("✅ Withdraw event validated successfully!")	
 
 
 def test_withdraw_endpoint():
@@ -76,11 +85,12 @@ def test_withdraw_endpoint():
         print(f'Auth Token: {AUTH_TOKEN[:8]}...')
         
         print('\nMaking API request using SDK...')
-        print(f'Withdraw Event Data: {json.dumps(WITHDRAW_EVENT, indent=2)}')
+        withdraw_dict = withdraw.to_dict()
+        print(f'Customer Event Data: {json.dumps(withdraw_dict, indent=2)}')
         
         # Make the API call using SDK
         start_time = time.time()
-        result = sdk.send_withdraw_event(WITHDRAW_EVENT)
+        result = sdk.send_withdraw_event(withdraw_dict)
         end_time = time.time()
         
         response_time = int((end_time - start_time) * 1000)

@@ -27,7 +27,7 @@ class DataPipelineClient:
         
         Args:
             config: Configuration dictionary with:
-                - baseURL: API base URL (default: https://demo.optikpi.com/apigw/ingest)
+                - baseURL: API base URL (required)
                 - authToken: Authentication token (required)
                 - accountId: Account ID (required)
                 - workspaceId: Workspace ID (required)

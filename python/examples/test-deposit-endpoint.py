@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "python"))
 
 from index import OptikpiDataPipelineSDK
+from models.DepositEvent import DepositEvent
 
 
 # Load environment variables
@@ -41,25 +42,32 @@ sdk = OptikpiDataPipelineSDK({
 })
 
 # Deposit event data
-DEPOSIT_EVENT = {
-    "account_id": ACCOUNT_ID,
-    "workspace_id": WORKSPACE_ID,
-    "user_id": "user123456",
-    "event_category": "Deposit",
-    "event_name": "Successful Deposit",
-    "event_id": "evt_dep_987654321",
-    "event_time": "2024-01-15T14:45:00Z",
-    "amount": 500.00,
-    "currency": "USD",
-    "payment_method": "bank",
-    "transaction_id": "txn_123456789",
-    "status": "completed",
-    "metadata": {
+deposit = DepositEvent(
+    account_id=ACCOUNT_ID,
+    workspace_id=WORKSPACE_ID,
+    user_id="user123456",
+    event_category="Deposit",
+    event_name="Successful Deposit",
+    event_id="evt_dep_987654321",
+    event_time="2024-01-15T14:45:00Z",
+    amount=500.00,
+    currency="USD",
+    payment_method="bank",
+    transaction_id="txn_123456789",
+    status="success",
+    metadata={
         "bank_name": "Chase Bank",
         "account_last4": "1234"
     }
-}
+)
 
+validation = deposit.validate()
+
+if not validation.get("isValid", False):
+    print("❌ Validation errors:", validation.get("errors", []))
+    sys.exit(1)
+
+print("✅ Deposit event validated successfully!")
 
 def test_deposit_endpoint():
     """
@@ -79,11 +87,12 @@ def test_deposit_endpoint():
         print(f'Auth Token: {AUTH_TOKEN[:8]}...')
         
         print('\nMaking API request using SDK...')
-        print(f'Deposit Event Data: {json.dumps(DEPOSIT_EVENT, indent=2)}')
+        deposit_dict = deposit.to_dict()
+        print(f'Customer Event Data: {json.dumps(deposit_dict, indent=2)}')
         
         # Make the API call using SDK
         start_time = time.time()
-        result = sdk.send_deposit_event(DEPOSIT_EVENT)
+        result = sdk.send_deposit_event(deposit_dict)
         end_time = time.time()
         
         response_time = int((end_time - start_time) * 1000)

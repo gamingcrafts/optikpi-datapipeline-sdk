@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "python"))
 
 from index import OptikpiDataPipelineSDK
-
+from models.GamingActivityEvent import GamingActivityEvent
 
 # Load environment variables
 load_dotenv()
@@ -41,16 +41,24 @@ sdk = OptikpiDataPipelineSDK({
 })
 
 # Gaming event data
-GAMING_EVENT = {
-  "account_id": ACCOUNT_ID,
-  "workspace_id": WORKSPACE_ID,
-  "user_id": "user123411",
-  "event_category": "Gaming Activity",
-  "event_name": "Play Casino Game",
-  "event_id": "1234",
-  "event_time": "2024-01-15T10:30:00Z"
-}
+gaming = GamingActivityEvent(
+    account_id=ACCOUNT_ID,
+    workspace_id=WORKSPACE_ID,
+    user_id="user123411",
+    event_category="Gaming Activity",
+    event_name="Play Casino Game",
+    event_id="1234",
+    event_time="2024-01-15T10:30:00Z",
+    game_id= "123",
+    game_title= "poker"
+)
+validation = gaming.validate()
 
+if not validation.get("isValid", False):
+    print("❌ Validation errors:", validation.get("errors", []))
+    sys.exit(1)
+
+print("✅ Gaming event validated successfully!")
 
 def test_gaming_endpoint():
     """
@@ -70,11 +78,12 @@ def test_gaming_endpoint():
         print(f'Auth Token: {AUTH_TOKEN[:8]}...')
         
         print('\nMaking API request using SDK...')
-        print(f'Gaming Event Data: {json.dumps(GAMING_EVENT, indent=2)}')
+        gaming_dict = gaming.to_dict()
+        print(f'Customer Event Data: {json.dumps(gaming_dict, indent=2)}')
         
         # Make the API call using SDK
         start_time = time.time()
-        result = sdk.send_gaming_activity_event(GAMING_EVENT)
+        result = sdk.send_gaming_activity_event(gaming_dict)
         end_time = time.time()
         
         response_time = int((end_time - start_time) * 1000)

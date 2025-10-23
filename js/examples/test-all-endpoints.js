@@ -1,5 +1,6 @@
 require('dotenv').config();
 const OptikpiDataPipelineSDK = require('../src/index');
+const { AccountEvent,CustomerProfile,DepositEvent,GamingActivityEvent,WithdrawEvent} = require('../src/models');
 
 // Configuration - Read from environment variables
 const API_BASE_URL = process.env.API_BASE_URL;
@@ -25,7 +26,7 @@ const sdk = new OptikpiDataPipelineSDK({
 
 // Test data for different endpoints
 const TEST_DATA = {
-  customer: {
+  customer:new CustomerProfile({ 
     "account_id": ACCOUNT_ID,
     "workspace_id": WORKSPACE_ID,
     "user_id": "user123456",
@@ -67,8 +68,8 @@ const TEST_DATA = {
     "email_verification": "Verified",
     "bank_verification": "NotVerified",
     "iddoc_verification": "Verified"
-  },
-  account: {
+  }),
+  account: new AccountEvent({
     "account_id": ACCOUNT_ID,
     "workspace_id": WORKSPACE_ID,
     "user_id": "user123456",
@@ -82,8 +83,8 @@ const TEST_DATA = {
     "partner_id": "partner_456",
     "campaign_code": "CAMPAIGN_001",
     "reason": "Registration completed successfully"
-  },
-  deposit: {
+  }),
+  deposit:new DepositEvent( {
     "account_id": ACCOUNT_ID,
     "workspace_id": WORKSPACE_ID,
     "user_id": "user123456",
@@ -96,8 +97,8 @@ const TEST_DATA = {
     "transaction_id": "txn_123456789",
     "payment_provider_id": "provider123",
     "payment_provider_name": "Bank Transfer"
-  },
-  withdraw: {
+  }),
+  withdraw:new WithdrawEvent( {
     "account_id": ACCOUNT_ID,
     "workspace_id": WORKSPACE_ID,
     "user_id": "user123456",
@@ -108,8 +109,8 @@ const TEST_DATA = {
     "amount": 300.00,
     "payment_method": "bank",
     "transaction_id": "txn_123456790"
-  },
-  gaming: {
+  }),
+  gaming: new GamingActivityEvent ({
     "account_id": ACCOUNT_ID,
     "workspace_id": WORKSPACE_ID,
     "user_id": "user123456",
@@ -122,8 +123,25 @@ const TEST_DATA = {
     "game_id": "game_123",
     "game_title": "Blackjack",
     "provider": "Provider A"
-  }
+  })
 };
+const eventsToValidate = [
+  { key: "customer", label: "Customer" },
+  { key: "account", label: "Account" },
+  { key: "deposit", label: "Deposit" },
+  { key: "withdraw", label: "Withdraw" },
+  { key: "gaming", label: "Gaming" }
+];
+
+for (const { key, label } of eventsToValidate) {
+  const validation = TEST_DATA[key].validate();
+  if (!validation.isValid) {
+    console.error(`❌ ${label} validation errors:`, validation.errors);
+    process.exit(1);
+  }
+  console.log(`✅ ${label} event validated successfully!`);
+}
+
 
 // Make API request using SDK
 async function makeApiRequest(endpoint, data, method) {
