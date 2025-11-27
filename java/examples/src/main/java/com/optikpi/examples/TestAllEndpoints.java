@@ -13,58 +13,59 @@ import com.optikpi.datapipeline.model.AccountEvent;
 import com.optikpi.datapipeline.model.CustomerProfile;
 import com.optikpi.datapipeline.model.DepositEvent;
 import com.optikpi.datapipeline.model.GamingActivityEvent;
+import com.optikpi.datapipeline.model.ValidationResult;
 import com.optikpi.datapipeline.model.WithdrawEvent;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
 /**
- * Example: Test All Endpoints
- * Demonstrates how to use all available endpoints in the Optikpi Data Pipeline SDK
+ * Example: Test All Endpoints Demonstrates how to use all available endpoints
+ * in the Optikpi Data Pipeline SDK
  */
 public class TestAllEndpoints {
-    
+
     public static void main(String[] args) {
         // Load environment variables
         Dotenv dotenv = Dotenv.configure()
                 .directory(".")
-                .filename("env")
+                .filename(".env")
                 .load();
-        
+
         // Get configuration from environment variables
-        String authToken = dotenv.get("OPTIKPI_AUTH_TOKEN");
-        String accountId = dotenv.get("OPTIKPI_ACCOUNT_ID");
-        String workspaceId = dotenv.get("OPTIKPI_WORKSPACE_ID");
-        String baseUrl = dotenv.get("OPTIKPI_BASE_URL", "https://demo.optikpi.com/apigw/ingest");
-        
+        String authToken = dotenv.get("AUTH_TOKEN");
+        String accountId = dotenv.get("ACCOUNT_ID");
+        String workspaceId = dotenv.get("WORKSPACE_ID");
+        String baseUrl = dotenv.get("API_BASE_URL");
+
         if (authToken == null || accountId == null || workspaceId == null) {
             System.err.println("Error: Missing required environment variables:");
             System.err.println("Please set OPTIKPI_AUTH_TOKEN, OPTIKPI_ACCOUNT_ID, and OPTIKPI_WORKSPACE_ID");
             System.exit(1);
         }
-        
+
         // Create client configuration
         ClientConfig config = new ClientConfig(authToken, accountId, workspaceId);
         config.setBaseUrl(baseUrl);
-        
+
         // Create SDK instance
         OptikpiDataPipelineSDK sdk = new OptikpiDataPipelineSDK(config);
-        
+
         System.out.println("=== Optikpi Data Pipeline SDK - All Endpoints Test ===");
         System.out.println("Base URL: " + config.getBaseUrl());
         System.out.println("Account ID: " + config.getAccountId());
         System.out.println("Workspace ID: " + config.getWorkspaceId());
         System.out.println();
-        
+
         // Test all endpoints
         testHealthCheck(sdk);
-        testCustomerProfile(sdk);
-        testAccountEvent(sdk);
-        testDepositEvent(sdk);
-        testWithdrawEvent(sdk);
-        testGamingActivityEvent(sdk);
-        testBatchOperations(sdk);
+        testCustomerProfile(sdk, accountId, workspaceId);
+        testAccountEvent(sdk, accountId, workspaceId);
+        testDepositEvent(sdk, accountId, workspaceId);
+        testWithdrawEvent(sdk, accountId, workspaceId);
+        testGamingActivityEvent(sdk, accountId, workspaceId);
+        testBatchOperations(sdk, accountId, workspaceId);
     }
-    
+
     private static void testHealthCheck(OptikpiDataPipelineSDK sdk) {
         System.out.println("=== Health Check ===");
         try {
@@ -75,11 +76,12 @@ public class TestAllEndpoints {
         }
         System.out.println();
     }
-    
-    private static void testCustomerProfile(OptikpiDataPipelineSDK sdk) {
+
+    private static void testCustomerProfile(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
         System.out.println("=== Customer Profile ===");
         try {
-            CustomerProfile customer = createSampleCustomer();
+            CustomerProfile customer = createSampleCustomer(accountId, workspaceId);
+            validateEvent(customer, "customer event");
             var response = sdk.sendCustomerProfile(customer);
             printResponse("Customer Profile", response);
         } catch (Exception e) {
@@ -87,11 +89,12 @@ public class TestAllEndpoints {
         }
         System.out.println();
     }
-    
-    private static void testAccountEvent(OptikpiDataPipelineSDK sdk) {
+
+    private static void testAccountEvent(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
         System.out.println("=== Account Event ===");
         try {
-            AccountEvent event = createSampleAccountEvent();
+            AccountEvent event = createSampleAccountEvent(accountId, workspaceId);
+            validateEvent(event, "Account event");
             var response = sdk.sendAccountEvent(event);
             printResponse("Account Event", response);
         } catch (Exception e) {
@@ -99,11 +102,12 @@ public class TestAllEndpoints {
         }
         System.out.println();
     }
-    
-    private static void testDepositEvent(OptikpiDataPipelineSDK sdk) {
+
+    private static void testDepositEvent(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
         System.out.println("=== Deposit Event ===");
         try {
-            DepositEvent event = createSampleDepositEvent();
+            DepositEvent event = createSampleDepositEvent(accountId, workspaceId);
+            validateEvent(event, "Deposit event");
             var response = sdk.sendDepositEvent(event);
             printResponse("Deposit Event", response);
         } catch (Exception e) {
@@ -111,11 +115,12 @@ public class TestAllEndpoints {
         }
         System.out.println();
     }
-    
-    private static void testWithdrawEvent(OptikpiDataPipelineSDK sdk) {
+
+    private static void testWithdrawEvent(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
         System.out.println("=== Withdraw Event ===");
         try {
-            WithdrawEvent event = createSampleWithdrawEvent();
+            WithdrawEvent event = createSampleWithdrawEvent(accountId, workspaceId);
+            validateEvent(event, "Withdraw event");
             var response = sdk.sendWithdrawEvent(event);
             printResponse("Withdraw Event", response);
         } catch (Exception e) {
@@ -123,11 +128,12 @@ public class TestAllEndpoints {
         }
         System.out.println();
     }
-    
-    private static void testGamingActivityEvent(OptikpiDataPipelineSDK sdk) {
+
+    private static void testGamingActivityEvent(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
         System.out.println("=== Gaming Activity Event ===");
         try {
-            GamingActivityEvent event = createSampleGamingActivityEvent();
+            GamingActivityEvent event = createSampleGamingActivityEvent(accountId, workspaceId);
+            validateEvent(event, "Gaming event");
             var response = sdk.sendGamingActivityEvent(event);
             printResponse("Gaming Activity Event", response);
         } catch (Exception e) {
@@ -135,23 +141,23 @@ public class TestAllEndpoints {
         }
         System.out.println();
     }
-    
-    private static void testBatchOperations(OptikpiDataPipelineSDK sdk) {
+
+    private static void testBatchOperations(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
         System.out.println("=== Batch Operations ===");
         try {
             BatchData batchData = new BatchData();
-            batchData.setCustomers(Arrays.asList(createSampleCustomer()));
-            batchData.setAccountEvents(Arrays.asList(createSampleAccountEvent()));
-            batchData.setDepositEvents(Arrays.asList(createSampleDepositEvent()));
-            batchData.setWithdrawEvents(Arrays.asList(createSampleWithdrawEvent()));
-            batchData.setGamingEvents(Arrays.asList(createSampleGamingActivityEvent()));
-            
+            batchData.setCustomers(Arrays.asList(createSampleCustomer(accountId, workspaceId)));
+            batchData.setAccountEvents(Arrays.asList(createSampleAccountEvent(accountId, workspaceId)));
+            batchData.setDepositEvents(Arrays.asList(createSampleDepositEvent(accountId, workspaceId)));
+            batchData.setWithdrawEvents(Arrays.asList(createSampleWithdrawEvent(accountId, workspaceId)));
+            batchData.setGamingEvents(Arrays.asList(createSampleGamingActivityEvent(accountId, workspaceId)));
+            validateEvent(batchData, "BatchData");
             var response = sdk.sendBatch(batchData);
-            
+
             if (response.isSuccess()) {
                 System.out.println("✅ Batch operation completed successfully!");
                 System.out.println("Timestamp: " + response.getTimestamp());
-                
+
                 if (response.getCustomers() != null) {
                     System.out.println("Customer profiles: " + (response.getCustomers().isSuccess() ? "Success" : "Failed"));
                 }
@@ -175,11 +181,11 @@ public class TestAllEndpoints {
         }
         System.out.println();
     }
-    
-    private static CustomerProfile createSampleCustomer() {
+
+    private static CustomerProfile createSampleCustomer(String accountId, String workspaceId) {
         CustomerProfile customer = new CustomerProfile();
-        customer.setAccountId("acc_12345");
-        customer.setWorkspaceId("ws_67890");
+        customer.setAccountId(accountId);
+        customer.setWorkspaceId(workspaceId);
         customer.setUserId("user_001");
         customer.setUsername("john_doe");
         customer.setEmail("john.doe@example.com");
@@ -195,20 +201,20 @@ public class TestAllEndpoints {
         customer.setAccountStatus("Active");
         customer.setVipStatus("Regular");
         customer.setCreationTimestamp(Instant.now().toString());
-        
+
         // Add some custom data
         Map<String, Object> customData = new HashMap<>();
         customData.put("preferred_game_category", "slots");
         customData.put("marketing_source", "google_ads");
         customer.setCustomData(customData);
-        
+
         return customer;
     }
-    
-    private static AccountEvent createSampleAccountEvent() {
+
+    private static AccountEvent createSampleAccountEvent(String accountId, String workspaceId) {
         AccountEvent event = new AccountEvent();
-        event.setAccountId("acc_12345");
-        event.setWorkspaceId("ws_67890");
+        event.setAccountId(accountId);
+        event.setWorkspaceId(workspaceId);
         event.setUserId("user_001");
         event.setEventName("Login");
         event.setEventId("evt_" + System.currentTimeMillis());
@@ -217,47 +223,47 @@ public class TestAllEndpoints {
         event.setStatus("completed");
         return event;
     }
-    
-    private static DepositEvent createSampleDepositEvent() {
+
+    private static DepositEvent createSampleDepositEvent(String accountId, String workspaceId) {
         DepositEvent event = new DepositEvent();
-        event.setAccountId("acc_12345");
-        event.setWorkspaceId("ws_67890");
+        event.setAccountId(accountId);
+        event.setWorkspaceId(workspaceId);
         event.setUserId("user_001");
-        event.setEventName("Deposit Completed");
+        event.setEventName("Successful Deposit");
         event.setEventId("evt_" + System.currentTimeMillis());
         event.setEventTime(Instant.now().toString());
         event.setAmount(new BigDecimal("100.00"));
         event.setCurrency("USD");
         event.setPaymentMethod("credit_card");
         event.setTransactionId("txn_" + System.currentTimeMillis());
-        event.setStatus("completed");
+        event.setStatus("success");
         event.setDevice("mobile");
         return event;
     }
-    
-    private static WithdrawEvent createSampleWithdrawEvent() {
+
+    private static WithdrawEvent createSampleWithdrawEvent(String accountId, String workspaceId) {
         WithdrawEvent event = new WithdrawEvent();
-        event.setAccountId("acc_12345");
-        event.setWorkspaceId("ws_67890");
+        event.setAccountId(accountId);
+        event.setWorkspaceId(workspaceId);
         event.setUserId("user_001");
-        event.setEventName("Withdrawal Completed");
+        event.setEventName("Successful Withdrawal");
         event.setEventId("evt_" + System.currentTimeMillis());
         event.setEventTime(Instant.now().toString());
         event.setAmount(new BigDecimal("50.00"));
         event.setCurrency("USD");
-        event.setWithdrawalMethod("bank_transfer");
+        event.setPaymentMethod("bank");
         event.setTransactionId("txn_" + System.currentTimeMillis());
-        event.setStatus("completed");
+        event.setStatus("success");
         event.setDevice("desktop");
         return event;
     }
-    
-    private static GamingActivityEvent createSampleGamingActivityEvent() {
+
+    private static GamingActivityEvent createSampleGamingActivityEvent(String accountId, String workspaceId) {
         GamingActivityEvent event = new GamingActivityEvent();
-        event.setAccountId("acc_12345");
-        event.setWorkspaceId("ws_67890");
+        event.setAccountId(accountId);
+        event.setWorkspaceId(workspaceId);
         event.setUserId("user_001");
-        event.setEventName("Game Started");
+        event.setEventName("Play Casino Game");
         event.setEventId("evt_" + System.currentTimeMillis());
         event.setEventTime(Instant.now().toString());
         event.setGameId("game_001");
@@ -270,7 +276,7 @@ public class TestAllEndpoints {
         event.setSessionId("session_" + System.currentTimeMillis());
         return event;
     }
-    
+
     private static void printResponse(String operation, com.optikpi.datapipeline.ApiResponse<Object> response) {
         if (response.isSuccess()) {
             System.out.println("✅ " + operation + " successful!");
@@ -282,4 +288,67 @@ public class TestAllEndpoints {
             System.out.println("Status: " + response.getStatus());
         }
     }
+
+    // ✅ Universal validation method for all event types (including BatchData)
+    private static void validateEvent(Object event, String eventName) {
+        if (event instanceof CustomerProfile) {
+            ValidationResult result = ((CustomerProfile) event).validate();
+            printValidationResult(result, eventName);
+        } else if (event instanceof AccountEvent) {
+            ValidationResult result = ((AccountEvent) event).validate();
+            printValidationResult(result, eventName);
+        } else if (event instanceof DepositEvent) {
+            ValidationResult result = ((DepositEvent) event).validate();
+            printValidationResult(result, eventName);
+        } else if (event instanceof WithdrawEvent) {
+            ValidationResult result = ((WithdrawEvent) event).validate();
+            printValidationResult(result, eventName);
+        } else if (event instanceof GamingActivityEvent) {
+            ValidationResult result = ((GamingActivityEvent) event).validate();
+            printValidationResult(result, eventName);
+        } else if (event instanceof BatchData) {
+            System.out.println("=== Validating BatchData contents ===");
+
+            BatchData batch = (BatchData) event;
+
+            if (batch.getCustomers() != null) {
+                for (Object c : batch.getCustomers()) {
+                    validateEvent(c, "CustomerProfile (Batch)");
+                }
+            }
+            if (batch.getAccountEvents() != null) {
+                for (Object a : batch.getAccountEvents()) {
+                    validateEvent(a, "AccountEvent (Batch)");
+                }
+            }
+            if (batch.getDepositEvents() != null) {
+                for (Object d : batch.getDepositEvents()) {
+                    validateEvent(d, "DepositEvent (Batch)");
+                }
+            }
+            if (batch.getWithdrawEvents() != null) {
+                for (Object w : batch.getWithdrawEvents()) {
+                    validateEvent(w, "WithdrawEvent (Batch)");
+                }
+            }
+            if (batch.getGamingEvents() != null) {
+                for (Object g : batch.getGamingEvents()) {
+                    validateEvent(g, "GamingActivityEvent (Batch)");
+                }
+            }
+
+        } else {
+            System.out.println("⚠️ Unknown event type: " + eventName);
+        }
+    }
+
+    private static void printValidationResult(ValidationResult result, String eventName) {
+        if (!result.isValid()) {
+            System.out.println("❌ Invalid " + eventName + ":");
+            System.out.println("Errors: " + result.getErrors());
+        } else {
+            System.out.println("✅ Valid " + eventName + ": " + result.isValid());
+        }
+    }
+
 }

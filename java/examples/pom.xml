@@ -42,7 +42,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>com.optikpi.examples.TestCustomerEndpoint</mainClass>
+                    <mainClass>com.optikpi.examples.TestAccountEndpoint</mainClass>
                 </configuration>
             </plugin>
         </plugins>

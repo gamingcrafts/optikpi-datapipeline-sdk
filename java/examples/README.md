@@ -25,15 +25,15 @@ This directory contains example applications demonstrating how to use the Optikp
 
 3. **Configure environment variables**:
    ```bash
-   cp env.example env
-   # Edit the 'env' file with your actual credentials
+   cp env.example .env
+   # Edit the '.env' file with your actual credentials
    ```
 
 4. **Update the env file** with your Optikpi credentials:
    ```
-   OPTIKPI_AUTH_TOKEN=your_actual_auth_token
-   OPTIKPI_ACCOUNT_ID=your_actual_account_id
-   OPTIKPI_WORKSPACE_ID=your_actual_workspace_id
+   AUTH_TOKEN=your_actual_auth_token
+   ACCOUNT_ID=your_actual_account_id
+   WORKSPACE_ID=your_actual_workspace_id
    ```
 
 ## Running Examples
@@ -163,7 +163,7 @@ The `ClientConfig` class supports various configuration options:
 
 ```java
 ClientConfig config = new ClientConfig(authToken, accountId, workspaceId);
-config.setBaseUrl("https://api.optikpi.com/ingest");
+config.setBaseUrl("https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest");
 config.setTimeout(60000); // 60 seconds
 config.setRetries(5);
 config.setRetryDelay(2000); // 2 seconds

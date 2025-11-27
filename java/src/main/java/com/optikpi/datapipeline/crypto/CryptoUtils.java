@@ -1,10 +1,11 @@
 package com.optikpi.datapipeline.crypto;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Cryptographic utilities for HMAC and HKDF operations
@@ -16,11 +17,6 @@ public class CryptoUtils {
     
     /**
      * Derives a cryptographic key using HKDF (HMAC-based Key Derivation Function)
-     * @param authToken Authentication token
-     * @param accountId Account ID
-     * @param workspaceId Workspace ID
-     * @param info Context string for key derivation
-     * @return Derived key
      */
     public static byte[] deriveKey(String authToken, String accountId, String workspaceId, String info) {
         if (authToken == null || accountId == null || workspaceId == null || info == null) {
@@ -40,13 +36,8 @@ public class CryptoUtils {
     
     /**
      * Generates HMAC signature using HKDF-derived key
-     * @param data Data to sign
-     * @param authToken Authentication token
-     * @param accountId Account ID
-     * @param workspaceId Workspace ID
-     * @return HMAC signature in hex format
      */
-    public static String generateHmacSignature(Object data, String authToken, String accountId, String workspaceId) {
+    public static String generateHmacSignature(String data, String authToken, String accountId, String workspaceId) {
         if (data == null || authToken == null || accountId == null || workspaceId == null) {
             throw new IllegalArgumentException("All parameters are required for HMAC signature generation");
         }
@@ -55,8 +46,7 @@ public class CryptoUtils {
             String info = "hmac-signing";
             byte[] derivedKey = deriveKey(authToken, accountId, workspaceId, info);
             
-            String dataString = data instanceof String ? (String) data : data.toString();
-            byte[] dataBytes = dataString.getBytes(StandardCharsets.UTF_8);
+            byte[] dataBytes = data.getBytes(StandardCharsets.UTF_8);
             
             Mac mac = Mac.getInstance(HMAC_ALGORITHM);
             SecretKeySpec secretKeySpec = new SecretKeySpec(derivedKey, HMAC_ALGORITHM);
@@ -71,14 +61,8 @@ public class CryptoUtils {
     
     /**
      * Validates HMAC signature
-     * @param data Data that was signed
-     * @param signature HMAC signature to validate
-     * @param authToken Authentication token
-     * @param accountId Account ID
-     * @param workspaceId Workspace ID
-     * @return True if signature is valid
      */
-    public static boolean validateHmacSignature(Object data, String signature, String authToken, String accountId, String workspaceId) {
+    public static boolean validateHmacSignature(String data, String signature, String authToken, String accountId, String workspaceId) {
         try {
             String expectedSignature = generateHmacSignature(data, authToken, accountId, workspaceId);
             return expectedSignature.equals(signature);
@@ -88,21 +72,21 @@ public class CryptoUtils {
     }
     
     /**
-     * HKDF implementation
+     * HKDF implementation matching Node.js crypto.hkdfSync behavior
      */
     private static byte[] hkdf(byte[] ikm, byte[] salt, byte[] info, int length) throws NoSuchAlgorithmException, InvalidKeyException {
-        // Extract
-        byte[] prk = extract(salt, ikm);
-        
-        // Expand
+        byte[] prk = extract(ikm, salt);
         return expand(prk, info, length);
     }
     
-    private static byte[] extract(byte[] salt, byte[] ikm) throws NoSuchAlgorithmException, InvalidKeyException {
+    /**
+     * CRITICAL: Node.js uses salt as HMAC key and ikm as message (backwards from RFC 5869)
+     */
+    private static byte[] extract(byte[] ikm, byte[] salt) throws NoSuchAlgorithmException, InvalidKeyException {
         Mac mac = Mac.getInstance(HMAC_ALGORITHM);
-        SecretKeySpec secretKeySpec = new SecretKeySpec(salt, HMAC_ALGORITHM);
+        SecretKeySpec secretKeySpec = new SecretKeySpec(ikm, HMAC_ALGORITHM);
         mac.init(secretKeySpec);
-        return mac.doFinal(ikm);
+        return mac.doFinal(salt);
     }
     
     private static byte[] expand(byte[] prk, byte[] info, int length) throws NoSuchAlgorithmException, InvalidKeyException {

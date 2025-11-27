@@ -1,14 +1,15 @@
 package com.optikpi.datapipeline.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Positive;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 
 /**
  * Deposit Event Model
@@ -56,7 +57,7 @@ public class DepositEvent {
     @JsonProperty("transaction_id")
     private String transactionId;
     
-    @Pattern(regexp = "verified|pending|failed|completed", message = "status must be one of: verified, pending, failed, completed")
+    @Pattern(regexp = "success|pending|failed|cancelled|refunded", message = "status must be one of: success, pending, failed, cancelled, refunded")
     @JsonProperty("status")
     private String status;
     
@@ -80,6 +81,18 @@ public class DepositEvent {
     
     @JsonProperty("fee_amount")
     private BigDecimal feeAmount;
+    
+    @JsonProperty("payment_provider_id")
+    private String paymentProviderId;
+    
+    @JsonProperty("payment_provider_name")
+    private String paymentProviderName;
+    
+    @JsonProperty("fees")
+    private BigDecimal fees;
+    
+    @JsonProperty("net_amount")
+    private BigDecimal netAmount;
     
     public DepositEvent() {}
     
@@ -122,30 +135,44 @@ public class DepositEvent {
         if (amount == null) {
             errors.add("amount is required");
         }
+        if (paymentMethod == null || paymentMethod.trim().isEmpty()) {
+            errors.add("payment_method is required");
+        }
+        if (transactionId == null || transactionId.trim().isEmpty()) {
+            errors.add("transaction_id is required");
+        }
         
         // Event category validation
         if (eventCategory != null && !"Deposit".equals(eventCategory)) {
             errors.add("event_category must be \"Deposit\" for deposit events");
         }
         
-        // Event name validation
+        // Event name validation - CORRECTED to match JavaScript/API
         String[] validEventNames = {
-            "Deposit Initiated", "Deposit Completed", "Deposit Failed",
-            "Deposit Cancelled", "Deposit Refunded", "Deposit Reversed"
+            "Successful Deposit",
+            "Failed Deposit",
+            "Pending Deposit",
+            "Deposit Cancelled",
+            "Deposit Refunded"
         };
         
         if (eventName != null && !isValidEventName(eventName, validEventNames)) {
             errors.add("event_name must be one of: " + String.join(", ", validEventNames));
         }
         
-        // Status validation
+        // Status validation - CORRECTED to match JavaScript
         if (status != null && !isValidStatus(status)) {
-            errors.add("status must be one of: verified, pending, failed, completed");
+            errors.add("status must be one of: success, pending, failed, cancelled, refunded");
         }
         
         // Device validation
         if (device != null && !isValidDevice(device)) {
             errors.add("device must be one of: desktop, mobile, tablet, app");
+        }
+        
+        // Payment method validation
+        if (paymentMethod != null && !isValidPaymentMethod(paymentMethod)) {
+            errors.add("payment_method must be one of: bank, credit_card, debit_card, e_wallet, crypto, paypal, skrill, neteller");
         }
         
         // Date format validation
@@ -171,13 +198,20 @@ public class DepositEvent {
     }
     
     private boolean isValidStatus(String status) {
-        return "verified".equals(status) || "pending".equals(status) || 
-               "failed".equals(status) || "completed".equals(status);
+        return "success".equals(status) || "pending".equals(status) || 
+               "failed".equals(status) || "cancelled".equals(status) || "refunded".equals(status);
     }
     
     private boolean isValidDevice(String device) {
         return "desktop".equals(device) || "mobile".equals(device) || 
                "tablet".equals(device) || "app".equals(device);
+    }
+    
+    private boolean isValidPaymentMethod(String method) {
+        return "bank".equals(method) || "credit_card".equals(method) || 
+               "debit_card".equals(method) || "e_wallet".equals(method) ||
+               "crypto".equals(method) || "paypal".equals(method) ||
+               "skrill".equals(method) || "neteller".equals(method);
     }
     
     private boolean isValidDateTime(String dateTime) {
@@ -246,4 +280,16 @@ public class DepositEvent {
     
     public BigDecimal getFeeAmount() { return feeAmount; }
     public void setFeeAmount(BigDecimal feeAmount) { this.feeAmount = feeAmount; }
+    
+    public String getPaymentProviderId() { return paymentProviderId; }
+    public void setPaymentProviderId(String paymentProviderId) { this.paymentProviderId = paymentProviderId; }
+    
+    public String getPaymentProviderName() { return paymentProviderName; }
+    public void setPaymentProviderName(String paymentProviderName) { this.paymentProviderName = paymentProviderName; }
+    
+    public BigDecimal getFees() { return fees; }
+    public void setFees(BigDecimal fees) { this.fees = fees; }
+    
+    public BigDecimal getNetAmount() { return netAmount; }
+    public void setNetAmount(BigDecimal netAmount) { this.netAmount = netAmount; }
 }
