@@ -283,6 +283,56 @@ class DataPipelineClient {
       };
     }
   }
+  
+  /**
+   * Sends wallet balance event data
+   * @param {Object|Array} data - Wallet balance event data or array of events
+   * @returns {Promise<Object>} API response
+   */
+  async sendWalletBalanceEvent(data) {
+    try {
+      const response = await this.axios.post('/events/wallet-balance', data);
+      return {
+        success: true,
+        status: response.status,
+        data: response.data,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
+
+  /**
+   * Sends refer friend event data
+   * @param {Object|Array} data - Refer friend event data or array of events
+   * @returns {Promise<Object>} API response
+   */
+  async sendReferFriendEvent(data) {
+    try {
+      const response = await this.axios.post('/events/refer-friend', data);
+      return {
+        success: true,
+        status: response.status,
+        data: response.data,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
 
   /**
    * Sends multiple events in batch
