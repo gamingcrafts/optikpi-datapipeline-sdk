@@ -217,6 +217,14 @@ public class DataPipelineClient {
         return sendData("/events/gaming-activity", data);
     }
     
+    public ApiResponse<Object> sendReferFriendEvent(Object data) {
+    return sendData("/events/refer-friend", data);
+    }
+
+    public ApiResponse<Object> sendWalletBalanceEvent(Object data) {
+        return sendData("/events/wallet-balance", data);
+    }
+
     public BatchResponse sendBatch(BatchData batchData) {
         BatchResponse results = new BatchResponse();
         results.setSuccess(true);
@@ -240,6 +248,14 @@ public class DataPipelineClient {
         
         if (batchData.getGamingEvents() != null) {
             results.setGamingEvents(sendGamingActivityEvent(batchData.getGamingEvents()));
+        }
+
+        if (batchData.getReferFriendEvents() != null) {
+        results.setReferFriendEvents(sendReferFriendEvent(batchData.getReferFriendEvents()));
+        }
+
+        if (batchData.getWalletBalanceEvents() != null) {
+            results.setWalletBalanceEvents(sendWalletBalanceEvent(batchData.getWalletBalanceEvents()));
         }
         
         return results;

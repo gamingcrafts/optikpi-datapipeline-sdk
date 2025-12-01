@@ -21,6 +21,12 @@ public class BatchData {
     
     @JsonProperty("gamingEvents")
     private List<Object> gamingEvents;
+
+    @JsonProperty("referFriendEvents")  
+    private List<Object> referFriendEvents;
+    
+    @JsonProperty("walletBalanceEvents")  
+    private List<Object> walletBalanceEvents;
     
     public BatchData() {}
     
@@ -63,5 +69,22 @@ public class BatchData {
     
     public void setGamingEvents(List<Object> gamingEvents) {
         this.gamingEvents = gamingEvents;
+    }
+
+      
+    public List<Object> getReferFriendEvents() {
+        return referFriendEvents;
+    }
+    
+    public void setReferFriendEvents(List<Object> referFriendEvents) {
+        this.referFriendEvents = referFriendEvents;
+    }
+    
+    public List<Object> getWalletBalanceEvents() {
+        return walletBalanceEvents;
+    }
+    
+    public void setWalletBalanceEvents(List<Object> walletBalanceEvents) {
+        this.walletBalanceEvents = walletBalanceEvents;
     }
 }
