@@ -165,6 +165,19 @@ Sends gaming activity events.
 ```javascript
 const result = await sdk.sendGamingActivityEvent(gamingEvent);
 ```
+#### `sendWalletBalanceEvent(data)`
+Sends gaming activity events.
+
+```javascript
+const result = await sdk.sendWalletBalanceEvent(walletBalanceEvent);
+```
+
+#### `sendReferFriendEvent(data)`
+Sends gaming activity events.
+
+```javascript
+const result = await sdk.sendReferFriendEvent(referFrientEvent);
+```
 
 #### `sendBatch(batchData)`
 Sends multiple types of data in a single batch operation.

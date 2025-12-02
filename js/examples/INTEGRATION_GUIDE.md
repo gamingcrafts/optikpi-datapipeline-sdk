@@ -1,10 +1,8 @@
-# Data Pipeline API Integration Guide
+# Optikpi Data Pipeline API Integration Guide v1.0.1
 
 ## Overview
 
-This guide provides comprehensive instructions for third-party developers to integrate with the **Data Pipeline API**. The API enables secure, real-time ingestion of customer profiles and event data into our enterprise data pipeline infrastructure.
-
-> **💡 SDK Integration Available**: For easier integration, we now provide the **Optikpi Data Pipeline SDK** that handles all authentication, HMAC signature generation, and API communication automatically. See the [Quick Start](#quick-start) section for SDK usage examples.
+This guide provides comprehensive instructions for third-party developers to integrate with the **Optikpi Data Pipeline API**. The API enables secure, real-time ingestion of customer profiles and event data into our enterprise data pipeline infrastructure.
 
 ### 🚀 Key Features
 - **Real-time Data Ingestion**: Push customer and event data instantly
@@ -18,13 +16,16 @@ This guide provides comprehensive instructions for third-party developers to int
 - **Account Events**: Registration, verification, and account changes
 - **Financial Events**: Deposits, withdrawals, and transactions
 - **Gaming Activity**: Game plays, wins, losses, and session data
+- **Wallet Balance**: Wallet balance updates and tracking
+- **Refer Friend**: Referral program events and rewards
 
 ## Table of Contents
 
 - [🔐 Authentication](#authentication)
 - [🌐 API Endpoints](#api-endpoints)
 - [📋 Data Models](#data-models)
-- [💻 Integration Examples](#integration-examples)
+- [🚀 Quick Start](#quick-start)
+- [📚 SDK Integration Guide](#sdk-integration-guide)
 - [⚠️ Error Handling](#error-handling)
 - [✅ Best Practices](#best-practices)
 - [⚡ Rate Limits](#rate-limits)
@@ -32,121 +33,43 @@ This guide provides comprehensive instructions for third-party developers to int
 
 ---
 
-## Quick Start
-
-<details>
-<summary><strong>🚀 Get Started in 5 Minutes</strong></summary>
-
-### 1. Get Your Credentials
-```bash
-# Contact your account manager for:
-# - API Gateway URL
-# - Authentication Token
-# - Account ID and Workspace ID
-```
-
-### 2. Install the SDK
-```bash
-npm install 
-```
-
-### 3. Test Your Connection
-```javascript
-const OptikpiDataPipelineSDK = require('../src/index');
-
-const sdk = new OptikpiDataPipelineSDK({
-  authToken: 'your-auth-token',
-  accountId: 'your-account-id',
-  workspaceId: 'your-workspace-id',
-  baseURL: 'https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest'
-});
-
-// Health check
-const health = await sdk.healthCheck();
-console.log('API Status:', health.success ? 'Healthy' : 'Unhealthy');
-```
-
-### 4. Send Your First Data
-```javascript
-// Simple customer profile
-const customerData = new CustomerProfile({
-  account_id: 'your-account-id',
-  workspace_id: 'your-workspace-id',
-  user_id: 'user123',
-  username: 'john_doe',
-  email: 'john@example.com',
-  // ... other required fields
-});
-const validation = customerData.validate();
-if (!validation.isValid) {
-  console.error('❌ Validation errors:', validation.errors);
-  process.exit(1);
-}
-console.log('✅ Customer event validated successfully!');
-
-const result = await sdk.sendCustomerProfile(customerData);
-if (result.success) {
-  console.log('Customer profile sent successfully!');
-} else {
-  console.error('Failed to send customer profile:', result.error);
-}
-```
-
-</details>
-
 ## 🔐 Authentication
 
-The Data Pipeline API uses a **dual-layer security model** to ensure data integrity and prevent unauthorized access.
+The Data Pipeline API uses a **dual-layer security model** to ensure data integrity and prevent unauthorized access. The official SDK handles all authentication automatically - you don't need to implement any crypto code.
 
-> **🚀 SDK Simplification**: The Optikpi Data Pipeline SDK automatically handles all authentication complexity, including HMAC signature generation and HKDF key derivation. You only need to provide your credentials during SDK initialization.
+### How Authentication Works
 
-### 1. Token Authentication
-All API requests require a valid authentication token in the header:
+1. **Token Authentication**: Your authentication token is sent in the `x-optikpi-token` header
+2. **HMAC Signature**: Each request is signed using HMAC with HKDF key derivation
+3. **Automatic Handling**: The SDK generates all required headers and signatures
 
-```http
-x-optikpi-token: your-auth-token-here
-```
+### What You Need
 
-> **Note**: Contact your account manager to obtain your authentication token.
+- **Authentication Token**: Contact your account manager to obtain this
+- **Account ID & Workspace ID**: Provided by your account manager
+- **API Gateway URL**: The endpoint for your environment
 
-### 2. HMAC Request Body Authentication
-For enhanced security, all requests require HMAC signature validation using **HKDF** (HMAC-based Key Derivation Function).
 
-#### Required Headers
-| Header | Description | Example |
-|--------|-------------|---------|
-| `x-hmac-signature` | HMAC signature of the request body | `a1b2c3d4e5f6...` |
-| `x-hmac-algorithm` | HMAC algorithm (default: sha256) | `sha256` |
-
-#### HKDF Parameters
-| Parameter | Description | Example |
-|-----------|-------------|---------|
-| **IKM** (Input Key Material) | Your auth token | `your-auth-token-here` |
-| **Salt** | `account_id + workspace_id` (from headers) | `68911b7ad58ad825ec00c5ef68911b7ad825ec00c5ef` |
-| **Info** | Context string | `"hmac-signing"` |
-
-#### Security Benefits
-- 🔒 **Request Integrity**: Ensures data hasn't been tampered with
-- 🔒 **Replay Protection**: Each request has a unique signature
-- 🔒 **Context Binding**: Keys are bound to specific account/workspace
-- 🔒 **Cryptographic Strength**: Uses standardized HKDF algorithm
+> **💡 SDK Advantage**: All authentication complexity is handled automatically by the SDK. You just provide your credentials during initialization.
 
 ## 🌐 API Endpoints
 
 ### Base URL
 ```
-https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest
+https://your-api-gateway-url/apigw/ingest
 ```
 
 ### Available Endpoints
-
 | Endpoint | Method | Description | Rate Limit |
 |----------|--------|-------------|------------|
-| `/customers` | POST | Push customer profile data | 1000 req/sec |
-| `/events/account` | POST | Push account events | 1000 req/sec |
-| `/events/deposit` | POST | Push deposit events | 1000 req/sec |
-| `/events/withdraw` | POST | Push withdrawal events | 1000 req/sec |
-| `/events/gaming-activity` | POST | Push gaming activity events | 1000 req/sec |
+| `/customers` | POST | Push customer profile data | 50 req/sec |
+| `/events/account` | POST | Push account events | 250 req/sec |
+| `/events/deposit` | POST | Push deposit events | 250 req/sec |
+| `/events/withdraw` | POST | Push withdrawal events | 250 req/sec |
+| `/events/gaming-activity` | POST | Push gaming activity events | 250 req/sec |
+| `/events/wallet-balance` | POST | Push wallet balance events | 250 req/sec |
+| `/events/refer-friend` | POST | Push refer friend events | 250 req/sec |
+| `/extattributes` | POST | Push extended attributes data | 50 req/sec |
 | `/datapipeline/health` | GET | Health check endpoint | No limit |
 
 ### Required Headers
@@ -155,673 +78,462 @@ https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest
 | `x-optikpi-account-id` | string | Your account identifier | `68911b7ad58ad825ec00c5ef` |
 | `x-optikpi-workspace-id` | string | Your workspace identifier | `68911b7ad825ec00c5ef` |
 
-### Response Format
-All successful responses follow this structure:
+### Successful Response Format
 ```json
 {
   "message": "Success description",
   "recordIds": ["record-id-1", "record-id-2"],
-  "count": 2,
-  "streamName": "firehose-stream-name",
-  "destination": "s3://bucket/path"
+  "count": 2
 }
 ```
 
 ## 📋 Data Models
 
-### Customer Profile
-<details>
-<summary><strong>📊 Customer Profile Schema</strong></summary>
-
-**Endpoint**: `POST /customers/{account_id}/{workspace_id}`
-
-**Description**: Complete customer profile information including personal details, preferences, and account settings.
-
-**Required Fields**: 25 fields
-**Optional Fields**: 15 fields
-```json
-{
-  "account_id": "string (required)",
-  "workspace_id": "string (required)",
-  "user_id": "string (required)",
-  "username": "string (required)",
-  "full_name": "string (required)",
-  "first_name": "string (optional)",
-  "last_name": "string (optional)",
-  "date_of_birth": "string (required, YYYY-MM-DD)",
-  "email": "string (required, email format)",
-  "phone_number": "string (required)",
-  "gender": "string (optional, Male/Female)",
-  "country": "string (optional)",
-  "city": "string (optional)",
-  "language": "string (optional)",
-  "currency": "string (required)",
-  "marketing_email_preference": "string (optional, Opt-in/Opt-out)",
-  "notifications_preference": "string (optional, Opt-in/Opt-out)",
-  "subscription": "string (required, Subscribed/Unsubscribed)",
-  "privacy_settings": "string (optional, public/private)",
-  "deposit_limits": "number (required)",
-  "loss_limits": "number (required)",
-  "wagering_limits": "number (required)",
-  "session_time_limits": "number (required)",
-  "cooling_off_period": "integer (required)",
-  "self_exclusion_period": "integer (required)",
-  "reality_checks_notification": "string (optional, daily/weekly/monthly)",
-  "account_status": "string (required, Active/Locked/InActive/Frozen)",
-  "vip_status": "string (required, Regular/VIP)",
-  "loyalty_program_tiers": "string (required, Gold/Silver/Bronze)",
-  "bonus_abuser": "string (optional, Flagged as a bonus abuser/Not flagged)",
-  "financial_risk_level": "number (required, 0-1)",
-  "acquisition_source": "string (optional, Google Ads/Facebook Ads/Twitter Ads)",
-  "partner_id": "string (optional)",
-  "affliate_id": "string (optional)",
-  "referral_link_code": "string (required)",
-  "referral_limit_reached": "string (optional, Reached/Not Reached)",
-  "creation_timestamp": "string (required, ISO 8601)",
-  "phone_verification": "string (required, Verified/NotVerified)",
-  "email_verification": "string (required, Verified/NotVerified)",
-  "bank_verification": "string (required, Verified/NotVerified)",
-  "iddoc_verification": "string (required, Verified/NotVerified)"
-}
-```
+### 📊 Customer Profile Schema
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| account_id | String | Yes | Account identifier - one account can have multiple workspaces |
+| workspace_id | String | Yes | Workspace identifier - belongs to an account |
+| user_id | String | Yes | Unique user identifier |
+| username | String | No | User's username |
+| full_name | String | No | User's full name |
+| first_name | String | No | User's first name |
+| last_name | String | No | User's last name |
+| date_of_birth | String | No | User's date of birth (date format) |
+| email | String | No | User's email address (email format) |
+| phone_number | String | No | User's phone number |
+| gender | String | No | User's gender |
+| country | String | No | User's country |
+| city | String | No | User's city |
+| language | String | No | User's preferred language |
+| currency | String | No | User's preferred currency |
+| phone_verification | String | No | Phone verification status |
+| email_verification | String | No | Email verification status |
+| bank_verification | String | No | Bank verification status |
+| iddoc_verification | String | No | ID document verification status |
+| marketing_email_preference | String | No | Marketing email preference |
+| notifications_preference | String | No | Notifications preference |
+| subscription | String | No | Subscription status (Subscribed\|Unsubscribed) |
+| privacy_settings | String | No | Privacy settings |
+| deposit_limits | Number | No | Deposit limits |
+| loss_limits | Number | No | Loss limits |
+| wagering_limits | Number | No | Wagering limits |
+| session_time_limits | Number | No | Session time limits |
+| cooling_off_expiry_date | String | No | Cooling off expiry date (date-time format). Example: `"2024-01-15T10:30:00Z"`
+| self_exclusion_expiry_date | String | No | Self exclusion expiry date (date-time format). Example: `"2024-01-15T10:30:00Z"`
+| reality_checks_notification | String | No | Reality checks notification frequency |
+| vip_status | String | No | VIP status |
+| loyalty_program_tiers | String | No | Loyalty program tier |
+| account_status | String | No | Account status |
+| bonus_abuser | String | No | Bonus abuser status |
+| financial_risk_level | Number | No | Financial risk level |
+| acquisition_source | String | No | Acquisition source |
+| partner_id | String | No | Partner identifier |
+| referral_link_code | String | No | Referral link code |
+| referral_limit_reached | String | No | Referral limit status |
+| creation_timestamp | String | Yes | Account creation timestamp (date-time format). Example: `"2024-01-15T10:30:00Z"`
+| risk_score_level | String | No | Risk score level |
+| marketing_sms_preference | String | No | Marketing SMS preference |
+| custom_data | Object/String | No | Custom data in JSON format. Examples: `{"email":true,"sms":false}` or `"{\"email\":true,\"sms\":true}"`
+| self_exclusion_by | String | No | Self exclusion initiated by |
+| self_exclusion_by_type | String | No | Self exclusion by type |
+| self_exclusion_check_time | String | No | Self exclusion check time (date-time format). Example: `"2024-01-15T10:30:00Z"`
+| self_exclusion_created_time | String | No | Self exclusion created time (date-time format). Example: `"2024-01-15T10:30:00Z"`
+| closed_time | String | No | Account closed time (date-time format). Example: `"2024-01-15T10:30:00Z"`
+| real_money_enabled | String | No | Real money enabled status |
+| push_token | String | No | Push notification token |
 
 ### Account Event
-```json
-{
-  "account_id": "string (required)",
-  "workspace_id": "string (required)",
-  "user_id": "string (required)",
-  "event_category": "string (required)",
-  "event_name": "string (required)",
-  "event_id": "string (required)",
-  "event_time": "string (required, ISO 8601)",
-  "device": "string (optional, desktop/mobile/tablet)",
-  "ip_address": "string (optional)",
-  "user_agent": "string (optional)",
-  "status": "string (optional, verified/failed)",
-  "metadata": "object (optional)"
-}
-```
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| account_id | String | Yes | Account identifier - one account can have multiple workspaces |
+| workspace_id | String | Yes | Workspace identifier - belongs to an account |
+| user_id | String | Yes | Unique user identifier |
+| event_category | String | Yes | Category of the event (Account) |
+| event_name | String | Yes | Name of the account event |
+| event_id | String | Yes | Unique event identifier |
+| event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" |
+| affiliate_id | String | No | Affiliate identifier |
+| partner_id | String | No | Partner identifier |
+| device | String | No | Device type used |
+| campaign_code | String | No | Campaign code |
+| status | String | No | Verification status |
+| reason | String | No | Reason for failure or additional information |
 
 ### Deposit Event
-```json
-{
-  "account_id": "string (required)",
-  "workspace_id": "string (required)",
-  "user_id": "string (required)",
-  "event_category": "string (required)",
-  "event_name": "string (required)",
-  "event_id": "string (required)",
-  "event_time": "string (required, ISO 8601)",
-  "amount": "number (required)",
-  "currency": "string (optional)",
-  "payment_method": "string (optional, bank/credit_card)",
-  "transaction_id": "string (optional)",
-  "status": "string (optional)",
-  "metadata": "object (optional)"
-}
-```
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| account_id | String | Yes | Account identifier - one account can have multiple workspaces |
+| workspace_id | String | Yes | Workspace identifier - belongs to an account |
+| user_id | String | Yes | Unique user identifier |
+| event_category | String | Yes | Category of the event (Deposit) |
+| event_name | String | Yes | Name of the deposit event (Successful Deposit\|First-Time Deposit\|Second-Time Deposit\|Third-Time Deposit\|Failed Deposit) |
+| event_id | String | Yes | Unique event identifier |
+| event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" |
+| payment_method | String | No | Payment method used |
+| transaction_id | String | No | Transaction identifier |
+| amount | Number | Yes | Deposit amount |
+| payment_provider_id | String | No | Payment provider identifier |
+| payment_provider_name | String | No | Payment provider name |
+| failure_reason | String | No | Reason for deposit failure |
 
 ### Withdraw Event
-```json
-{
-  "account_id": "string (required)",
-  "workspace_id": "string (required)",
-  "user_id": "string (required)",
-  "event_category": "string (required)",
-  "event_name": "string (required)",
-  "event_id": "string (required)",
-  "event_time": "string (required, ISO 8601)",
-  "amount": "number (optional)",
-  "currency": "string (optional)",
-  "payment_method": "string (optional, bank)",
-  "transaction_id": "string (optional)",
-  "status": "string (optional)",
-  "metadata": "object (optional)"
-}
-```
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| account_id | String | Yes | Account identifier - one account can have multiple workspaces |
+| workspace_id | String | Yes | Workspace identifier - belongs to an account |
+| user_id | String | Yes | Unique user identifier |
+| event_category | String | Yes | Category of the event (Withdraw) |
+| event_name | String | Yes | Name of the withdrawal event (Successful Withdrawal\|Failed Withdrawal\|Pending Withdrawal\|Withdrawal Reversal) |
+| event_id | String | Yes | Unique event identifier |
+| event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" |
+| amount | Number | Yes | Withdrawal amount |
+| payment_method | String | No | Payment method used |
+| transaction_id | String | No | Transaction identifier |
+| failure_reason | String | No | Reason for withdrawal failure |
 
 ### Gaming Activity Event
-```json
-{
-  "account_id": "string (required)",
-  "workspace_id": "string (required)",
-  "user_id": "string (required)",
-  "event_category": "string (required)",
-  "event_name": "string (required)",
-  "event_id": "string (required)",
-  "event_time": "string (required, ISO 8601)",
-  "wager_amount": "number (optional)",
-  "win_amount": "number (optional)",
-  "game_title": "string (optional)",
-  "game_category": "string (optional)",
-  "session_duration": "number (optional)",
-  "metadata": "object (optional)"
-}
-```
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| account_id | String | Yes | Account identifier - one account can have multiple workspaces |
+| workspace_id | String | Yes | Workspace identifier - belongs to an account |
+| user_id | String | Yes | Unique user identifier |
+| event_category | String | Yes | Category of the event (Gaming Activity) |
+| event_name | String | Yes | Name of the gaming activity event |
+| event_id | String | Yes | Unique event identifier |
+| event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" |
+| wager_amount | Number | No | Amount wagered |
+| win_amount | Number | No | Amount won |
+| loss_amount | Number | No | Amount lost |
+| game_id | String | No | Game identifier |
+| game_title | String | No | Title of the game |
+| provider | String | No | Game provider |
+| bonus_id | String | No | Bonus identifier |
+| free_spin_id | String | No | Free spin identifier |
+| jackpot_amount | Number | No | Jackpot amount |
+| num_spins_played | Integer | No | Number of spins played |
+| game_theme | String | No | Theme of the game |
+| remaining_spins | Integer | No | Number of remaining spins |
+| bet_value_per_spin | Number | No | Bet value per spin |
+| wagering_requirements_met | Boolean | No | Whether wagering requirements are met |
+| free_spin_expiry_date | String | No | Free spin expiry date (date-time format). Example: `"2024-01-15T10:30:00Z"`
+| campaign_id | String | No | Campaign identifier |
+| campaign_name | String | No | Campaign name |
+| rtp | Number | No | Return to Player percentage |
+| game_category | String | No | Category of the game |
+| winning_bet_amount | Number | No | Amount of winning bet |
+| jackpot_type | String | No | Type of jackpot |
+| volatility | String | No | Game volatility level |
+| min_bet | Number | No | Minimum bet amount |
+| max_bet | Number | No | Maximum bet amount |
+| number_of_reels | Integer | No | Number of reels in the game |
+| number_of_paylines | Integer | No | Number of paylines in the game |
+| feature_types | String | No | Types of features available in the game |
+| game_release_date | String | No | Game release date (date-time format). Example: `"2024-01-15T10:30:00Z"`
+| live_dealer_availability | Boolean | No | Whether live dealer is available |
+| side_bets_availability | Boolean | No | Whether side bets are available |
+| multiplayer_option | Boolean | No | Whether multiplayer option is available |
+| auto_play | Boolean | No | Whether auto play is available |
+| poker_variant | String | No | Poker variant type |
+| tournament_name | String | No | Name of the tournament |
+| buy_in_amount | Number | No | Buy-in amount for tournament |
+| table_type | String | No | Type of table |
+| stakes_level | String | No | Stakes level |
+| number_of_players | Integer | No | Number of players |
+| game_duration | Integer | No | Duration of the game in minutes |
+| hand_volume | Integer | No | Volume of hands played |
+| player_position | String | No | Position of the player |
+| final_hand | String | No | Final hand result |
+| rake_contribution | Number | No | Rake contribution amount |
+| multi_tabling_indicator | Boolean | No | Whether multi-tabling is active |
+| session_result | String | No | Result of the session |
+| vip_status | String | No | VIP status of the player |
+| blind_level | String | No | Blind level in poker |
+| rebuy_and_addon_info | String | No | Rebuy and addon information |
+| sport_type | String | No | Type of sport for betting |
+| betting_market | String | No | Betting market type |
+| odds | Number | No | Betting odds |
+| live_betting_availability | Boolean | No | Whether live betting is available |
+| result | String | No | Result of the bet/game |
+| bet_status | String | No | Status of the bet |
+| betting_channel | String | No | Channel used for betting |
+| bonus_type | String | No | Type of bonus |
+| bonus_amount | Number | No | Amount of bonus |
+| free_spin_start_date | String | No | Free spin start date (date-time format). Example: `"2024-01-15T10:30:00Z"`
+| num_spins_awarded | Integer | No | Number of spins awarded |
+| bonus_code | String | No | Bonus code used |
+| parent_game_category | String | No | Parent game category |
+| currency | String | No | Currency used |
+| money_type | String | No | Type of money (real/virtual) |
+| transaction_type | String | No | Type of transaction |
 
-## Integration Examples
+### Wallet Balance Event
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| account_id | String | Yes | Account identifier - one account can have multiple workspaces |
+| workspace_id | String | Yes | Workspace identifier - belongs to an account |
+| user_id | String | Yes | Unique user identifier |
+| event_category | String | Yes | Category of the event (Wallet Balance) |
+| event_name | String | Yes | Name of the wallet balance event |
+| event_id | String | Yes | Unique event identifier |
+| event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" |
+| wallet_type | String | No | Type of wallet |
+| currency | String | No | Currency of the wallet balance |
+| current_cash_balance | Number | No | Current cash balance in the wallet |
+| current_bonus_balance | Number | No | Current bonus balance in the wallet |
+| current_total_balance | Number | No | Current total balance (cash + bonus) in the wallet |
+| blocked_amount | Number | No | Amount blocked in the wallet |
+
+### Refer Friend Event
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| account_id | String | Yes | Account identifier - one account can have multiple workspaces |
+| workspace_id | String | Yes | Workspace identifier - belongs to an account |
+| user_id | String | Yes | Unique user identifier |
+| event_category | String | Yes | Category of the event (Refer Friend) |
+| event_name | String | Yes | Name of the refer friend event |
+| event_id | String | Yes | Unique event identifier |
+| event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" |
+| referral_code_used | String | No | Referral code that was used |
+| successful_referral_confirmation | Boolean | No | Whether the referral was successfully confirmed |
+| reward_type | String | No | Type of reward (e.g., bonus, cash, points) |
+| reward_claimed_status | String | No | Status of reward claim (e.g., pending, claimed, expired) |
+| referee_user_id | String | No | User ID of the person who was referred |
+| referee_registration_date | String | No | Date when the referee registered (date-time format). Example: "2024-01-15T10:30:00Z" |
+| referee_first_deposit | Number | No | First deposit amount made by the referee |
+
+### Extended Attributes
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| workspace_id | String | Yes | Workspace identifier - belongs to an account |
+| user_id | String | Yes | Unique user identifier |
+| list_name | String | Yes | Name of the list or category for the extended attributes |
+| ext_data | Object/String | Yes | Extended attributes data in JSON format. Examples: `{"email":true,"sms":false}` or `"{\"email\":true,\"sms\":true}"`
+
+
+> **📅 Timestamp Format**: All date-time fields use ISO 8601 format with UTC timezone (e.g., `"2024-01-15T10:30:00Z"`). The `Z` suffix indicates UTC timezone.
+
+## 🚀 Quick Start
+
+Get started with the Optikpi Data Pipeline API in just 5 minutes using our official SDK.
 
 ### Prerequisites
-Before making API calls, you need:
+
+Before you begin, you'll need:
+
 1. Your authentication token
 2. Account ID and Workspace ID
-3. The Optikpi Data Pipeline SDK installed
+3. API Gateway URL
+4. Node.js environment
 
-### SDK Setup
+## 📚 SDK Integration Guide
+The official Optikpi Data Pipeline SDK makes integration simple and secure. All authentication, validation, and error handling is handled automatically.
+
+### Installation
+```bash
+npm install @optikpi/datapipeline-sdk
+```
+
+### 1. Initialize the SDK
 ```javascript
-const OptikpiDataPipelineSDK = require('../src/index');
+const { OptikpiDataPipelineSDK } = require('@optikpi/datapipeline-sdk');
 
 const sdk = new OptikpiDataPipelineSDK({
   authToken: 'your-auth-token',
   accountId: 'your-account-id',
   workspaceId: 'your-workspace-id',
-  baseURL: 'https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest'
+  baseURL: 'https://your-api-gateway-url/apigw/ingest'
 });
 ```
 
-### SDK vs Manual Integration
-| Feature | Manual (curl) | SDK |
-|---------|---------------|-----|
-| **Setup** | Complex HMAC/HKDF implementation | Simple initialization |
-| **Authentication** | Manual header management | Automatic |
-| **Error Handling** | Basic HTTP status codes | Rich error objects |
-| **Retry Logic** | Manual implementation | Built-in retry mechanism |
-| **Data Validation** | Manual validation | Built-in validation |
-| **Maintenance** | High (crypto code) | Low (SDK updates) |
-
-### Example 1: Push Single Customer Profile (Using SDK)
-
-> **📝 Note**: This example uses the Optikpi Data Pipeline SDK for simplified integration. The SDK automatically handles all authentication and HMAC signature generation.
-
+### 2. Send Customer Profile
 ```javascript
-// Customer data
-const customerData = new CustomerProfile({
-  account_id: "68911b7ad58ad825ec00c5ef",
-  workspace_id: "68911b7ad58ad825ec00c5ef",
-  user_id: "user123456",
-  username: "john_doe",
-  full_name: "John Doe",
-  first_name: "John",
-  last_name: "Doe",
-  date_of_birth: "1990-01-15",
-  email: "john.doe@example.com",
-  phone_number: "+1234567890",
-  gender: "Male",
-  country: "United States",
-  city: "New York",
-  language: "en",
-  currency: "USD",
-  marketing_email_preference: "Opt-in",
-  notifications_preference: "Opt-in",
-  subscription: "Subscribed",
-  privacy_settings: "private",
+const customerData = {
+  account_id: 'your-account-id',
+  workspace_id: 'your-workspace-id',
+  user_id: 'user123',
+  username: 'john_doe',
+  full_name: 'John Doe',
+  email: 'john.doe@example.com',
+  phone_number: '+1234567890',
+  currency: 'USD',
+  subscription: 'Subscribed',
   deposit_limits: 1000.00,
   loss_limits: 500.00,
   wagering_limits: 2000.00,
   session_time_limits: 120,
   cooling_off_period: 7,
   self_exclusion_period: 30,
-  reality_checks_notification: "daily",
-  account_status: "Active",
-  vip_status: "Regular",
-  loyalty_program_tiers: "Bronze",
-  bonus_abuser: "Not flagged",
+  account_status: 'Active',
+  vip_status: 'Regular',
+  loyalty_program_tiers: 'Bronze',
   financial_risk_level: 0.3,
-  acquisition_source: "Google Ads",
-  partner_id: "partner123",
-  affliate_id: "affiliate456",
-  referral_link_code: "REF789",
-  referral_limit_reached: "Not Reached",
-  creation_timestamp: "2024-01-15T10:30:00Z",
-  phone_verification: "Verified",
-  email_verification: "Verified",
-  bank_verification: "NotVerified",
-  iddoc_verification: "Verified"
-});
-const validation = customerData.validate();
-if (!validation.isValid) {
-  console.error('❌ Validation errors:', validation.errors);
-  process.exit(1);
-}
-console.log('✅ Customer event validated successfully!');
+  referral_link_code: 'REF789',
+  creation_timestamp: new Date().toISOString(),
+  phone_verification: 'Verified',
+  email_verification: 'Verified',
+  bank_verification: 'NotVerified',
+  iddoc_verification: 'Verified'
+};
 
-// Send customer profile using SDK
 try {
   const result = await sdk.sendCustomerProfile(customerData);
-  
   if (result.success) {
     console.log('✅ Customer profile sent successfully!');
     console.log('Response:', result.data);
-    console.log('HTTP Status:', result.status);
-    console.log('Response Time:', result.responseTime, 'ms');
   } else {
     console.error('❌ Failed to send customer profile:', result.error);
-    console.log('HTTP Status:', result.status);
   }
 } catch (error) {
-  console.error('❌ SDK Error:', error.message);
+  console.error('❌ Error:', error.message);
 }
 ```
 
-**Expected Response:**
-```json
-{
-  "message": "1 customer profile(s) sent to Firehose successfully",
-  "recordIds": ["record-id-123"],
-  "count": 1,
-  "streamName": "datapipeline-customers-dev-stream",
-  "destination": "s3://datapipeline/customers/68911b7ad58ad825ec00c5ef/68911b7ad58ad825ec00c5ef"
-}
-```
-
-### Example 2: Push Multiple Customer Profiles (Batch - Using SDK)
-
-> **📝 Note**: This example uses the Optikpi Data Pipeline SDK for simplified integration. The SDK automatically handles all authentication and HMAC signature generation.
-
+### 3. Send Events
 ```javascript
-#!/bin/bash
+// Account Event
+const accountEvent = {
+  account_id: 'your-account-id',
+  workspace_id: 'your-workspace-id',
+  user_id: 'user123',
+  event_category: 'Account',
+  event_name: 'Player Registration',
+  event_id: 'evt_123456789',
+  event_time: new Date().toISOString(),
+  device: 'desktop',
+  ip_address: '192.168.1.100',
+  status: 'verified'
+};
+const accountResult = await sdk.sendAccountEvent(accountEvent);
 
-# Configuration
-API_BASE_URL="https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest"
-AUTH_TOKEN="your-auth-token-here"
-ACCOUNT_ID="68911b7ad58ad825ec00c5ef"
-WORKSPACE_ID="68911b7ad825ec00c5ef"
+// Deposit Event
+const depositEvent = {
+  account_id: 'your-account-id',
+  workspace_id: 'your-workspace-id',
+  user_id: 'user123',
+  event_category: 'Deposit',
+  event_name: 'Successful Deposit',
+  event_id: 'evt_dep_987654321',
+  event_time: new Date().toISOString(),
+  amount: 500.00,
+  currency: 'USD',
+  payment_method: 'bank',
+  transaction_id: 'txn_123456789',
+  status: 'completed'
+};
+const depositResult = await sdk.sendDepositEvent(depositEvent);
 
-# Multiple customers data
-const CUSTOMERS_DATA = [
-  {
-    account_id: "68911b7ad58ad825ec00c5ef",
-    workspace_id: "68911b7ad58ad825ec00c5ef",
-    user_id: "user123456",
-    username: "john_doe",
-    full_name: "John Doe",
-    date_of_birth: "1990-01-15",
-    email: "john.doe@example.com",
-    phone_number: "+1234567890",
-    currency: "USD",
-    subscription: "Subscribed",
-    deposit_limits: 1000.0,
-    loss_limits: 500.0,
-    wagering_limits: 2000.0,
-    session_time_limits: 120,
-    cooling_off_period: 7,
-    self_exclusion_period: 30,
-    account_status: "Active",
-    vip_status: "Regular",
-    loyalty_program_tiers: "Bronze",
-    financial_risk_level: 0.3,
-    referral_link_code: "REF789",
-    creation_timestamp: "2024-01-15T10:30:00Z",
-    phone_verification: "Verified",
-    email_verification: "Verified",
-    bank_verification: "NotVerified",
-    iddoc_verification: "Verified",
-  },
-  {
-    account_id: "68911b7ad58ad825ec00c5ef",
-    workspace_id: "68911b7ad58ad825ec00c5ef",
-    user_id: "user789012",
-    username: "jane_smith",
-    full_name: "Jane Smith",
-    date_of_birth: "1985-05-20",
-    email: "jane.smith@example.com",
-    phone_number: "+1987654321",
-    currency: "USD",
-    subscription: "Subscribed",
-    deposit_limits: 2000.0,
-    loss_limits: 1000.0,
-    wagering_limits: 5000.0,
-    session_time_limits: 180,
-    cooling_off_period: 14,
-    self_exclusion_period: 60,
-    account_status: "Active",
-    vip_status: "VIP",
-    loyalty_program_tiers: "Gold",
-    financial_risk_level: 0.1,
-    referral_link_code: "REF456",
-    creation_timestamp: "2024-01-16T14:20:00Z",
-    phone_verification: "Verified",
-    email_verification: "Verified",
-    bank_verification: "Verified",
-    iddoc_verification: "Verified",
-  },
-];
+// Gaming Activity Event
+const gamingEvent = {
+  account_id: 'your-account-id',
+  workspace_id: 'your-workspace-id',
+  user_id: 'user123',
+  event_category: 'Gaming Activity',
+  event_name: 'Slot Game Play',
+  event_id: 'evt_game_789123456',
+  event_time: new Date().toISOString(),
+  wager_amount: 10.00,
+  win_amount: 25.00,
+  game_title: 'Mega Fortune Slots',
+  game_category: 'Slots',
+  session_duration: 45
+};
+const gamingResult = await sdk.sendGamingActivityEvent(gamingEvent);
 
-// ✅ Validate each customer in the array
-for (const customerData of CUSTOMERS_DATA) {
-  console.log(`\n🔍 Validating customer: ${customerData.username}`);
-  const customer = new CustomerProfile(customerData);
-  const validation = customer.validate();
+// Wallet Balance Event
+const walletBalanceEvent = {
+  account_id: 'your-account-id',
+  workspace_id: 'your-workspace-id',
+  user_id: 'user123',
+  event_category: 'Wallet Balance',
+  event_name: 'Balance Update',
+  event_id: 'evt_wallet_123456789',
+  event_time: new Date().toISOString(),
+  wallet_type: 'main',
+  currency: 'USD',
+  current_cash_balance: 1000.00,
+  current_bonus_balance: 50.00,
+  current_total_balance: 1050.00,
+  blocked_amount: 0.00
+};
+const walletBalanceResult = await sdk.sendWalletBalanceEvent(walletBalanceEvent);
 
-  if (!validation.isValid) {
-    console.error(`❌ Validation errors for ${customerData.username}:`, validation.errors);
-    process.exit(1);
+// Refer Friend Event
+const referFriendEvent = {
+  account_id: 'your-account-id',
+  workspace_id: 'your-workspace-id',
+  user_id: 'user123',
+  event_category: 'Refer Friend',
+  event_name: 'Referral Confirmed',
+  event_id: 'evt_refer_987654321',
+  event_time: new Date().toISOString(),
+  referral_code_used: 'REF123',
+  successful_referral_confirmation: true,
+  reward_type: 'bonus',
+  reward_claimed_status: 'claimed',
+  referee_user_id: 'user456',
+  referee_registration_date: new Date().toISOString(),
+  referee_first_deposit: 100.00
+};
+const referFriendResult = await sdk.sendReferFriendEvent(referFriendEvent);
+```
+
+### 4. Customer Extension Attributes
+```javascript
+// Format 1: Object (auto-converted to JSON string)
+const extAttributesEvent = {
+  account_id: 'your-account-id',
+  workspace_id: 'your-workspace-id',
+  user_id: 't345345',
+  list_name: 'BINGO_PREFERENCES',
+  ext_data: {
+    "Email": "True",
+    "SMS": "True"
   }
+};
 
-  console.log(`✅ Customer ${customerData.username} validated successfully!`);
-}
+// Format 2: JSON string (also supported)
+const extAttributesEventString = {
+  account_id: 'your-account-id',
+  workspace_id: 'your-workspace-id',
+  user_id: 't345345',
+  list_name: 'BINGO_PREFERENCES',
+  ext_data: '{\"Email\":\"True\",\"SMS\":\"True\"}'
+};
 
-# Generate HMAC signature
-SALT="${ACCOUNT_ID}${WORKSPACE_ID}"
-INFO="hmac-signing"
-PRK=$(echo -n "$AUTH_TOKEN" | openssl dgst -sha256 -hmac "$SALT" | cut -d' ' -f2)
-DERIVED_KEY=$(echo -n "${INFO}01" | openssl dgst -sha256 -hmac "$PRK" | cut -d' ' -f2)
-HMAC_SIGNATURE=$(echo -n "$CUSTOMERS_DATA" | openssl dgst -sha256 -hmac "$DERIVED_KEY" | cut -d' ' -f2)
-
-# Make API call
-curl -X POST "${API_BASE_URL}/customers/${ACCOUNT_ID}/${WORKSPACE_ID}" \
-  -H "Content-Type: application/json" \
-  -H "x-optikpi-token: ${AUTH_TOKEN}" \
-  -H "x-hmac-signature: ${HMAC_SIGNATURE}" \
-  -H "x-hmac-algorithm: sha256" \
-  -d "$CUSTOMERS_DATA" \
-  -w "\nHTTP Status: %{http_code}\nResponse Time: %{time_total}s\n"
+const extAttributesResult = await sdk.sendExtendedAttributes(extAttributesEvent);
 ```
 
-**Expected Response:**
-```json
-{
-  "message": "2 customer profile(s) sent to Firehose successfully",
-  "recordIds": ["record-id-123", "record-id-456"],
-  "count": 2,
-  "streamName": "datapipeline-customers-dev-stream",
-  "destination": "s3://datapipeline/customers/68911b7ad58ad825ec00c5ef/68911b7ad825ec00c5ef"
-}
+### 5. Health Check
+```javascript
+const health = await sdk.healthCheck();
+console.log('API Status:', health.success ? 'Healthy' : 'Unhealthy');
 ```
 
-### Example 3: Push Account Event
-
-```bash
-#!/bin/bash
-
-# Configuration
-API_BASE_URL="https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest"
-AUTH_TOKEN="your-auth-token-here"
-ACCOUNT_ID="68911b7ad58ad825ec00c5ef"
-WORKSPACE_ID="68911b7ad825ec00c5ef"
-
-# Account event data
-const account=new AccountEvent'({
-  "account_id": "68911b7ad58ad825ec00c5ef",
-  "workspace_id": "68911b7ad825ec00c5ef",
-  "user_id": "user123456",
-  "event_category": "Account",
-  "event_name": "Player Registration",
-  "event_id": "evt_123456789",
-  "event_time": "2024-01-15T10:30:00Z",
-  "device": "desktop",
-  "ip_address": "192.168.1.100",
-  "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-  "status": "verified",
-  "metadata": {
-    "registration_source": "website",
-    "referral_code": "REF789"
-  }
-})'
-// Validate the account event
-const validation = account.validate();
-if (!validation.isValid) {
-  console.error('❌ Validation errors:', validation.errors);
-  process.exit(1);
-}
-console.log('✅ Account event validated successfully!');
-
-# Generate HMAC signature
-SALT="${ACCOUNT_ID}${WORKSPACE_ID}"
-INFO="hmac-signing"
-PRK=$(echo -n "$AUTH_TOKEN" | openssl dgst -sha256 -hmac "$SALT" | cut -d' ' -f2)
-DERIVED_KEY=$(echo -n "${INFO}01" | openssl dgst -sha256 -hmac "$PRK" | cut -d' ' -f2)
-HMAC_SIGNATURE=$(echo -n "$account" | openssl dgst -sha256 -hmac "$DERIVED_KEY" | cut -d' ' -f2)
-
-# Make API call
-curl -X POST "${API_BASE_URL}/events/account/${ACCOUNT_ID}/${WORKSPACE_ID}" \
-  -H "Content-Type: application/json" \
-  -H "x-optikpi-token: ${AUTH_TOKEN}" \
-  -H "x-hmac-signature: ${HMAC_SIGNATURE}" \
-  -H "x-hmac-algorithm: sha256" \
-  -d "$account" \
-  -w "\nHTTP Status: %{http_code}\nResponse Time: %{time_total}s\n"
+### 6. Batch Operations
+```javascript
+const batchData = {
+  customers: [customer1, customer2],
+  depositEvents: [deposit1, deposit2],
+  gamingEvents: [gaming1, gaming2],
+  walletBalanceEvents: [walletBalance1, walletBalance2],
+  referFriendEvents: [referFriend1, referFriend2],
+  extendedAttributes: [extAttr1, extAttr2]
+};
+const batchResult = await sdk.sendBatch(batchData);
 ```
 
-**Expected Response:**
-```json
-{
-  "message": "1 account event(s) sent to Firehose successfully",
-  "recordIds": ["record-id-789"],
-  "count": 1,
-  "streamName": "datapipeline-events-account-dev-stream",
-  "destination": "s3://datapipeline/events/account/68911b7ad58ad825ec00c5ef/68911b7ad825ec00c5ef/yyyy/mm/dd"
-}
-```
+### SDK Benefits
+- 🔐 **Automatic Authentication**: Handles HMAC signature generation
+- ✅ **Built-in Validation**: Validates data before sending
+- 🔄 **Retry Logic**: Automatic retry with exponential backoff
+- 🛡 **Error Handling**: Rich error objects with detailed information
+- 📝 **Type Safety**: Full TypeScript support
+- ⚡ **High Performance**: Optimized for high-throughput data ingestion
 
-### Example 4: Push Deposit Event
+For complete SDK documentation, see the README.md file.
 
-```bash
-#!/bin/bash
-
-# Configuration
-API_BASE_URL="https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest"
-AUTH_TOKEN="your-auth-token-here"
-ACCOUNT_ID="68911b7ad58ad825ec00c5ef"
-WORKSPACE_ID="68911b7ad825ec00c5ef"
-
-# Deposit event data
-const deposit=new DepositEvent'({
-  "account_id": "68911b7ad58ad825ec00c5ef",
-  "workspace_id": "68911b7ad825ec00c5ef",
-  "user_id": "user123456",
-  "event_category": "Deposit",
-  "event_name": "Successful Deposit",
-  "event_id": "evt_dep_987654321",
-  "event_time": "2024-01-15T14:45:00Z",
-  "amount": 500.00,
-  "currency": "USD",
-  "payment_method": "bank",
-  "transaction_id": "txn_123456789",
-  "status": "completed",
-  "metadata": {
-    "bank_name": "Chase Bank",
-    "account_last4": "1234"
-  }
-})'
-// Validate the account event
-const validation = deposit.validate();
-if (!validation.isValid) {
-  console.error('❌ Validation errors:', validation.errors);
-  process.exit(1);
-}
-console.log('✅ Deposit event validated successfully!');
-
-# Generate HMAC signature
-SALT="${ACCOUNT_ID}${WORKSPACE_ID}"
-INFO="hmac-signing"
-PRK=$(echo -n "$AUTH_TOKEN" | openssl dgst -sha256 -hmac "$SALT" | cut -d' ' -f2)
-DERIVED_KEY=$(echo -n "${INFO}01" | openssl dgst -sha256 -hmac "$PRK" | cut -d' ' -f2)
-HMAC_SIGNATURE=$(echo -n "$deposit" | openssl dgst -sha256 -hmac "$DERIVED_KEY" | cut -d' ' -f2)
-
-# Make API call
-curl -X POST "${API_BASE_URL}/events/deposit/${ACCOUNT_ID}/${WORKSPACE_ID}" \
-  -H "Content-Type: application/json" \
-  -H "x-optikpi-token: ${AUTH_TOKEN}" \
-  -H "x-hmac-signature: ${HMAC_SIGNATURE}" \
-  -H "x-hmac-algorithm: sha256" \
-  -d "$deposit" \
-  -w "\nHTTP Status: %{http_code}\nResponse Time: %{time_total}s\n"
-```
-
-**Expected Response:**
-```json
-{
-  "message": "1 deposit event(s) sent to Firehose successfully",
-  "recordIds": ["record-id-dep-123"],
-  "count": 1,
-  "streamName": "datapipeline-events-deposit-dev-stream",
-  "destination": "s3://datapipeline/events/deposit/68911b7ad58ad825ec00c5ef/68911b7ad825ec00c5ef/yyyy/mm/dd"
-}
-```
-
-### Example 5: Push Withdraw Event
-
-```bash
-#!/bin/bash
-
-# Configuration
-API_BASE_URL="https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest"
-AUTH_TOKEN="your-auth-token-here"
-ACCOUNT_ID="68911b7ad58ad825ec00c5ef"
-WORKSPACE_ID="68911b7ad825ec00c5ef"
-
-# Withdraw event data
-const withdraw=new WithdrawEvent'({
-  "account_id": "68911b7ad58ad825ec00c5ef",
-  "workspace_id": "68911b7ad825ec00c5ef",
-  "user_id": "user123456",
-  "event_category": "Withdraw",
-  "event_name": "Withdrawal Request",
-  "event_id": "evt_wd_456789123",
-  "event_time": "2024-01-15T16:20:00Z",
-  "amount": 250.00,
-  "currency": "USD",
-  "payment_method": "bank",
-  "transaction_id": "txn_wd_987654321",
-  "status": "pending",
-  "metadata": {
-    "bank_name": "Wells Fargo",
-    "account_last4": "5678",
-    "processing_time": "2-3 business days"
-  }
-})'
-
-// Validate the account event
-const validation = withdraw.validate();
-if (!validation.isValid) {
-  console.error('❌ Validation errors:', validation.errors);
-  process.exit(1);
-}
-console.log('✅ Withdraw event validated successfully!');
-
-# Generate HMAC signature
-SALT="${ACCOUNT_ID}${WORKSPACE_ID}"
-INFO="hmac-signing"
-PRK=$(echo -n "$AUTH_TOKEN" | openssl dgst -sha256 -hmac "$SALT" | cut -d' ' -f2)
-DERIVED_KEY=$(echo -n "${INFO}01" | openssl dgst -sha256 -hmac "$PRK" | cut -d' ' -f2)
-HMAC_SIGNATURE=$(echo -n "$withdraw" | openssl dgst -sha256 -hmac "$DERIVED_KEY" | cut -d' ' -f2)
-
-# Make API call
-curl -X POST "${API_BASE_URL}/events/withdraw/${ACCOUNT_ID}/${WORKSPACE_ID}" \
-  -H "Content-Type: application/json" \
-  -H "x-optikpi-token: ${AUTH_TOKEN}" \
-  -H "x-hmac-signature: ${HMAC_SIGNATURE}" \
-  -H "x-hmac-algorithm: sha256" \
-  -d "$withdraw" \
-  -w "\nHTTP Status: %{http_code}\nResponse Time: %{time_total}s\n"
-```
-
-**Expected Response:**
-```json
-{
-  "message": "1 withdraw event(s) sent to Firehose successfully",
-  "recordIds": ["record-id-wd-456"],
-  "count": 1,
-  "streamName": "datapipeline-events-withdraw-dev-stream",
-  "destination": "s3://datapipeline/events/withdraw/68911b7ad58ad825ec00c5ef/68911b7ad825ec00c5ef/yyyy/mm/dd"
-}
-```
-
-### Example 6: Push Gaming Activity Event
-
-```bash
-#!/bin/bash
-
-# Configuration
-API_BASE_URL="https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest"
-AUTH_TOKEN="your-auth-token-here"
-ACCOUNT_ID="68911b7ad58ad825ec00c5ef"
-WORKSPACE_ID="68911b7ad825ec00c5ef"
-
-# Gaming activity event data
-const gaming=new GamingActivityEvent'({
-  "account_id": "68911b7ad58ad825ec00c5ef",
-  "workspace_id": "68911b7ad825ec00c5ef",
-  "user_id": "user123456",
-  "event_category": "Gaming Activity",
-  "event_name": "Slot Game Play",
-  "event_id": "evt_game_789123456",
-  "event_time": "2024-01-15T18:30:00Z",
-  "wager_amount": 10.00,
-  "win_amount": 25.00,
-  "game_title": "Mega Fortune Slots",
-  "game_category": "Slots",
-  "session_duration": 45,
-  "metadata": {
-    "game_id": "mega_fortune_001",
-    "provider": "NetEnt",
-    "bet_lines": 20,
-    "multiplier": 2.5
-  }
-})'
-// Validate the account event
-const validation = gaming.validate();
-if (!validation.isValid) {
-  console.error('❌ Validation errors:', validation.errors);
-  process.exit(1);
-}
-console.log('✅ Gaming event validated successfully!');
-
-# Generate HMAC signature
-SALT="${ACCOUNT_ID}${WORKSPACE_ID}"
-INFO="hmac-signing"
-PRK=$(echo -n "$AUTH_TOKEN" | openssl dgst -sha256 -hmac "$SALT" | cut -d' ' -f2)
-DERIVED_KEY=$(echo -n "${INFO}01" | openssl dgst -sha256 -hmac "$PRK" | cut -d' ' -f2)
-HMAC_SIGNATURE=$(echo -n "$gaming" | openssl dgst -sha256 -hmac "$DERIVED_KEY" | cut -d' ' -f2)
-
-# Make API call
-curl -X POST "${API_BASE_URL}/events/gaming-activity/${ACCOUNT_ID}/${WORKSPACE_ID}" \
-  -H "Content-Type: application/json" \
-  -H "x-optikpi-token: ${AUTH_TOKEN}" \
-  -H "x-hmac-signature: ${HMAC_SIGNATURE}" \
-  -H "x-hmac-algorithm: sha256" \
-  -d "$gaming" \
-  -w "\nHTTP Status: %{http_code}\nResponse Time: %{time_total}s\n"
-```
-
-**Expected Response:**
-```json
-{
-  "message": "1 gaming activity event(s) sent to Firehose successfully",
-  "recordIds": ["record-id-game-789"],
-  "count": 1,
-  "streamName": "datapipeline-events-gaming-activity-dev-stream",
-  "destination": "s3://datapipeline/events/gaming-activity/68911b7ad58ad825ec00c5ef/68911b7ad825ec00c5ef/yyyy/mm/dd"
-}
-```
-
-### Example 7: Health Check
-
-```bash
-#!/bin/bash
-
-# Configuration
-API_BASE_URL="https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest"
-AUTH_TOKEN="your-auth-token-here"
-
-# Health check (no HMAC required for GET requests)
-curl -X GET "${API_BASE_URL}/datapipeline/health" \
-  -H "x-optikpi-token: ${AUTH_TOKEN}" \
-  -w "\nHTTP Status: %{http_code}\nResponse Time: %{time_total}s\n"
-```
-
-**Expected Response:**
-```json
-{
-  "status": "healthy",
-  "timestamp": "2024-01-15T10:30:00Z",
-  "service": "data-pipeline-api"
-}
-```
-
-## Error Handling
+## ⚠️ Error Handling
 
 ### Common HTTP Status Codes
 
@@ -836,7 +548,6 @@ curl -X GET "${API_BASE_URL}/datapipeline/health" \
 | 500 | Internal Server Error | Retry request after delay |
 
 ### Error Response Format
-
 ```json
 {
   "error": "Bad Request",
@@ -848,378 +559,146 @@ curl -X GET "${API_BASE_URL}/datapipeline/health" \
 }
 ```
 
-### Retry Strategy
+### Retry Strategy Implementation
+```javascript
+class RetryHandler {
+  constructor(maxRetries = 3, baseDelay = 1000) {
+    this.maxRetries = maxRetries;
+    this.baseDelay = baseDelay;
+  }
 
-```bash
-#!/bin/bash
+  async executeWithRetry(operation) {
+    let lastError;
+    for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
+      try {
+        const result = await operation();
+        if (result.success) {
+          return result;
+        }
+        // Don't retry on client errors (4xx)
+        if (result.status >= 400 && result.status < 500) {
+          return result;
+        }
+        lastError = result;
+        if (attempt < this.maxRetries) {
+          const delay = this.baseDelay * Math.pow(2, attempt - 1);
+          console.log(`Attempt ${attempt} failed, retrying in ${delay}ms...`);
+          await this.delay(delay);
+        }
+      } catch (error) {
+        lastError = {
+          success: false,
+          error: error.message,
+          status: 0
+        };
+        if (attempt < this.maxRetries) {
+          const delay = this.baseDelay * Math.pow(2, attempt - 1);
+          console.log(`Attempt ${attempt} failed with error, retrying in ${delay}ms...`);
+          await this.delay(delay);
+        }
+      }
+    }
+    return lastError;
+  }
 
-# Retry function with exponential backoff
-retry_request() {
-    local max_attempts=3
-    local base_delay=1
-    local attempt=1
-    
-    while [ $attempt -le $max_attempts ]; do
-        echo "Attempt $attempt of $max_attempts"
-        
-        # Make the API call
-        response=$(curl -s -w "%{http_code}" -X POST "${API_BASE_URL}/customers/${ACCOUNT_ID}/${WORKSPACE_ID}" \
-          -H "Content-Type: application/json" \
-          -H "x-optikpi-token: ${AUTH_TOKEN}" \
-          -H "x-hmac-signature: ${HMAC_SIGNATURE}" \
-          -H "x-hmac-algorithm: sha256" \
-          -d "$CUSTOMER_DATA")
-        
-        http_code="${response: -3}"
-        response_body="${response%???}"
-        
-        if [ "$http_code" -eq 200 ]; then
-            echo "Success: $response_body"
-            return 0
-        elif [ "$http_code" -eq 429 ]; then
-            delay=$((base_delay * 2 ** (attempt - 1)))
-            echo "Rate limited. Waiting ${delay}s before retry..."
-            sleep $delay
-        else
-            echo "Error $http_code: $response_body"
-            return 1
-        fi
-        
-        attempt=$((attempt + 1))
-    done
-    
-    echo "Max retry attempts reached"
-    return 1
+  delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 }
 ```
 
-## Best Practices
+## ✅ Best Practices
 
 ### 1. Data Validation
 - Always validate data before sending to API
 - Ensure required fields are present
 - Use proper data types (numbers, strings, dates)
+- Implement client-side validation for better user experience
 
 ### 2. Batch Processing
 - Use batch endpoints for multiple records
 - Keep batch sizes reasonable (max 500 records)
 - Implement proper error handling for partial failures
+- Consider rate limits when batching
 
 ### 3. Error Handling
 - Implement exponential backoff for retries
 - Log all API responses for debugging
 - Handle rate limiting gracefully
+- Monitor error rates and set up alerts
 
 ### 4. Security
 - Keep authentication tokens secure
 - Rotate tokens regularly
 - Use HTTPS for all API calls
+- Never log sensitive data
 
 ### 5. Monitoring
 - Monitor API response times
 - Track success/failure rates
 - Set up alerts for high error rates
+- Implement health checks
 
-## Rate Limits
+### 6. Performance
+- Use connection pooling for HTTP clients
+- Implement request queuing for high volume
+- Consider async processing for non-critical data
+- Cache frequently used data
 
-- **Requests per second**: 1000
+## ⚡ Rate Limits
+
+- **Customer endpoints**: 50 requests per second
+- **Event endpoints**: 250 requests per second
 - **Batch size limit**: 500 records per request
 - **Rate limit window**: 1 minute
 - **Rate limit response**: 429 Too Many Requests
 
-## Support
-
-For technical support and questions:
-- Email: api-support@yourcompany.com
-- Documentation: https://docs.yourcompany.com/api
-- Status page: https://status.yourcompany.com
-
-## Complete Integration Script
-
-Here's a complete JavaScript script using the SDK that demonstrates all API endpoints:
-
-> **💡 SDK Advantage**: This script is much simpler than the equivalent bash/curl version and automatically handles all authentication complexity.
-
+### Rate Limit Handling
 ```javascript
-// Data Pipeline API Integration Script
-// Complete example with all endpoints using SDK
-
-const OptikpiDataPipelineSDK = require('../src/index');
-
-# Configuration
-API_BASE_URL="https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest"
-AUTH_TOKEN="your-auth-token-here"
-ACCOUNT_ID="68911b7ad58ad825ec00c5ef"
-WORKSPACE_ID="68911b7ad825ec00c5ef"
-
-# Colors for output
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
-
-echo -e "${GREEN}Data Pipeline API Integration Test${NC}"
-echo "======================================"
-
-# Function to generate HMAC signature
-generate_hmac() {
-    local data="$1"
-    local salt="${ACCOUNT_ID}${WORKSPACE_ID}"
-    local info="hmac-signing"
-    
-    local prk=$(echo -n "$AUTH_TOKEN" | openssl dgst -sha256 -hmac "$salt" | cut -d' ' -f2)
-    local derived_key=$(echo -n "${info}01" | openssl dgst -sha256 -hmac "$prk" | cut -d' ' -f2)
-    echo -n "$data" | openssl dgst -sha256 -hmac "$derived_key" | cut -d' ' -f2
-}
-
-# Function to make API call
-make_api_call() {
-    local endpoint="$1"
-    local data="$2"
-    local description="$3"
-    
-    echo -e "\n${YELLOW}Testing: $description${NC}"
-    
-    local hmac_signature=$(generate_hmac "$data")
-    
-    local response=$(curl -s -w "%{http_code}" -X POST "${API_BASE_URL}${endpoint}" \
-      -H "Content-Type: application/json" \
-      -H "x-optikpi-token: ${AUTH_TOKEN}" \
-      -H "x-hmac-signature: ${hmac_signature}" \
-      -H "x-hmac-algorithm: sha256" \
-      -d "$data")
-    
-    local http_code="${response: -3}"
-    local response_body="${response%???}"
-    
-    if [ "$http_code" -eq 200 ]; then
-        echo -e "${GREEN}✅ Success${NC}"
-        echo "Response: $response_body"
-    else
-        echo -e "${RED}❌ Error $http_code${NC}"
-        echo "Response: $response_body"
-    fi
-}
-
-# Test data
-# Customer event data
-const customerData = new CustomerProfile({
-  account_id: "68911b7ad58ad825ec00c5ef",
-  workspace_id: "68911b7ad58ad825ec00c5ef",
-  user_id: "user123456",
-  username: "john_doe",
-  full_name: "John Doe",
-  first_name: "John",
-  last_name: "Doe",
-  date_of_birth: "1990-01-15",
-  email: "john.doe@example.com",
-  phone_number: "+1234567890",
-  gender: "Male",
-  country: "United States",
-  city: "New York",
-  language: "en",
-  currency: "USD",
-  marketing_email_preference: "Opt-in",
-  notifications_preference: "Opt-in",
-  subscription: "Subscribed",
-  privacy_settings: "private",
-  deposit_limits: 1000.00,
-  loss_limits: 500.00,
-  wagering_limits: 2000.00,
-  session_time_limits: 120,
-  cooling_off_period: 7,
-  self_exclusion_period: 30,
-  reality_checks_notification: "daily",
-  account_status: "Active",
-  vip_status: "Regular",
-  loyalty_program_tiers: "Bronze",
-  bonus_abuser: "Not flagged",
-  financial_risk_level: 0.3,
-  acquisition_source: "Google Ads",
-  partner_id: "partner123",
-  affliate_id: "affiliate456",
-  referral_link_code: "REF789",
-  referral_limit_reached: "Not Reached",
-  creation_timestamp: "2024-01-15T10:30:00Z",
-  phone_verification: "Verified",
-  email_verification: "Verified",
-  bank_verification: "NotVerified",
-  iddoc_verification: "Verified"
-});
-const validation = customerData.validate();
-if (!validation.isValid) {
-  console.error('❌ Validation errors:', validation.errors);
-  process.exit(1);
-}
-console.log('✅ Customer event validated successfully!');
-# Account event data
-const account=new AccountEvent'({
-  "account_id": "68911b7ad58ad825ec00c5ef",
-  "workspace_id": "68911b7ad825ec00c5ef",
-  "user_id": "user123456",
-  "event_category": "Account",
-  "event_name": "Player Registration",
-  "event_id": "evt_123456789",
-  "event_time": "2024-01-15T10:30:00Z",
-  "device": "desktop",
-  "ip_address": "192.168.1.100",
-  "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-  "status": "verified",
-  "metadata": {
-    "registration_source": "website",
-    "referral_code": "REF789"
+class RateLimitHandler {
+  constructor(endpointType = 'events') {
+    this.requests = [];
+    this.maxRequests = endpointType === 'customers' ? 50 : 250;
+    this.windowMs = 60000; // 1 minute
   }
-})'
-// Validate the account event
-const validation = account.validate();
-if (!validation.isValid) {
-  console.error('❌ Validation errors:', validation.errors);
-  process.exit(1);
-}
-console.log('✅ Account event validated successfully!');
 
-# Deposit event data
-const deposit=new DepositEvent'({
-  "account_id": "68911b7ad58ad825ec00c5ef",
-  "workspace_id": "68911b7ad825ec00c5ef",
-  "user_id": "user123456",
-  "event_category": "Deposit",
-  "event_name": "Successful Deposit",
-  "event_id": "evt_dep_987654321",
-  "event_time": "2024-01-15T14:45:00Z",
-  "amount": 500.00,
-  "currency": "USD",
-  "payment_method": "bank",
-  "transaction_id": "txn_123456789",
-  "status": "completed",
-  "metadata": {
-    "bank_name": "Chase Bank",
-    "account_last4": "1234"
+  async waitIfNeeded() {
+    const now = Date.now();
+    // Remove requests outside the window
+    this.requests = this.requests.filter(time => now - time < this.windowMs);
+    
+    if (this.requests.length >= this.maxRequests) {
+      const oldestRequest = Math.min(...this.requests);
+      const waitTime = this.windowMs - (now - oldestRequest);
+      if (waitTime > 0) {
+        console.log(`Rate limit reached, waiting ${waitTime}ms...`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+      }
+    }
+    this.requests.push(now);
   }
-})'
-// Validate the account event
-const validation = deposit.validate();
-if (!validation.isValid) {
-  console.error('❌ Validation errors:', validation.errors);
-  process.exit(1);
 }
-console.log('✅ Deposit event validated successfully!');
-
-# Withdraw event data
-const withdraw=new WithdrawEvent'({
-  "account_id": "68911b7ad58ad825ec00c5ef",
-  "workspace_id": "68911b7ad825ec00c5ef",
-  "user_id": "user123456",
-  "event_category": "Withdraw",
-  "event_name": "Withdrawal Request",
-  "event_id": "evt_wd_456789123",
-  "event_time": "2024-01-15T16:20:00Z",
-  "amount": 250.00,
-  "currency": "USD",
-  "payment_method": "bank",
-  "transaction_id": "txn_wd_987654321",
-  "status": "pending",
-  "metadata": {
-    "bank_name": "Wells Fargo",
-    "account_last4": "5678",
-    "processing_time": "2-3 business days"
-  }
-})'
-
-// Validate the account event
-const validation = withdraw.validate();
-if (!validation.isValid) {
-  console.error('❌ Validation errors:', validation.errors);
-  process.exit(1);
-}
-console.log('✅ Withdraw event validated successfully!');
-
-# Gaming activity event data
-const gaming=new GamingActivityEvent'({
-  "account_id": "68911b7ad58ad825ec00c5ef",
-  "workspace_id": "68911b7ad825ec00c5ef",
-  "user_id": "user123456",
-  "event_category": "Gaming Activity",
-  "event_name": "Slot Game Play",
-  "event_id": "evt_game_789123456",
-  "event_time": "2024-01-15T18:30:00Z",
-  "wager_amount": 10.00,
-  "win_amount": 25.00,
-  "game_title": "Mega Fortune Slots",
-  "game_category": "Slots",
-  "session_duration": 45,
-  "metadata": {
-    "game_id": "mega_fortune_001",
-    "provider": "NetEnt",
-    "bet_lines": 20,
-    "multiplier": 2.5
-  }
-})'
-// Validate the account event
-const validation = gaming.validate();
-if (!validation.isValid) {
-  console.error('❌ Validation errors:', validation.errors);
-  process.exit(1);
-}
-console.log('✅ Gaming event validated successfully!');
-
-# Run tests
-make_api_call "/customers/${ACCOUNT_ID}/${WORKSPACE_ID}" "$customer" "Customer Profile"
-make_api_call "/events/account/${ACCOUNT_ID}/${WORKSPACE_ID}" "$account" "Account Event"
-make_api_call "/events/deposit/${ACCOUNT_ID}/${WORKSPACE_ID}" "$deposit" "Deposit Event"
-make_api_call "/events/withdraw/${ACCOUNT_ID}/${WORKSPACE_ID}" "$withdraw" "Withdraw Event"
-make_api_call "/events/gaming-activity/${ACCOUNT_ID}/${WORKSPACE_ID}" "$gaming" "Gaming Activity Event"
-
-# Health check
-echo -e "\n${YELLOW}Testing: Health Check${NC}"
-health_response=$(curl -s -w "%{http_code}" -X GET "${API_BASE_URL}/datapipeline/health" \
-  -H "x-optikpi-token: ${AUTH_TOKEN}")
-
-health_http_code="${health_response: -3}"
-health_body="${health_response%???}"
-
-if [ "$health_http_code" -eq 200 ]; then
-    echo -e "${GREEN}✅ Health Check Success${NC}"
-    echo "Response: $health_body"
-else
-    echo -e "${RED}❌ Health Check Failed $health_http_code${NC}"
-    echo "Response: $health_body"
-fi
-
-console.log('\n🎉 Integration test completed!');
 ```
 
-## 🚀 SDK Integration Benefits
+## 📞 Support
 
-By using the Optikpi Data Pipeline SDK instead of manual curl commands, you get:
+For technical support and questions:
 
-### **Simplified Development**
-- **No crypto implementation** - SDK handles HMAC/HKDF automatically
-- **Clean, readable code** - Focus on business logic, not authentication
-- **Type safety** - Better IDE support and error catching
+- **Email**: api-support@optikpi.com
+- **Documentation**: https://docs.optikpi.com/api
+- **GitHub Issues**: https://github.com/optikpi/datapipeline-sdk/issues
 
-### **Enhanced Reliability**
-- **Built-in retry logic** - Automatic handling of network failures
-- **Better error handling** - Rich error objects with detailed information
-- **Request validation** - SDK validates data before sending
+## 🚀 Next Steps
+1. **Choose Integration Method**: Decide between manual integration or SDK
+2. **Get Credentials**: Contact your account manager for API credentials
+3. **Start Development**: Use the examples in this guide as templates
+4. **Test Integration**: Use the health check endpoint to verify connectivity
+5. **Go Live**: Deploy your integration to production
 
-### **Maintenance Benefits**
-- **Automatic updates** - SDK improvements without code changes
-- **Security updates** - Cryptographic improvements handled automatically
-- **Documentation** - Always up-to-date with latest API changes
+## 📚 Additional Resources
+- **SDK Documentation**: README.md
+- **Java SDK Guide**: ../java/README.md
+- **Integration Examples**: ../examples/
+- **Changelog**: CHANGELOG.md
 
-### **Production Ready**
-- **Logging support** - Built-in request/response logging
-- **Performance monitoring** - Response time tracking
-- **Batch operations** - Efficient handling of multiple records
-
-## 📚 Next Steps
-
-1. **Install the SDK**: `npm install`
-2. **Review Examples**: Check the updated client examples in this folder
-3. **Start Integrating**: Use the SDK examples as templates for your integration
-4. **Get Support**: Contact our team for SDK-specific assistance
-
-The SDK makes integration with the Optikpi Data Pipeline API significantly easier and more reliable than manual implementation.
-
-
+This integration guide provides everything you need to successfully integrate with the Optikpi Data Pipeline API. Choose the approach that best fits your technology stack and requirements.
