@@ -9,6 +9,8 @@ from .AccountEvent import AccountEvent
 from .DepositEvent import DepositEvent
 from .WithdrawEvent import WithdrawEvent
 from .GamingActivityEvent import GamingActivityEvent
+from .WalletBalanceEvent import WalletBalanceEvent
+from .ReferFriendEvent import ReferFriendEvent
 
 # Define public API for the models package
 __all__ = [
@@ -16,5 +18,7 @@ __all__ = [
     "AccountEvent",
     "DepositEvent",
     "WithdrawEvent",
-    "GamingActivityEvent"
+    "GamingActivityEvent",
+    "WalletBalanceEvent",
+    "ReferFriendEvent"
 ]

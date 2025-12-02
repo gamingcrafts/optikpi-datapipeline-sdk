@@ -168,7 +168,9 @@ result = sdk.send_deposit_event(deposit)
 batch_data = {
     'customers': [customer1, customer2],
     'depositEvents': [deposit1, deposit2],
-    'gamingEvents': [gaming1, gaming2]
+    'gamingEvents': [gaming1, gaming2],
+    'walletBalanceEvents': [wallet1, wallet2],
+    'referFriendEvents': [referral1, referral2]
 }
 
 batch_result = sdk.send_batch(batch_data)
@@ -233,6 +235,20 @@ Sends gaming activity events.
 result = sdk.send_gaming_activity_event(gaming_event)
 ```
 
+#### `send_wallet_balance_event(data)`
+Sends wallet balance events.
+
+```python
+result = sdk.send_wallet_balance_event(wallet_event)
+```
+
+#### `send_refer_friend_event(data)`
+Sends refer-a-friend events.
+
+```python
+result = sdk.send_refer_friend_event(referral_event)
+```
+
 #### `send_extended_attributes(data)`
 Sends extended attributes data.
 
@@ -247,7 +263,9 @@ Sends multiple types of data in a single batch operation.
 result = sdk.send_batch({
     'customers': [customer1, customer2],
     'depositEvents': [deposit1, deposit2],
-    'gamingEvents': [gaming1, gaming2]
+    'gamingEvents': [gaming1, gaming2],
+    'walletBalanceEvents': [wallet1, wallet2],
+    'referFriendEvents': [referral1, referral2]
 })
 ```
 
@@ -277,6 +295,8 @@ if not validation['is_valid']:
 from models.AccountEvent import AccountEvent
 from models.DepositEvent import DepositEvent
 from models.GamingActivityEvent import GamingActivityEvent
+from models.WalletBalanceEvent import WalletBalanceEvent
+from models.ReferFriendEvent import ReferFriendEvent
 
 account = AccountEvent(
     account_id=ACCOUNT_ID,

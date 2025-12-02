@@ -16,6 +16,8 @@ from models.AccountEvent import AccountEvent
 from models.DepositEvent import DepositEvent
 from models.WithdrawEvent import WithdrawEvent
 from models.GamingActivityEvent import GamingActivityEvent
+from models.WalletBalanceEvent import WalletBalanceEvent
+from models.ReferFriendEvent import ReferFriendEvent
 from utils import crypto
 
 __version__ = "1.0.0"
@@ -120,6 +122,28 @@ class OptikpiDataPipelineSDK:
         """
         return self.client.send_gaming_activity_event(data)
     
+    def send_wallet_balance_event(self, data):
+        """
+        Send wallet balance event data
+
+        Args:
+            data: Wallet balance event data (dict or list)
+        Returns:
+            Response dictionary
+        """
+        return self.client.send_wallet_balance_event(data)
+
+    def send_refer_friend_event(self, data):
+        """
+        Send refer friend event data
+
+        Args:
+            data: Refer friend event data (dict or list)
+        Returns:
+            Response dictionary
+        """
+        return self.client.send_refer_friend_event(data)
+    
     def send_extended_attributes(self, data):
         """
         Send Extended Attributes data
@@ -188,6 +212,8 @@ __all__ = [
     'DepositEvent',
     'WithdrawEvent',
     'GamingActivityEvent',
+    'WalletBalanceEvent',
+    'ReferFriendEvent',
     'crypto',
     'create_client',
 ]

@@ -95,6 +95,8 @@ sdk = OptikpiDataPipelineSDK({
 - `sdk.send_deposit_event(data)` - Send deposit events
 - `sdk.send_withdraw_event(data)` - Send withdrawal events
 - `sdk.send_gaming_activity_event(data)` - Send gaming activity events
+- `sdk.send_wallet_balance_event(data)` - Send wallet balance events  
+- `sdk.send_refer_friend_event(data)` - Send refer-a-friend events  
 - `sdk.health_check()` - Check API health status
 - `sdk.send_batch(batch_data)` - Send multiple data types in batch
 
@@ -128,6 +130,9 @@ Response Data: {
   "count": 1
 }
 ```
+
+ℹ️ Similar examples are available for Account, Deposit, Withdrawal, Gaming, Wallet Balance, and Refer Friend events.
+
 
 ## Security Notes
 
@@ -224,11 +229,18 @@ poetry run python examples/test-customer-endpoint.py
 ```
 python/
 ├── examples/               # Example scripts
-│   ├── test-customer-endpoint.py
 │   ├── test-account-endpoint.py
 │   ├── test-all-endpoints.py
 │   ├── test-simple-failures.py
 │   ├── test-validation-failures.py
+│   ├── test-customer-endpoint.py
+│   ├── test-customerext-endpoint.py
+│   ├── test-deposit-endpoint.py
+│   ├── test-gaming-endpoint.py
+│   ├── test-refer-friend-endpoint.py
+│   ├── test-wallet-balance-endpoint.py
+│   ├── test-withdraw-endpoint.py
+│   ├── validate-account-schema.py
 │   └── debug-hmac.py
 ├── src/python/            # SDK source code
 │   ├── index.py           # Main SDK class
@@ -239,7 +251,9 @@ python/
 │   │   ├── AccountEvent.py
 │   │   ├── DepositEvent.py
 │   │   ├── WithdrawEvent.py
-│   │   └── GamingActivityEvent.py
+│   │   ├── GamingActivityEvent.py
+│   │   ├── WalletBalanceEvent.py
+│   │   └── ReferFriendEvent.py
 │   └── utils/             # Utility functions
 │       └── crypto.py      # HMAC/HKDF implementation
 ├── .env                   # Environment variables (create this)
