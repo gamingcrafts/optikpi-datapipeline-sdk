@@ -234,6 +234,44 @@ event.setCurrency("USD");
 event.setDevice("mobile");
 event.setSessionId("session_001");
 ```
+### Refer Friend Events
+```java
+import com.optikpi.datapipeline.model.ReferFriendEvent;
+
+ReferFriendEvent event = new ReferFriendEvent();
+event.setAccountId("acc_12345");
+event.setWorkspaceId("ws_67890");
+event.setUserId("user_001");
+event.setEventName("Referral Successful");
+event.setEventId("evt_005");
+event.setEventTime(Instant.now().toString());
+event.setReferralCodeUsed("REF123456");
+event.setSuccessfulReferralConfirmation(true);
+event.setRewardType("bonus"); // bonus, cash, points, free_spins, other
+event.setRewardClaimedStatus("claimed"); // pending, claimed, expired, cancelled
+event.setRefereeUserId("user_002");
+event.setRefereeFirstDeposit(100.00);
+```
+
+### Wallet Balance Events
+```java
+import com.optikpi.datapipeline.model.WalletBalanceEvent;
+
+WalletBalanceEvent event = new WalletBalanceEvent();
+event.setAccountId("acc_12345");
+event.setWorkspaceId("ws_67890");
+event.setUserId("user_001");
+event.setEventName("Balance Update");
+event.setEventId("evt_006");
+event.setEventTime(Instant.now().toString());
+event.setWalletType("main");
+event.setCurrency("USD");
+event.setCurrentCashBalance(new BigDecimal("1250.50"));
+event.setCurrentBonusBalance(new BigDecimal("100.00"));
+event.setCurrentTotalBalance(new BigDecimal("1350.50"));
+event.setBlockedAmount(new BigDecimal("50.00"));
+```
+
 
 ## Batch Operations
 
@@ -249,6 +287,8 @@ batchData.setAccountEvents(Arrays.asList(accountEvent1, accountEvent2));
 batchData.setDepositEvents(Arrays.asList(depositEvent1, depositEvent2));
 batchData.setWithdrawEvents(Arrays.asList(withdrawEvent1, withdrawEvent2));
 batchData.setGamingEvents(Arrays.asList(gamingEvent1, gamingEvent2));
+batchData.setReferFriendEvents(Arrays.asList(referFriendEvent1, referFriendEvent2));
+batchData.setWalletBalanceEvents(Arrays.asList(walletBalanceEvent1, walletBalanceEvent2));
 
 var response = sdk.sendBatch(batchData);
 if (response.isSuccess()) {

@@ -68,6 +68,16 @@ mvn exec:java -Dexec.mainClass="com.optikpi.examples.TestWithdrawEndpoint"
 mvn exec:java -Dexec.mainClass="com.optikpi.examples.TestGamingEndpoint"
 ```
 
+### Test ReferFriend Events
+```bash
+mvn exec:java -Dexec.mainClass="com.optikpi.examples.TestReferFriendEndpoint"
+```
+
+### Test WalletBalance Events
+```bash
+mvn exec:java -Dexec.mainClass="com.optikpi.examples.TestWalletBalanceEndpoint"
+```
+
 ## Example Code
 
 ### Basic Usage
@@ -133,6 +143,8 @@ if (response.isSuccess()) {
 - **TestDepositEndpoint**: Demonstrates deposit event handling
 - **TestWithdrawEndpoint**: Shows withdrawal event processing
 - **TestGamingEndpoint**: Illustrates gaming activity tracking
+- **TestReferFriendEndpoint**: Demonstrates referral event processing
+- **TestWalletBalanceEndpoint**: Demonstrates wallet balance update event handling
 
 ## Error Handling
 
