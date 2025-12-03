@@ -200,6 +200,10 @@ public class DataPipelineClient {
     public ApiResponse<Object> sendCustomerProfile(Object data) {
         return sendData("/customers", data);
     }
+
+    public ApiResponse<Object> sendExtendedAttributes(Object data) {
+        return sendData("/extattributes", data);
+    }
     
     public ApiResponse<Object> sendAccountEvent(Object data) {
         return sendData("/events/account", data);
@@ -217,6 +221,14 @@ public class DataPipelineClient {
         return sendData("/events/gaming-activity", data);
     }
     
+    public ApiResponse<Object> sendReferFriendEvent(Object data) {
+    return sendData("/events/refer-friend", data);
+    }
+
+    public ApiResponse<Object> sendWalletBalanceEvent(Object data) {
+        return sendData("/events/wallet-balance", data);
+    }
+
     public BatchResponse sendBatch(BatchData batchData) {
         BatchResponse results = new BatchResponse();
         results.setSuccess(true);
@@ -225,7 +237,9 @@ public class DataPipelineClient {
         if (batchData.getCustomers() != null) {
             results.setCustomers(sendCustomerProfile(batchData.getCustomers()));
         }
-        
+        if (batchData.getExtendedAttributes() != null) {
+            results.setExtendedAttributes(sendExtendedAttributes(batchData.getExtendedAttributes()));
+        }
         if (batchData.getAccountEvents() != null) {
             results.setAccountEvents(sendAccountEvent(batchData.getAccountEvents()));
         }
@@ -240,6 +254,14 @@ public class DataPipelineClient {
         
         if (batchData.getGamingEvents() != null) {
             results.setGamingEvents(sendGamingActivityEvent(batchData.getGamingEvents()));
+        }
+
+        if (batchData.getReferFriendEvents() != null) {
+        results.setReferFriendEvents(sendReferFriendEvent(batchData.getReferFriendEvents()));
+        }
+
+        if (batchData.getWalletBalanceEvents() != null) {
+            results.setWalletBalanceEvents(sendWalletBalanceEvent(batchData.getWalletBalanceEvents()));
         }
         
         return results;

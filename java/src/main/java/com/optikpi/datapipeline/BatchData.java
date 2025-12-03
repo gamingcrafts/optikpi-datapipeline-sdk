@@ -9,6 +9,9 @@ import java.util.List;
 public class BatchData {
     @JsonProperty("customers")
     private List<Object> customers;
+
+    @JsonProperty("extendedAttributes")
+    private List<Object> extendedAttributes;
     
     @JsonProperty("accountEvents")
     private List<Object> accountEvents;
@@ -21,6 +24,12 @@ public class BatchData {
     
     @JsonProperty("gamingEvents")
     private List<Object> gamingEvents;
+
+    @JsonProperty("referFriendEvents")  
+    private List<Object> referFriendEvents;
+    
+    @JsonProperty("walletBalanceEvents")  
+    private List<Object> walletBalanceEvents;
     
     public BatchData() {}
     
@@ -36,7 +45,14 @@ public class BatchData {
     public List<Object> getAccountEvents() {
         return accountEvents;
     }
-    
+
+    public List<Object> getExtendedAttributes() {
+        return extendedAttributes;
+    }
+
+    public void setExtendedAttributes(List<Object> extendedAttributes) {
+        this.extendedAttributes = extendedAttributes;
+    }
     public void setAccountEvents(List<Object> accountEvents) {
         this.accountEvents = accountEvents;
     }
@@ -63,5 +79,22 @@ public class BatchData {
     
     public void setGamingEvents(List<Object> gamingEvents) {
         this.gamingEvents = gamingEvents;
+    }
+
+      
+    public List<Object> getReferFriendEvents() {
+        return referFriendEvents;
+    }
+    
+    public void setReferFriendEvents(List<Object> referFriendEvents) {
+        this.referFriendEvents = referFriendEvents;
+    }
+    
+    public List<Object> getWalletBalanceEvents() {
+        return walletBalanceEvents;
+    }
+    
+    public void setWalletBalanceEvents(List<Object> walletBalanceEvents) {
+        this.walletBalanceEvents = walletBalanceEvents;
     }
 }

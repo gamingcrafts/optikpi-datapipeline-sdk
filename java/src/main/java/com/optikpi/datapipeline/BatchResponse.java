@@ -13,6 +13,9 @@ public class BatchResponse {
     @JsonProperty("customers")
     private ApiResponse<Object> customers;
     
+    @JsonProperty("extendedAttributes")
+    private ApiResponse<Object> extendedAttributes;
+
     @JsonProperty("accountEvents")
     private ApiResponse<Object> accountEvents;
     
@@ -24,6 +27,13 @@ public class BatchResponse {
     
     @JsonProperty("gamingEvents")
     private ApiResponse<Object> gamingEvents;
+
+    @JsonProperty("referFriendEvents")  
+    private ApiResponse<Object> referFriendEvents;
+    
+    @JsonProperty("walletBalanceEvents")  
+    private ApiResponse<Object> walletBalanceEvents;
+
     
     @JsonProperty("timestamp")
     private Instant timestamp;
@@ -46,6 +56,14 @@ public class BatchResponse {
     public void setCustomers(ApiResponse<Object> customers) {
         this.customers = customers;
     }
+
+    public ApiResponse<Object> getExtendedAttributes() {
+    return extendedAttributes;
+    }
+
+    public void setExtendedAttributes(ApiResponse<Object> extendedAttributes) {
+    this.extendedAttributes = extendedAttributes;
+   }
     
     public ApiResponse<Object> getAccountEvents() {
         return accountEvents;
@@ -78,7 +96,22 @@ public class BatchResponse {
     public void setGamingEvents(ApiResponse<Object> gamingEvents) {
         this.gamingEvents = gamingEvents;
     }
+    // ADD THESE TWO METHODS
+    public ApiResponse<Object> getReferFriendEvents() {
+        return referFriendEvents;
+    }
     
+    public void setReferFriendEvents(ApiResponse<Object> referFriendEvents) {
+        this.referFriendEvents = referFriendEvents;
+    }
+    
+    public ApiResponse<Object> getWalletBalanceEvents() {
+        return walletBalanceEvents;
+    }
+    
+    public void setWalletBalanceEvents(ApiResponse<Object> walletBalanceEvents) {
+        this.walletBalanceEvents = walletBalanceEvents;
+    }
     public Instant getTimestamp() {
         return timestamp;
     }

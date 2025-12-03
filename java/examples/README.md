@@ -43,6 +43,11 @@ This directory contains example applications demonstrating how to use the Optikp
 mvn exec:java -Dexec.mainClass="com.optikpi.examples.TestCustomerEndpoint"
 ```
 
+### Test Customer Extended Attribute Endpoint
+```bash
+mvn exec:java -Dexec.mainClass="com.optikpi.examples.TestCustomerExtEndpoint"
+```
+
 ### Test All Endpoints
 ```bash
 mvn exec:java -Dexec.mainClass="com.optikpi.examples.TestAllEndpoints"
@@ -66,6 +71,16 @@ mvn exec:java -Dexec.mainClass="com.optikpi.examples.TestWithdrawEndpoint"
 ### Test Gaming Activity Events
 ```bash
 mvn exec:java -Dexec.mainClass="com.optikpi.examples.TestGamingEndpoint"
+```
+
+### Test ReferFriend Events
+```bash
+mvn exec:java -Dexec.mainClass="com.optikpi.examples.TestReferFriendEndpoint"
+```
+
+### Test WalletBalance Events
+```bash
+mvn exec:java -Dexec.mainClass="com.optikpi.examples.TestWalletBalanceEndpoint"
 ```
 
 ## Example Code
@@ -128,11 +143,14 @@ if (response.isSuccess()) {
 ## Available Examples
 
 - **TestCustomerEndpoint**: Demonstrates customer profile operations
+- **TestCustomerExtEndpoint**: Demonstrates customer Extended Attributes Processing
 - **TestAllEndpoints**: Tests all available API endpoints
 - **TestAccountEndpoint**: Focuses on account event operations
 - **TestDepositEndpoint**: Demonstrates deposit event handling
 - **TestWithdrawEndpoint**: Shows withdrawal event processing
 - **TestGamingEndpoint**: Illustrates gaming activity tracking
+- **TestReferFriendEndpoint**: Demonstrates referral event processing
+- **TestWalletBalanceEndpoint**: Demonstrates wallet balance update event handling
 
 ## Error Handling
 
@@ -163,7 +181,7 @@ The `ClientConfig` class supports various configuration options:
 
 ```java
 ClientConfig config = new ClientConfig(authToken, accountId, workspaceId);
-config.setBaseUrl("https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest");
+config.setBaseUrl("https://your-api-gateway-url/apigw/ingest");
 config.setTimeout(60000); // 60 seconds
 config.setRetries(5);
 config.setRetryDelay(2000); // 2 seconds

@@ -36,10 +36,20 @@ public class OptikpiDataPipelineSDK {
     }
     
     /**
+     * Sends extended attributes data
+     * @param data Extended attributes data or array of attributes
+     * @return API response
+     */
+    public ApiResponse<Object> sendExtendedAttributes(Object data) {
+        return client.sendExtendedAttributes(data);
+    }
+
+    /**
      * Sends account event data
      * @param data Account event data or array of events
      * @return API response
      */
+
     public ApiResponse<Object> sendAccountEvent(Object data) {
         return client.sendAccountEvent(data);
     }
@@ -70,7 +80,25 @@ public class OptikpiDataPipelineSDK {
     public ApiResponse<Object> sendGamingActivityEvent(Object data) {
         return client.sendGamingActivityEvent(data);
     }
-    
+
+    /**
+     * Sends refer friend event data
+     * @param data Refer friend event data or array of events
+     * @return API response
+     */
+    public ApiResponse<Object> sendReferFriendEvent(Object data) {
+        return client.sendReferFriendEvent(data);
+    }
+
+    /**
+     * Sends wallet balance event data
+     * @param data Wallet balance event data or array of events
+     * @return API response
+     */
+    public ApiResponse<Object> sendWalletBalanceEvent(Object data) {
+        return client.sendWalletBalanceEvent(data);
+    }
+
     /**
      * Sends multiple events in batch
      * @param batchData Object containing different event types

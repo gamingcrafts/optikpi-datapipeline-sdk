@@ -1,5 +1,6 @@
 package com.optikpi.examples;
 
+import java.lang.ref.Reference;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Arrays;
@@ -14,6 +15,8 @@ import com.optikpi.datapipeline.model.CustomerProfile;
 import com.optikpi.datapipeline.model.DepositEvent;
 import com.optikpi.datapipeline.model.GamingActivityEvent;
 import com.optikpi.datapipeline.model.ValidationResult;
+import com.optikpi.datapipeline.model.WalletBalanceEvent;
+import com.optikpi.datapipeline.model.ReferFriendEvent;
 import com.optikpi.datapipeline.model.WithdrawEvent;
 
 import io.github.cdimascio.dotenv.Dotenv;
@@ -63,6 +66,8 @@ public class TestAllEndpoints {
         testDepositEvent(sdk, accountId, workspaceId);
         testWithdrawEvent(sdk, accountId, workspaceId);
         testGamingActivityEvent(sdk, accountId, workspaceId);
+        testReferFriendEvent(sdk, accountId, workspaceId);      
+        testWalletBalanceEvent(sdk, accountId, workspaceId);
         testBatchOperations(sdk, accountId, workspaceId);
     }
 
@@ -142,6 +147,32 @@ public class TestAllEndpoints {
         System.out.println();
     }
 
+    private static void testReferFriendEvent(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
+        System.out.println("=== Refer Friend Event ===");
+        try {
+            ReferFriendEvent event = createSampleReferFriendEvent(accountId, workspaceId);
+            validateEvent(event, "ReferFriend Event");
+            var response = sdk.sendReferFriendEvent(event);
+            printResponse("Refer Friend Event", response);
+        } catch (Exception e) {
+            System.err.println("❌ Refer Friend event failed: " + e.getMessage());
+        }
+        System.out.println();
+    }
+
+     private static void testWalletBalanceEvent(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
+        System.out.println("=== Wallet Balance Event ===");
+        try {
+            WalletBalanceEvent event = createSampleWalletBalanceEvent(accountId, workspaceId);
+            validateEvent(event, "Wallet Balance Event");
+            var response = sdk.sendWalletBalanceEvent(event);
+            printResponse("Wallet Balance Event", response);
+        } catch (Exception e) {
+            System.err.println("❌ Wallet Balance event failed: " + e.getMessage());
+        }
+        System.out.println();
+    }
+
     private static void testBatchOperations(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
         System.out.println("=== Batch Operations ===");
         try {
@@ -151,6 +182,8 @@ public class TestAllEndpoints {
             batchData.setDepositEvents(Arrays.asList(createSampleDepositEvent(accountId, workspaceId)));
             batchData.setWithdrawEvents(Arrays.asList(createSampleWithdrawEvent(accountId, workspaceId)));
             batchData.setGamingEvents(Arrays.asList(createSampleGamingActivityEvent(accountId, workspaceId)));
+            batchData.setReferFriendEvents(Arrays.asList(createSampleReferFriendEvent(accountId, workspaceId)));
+            batchData.setWalletBalanceEvents(Arrays.asList(createSampleWalletBalanceEvent(accountId, workspaceId)));
             validateEvent(batchData, "BatchData");
             var response = sdk.sendBatch(batchData);
 
@@ -173,6 +206,12 @@ public class TestAllEndpoints {
                 if (response.getGamingEvents() != null) {
                     System.out.println("Gaming events: " + (response.getGamingEvents().isSuccess() ? "Success" : "Failed"));
                 }
+                if (response.getReferFriendEvents() != null) {
+                    System.out.println("Refer Friend events: " + (response.getReferFriendEvents().isSuccess() ? "Success" : "Failed"));
+                }
+                if (response.getWalletBalanceEvents() != null) {
+                    System.out.println("Wallet Balance events: " + (response.getWalletBalanceEvents().isSuccess() ? "Success" : "Failed"));
+                }
             } else {
                 System.out.println("❌ Batch operation failed");
             }
@@ -186,7 +225,7 @@ public class TestAllEndpoints {
         CustomerProfile customer = new CustomerProfile();
         customer.setAccountId(accountId);
         customer.setWorkspaceId(workspaceId);
-        customer.setUserId("user_001");
+        customer.setUserId("user_011");
         customer.setUsername("john_doe");
         customer.setEmail("john.doe@example.com");
         customer.setFullName("John Doe");
@@ -215,7 +254,7 @@ public class TestAllEndpoints {
         AccountEvent event = new AccountEvent();
         event.setAccountId(accountId);
         event.setWorkspaceId(workspaceId);
-        event.setUserId("user_001");
+        event.setUserId("user_012");
         event.setEventName("Login");
         event.setEventId("evt_" + System.currentTimeMillis());
         event.setEventTime(Instant.now().toString());
@@ -228,7 +267,7 @@ public class TestAllEndpoints {
         DepositEvent event = new DepositEvent();
         event.setAccountId(accountId);
         event.setWorkspaceId(workspaceId);
-        event.setUserId("user_001");
+        event.setUserId("user_013");
         event.setEventName("Successful Deposit");
         event.setEventId("evt_" + System.currentTimeMillis());
         event.setEventTime(Instant.now().toString());
@@ -245,7 +284,7 @@ public class TestAllEndpoints {
         WithdrawEvent event = new WithdrawEvent();
         event.setAccountId(accountId);
         event.setWorkspaceId(workspaceId);
-        event.setUserId("user_001");
+        event.setUserId("user_014");
         event.setEventName("Successful Withdrawal");
         event.setEventId("evt_" + System.currentTimeMillis());
         event.setEventTime(Instant.now().toString());
@@ -262,7 +301,7 @@ public class TestAllEndpoints {
         GamingActivityEvent event = new GamingActivityEvent();
         event.setAccountId(accountId);
         event.setWorkspaceId(workspaceId);
-        event.setUserId("user_001");
+        event.setUserId("user_015");
         event.setEventName("Play Casino Game");
         event.setEventId("evt_" + System.currentTimeMillis());
         event.setEventTime(Instant.now().toString());
@@ -275,6 +314,40 @@ public class TestAllEndpoints {
         event.setDevice("mobile");
         event.setSessionId("session_" + System.currentTimeMillis());
         return event;
+    }
+    private static ReferFriendEvent createSampleReferFriendEvent(String accountId, String workspaceId) {
+     ReferFriendEvent event = new ReferFriendEvent();
+            event.setAccountId(accountId);
+            event.setWorkspaceId(workspaceId);
+            event.setUserId("user_016");
+            event.setEventName("Referral Successful");
+            event.setEventId("evt_rf_987654321");
+            event.setEventTime(Instant.now().toString());
+            event.setReferralCodeUsed("REF123456");
+            event.setSuccessfulReferralConfirmation(true);
+            event.setRewardType("bonus");
+            event.setRewardClaimedStatus("claimed");
+            event.setRefereeUserId("user789012");
+            event.setRefereeRegistrationDate("2024-01-15T10:30:00Z");
+            event.setRefereeFirstDeposit(100.00);
+            return event;
+    }
+
+    private static WalletBalanceEvent createSampleWalletBalanceEvent(String accountId, String workspaceId) {
+      WalletBalanceEvent event = new WalletBalanceEvent();
+            event.setAccountId(accountId);
+            event.setWorkspaceId(workspaceId);
+            event.setUserId("user_017");
+            event.setEventName("Balance Update");
+            event.setEventId("evt_wb_987654321");
+            event.setEventTime(Instant.now().toString());
+            event.setWalletType("main");
+            event.setCurrency("USD");
+            event.setCurrentCashBalance(new BigDecimal("1250.50"));
+            event.setCurrentBonusBalance(new BigDecimal("100.00"));
+            event.setCurrentTotalBalance(new BigDecimal("1350.50"));
+            event.setBlockedAmount(new BigDecimal("50.00"));
+            return event;
     }
 
     private static void printResponse(String operation, com.optikpi.datapipeline.ApiResponse<Object> response) {
@@ -306,6 +379,12 @@ public class TestAllEndpoints {
         } else if (event instanceof GamingActivityEvent) {
             ValidationResult result = ((GamingActivityEvent) event).validate();
             printValidationResult(result, eventName);
+        } else if (event instanceof ReferFriendEvent) {
+            ValidationResult result = ((ReferFriendEvent) event).validate();
+            printValidationResult(result, eventName);
+        } else if (event instanceof WalletBalanceEvent) {
+            ValidationResult result = ((WalletBalanceEvent) event).validate();
+            printValidationResult(result, eventName);   
         } else if (event instanceof BatchData) {
             System.out.println("=== Validating BatchData contents ===");
 
@@ -336,6 +415,17 @@ public class TestAllEndpoints {
                     validateEvent(g, "GamingActivityEvent (Batch)");
                 }
             }
+            if (batch.getReferFriendEvents() != null) {
+                for (Object g : batch.getReferFriendEvents()) {
+                    validateEvent(g, "ReferFriendEvent (Batch)");
+                }
+            }
+            if (batch.getWalletBalanceEvents() != null) {
+                for (Object g : batch.getWalletBalanceEvents()) {
+                    validateEvent(g, "WalletBalanceEvent (Batch)");
+                }
+            }
+            
 
         } else {
             System.out.println("⚠️ Unknown event type: " + eventName);
