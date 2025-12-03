@@ -200,6 +200,10 @@ public class DataPipelineClient {
     public ApiResponse<Object> sendCustomerProfile(Object data) {
         return sendData("/customers", data);
     }
+
+    public ApiResponse<Object> sendExtendedAttributes(Object data) {
+        return sendData("/extattributes", data);
+    }
     
     public ApiResponse<Object> sendAccountEvent(Object data) {
         return sendData("/events/account", data);
@@ -233,7 +237,9 @@ public class DataPipelineClient {
         if (batchData.getCustomers() != null) {
             results.setCustomers(sendCustomerProfile(batchData.getCustomers()));
         }
-        
+        if (batchData.getExtendedAttributes() != null) {
+            results.setExtendedAttributes(sendExtendedAttributes(batchData.getExtendedAttributes()));
+        }
         if (batchData.getAccountEvents() != null) {
             results.setAccountEvents(sendAccountEvent(batchData.getAccountEvents()));
         }

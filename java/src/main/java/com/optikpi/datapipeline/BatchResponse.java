@@ -13,6 +13,9 @@ public class BatchResponse {
     @JsonProperty("customers")
     private ApiResponse<Object> customers;
     
+    @JsonProperty("extendedAttributes")
+    private ApiResponse<Object> extendedAttributes;
+
     @JsonProperty("accountEvents")
     private ApiResponse<Object> accountEvents;
     
@@ -53,6 +56,14 @@ public class BatchResponse {
     public void setCustomers(ApiResponse<Object> customers) {
         this.customers = customers;
     }
+
+    public ApiResponse<Object> getExtendedAttributes() {
+    return extendedAttributes;
+    }
+
+    public void setExtendedAttributes(ApiResponse<Object> extendedAttributes) {
+    this.extendedAttributes = extendedAttributes;
+   }
     
     public ApiResponse<Object> getAccountEvents() {
         return accountEvents;

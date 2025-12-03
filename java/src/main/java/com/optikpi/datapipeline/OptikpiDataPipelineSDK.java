@@ -36,10 +36,20 @@ public class OptikpiDataPipelineSDK {
     }
     
     /**
+     * Sends extended attributes data
+     * @param data Extended attributes data or array of attributes
+     * @return API response
+     */
+    public ApiResponse<Object> sendExtendedAttributes(Object data) {
+        return client.sendExtendedAttributes(data);
+    }
+
+    /**
      * Sends account event data
      * @param data Account event data or array of events
      * @return API response
      */
+
     public ApiResponse<Object> sendAccountEvent(Object data) {
         return client.sendAccountEvent(data);
     }

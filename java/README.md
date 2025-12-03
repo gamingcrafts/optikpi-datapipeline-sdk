@@ -166,7 +166,23 @@ customer.setCurrency("USD");
 customer.setAccountStatus("Active");
 customer.setVipStatus("Regular");
 ```
+### Customer Extendent attribute Profile
 
+```java
+ExtendedAttributesEvent event = new ExtendedAttributesEvent();
+event.setAccountId(accountId);
+event.setWorkspaceId(workspaceId);
+event.setUserId("KLT71234");
+event.setListName("BINGO_PREFERENCES");
+
+// Create ext_data as Map (will be auto-converted to JSON string)
+Map<String, String> extData = new HashMap<>();
+extData.put("Email", "True");
+extData.put("SMS", "True");
+extData.put("PushNotifications", "False");
+event.setExtData(extData);
+
+```
 ### Account Events
 
 ```java

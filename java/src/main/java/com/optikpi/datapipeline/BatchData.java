@@ -9,6 +9,9 @@ import java.util.List;
 public class BatchData {
     @JsonProperty("customers")
     private List<Object> customers;
+
+    @JsonProperty("extendedAttributes")
+    private List<Object> extendedAttributes;
     
     @JsonProperty("accountEvents")
     private List<Object> accountEvents;
@@ -42,7 +45,14 @@ public class BatchData {
     public List<Object> getAccountEvents() {
         return accountEvents;
     }
-    
+
+    public List<Object> getExtendedAttributes() {
+        return extendedAttributes;
+    }
+
+    public void setExtendedAttributes(List<Object> extendedAttributes) {
+        this.extendedAttributes = extendedAttributes;
+    }
     public void setAccountEvents(List<Object> accountEvents) {
         this.accountEvents = accountEvents;
     }
