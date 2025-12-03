@@ -61,7 +61,7 @@ sdk = OptikpiDataPipelineSDK({
     'authToken': 'your-auth-token',
     'accountId': 'your-account-id',
     'workspaceId': 'your-workspace-id',
-    'baseURL':'https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest'
+    'baseURL':'https://your-api-gateway-url/apigw/ingest'
 })
 ```
 
@@ -183,7 +183,7 @@ batch_result = sdk.send_batch(batch_data)
 | `authToken` | str | ✅ | - | Your authentication token |
 | `accountId` | str | ✅ | - | Your account ID |
 | `workspaceId` | str | ✅ | - | Your workspace ID |
-| `baseURL` | str | ❌ | `https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest` | API base URL |
+| `baseURL` | str | ❌ | `https://your-api-gateway-url/apigw/ingest` | API base URL |
 | `timeout` | int | ❌ | `30` | Request timeout in seconds |
 | `retries` | int | ❌ | `3` | Number of retry attempts |
 | `retryDelay` | int | ❌ | `1` | Delay between retries in seconds |
@@ -461,7 +461,7 @@ Create a `.env` file:
 OPTIKPI_AUTH_TOKEN=your-auth-token-here
 OPTIKPI_ACCOUNT_ID=your-account-id
 OPTIKPI_WORKSPACE_ID=your-workspace-id
-OPTIKPI_API_URL=https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest
+OPTIKPI_API_URL=https://your-api-gateway-url/apigw/ingest
 ```
 
 ### Error Handling Example

@@ -17,7 +17,7 @@ This folder contains Python examples for integrating with the Optikpi API using 
    cp env.example .env
    
    # Edit .env with your actual values
-   API_BASE_URL=https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest
+   API_BASE_URL=https://your-api-gateway-url/apigw/ingest
    AUTH_TOKEN=your-auth-token-here
    ACCOUNT_ID=your-account-id
    WORKSPACE_ID=your-workspace-id
@@ -26,7 +26,7 @@ This folder contains Python examples for integrating with the Optikpi API using 
    **Option B: Direct Configuration**
    Edit the configuration variables in the test files:
    ```python
-   API_BASE_URL = "https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest"
+   API_BASE_URL = "https://your-api-gateway-url/apigw/ingest'"
    AUTH_TOKEN = "your-auth-token-here"
    ACCOUNT_ID = "your-account-id"
    WORKSPACE_ID = "your-workspace-id"
@@ -85,7 +85,7 @@ sdk = OptikpiDataPipelineSDK({
     'authToken': 'your-auth-token',
     'accountId': 'your-account-id',
     'workspaceId': 'your-workspace-id',
-    'baseURL': 'https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest'
+    'baseURL': 'https://your-api-gateway-url/apigw/ingest''
 })
 ```
 
@@ -95,6 +95,8 @@ sdk = OptikpiDataPipelineSDK({
 - `sdk.send_deposit_event(data)` - Send deposit events
 - `sdk.send_withdraw_event(data)` - Send withdrawal events
 - `sdk.send_gaming_activity_event(data)` - Send gaming activity events
+- `sdk.send_wallet_balance_event(data)` - Send wallet balance events  
+- `sdk.send_refer_friend_event(data)` - Send refer-a-friend events  
 - `sdk.health_check()` - Check API health status
 - `sdk.send_batch(batch_data)` - Send multiple data types in batch
 
@@ -104,7 +106,7 @@ sdk = OptikpiDataPipelineSDK({
 🚀 Testing Customer Endpoint
 ============================
 Configuration:
-API Base URL: https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest
+API Base URL: https://your-api-gateway-url/apigw/ingest'
 Account ID: 688743ad724a144fc1e051d9
 Workspace ID: 67bed03cc39204069f2f0366
 Auth Token: 055da5b3...
@@ -128,6 +130,9 @@ Response Data: {
   "count": 1
 }
 ```
+
+ℹ️ Similar examples are available for Account, Deposit, Withdrawal, Gaming, Wallet Balance, and Refer Friend events.
+
 
 ## Security Notes
 
@@ -184,7 +189,7 @@ The examples can be configured using environment variables for better security a
 
 | Variable | Description | Required | Default |
 |----------|-------------|----------|---------|
-| `API_BASE_URL` | API Gateway URL | Yes | `https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest` |
+| `API_BASE_URL` | API Gateway URL | Yes | `https://your-api-gateway-url/apigw/ingest'` |
 | `AUTH_TOKEN` | Authentication token | Yes | Demo token (not for production) |
 | `ACCOUNT_ID` | Your account identifier | Yes | Demo account ID |
 | `WORKSPACE_ID` | Your workspace identifier | Yes | Demo workspace ID |
@@ -193,7 +198,7 @@ The examples can be configured using environment variables for better security a
 
 **Linux/macOS:**
 ```bash
-export API_BASE_URL="https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest"
+export API_BASE_URL="https://your-api-gateway-url/apigw/ingest'"
 export AUTH_TOKEN="your-auth-token"
 export ACCOUNT_ID="your-account-id"
 export WORKSPACE_ID="your-workspace-id"
@@ -201,7 +206,7 @@ export WORKSPACE_ID="your-workspace-id"
 
 **Windows:**
 ```cmd
-set API_BASE_URL=https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest
+set API_BASE_URL=https://your-api-gateway-url/apigw/ingest'
 set AUTH_TOKEN=your-auth-token
 set ACCOUNT_ID=your-account-id
 set WORKSPACE_ID=your-workspace-id
@@ -224,11 +229,18 @@ poetry run python examples/test-customer-endpoint.py
 ```
 python/
 ├── examples/               # Example scripts
-│   ├── test-customer-endpoint.py
 │   ├── test-account-endpoint.py
 │   ├── test-all-endpoints.py
 │   ├── test-simple-failures.py
 │   ├── test-validation-failures.py
+│   ├── test-customer-endpoint.py
+│   ├── test-customerext-endpoint.py
+│   ├── test-deposit-endpoint.py
+│   ├── test-gaming-endpoint.py
+│   ├── test-refer-friend-endpoint.py
+│   ├── test-wallet-balance-endpoint.py
+│   ├── test-withdraw-endpoint.py
+│   ├── validate-account-schema.py
 │   └── debug-hmac.py
 ├── src/python/            # SDK source code
 │   ├── index.py           # Main SDK class
@@ -239,7 +251,9 @@ python/
 │   │   ├── AccountEvent.py
 │   │   ├── DepositEvent.py
 │   │   ├── WithdrawEvent.py
-│   │   └── GamingActivityEvent.py
+│   │   ├── GamingActivityEvent.py
+│   │   ├── WalletBalanceEvent.py
+│   │   └── ReferFriendEvent.py
 │   └── utils/             # Utility functions
 │       └── crypto.py      # HMAC/HKDF implementation
 ├── .env                   # Environment variables (create this)

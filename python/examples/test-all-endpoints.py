@@ -19,6 +19,8 @@ from models.CustomerProfile import CustomerProfile
 from models.DepositEvent import DepositEvent
 from models.GamingActivityEvent import GamingActivityEvent
 from models.WithdrawEvent import WithdrawEvent
+from models.WalletBalanceEvent import WalletBalanceEvent
+from models.ReferFriendEvent import ReferFriendEvent
 
 
 # Load environment variables
@@ -144,14 +146,47 @@ TEST_DATA = {
         game_id="game_123",
         game_title="Blackjack",
         provider="Provider A"
+    ),
+    "wallet": WalletBalanceEvent(
+        account_id=ACCOUNT_ID,
+        workspace_id=WORKSPACE_ID,
+        user_id="user123456",
+        event_category="Wallet Balance",
+        event_name="Balance Updated",
+        event_id="evt_wallet_123456789",
+        event_time="2024-01-15T17:00:00Z",
+        currency="USD",
+        current_cash_balance=450.00,
+        current_bonus_balance=100.00,
+        current_total_balance=550.00,
+        blocked_amount=20.00
+    ),
+    "referral": ReferFriendEvent(
+        account_id=ACCOUNT_ID,
+        workspace_id=WORKSPACE_ID,
+        user_id="user123456",
+        event_category="Refer Friend",
+        event_name="Referral Successful",
+        event_id="evt_rf_123456789",
+        event_time="2024-01-15T17:30:00Z",
+        referral_code_used="REF123",
+        successful_referral_confirmation=True,
+        reward_type="bonus",
+        reward_claimed_status="claimed",
+        referee_user_id="user654321",
+        referee_registration_date="2024-01-15T16:00:00Z",
+        referee_first_deposit=100.00
     )
+
 }
 events_to_validate = [
     {"key": "customer", "label": "Customer"},
     {"key": "account", "label": "Account"},
     {"key": "deposit", "label": "Deposit"},
     {"key": "withdraw", "label": "Withdraw"},
-    {"key": "gaming", "label": "Gaming"}
+    {"key": "gaming", "label": "Gaming"},
+    {"key": "wallet", "label": "Wallet Balance"},
+    {"key": "referral", "label": "Refer Friend"}
 ]
 
 for event in events_to_validate:
@@ -197,6 +232,10 @@ def make_api_request(endpoint, data, method):
             result = sdk.send_withdraw_event(data)
         elif method == 'gaming':
             result = sdk.send_gaming_activity_event(data)
+        elif method == 'wallet':
+            result = sdk.send_wallet_balance_event(data)
+        elif method == 'referral':
+            result = sdk.send_refer_friend_event(data)    
         else:
             raise ValueError(f"Unknown method: {method}")
         
@@ -274,6 +313,8 @@ def test_all_endpoints():
     deposit_dict = TEST_DATA['deposit'].to_dict()
     withdraw_dict = TEST_DATA['withdraw'].to_dict()
     gaming_dict = TEST_DATA['gaming'].to_dict()
+    wallet_dict = TEST_DATA['wallet'].to_dict()
+    referral_dict = TEST_DATA['referral'].to_dict()
     endpoints = [
         {
             'name': 'Customer Profile',
@@ -304,6 +345,18 @@ def test_all_endpoints():
             'endpoint': '/events/gaming-activity',
             'data': gaming_dict,
             'method': 'gaming'
+        },
+                {
+            'name': 'Wallet Balance Event',
+            'endpoint': '/events/wallet-balance',
+            'data': wallet_dict,
+            'method': 'wallet'
+        },
+        {
+            'name': 'Refer Friend Event',
+            'endpoint': '/events/refer-friend',
+            'data': referral_dict,
+            'method': 'referral'
         }
     ]
     

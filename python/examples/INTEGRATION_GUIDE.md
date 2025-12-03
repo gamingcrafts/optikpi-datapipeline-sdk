@@ -18,6 +18,8 @@ This guide provides comprehensive instructions for third-party developers to int
 - **Account Events**: Registration, verification, and account changes
 - **Financial Events**: Deposits, withdrawals, and transactions
 - **Gaming Activity**: Game plays, wins, losses, and session data
+- **Wallet Balance Events**: Cash, bonus, total, and blocked amounts
+- **Refer Friend Events**: Referral tracking with rewards and conversion status
 
 ## Table of Contents
 
@@ -59,7 +61,7 @@ sdk = OptikpiDataPipelineSDK({
     'authToken': 'your-auth-token',
     'accountId': 'your-account-id',
     'workspaceId': 'your-workspace-id',
-    'baseURL': 'https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest'
+    'baseURL': 'https://your-api-gateway-url/apigw/ingest'
 })
 
 # Health check
@@ -138,7 +140,7 @@ For enhanced security, all requests require HMAC signature validation using **HK
 
 ### Base URL
 ```
-https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest
+https://your-api-gateway-url/apigw/ingest
 ```
 
 ### Available Endpoints
@@ -150,6 +152,8 @@ https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest
 | `/events/deposit` | POST | Push deposit events | 1000 req/sec |
 | `/events/withdraw` | POST | Push withdrawal events | 1000 req/sec |
 | `/events/gaming-activity` | POST | Push gaming activity events | 1000 req/sec |
+| `/events/wallet-balance` | POST | Push wallet balance events | 1000 req/sec |
+| `/events/refer-friend` | POST | Push refer-a-friend events | 1000 req/sec |
 | `/datapipeline/health` | GET | Health check endpoint | No limit |
 
 ### Required Headers
@@ -301,6 +305,47 @@ gaming = GamingActivityEvent(
     metadata={"note": "Evening session"}  # optional dictionary
 )
 ```
+### Wallet Balance Event
+```python
+wallet = WalletBalanceEvent(
+    account_id="string (required)",
+    workspace_id="string (required)",
+    user_id="string (required)",
+    event_category="Wallet Balance",
+    event_name="Balance Updated",
+    event_id="evt_wallet_001",
+    event_time="2024-01-15T14:45:00Z",  # ISO 8601 format
+
+    currency="USD",  # optional
+    
+    current_cash_balance=500.00,   # required number
+    current_bonus_balance=100.00,  # optional number
+    current_total_balance=600.00,  # required number
+    blocked_amount=20.00,          # optional number
+    metadata={"source": "deposit"} # optional dictionary
+)
+```
+
+### Refer Friend Event
+```python
+referral = ReferFriendEvent(
+    account_id="string (required)",
+    workspace_id="string (required)",
+    user_id="string (required)",
+    event_category="Refer Friend",
+    event_name="Referral Successful",
+    event_id="evt_rf_001",
+    event_time="2024-01-15T15:00:00Z",  # ISO 8601 format
+
+    referral_code_used="REF123",                # required string
+    referee_user_id="user789",                  # required string
+    successful_referral_confirmation=True,      # required bool
+    reward_type="bonus",                        # optional
+    reward_amount=50.00,                        # optional
+    reward_claimed_status="claimed",            # optional: claimed/pending/expired
+    metadata={"campaign": "HOLIDAY_REFER"}      # optional dictionary
+)
+```
 
 ## Integration Examples
 
@@ -318,7 +363,7 @@ sdk = OptikpiDataPipelineSDK({
     'authToken': 'your-auth-token',
     'accountId': 'your-account-id',
     'workspaceId': 'your-workspace-id',
-    'baseURL': 'https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest'
+    'baseURL': 'https://your-api-gateway-url/apigw/ingest'
 })
 ```
 
@@ -817,6 +862,116 @@ try:
         print(f"❌ API health check failed: {result['error']}")
 except Exception as error:
     print(f'❌ Error: {str(error)}')
+```
+### Example 8: Push Wallet Balance Event
+```python
+#!/usr/bin/env python3
+"""
+Send Wallet Balance Event Example
+"""
+import os
+from dotenv import load_dotenv
+sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "python"))
+
+from index import OptikpiDataPipelineSDK
+from models.WalletBalanceEvent import WalletBalanceEvent
+
+load_dotenv()
+
+sdk = OptikpiDataPipelineSDK({
+    'authToken': os.getenv('AUTH_TOKEN'),
+    'accountId': os.getenv('ACCOUNT_ID'),
+    'workspaceId': os.getenv('WORKSPACE_ID'),
+    'baseURL': os.getenv('API_BASE_URL')
+})
+
+wallet = WalletBalanceEvent(
+    account_id=os.getenv('ACCOUNT_ID'),
+    workspace_id=os.getenv('WORKSPACE_ID'),
+    user_id="user123",
+    event_category="Wallet Balance",
+    event_name="Balance Updated",
+    event_id="evt_wallet_987654321",
+    event_time="2024-01-15T10:30:00Z",
+    currency="USD",
+    current_cash_balance=450.00,
+    current_bonus_balance=50.00,
+    current_total_balance=500.00,
+    blocked_amount=0.00
+)
+
+validation = wallet.validate()
+if not validation["isValid"]:
+    print("❌ Validation errors:", validation["errors"])
+    sys.exit(1)
+
+print("✅ Wallet event validated successfully!")
+
+try:
+    result = sdk.send_wallet_balance_event(wallet)
+    if result['success']:
+        print("✅ Wallet balance event sent successfully!")
+        print("Response:", result['data'])
+    else:
+        print("❌ Failed:", result['error'])
+except Exception as error:
+    print("❌ Error:", str(error))
+```
+
+### Push Refer Friend Event
+```python
+#!/usr/bin/env python3
+"""
+Send Refer Friend Event Example
+"""
+import os
+from dotenv import load_dotenv
+sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "python"))
+
+from index import OptikpiDataPipelineSDK
+from models.ReferFriendEvent import ReferFriendEvent
+
+load_dotenv()
+
+sdk = OptikpiDataPipelineSDK({
+    'authToken': os.getenv('AUTH_TOKEN'),
+    'accountId': os.getenv('ACCOUNT_ID'),
+    'workspaceId': os.getenv('WORKSPACE_ID'),
+    'baseURL': os.getenv('API_BASE_URL')
+})
+
+referral = ReferFriendEvent(
+    account_id=os.getenv('ACCOUNT_ID'),
+    workspace_id=os.getenv('WORKSPACE_ID'),
+    user_id="user123",
+    event_category="Refer Friend",
+    event_name="Referral Successful",
+    event_id="evt_rf_1234",
+    event_time="2024-01-15T10:45:00Z",
+    referral_code_used="REFER50",
+    referee_user_id="user789",
+    successful_referral_confirmation=True,
+    reward_type="bonus",
+    reward_amount=100.00,
+    reward_claimed_status="pending"
+)
+
+validation = referral.validate()
+if not validation["isValid"]:
+    print("❌ Validation errors:", validation["errors"])
+    sys.exit(1)
+
+print("✅ Referral event validated successfully!")
+
+try:
+    result = sdk.send_refer_friend_event(referral)
+    if result['success']:
+        print("✅ Refer friend event sent successfully!")
+        print("Response:", result['data'])
+    else:
+        print("❌ Failed:", result['error'])
+except Exception as error:
+    print("❌ Error:", str(error))
 ```
 
 ## Error Handling

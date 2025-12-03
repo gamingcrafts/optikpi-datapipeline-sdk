@@ -279,6 +279,32 @@ class DataPipelineClient:
         """
         return self._make_request('POST', '/extattributes', data)
     
+    def send_wallet_balance_event(self, data: Union[Dict[str, Any], List[Dict[str, Any]]]) -> Dict[str, Any]:
+        """
+        Sends wallet balance event data
+    
+        Args:
+            data: Wallet balance event data or list of events
+        
+        Returns:
+            API response dictionary
+        """
+        return self._make_request('POST', '/events/wallet-balance', data)
+
+
+    def send_refer_friend_event(self, data: Union[Dict[str, Any], List[Dict[str, Any]]]) -> Dict[str, Any]:
+        """
+        Sends refer friend event data
+    
+        Args:
+            data: Refer friend event data or list of events
+        
+        Returns:
+            API response dictionary
+        """
+        return self._make_request('POST', '/events/refer-friend', data)
+
+    
     def send_batch(self, batch_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Sends multiple events in batch
@@ -290,6 +316,8 @@ class DataPipelineClient:
                 - depositEvents: List of deposit events
                 - withdrawEvents: List of withdraw events
                 - gamingEvents: List of gaming activity events
+                - walletBalanceEvents: List of wallet balance events
+                - referFriendEvents: List of refer friend events
             
         Returns:
             Batch response results dictionary
@@ -312,6 +340,12 @@ class DataPipelineClient:
         if 'gamingEvents' in batch_data:
             results['gamingEvents'] = self.send_gaming_activity_event(batch_data['gamingEvents'])
         
+        if 'walletBalanceEvents' in batch_data:
+             results['walletBalanceEvents'] = self.send_wallet_balance_event(batch_data['walletBalanceEvents'])
+
+        if 'referFriendEvents' in batch_data:
+            results['referFriendEvents'] = self.send_refer_friend_event(batch_data['referFriendEvents'])
+
         return {
             'success': True,
             'results': results,
@@ -328,6 +362,7 @@ class DataPipelineClient:
         self.config.update(new_config)
         self.validate_config()
         self.setup_session()
+    
     
     def get_config(self) -> Dict[str, Any]:
         """
