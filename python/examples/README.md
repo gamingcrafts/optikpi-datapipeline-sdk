@@ -17,7 +17,7 @@ This folder contains Python examples for integrating with the Optikpi API using 
    cp env.example .env
    
    # Edit .env with your actual values
-   API_BASE_URL=https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest
+   API_BASE_URL=https://your-api-gateway-url/apigw/ingest
    AUTH_TOKEN=your-auth-token-here
    ACCOUNT_ID=your-account-id
    WORKSPACE_ID=your-workspace-id
@@ -26,7 +26,7 @@ This folder contains Python examples for integrating with the Optikpi API using 
    **Option B: Direct Configuration**
    Edit the configuration variables in the test files:
    ```python
-   API_BASE_URL = "https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest"
+   API_BASE_URL = "https://your-api-gateway-url/apigw/ingest'"
    AUTH_TOKEN = "your-auth-token-here"
    ACCOUNT_ID = "your-account-id"
    WORKSPACE_ID = "your-workspace-id"
@@ -85,7 +85,7 @@ sdk = OptikpiDataPipelineSDK({
     'authToken': 'your-auth-token',
     'accountId': 'your-account-id',
     'workspaceId': 'your-workspace-id',
-    'baseURL': 'https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest'
+    'baseURL': 'https://your-api-gateway-url/apigw/ingest''
 })
 ```
 
@@ -106,7 +106,7 @@ sdk = OptikpiDataPipelineSDK({
 🚀 Testing Customer Endpoint
 ============================
 Configuration:
-API Base URL: https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest
+API Base URL: https://your-api-gateway-url/apigw/ingest'
 Account ID: 688743ad724a144fc1e051d9
 Workspace ID: 67bed03cc39204069f2f0366
 Auth Token: 055da5b3...
@@ -189,7 +189,7 @@ The examples can be configured using environment variables for better security a
 
 | Variable | Description | Required | Default |
 |----------|-------------|----------|---------|
-| `API_BASE_URL` | API Gateway URL | Yes | `https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest` |
+| `API_BASE_URL` | API Gateway URL | Yes | `https://your-api-gateway-url/apigw/ingest'` |
 | `AUTH_TOKEN` | Authentication token | Yes | Demo token (not for production) |
 | `ACCOUNT_ID` | Your account identifier | Yes | Demo account ID |
 | `WORKSPACE_ID` | Your workspace identifier | Yes | Demo workspace ID |
@@ -198,7 +198,7 @@ The examples can be configured using environment variables for better security a
 
 **Linux/macOS:**
 ```bash
-export API_BASE_URL="https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest"
+export API_BASE_URL="https://your-api-gateway-url/apigw/ingest'"
 export AUTH_TOKEN="your-auth-token"
 export ACCOUNT_ID="your-account-id"
 export WORKSPACE_ID="your-workspace-id"
@@ -206,7 +206,7 @@ export WORKSPACE_ID="your-workspace-id"
 
 **Windows:**
 ```cmd
-set API_BASE_URL=https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest
+set API_BASE_URL=https://your-api-gateway-url/apigw/ingest'
 set AUTH_TOKEN=your-auth-token
 set ACCOUNT_ID=your-account-id
 set WORKSPACE_ID=your-workspace-id

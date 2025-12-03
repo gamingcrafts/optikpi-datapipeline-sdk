@@ -14,7 +14,7 @@ python/__pycache__/
 python/.pytest_cache/
 python/dist/
 python/.coverage
-python/.env
+#python/.env
 python/poetry.lock
 
 # Python - src/python specific

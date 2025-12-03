@@ -61,7 +61,7 @@ sdk = OptikpiDataPipelineSDK({
     'authToken': 'your-auth-token',
     'accountId': 'your-account-id',
     'workspaceId': 'your-workspace-id',
-    'baseURL':'https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest'
+    'baseURL':'https://your-api-gateway-url/apigw/ingest'
 })
 ```
 
@@ -168,9 +168,7 @@ result = sdk.send_deposit_event(deposit)
 batch_data = {
     'customers': [customer1, customer2],
     'depositEvents': [deposit1, deposit2],
-    'gamingEvents': [gaming1, gaming2],
-    'walletBalanceEvents': [wallet1, wallet2],
-    'referFriendEvents': [referral1, referral2]
+    'gamingEvents': [gaming1, gaming2]
 }
 
 batch_result = sdk.send_batch(batch_data)
@@ -185,7 +183,7 @@ batch_result = sdk.send_batch(batch_data)
 | `authToken` | str | ✅ | - | Your authentication token |
 | `accountId` | str | ✅ | - | Your account ID |
 | `workspaceId` | str | ✅ | - | Your workspace ID |
-| `baseURL` | str | ❌ | `https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest` | API base URL |
+| `baseURL` | str | ❌ | `https://your-api-gateway-url/apigw/ingest` | API base URL |
 | `timeout` | int | ❌ | `30` | Request timeout in seconds |
 | `retries` | int | ❌ | `3` | Number of retry attempts |
 | `retryDelay` | int | ❌ | `1` | Delay between retries in seconds |
@@ -235,20 +233,6 @@ Sends gaming activity events.
 result = sdk.send_gaming_activity_event(gaming_event)
 ```
 
-#### `send_wallet_balance_event(data)`
-Sends wallet balance events.
-
-```python
-result = sdk.send_wallet_balance_event(wallet_event)
-```
-
-#### `send_refer_friend_event(data)`
-Sends refer-a-friend events.
-
-```python
-result = sdk.send_refer_friend_event(referral_event)
-```
-
 #### `send_extended_attributes(data)`
 Sends extended attributes data.
 
@@ -263,9 +247,7 @@ Sends multiple types of data in a single batch operation.
 result = sdk.send_batch({
     'customers': [customer1, customer2],
     'depositEvents': [deposit1, deposit2],
-    'gamingEvents': [gaming1, gaming2],
-    'walletBalanceEvents': [wallet1, wallet2],
-    'referFriendEvents': [referral1, referral2]
+    'gamingEvents': [gaming1, gaming2]
 })
 ```
 
@@ -295,8 +277,6 @@ if not validation['is_valid']:
 from models.AccountEvent import AccountEvent
 from models.DepositEvent import DepositEvent
 from models.GamingActivityEvent import GamingActivityEvent
-from models.WalletBalanceEvent import WalletBalanceEvent
-from models.ReferFriendEvent import ReferFriendEvent
 
 account = AccountEvent(
     account_id=ACCOUNT_ID,
@@ -481,7 +461,7 @@ Create a `.env` file:
 OPTIKPI_AUTH_TOKEN=your-auth-token-here
 OPTIKPI_ACCOUNT_ID=your-account-id
 OPTIKPI_WORKSPACE_ID=your-workspace-id
-OPTIKPI_API_URL=https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest
+OPTIKPI_API_URL=https://your-api-gateway-url/apigw/ingest
 ```
 
 ### Error Handling Example
