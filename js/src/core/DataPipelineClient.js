@@ -385,6 +385,20 @@ class DataPipelineClient {
       );
     }
 
+     if (batchData.walletBalanceEvents) {
+      promises.push(
+        this.sendWalletBalanceEvent(batchData.walletBalanceEvents)
+          .then(result => { results.walletBalanceEvents = result; })
+      );
+    }
+
+    if (batchData.referFriendEvents) {
+      promises.push(
+        this.sendReferFriendEvent(batchData.referFriendEvents)
+          .then(result => { results.referFriendEvents = result; })
+      );
+    }
+
     await Promise.all(promises);
 
     return {

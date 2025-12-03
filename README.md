@@ -150,7 +150,7 @@ OPTIKPI_ACCOUNT_ID=your_account_id
 OPTIKPI_WORKSPACE_ID=your_workspace_id
 
 # Optional
-OPTIKPI_BASE_URL=https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest
+OPTIKPI_BASE_URL=https://app.optikpi.com/apigw/ingest
 OPTIKPI_TIMEOUT=30000
 OPTIKPI_RETRIES=3
 ```
@@ -159,7 +159,7 @@ OPTIKPI_RETRIES=3
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `baseUrl` | String | `https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest` | API base URL |
+| `baseUrl` | String | `https://app.optikpi.com/apigw/ingest` | API base URL |
 | `timeout` | Number | `30000` | Request timeout in milliseconds |
 | `retries` | Number | `3` | Number of retry attempts |
 | `retryDelay` | Number | `1000` | Delay between retries in milliseconds |

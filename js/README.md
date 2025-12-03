@@ -34,7 +34,7 @@ const sdk = new OptikpiDataPipelineSDK({
   authToken: 'your-auth-token',
   accountId: 'your-account-id',
   workspaceId: 'your-workspace-id',
-  baseURL: 'https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest'
+  baseURL: 'https://your-api-gateway-url/apigw/ingest'
 });
 ```
 
@@ -116,7 +116,7 @@ const batchResult = await sdk.sendBatch(batchData);
 | `authToken` | string | ✅ | - | Your authentication token |
 | `accountId` | string | ✅ | - | Your account ID |
 | `workspaceId` | string | ✅ | - | Your workspace ID |
-| `baseURL` | string | ❌ | `https://5800o195ia.execute-api.eu-west-1.amazonaws.com/apigw/ingest` | API base URL |
+| `baseURL` | string | ❌ | `https://your-api-gateway-url/apigw/ingest` | API base URL |
 | `timeout` | number | ❌ | `30000` | Request timeout in milliseconds |
 | `retries` | number | ❌ | `3` | Number of retry attempts |
 | `retryDelay` | number | ❌ | `1000` | Delay between retries in milliseconds |

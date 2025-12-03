@@ -1,6 +1,6 @@
 require('dotenv').config();
 const OptikpiDataPipelineSDK = require('../src/index');
-const { AccountEvent,CustomerProfile,DepositEvent,GamingActivityEvent,WithdrawEvent} = require('../src/models');
+const { AccountEvent, CustomerProfile, DepositEvent, GamingActivityEvent, WithdrawEvent, WalletBalanceEvent, ReferFriendEvent } = require('../src/models');
 
 // Configuration - Read from environment variables
 const API_BASE_URL = process.env.API_BASE_URL;
@@ -26,7 +26,7 @@ const sdk = new OptikpiDataPipelineSDK({
 
 // Test data for different endpoints
 const TEST_DATA = {
-  customer:new CustomerProfile({ 
+  customer: new CustomerProfile({
     "account_id": ACCOUNT_ID,
     "workspace_id": WORKSPACE_ID,
     "user_id": "user123456",
@@ -84,7 +84,7 @@ const TEST_DATA = {
     "campaign_code": "CAMPAIGN_001",
     "reason": "Registration completed successfully"
   }),
-  deposit:new DepositEvent( {
+  deposit: new DepositEvent({
     "account_id": ACCOUNT_ID,
     "workspace_id": WORKSPACE_ID,
     "user_id": "user123456",
@@ -98,7 +98,7 @@ const TEST_DATA = {
     "payment_provider_id": "provider123",
     "payment_provider_name": "Bank Transfer"
   }),
-  withdraw:new WithdrawEvent( {
+  withdraw: new WithdrawEvent({
     "account_id": ACCOUNT_ID,
     "workspace_id": WORKSPACE_ID,
     "user_id": "user123456",
@@ -110,7 +110,7 @@ const TEST_DATA = {
     "payment_method": "bank",
     "transaction_id": "txn_123456790"
   }),
-  gaming: new GamingActivityEvent ({
+  gaming: new GamingActivityEvent({
     "account_id": ACCOUNT_ID,
     "workspace_id": WORKSPACE_ID,
     "user_id": "user123456",
@@ -123,6 +123,37 @@ const TEST_DATA = {
     "game_id": "game_123",
     "game_title": "Blackjack",
     "provider": "Provider A"
+  }),
+  walletBalance: new WalletBalanceEvent({
+    "account_id": ACCOUNT_ID,
+    "workspace_id": WORKSPACE_ID,
+    "user_id": "user123456",
+    "event_category": "Wallet Balance",
+    "event_name": "Balance Update",
+    "event_id": "evt_wb_123456789",
+    "event_time": "2024-01-15T17:00:00Z",
+    "wallet_type": "main",
+    "currency": "USD",
+    "current_cash_balance": 1250.50,
+    "current_bonus_balance": 100.00,
+    "current_total_balance": 1350.50,
+    "blocked_amount": 50.00
+  }),
+  referFriend: new ReferFriendEvent({
+    "account_id": ACCOUNT_ID,
+    "workspace_id": WORKSPACE_ID,
+    "user_id": "user123456",
+    "event_category": "Refer Friend",
+    "event_name": "Referral Successful",
+    "event_id": "evt_rf_123456789",
+    "event_time": "2024-01-15T18:00:00Z",
+    "referral_code_used": "REF123456",
+    "successful_referral_confirmation": true,
+    "reward_type": "bonus",
+    "reward_claimed_status": "claimed",
+    "referee_user_id": "user789012",
+    "referee_registration_date": "2024-01-15T10:30:00Z",
+    "referee_first_deposit": 100.00
   })
 };
 const eventsToValidate = [
@@ -130,7 +161,9 @@ const eventsToValidate = [
   { key: "account", label: "Account" },
   { key: "deposit", label: "Deposit" },
   { key: "withdraw", label: "Withdraw" },
-  { key: "gaming", label: "Gaming" }
+  { key: "gaming", label: "Gaming" },
+  { key: "walletBalance", label: "WalletBalance" },
+  { key: "referFriend", label: "ReferFriend" }
 ];
 
 for (const { key, label } of eventsToValidate) {
@@ -150,7 +183,7 @@ async function makeApiRequest(endpoint, data, method) {
 
   const startTime = Date.now();
   let result;
-  
+
   try {
     switch (method) {
       case 'customer':
@@ -168,12 +201,18 @@ async function makeApiRequest(endpoint, data, method) {
       case 'gaming':
         result = await sdk.sendGamingActivityEvent(data);
         break;
+      case 'walletBalance':
+        result = await sdk.sendWalletBalanceEvent(data);
+        break;
+      case 'referFriend':
+        result = await sdk.sendReferFriendEvent(data);
+        break;
       default:
         throw new Error(`Unknown method: ${method}`);
     }
-    
+
     const endTime = Date.now();
-    
+
     return {
       status: result.status || 200,
       data: result.data,
@@ -206,7 +245,9 @@ async function testAllEndpoints() {
     { name: 'Account Event', endpoint: '/events/account', data: TEST_DATA.account, method: 'account' },
     { name: 'Deposit Event', endpoint: '/events/deposit', data: TEST_DATA.deposit, method: 'deposit' },
     { name: 'Withdrawal Event', endpoint: '/events/withdraw', data: TEST_DATA.withdraw, method: 'withdraw' },
-    { name: 'Gaming Activity', endpoint: '/events/gaming-activity', data: TEST_DATA.gaming, method: 'gaming' }
+    { name: 'Gaming Activity', endpoint: '/events/gaming-activity', data: TEST_DATA.gaming, method: 'gaming' },
+    { name: 'Wallet Balance', endpoint: '/events/wallet-balance', data: TEST_DATA.walletBalance, method: 'walletBalance' },
+    { name: 'Refer Friend', endpoint: '/events/refer-friend', data: TEST_DATA.referFriend, method: 'referFriend' }
   ];
 
   const results = [];
@@ -215,15 +256,15 @@ async function testAllEndpoints() {
     try {
       console.log(`\n📡 Testing ${endpoint.name}...`);
       console.log('─'.repeat(50));
-      
+
       const result = await makeApiRequest(endpoint.endpoint, endpoint.data, endpoint.method);
-      
+
       console.log(`✅ ${endpoint.name} - SUCCESS`);
       console.log(`   Status: ${result.status}`);
       console.log(`   Response Time: ${result.responseTime}ms`);
       console.log(`   SDK Success: ${result.success}`);
       console.log(`   Response:`, JSON.stringify(result.data, null, 2));
-      
+
       results.push({
         endpoint: endpoint.name,
         status: 'SUCCESS',
@@ -234,11 +275,11 @@ async function testAllEndpoints() {
 
     } catch (error) {
       console.log(`❌ ${endpoint.name} - FAILED`);
-      
+
       if (error.response) {
         console.log(`   HTTP Status: ${error.response.status}`);
         console.log(`   Error Response:`, JSON.stringify(error.response.data, null, 2));
-        
+
         results.push({
           endpoint: endpoint.name,
           status: 'FAILED',
@@ -247,7 +288,7 @@ async function testAllEndpoints() {
         });
       } else {
         console.log(`   Error: ${error.message}`);
-        
+
         results.push({
           endpoint: endpoint.name,
           status: 'FAILED',
@@ -260,14 +301,14 @@ async function testAllEndpoints() {
   // Summary
   console.log('\n📊 Test Summary');
   console.log('===============');
-  
+
   const successful = results.filter(r => r.status === 'SUCCESS').length;
   const failed = results.filter(r => r.status === 'FAILED').length;
-  
+
   console.log(`✅ Successful: ${successful}`);
   console.log(`❌ Failed: ${failed}`);
   console.log(`📈 Success Rate: ${((successful / results.length) * 100).toFixed(1)}%`);
-  
+
   if (failed > 0) {
     console.log('\n❌ Failed Endpoints:');
     results.filter(r => r.status === 'FAILED').forEach(result => {
@@ -282,11 +323,11 @@ async function testAllEndpoints() {
 async function healthCheck() {
   try {
     console.log('\n🏥 Performing Health Check...');
-    
+
     const startTime = Date.now();
     const result = await sdk.healthCheck();
     const endTime = Date.now();
-    
+
     if (result.success) {
       console.log('✅ Health Check - SUCCESS');
       console.log(`   Status: ${result.status}`);
@@ -297,7 +338,7 @@ async function healthCheck() {
       console.log(`   Error: ${result.error}`);
       console.log(`   Status: ${result.status}`);
     }
-    
+
     return result;
   } catch (error) {
     console.log('❌ Health Check - FAILED');
@@ -311,10 +352,10 @@ async function runTests() {
   try {
     // Health check first
     await healthCheck();
-    
+
     // Test all endpoints
     const results = await testAllEndpoints();
-    
+
     console.log('\n🎉 All tests completed!');
     return results;
   } catch (error) {
