@@ -1,0 +1,104 @@
+require('dotenv').config();
+const OptikpiDataPipelineSDK = require('../src/index');
+const { GamingActivityEvent } = require('../src/models');
+
+// Configuration - Read from environment variables
+const API_BASE_URL = process.env.API_BASE_URL;
+const AUTH_TOKEN = process.env.AUTH_TOKEN;
+const ACCOUNT_ID = process.env.ACCOUNT_ID;
+const WORKSPACE_ID = process.env.WORKSPACE_ID;
+
+// Validate required environment variables
+if (!AUTH_TOKEN || !ACCOUNT_ID || !WORKSPACE_ID) {
+  console.error('❌ Error: Missing required environment variables!');
+  console.error('   Please set: AUTH_TOKEN, ACCOUNT_ID, WORKSPACE_ID');
+  console.error('   Copy env.example to .env and fill in your values');
+  process.exit(1);
+}
+
+// Initialize SDK
+const sdk = new OptikpiDataPipelineSDK({
+  authToken: AUTH_TOKEN,
+  accountId: ACCOUNT_ID,
+  workspaceId: WORKSPACE_ID,
+  baseURL: API_BASE_URL
+});
+
+// Gaming activity event data
+const gaming =new GamingActivityEvent ({
+  "account_id": ACCOUNT_ID,
+  "workspace_id": WORKSPACE_ID,
+  "user_id": "user123411",
+  "event_category": "Gaming Activity",
+  "event_name": "Play Casino Game",
+  "event_id": "1234",
+  "event_time": "2024-01-15T10:30:00Z",
+  "game_id": "123",
+  "game_title": "poker"
+});
+
+// Validate the account event
+const validation = gaming.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+
+console.log('✅ Gaming event validated successfully!');
+
+// SDK handles HMAC authentication automatically
+
+// Test gaming endpoint
+async function testGamingEndpoint() {
+  try {
+    console.log('🎮 Testing Gaming Activity Events Endpoint');
+    console.log('==========================================');
+    
+    console.log('Configuration:');
+    console.log(`API Base URL: ${API_BASE_URL}`);
+    console.log(`Account ID: ${ACCOUNT_ID}`);
+    console.log(`Workspace ID: ${WORKSPACE_ID}`);
+    console.log(`Auth Token: ${AUTH_TOKEN.substring(0, 8)}...`);
+    
+    console.log('\nMaking API request using SDK...');
+    console.log('Gaming Event Data:', JSON.stringify(gaming, null, 2));
+    
+    // Make the API call using SDK
+    const startTime = Date.now();
+    const result = await sdk.sendGamingActivityEvent(gaming);
+    const endTime = Date.now();
+    
+    if (result.success) {
+      console.log('\n✅ Success!');
+      console.log('==========================================');
+      console.log(`HTTP Status: ${result.status}`);
+      console.log(`Response Time: ${endTime - startTime}ms`);
+      console.log(`SDK Success: ${result.success}`);
+      console.log('Response Data:', JSON.stringify(result.data, null, 2));
+    } else {
+      console.log('\n❌ API Error!');
+      console.log('==========================================');
+      console.log(`HTTP Status: ${result.status}`);
+      console.log(`Response Time: ${endTime - startTime}ms`);
+      console.log(`SDK Success: ${result.success}`);
+      console.log('Error Data:', JSON.stringify(result.data, null, 2));
+    }
+    
+  } catch (error) {
+    console.error('\n❌ SDK Error occurred!');
+    console.error('==========================================');
+    console.error('Error:', error.message);
+    console.error('Stack:', error.stack);
+  }
+}
+
+// Run the test
+if (require.main === module) {
+  testGamingEndpoint();
+}
+
+module.exports = {
+  testGamingEndpoint,
+  gaming,
+  sdk
+};

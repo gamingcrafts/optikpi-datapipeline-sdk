@@ -1,20 +1,26 @@
 package com.optikpi.datapipeline;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.optikpi.datapipeline.crypto.CryptoUtils;
-import okhttp3.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 
-/**
- * Data Pipeline API Client
- * Main client class for interacting with the Optikpi Data Pipeline API
- */
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.optikpi.datapipeline.crypto.CryptoUtils;
+
+import okhttp3.FormBody;
+import okhttp3.Interceptor;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class DataPipelineClient {
     private static final Logger logger = LoggerFactory.getLogger(DataPipelineClient.class);
     
@@ -47,6 +53,9 @@ public class DataPipelineClient {
     private ObjectMapper createObjectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        // DO NOT SORT - preserve field declaration order
+        mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
         return mapper;
     }
     
@@ -65,7 +74,6 @@ public class DataPipelineClient {
         
         if (originalRequest.body() != null && !"GET".equals(originalRequest.method())) {
             try {
-                // Buffer the request body for HMAC signing
                 RequestBody originalBody = originalRequest.body();
                 String requestBody = getRequestBody(originalBody);
                 
@@ -76,9 +84,8 @@ public class DataPipelineClient {
                     config.getWorkspaceId()
                 );
                 
-                // Create new request body with the same content
                 RequestBody newBody = RequestBody.create(
-                    requestBody.getBytes(),
+                    requestBody,
                     originalBody.contentType()
                 );
                 
@@ -160,7 +167,6 @@ public class DataPipelineClient {
             }
             return sb.toString();
         } else {
-            // For JSON bodies, we need to buffer them
             try (okio.Buffer buffer = new okio.Buffer()) {
                 body.writeTo(buffer);
                 return buffer.readUtf8();
@@ -168,10 +174,6 @@ public class DataPipelineClient {
         }
     }
     
-    /**
-     * Performs a health check on the API
-     * @return Health check response
-     */
     public ApiResponse<Object> healthCheck() {
         try {
             Request request = new Request.Builder()
@@ -195,56 +197,26 @@ public class DataPipelineClient {
         }
     }
     
-    /**
-     * Sends customer profile data
-     * @param data Customer profile data or array of profiles
-     * @return API response
-     */
     public ApiResponse<Object> sendCustomerProfile(Object data) {
         return sendData("/customers", data);
     }
     
-    /**
-     * Sends account event data
-     * @param data Account event data or array of events
-     * @return API response
-     */
     public ApiResponse<Object> sendAccountEvent(Object data) {
         return sendData("/events/account", data);
     }
     
-    /**
-     * Sends deposit event data
-     * @param data Deposit event data or array of events
-     * @return API response
-     */
     public ApiResponse<Object> sendDepositEvent(Object data) {
         return sendData("/events/deposit", data);
     }
     
-    /**
-     * Sends withdrawal event data
-     * @param data Withdrawal event data or array of events
-     * @return API response
-     */
     public ApiResponse<Object> sendWithdrawEvent(Object data) {
         return sendData("/events/withdraw", data);
     }
     
-    /**
-     * Sends gaming activity event data
-     * @param data Gaming activity event data or array of events
-     * @return API response
-     */
     public ApiResponse<Object> sendGamingActivityEvent(Object data) {
         return sendData("/events/gaming-activity", data);
     }
     
-    /**
-     * Sends multiple events in batch
-     * @param batchData Object containing different event types
-     * @return Batch response results
-     */
     public BatchResponse sendBatch(BatchData batchData) {
         BatchResponse results = new BatchResponse();
         results.setSuccess(true);
@@ -276,7 +248,11 @@ public class DataPipelineClient {
     private ApiResponse<Object> sendData(String endpoint, Object data) {
         try {
             String jsonData = objectMapper.writeValueAsString(data);
-            RequestBody body = RequestBody.create(jsonData, MediaType.get("application/json; charset=utf-8"));
+            
+            RequestBody body = RequestBody.create(
+                jsonData,
+                MediaType.get("application/json; charset=utf-8")
+            );
             
             Request request = new Request.Builder()
                     .url(config.getBaseUrl() + endpoint)
@@ -299,29 +275,17 @@ public class DataPipelineClient {
         }
     }
     
-    /**
-     * Updates client configuration
-     * @param newConfig New configuration options
-     */
     public void updateConfig(ClientConfig newConfig) {
         this.config.updateFrom(newConfig);
         validateConfig(this.config);
     }
     
-    /**
-     * Gets current configuration (without sensitive data)
-     * @return Current configuration
-     */
     public ClientConfig getConfig() {
         ClientConfig copy = new ClientConfig();
         copy.updateFrom(config);
         return copy;
     }
     
-    /**
-     * Returns a copy of the config with masked sensitive data for logging
-     * @return Masked config copy
-     */
     public ClientConfig getConfigForLogging() {
         return config.copy();
     }

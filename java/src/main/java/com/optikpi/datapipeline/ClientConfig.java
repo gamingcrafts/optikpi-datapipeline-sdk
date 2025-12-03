@@ -4,7 +4,7 @@ package com.optikpi.datapipeline;
  * Configuration class for DataPipelineClient
  */
 public class ClientConfig {
-    private String baseUrl = "https://demo.optikpi.com/apigw/ingest";
+    private String baseUrl;
     private String authToken;
     private String accountId;
     private String workspaceId;

@@ -26,7 +26,7 @@ This folder contains JavaScript examples for integrating with the Optikpi API us
    **Option B: Direct Configuration**
    Edit the configuration variables in the test files:
    ```javascript
-   const API_BASE_URL = "https://demo.optikpi.com/apigw/ingest";
+   const API_BASE_URL = "https://your-api-gateway-url/apigw/ingest";
    const AUTH_TOKEN = "your-auth-token-here";
    const ACCOUNT_ID = "your-account-id";
    const WORKSPACE_ID = "your-workspace-id";
@@ -76,13 +76,13 @@ npm run test:simple-failures  # Simple focused validation failure tests
 
 ### SDK Initialization
 ```javascript
-const OptikpiDataPipelineSDK = require('@optikpi/datapipeline-sdk').default;
+const OptikpiDataPipelineSDK = require('../src/index');
 
 const sdk = new OptikpiDataPipelineSDK({
   authToken: 'your-auth-token',
   accountId: 'your-account-id',
   workspaceId: 'your-workspace-id',
-  baseURL: 'https://demo.optikpi.com/apigw/ingest'
+  baseURL: 'https://your-api-gateway-url/apigw/ingest'
 });
 ```
 
@@ -101,7 +101,7 @@ const sdk = new OptikpiDataPipelineSDK({
 🚀 Testing Customer Endpoint
 ============================
 Configuration:
-API Base URL: https://demo.optikpi.com/apigw/ingest
+API Base URL: "https://your-api-gateway-url/apigw/ingest"
 Account ID: 68911b7ad58ad825ec00c5ef
 Workspace ID: 68911b7ad58ad825ec00c5ef
 Auth Token: 0f07901b...
@@ -149,7 +149,7 @@ The examples can be configured using environment variables for better security a
 
 | Variable | Description | Required | Default |
 |----------|-------------|----------|---------|
-| `API_BASE_URL` | API Gateway URL | Yes | `https://demo.optikpi.com/apigw/ingest` |
+| `API_BASE_URL` | API Gateway URL | Yes | `https://your-api-gateway-url/apigw/ingest` |
 | `AUTH_TOKEN` | Authentication token | Yes | Demo token (not for production) |
 | `ACCOUNT_ID` | Your account identifier | Yes | Demo account ID |
 | `WORKSPACE_ID` | Your workspace identifier | Yes | Demo workspace ID |
@@ -183,6 +183,4 @@ node -r dotenv/config test-customer-endpoint.js
 ```
 
 ## Dependencies
-
-- `@optikpi/datapipeline-sdk` - Official Optikpi Data Pipeline SDK (installed locally from `../sdk/js`)
 - `dotenv` - Optional: for loading .env files (install with `npm install dotenv`) 

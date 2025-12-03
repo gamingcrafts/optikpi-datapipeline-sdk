@@ -1,14 +1,15 @@
 package com.optikpi.datapipeline.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Positive;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 
 /**
  * Withdrawal Event Model
@@ -50,13 +51,15 @@ public class WithdrawEvent {
     @JsonProperty("currency")
     private String currency;
     
-    @JsonProperty("withdrawal_method")
-    private String withdrawalMethod;
+    @NotBlank(message = "payment_method is required")
+    @JsonProperty("payment_method")
+    private String paymentMethod;
     
+    @NotBlank(message = "transaction_id is required")
     @JsonProperty("transaction_id")
     private String transactionId;
     
-    @Pattern(regexp = "verified|pending|failed|completed", message = "status must be one of: verified, pending, failed, completed")
+    @Pattern(regexp = "success|pending|failed|cancelled|rejected", message = "status must be one of: success, pending, failed, cancelled, rejected")
     @JsonProperty("status")
     private String status;
     
@@ -75,8 +78,14 @@ public class WithdrawEvent {
     @JsonProperty("reason")
     private String reason;
     
-    @JsonProperty("fee_amount")
-    private BigDecimal feeAmount;
+    @JsonProperty("fees")
+    private BigDecimal fees;
+    
+    @JsonProperty("net_amount")
+    private BigDecimal netAmount;
+    
+    @JsonProperty("withdrawal_reason")
+    private String withdrawalReason;
     
     @JsonProperty("processing_time")
     private String processingTime;
@@ -122,16 +131,24 @@ public class WithdrawEvent {
         if (amount == null) {
             errors.add("amount is required");
         }
+        if (paymentMethod == null || paymentMethod.trim().isEmpty()) {
+            errors.add("payment_method is required");
+        }
+        if (transactionId == null || transactionId.trim().isEmpty()) {
+            errors.add("transaction_id is required");
+        }
         
         // Event category validation
         if (eventCategory != null && !"Withdraw".equals(eventCategory)) {
             errors.add("event_category must be \"Withdraw\" for withdrawal events");
         }
         
-        // Event name validation
+        // Event name validation - CORRECTED to match JavaScript
         String[] validEventNames = {
-            "Withdrawal Initiated", "Withdrawal Completed", "Withdrawal Failed",
-            "Withdrawal Cancelled", "Withdrawal Reversed", "Withdrawal Approved",
+            "Successful Withdrawal",
+            "Failed Withdrawal",
+            "Pending Withdrawal",
+            "Withdrawal Cancelled",
             "Withdrawal Rejected"
         };
         
@@ -139,14 +156,19 @@ public class WithdrawEvent {
             errors.add("event_name must be one of: " + String.join(", ", validEventNames));
         }
         
-        // Status validation
+        // Status validation - CORRECTED to match JavaScript
         if (status != null && !isValidStatus(status)) {
-            errors.add("status must be one of: verified, pending, failed, completed");
+            errors.add("status must be one of: success, pending, failed, cancelled, rejected");
         }
         
         // Device validation
         if (device != null && !isValidDevice(device)) {
             errors.add("device must be one of: desktop, mobile, tablet, app");
+        }
+        
+        // Payment method validation - ADDED to match JavaScript
+        if (paymentMethod != null && !isValidPaymentMethod(paymentMethod)) {
+            errors.add("payment_method must be one of: bank, credit_card, debit_card, e_wallet, crypto, paypal, skrill, neteller");
         }
         
         // Date format validation
@@ -172,13 +194,20 @@ public class WithdrawEvent {
     }
     
     private boolean isValidStatus(String status) {
-        return "verified".equals(status) || "pending".equals(status) || 
-               "failed".equals(status) || "completed".equals(status);
+        return "success".equals(status) || "pending".equals(status) || 
+               "failed".equals(status) || "cancelled".equals(status) || "rejected".equals(status);
     }
     
     private boolean isValidDevice(String device) {
         return "desktop".equals(device) || "mobile".equals(device) || 
                "tablet".equals(device) || "app".equals(device);
+    }
+    
+    private boolean isValidPaymentMethod(String method) {
+        return "bank".equals(method) || "credit_card".equals(method) || 
+               "debit_card".equals(method) || "e_wallet".equals(method) ||
+               "crypto".equals(method) || "paypal".equals(method) ||
+               "skrill".equals(method) || "neteller".equals(method);
     }
     
     private boolean isValidDateTime(String dateTime) {
@@ -218,8 +247,8 @@ public class WithdrawEvent {
     public String getCurrency() { return currency; }
     public void setCurrency(String currency) { this.currency = currency; }
     
-    public String getWithdrawalMethod() { return withdrawalMethod; }
-    public void setWithdrawalMethod(String withdrawalMethod) { this.withdrawalMethod = withdrawalMethod; }
+    public String getPaymentMethod() { return paymentMethod; }
+    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
     
     public String getTransactionId() { return transactionId; }
     public void setTransactionId(String transactionId) { this.transactionId = transactionId; }
@@ -242,8 +271,14 @@ public class WithdrawEvent {
     public String getReason() { return reason; }
     public void setReason(String reason) { this.reason = reason; }
     
-    public BigDecimal getFeeAmount() { return feeAmount; }
-    public void setFeeAmount(BigDecimal feeAmount) { this.feeAmount = feeAmount; }
+    public BigDecimal getFees() { return fees; }
+    public void setFees(BigDecimal fees) { this.fees = fees; }
+    
+    public BigDecimal getNetAmount() { return netAmount; }
+    public void setNetAmount(BigDecimal netAmount) { this.netAmount = netAmount; }
+    
+    public String getWithdrawalReason() { return withdrawalReason; }
+    public void setWithdrawalReason(String withdrawalReason) { this.withdrawalReason = withdrawalReason; }
     
     public String getProcessingTime() { return processingTime; }
     public void setProcessingTime(String processingTime) { this.processingTime = processingTime; }

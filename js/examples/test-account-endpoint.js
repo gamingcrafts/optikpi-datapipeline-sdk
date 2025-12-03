@@ -1,8 +1,9 @@
 require('dotenv').config();
-const OptikpiDataPipelineSDK = require('@optikpi/datapipeline-sdk').default;
+const OptikpiDataPipelineSDK = require('../src/index');
+const { AccountEvent } = require('../src/models');
 
 // Configuration - Read from environment variables
-const API_BASE_URL = process.env.API_BASE_URL || "https://demo.optikpi.com/apigw/ingest";
+const API_BASE_URL = process.env.API_BASE_URL;
 const AUTH_TOKEN = process.env.AUTH_TOKEN;
 const ACCOUNT_ID = process.env.ACCOUNT_ID;
 const WORKSPACE_ID = process.env.WORKSPACE_ID;
@@ -24,21 +25,29 @@ const sdk = new OptikpiDataPipelineSDK({
 });
 
 // Account event data
-const ACCOUNT_EVENT = {
-  "account_id": ACCOUNT_ID,
-  "workspace_id": WORKSPACE_ID,
-  "user_id": "user123456",
-  "event_category": "Account",
-  "event_name": "Player Registration",
-  "event_id": "evt_123456789",
-  "event_time": "2024-01-15T10:30:00Z",
-  "device": "desktop",
-  "status": "verified",
-  "affiliate_id": "aff_123",
-  "partner_id": "partner_456",
-  "campaign_code": "CAMPAIGN_001",
-  "reason": "Registration completed successfully"
-};
+const account = new AccountEvent({
+  account_id: ACCOUNT_ID,
+  workspace_id: WORKSPACE_ID,
+  user_id: "user123456",
+  event_category: "Account",
+  event_name: "Player Registration",
+  event_id: "evt_123456789",
+  event_time: "2024-01-15T10:30:00Z",
+  device: "desktop",
+  status: "verified",
+  affiliate_id: "aff_123",
+  partner_id: "partner_456",
+  campaign_code: "CAMPAIGN_001",
+  reason: "Registration completed successfully"
+});
+
+// Validate the account event
+const validation = account.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+console.log('✅ Account event validated successfully!');
 
 // Test account endpoint
 async function testAccountEndpoint() {
@@ -53,11 +62,11 @@ async function testAccountEndpoint() {
     console.log(`Auth Token: ${AUTH_TOKEN.substring(0, 8)}...`);
     
     console.log('\nMaking API request using SDK...');
-    console.log('Account Event Data:', JSON.stringify(ACCOUNT_EVENT, null, 2));
+    console.log('Account Event Data:', JSON.stringify(account, null, 2));
     
     // Make the API call using SDK
     const startTime = Date.now();
-    const result = await sdk.sendAccountEvent(ACCOUNT_EVENT);
+    const result = await sdk.sendAccountEvent(account);
     const endTime = Date.now();
     
     if (result.success) {
@@ -91,6 +100,6 @@ if (require.main === module) {
 
 module.exports = {
   testAccountEndpoint,
-  ACCOUNT_EVENT,
+  account,
   sdk
 }; 

@@ -65,12 +65,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Installation
 ```bash
-npm install @optikpi/datapipeline-sdk
+npm install
 ```
 
 ### Quick Start
 ```javascript
-const { OptikpiDataPipelineSDK } = require('@optikpi/datapipeline-sdk');
+const OptikpiDataPipelineSDK = require('../src/index');
 
 const sdk = new OptikpiDataPipelineSDK({
   authToken: 'your-auth-token',

@@ -8,7 +8,7 @@ const { generateHmacSignature } = require('../utils/crypto');
 class DataPipelineClient {
   constructor(config = {}) {
     this.config = {
-      baseURL: config.baseURL || 'https://demo.optikpi.com/apigw/ingest',
+      baseURL: config.baseURL,
       authToken: config.authToken,
       accountId: config.accountId,
       workspaceId: config.workspaceId,
@@ -260,6 +260,81 @@ class DataPipelineClient {
   }
 
   /**
+   * Sends extended attributes data
+   * @param {Object|Array} data - Extended attributes data or array of attributes
+   * @returns {Promise<Object>} API response
+   */
+  async sendExtendedAttributes(data) {
+    try {
+      const response = await this.axios.post('/extattributes', data);
+      return {
+        success: true,
+        status: response.status,
+        data: response.data,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
+  
+  /**
+   * Sends wallet balance event data
+   * @param {Object|Array} data - Wallet balance event data or array of events
+   * @returns {Promise<Object>} API response
+   */
+  async sendWalletBalanceEvent(data) {
+    try {
+      const response = await this.axios.post('/events/wallet-balance', data);
+      return {
+        success: true,
+        status: response.status,
+        data: response.data,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
+
+  /**
+   * Sends refer friend event data
+   * @param {Object|Array} data - Refer friend event data or array of events
+   * @returns {Promise<Object>} API response
+   */
+  async sendReferFriendEvent(data) {
+    try {
+      const response = await this.axios.post('/events/refer-friend', data);
+      return {
+        success: true,
+        status: response.status,
+        data: response.data,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
+
+  /**
    * Sends multiple events in batch
    * @param {Object} batchData - Object containing different event types
    * @returns {Promise<Object>} Batch response results
@@ -300,6 +375,27 @@ class DataPipelineClient {
       promises.push(
         this.sendGamingActivityEvent(batchData.gamingEvents)
           .then(result => { results.gamingEvents = result; })
+      );
+    }
+
+    if (batchData.extendedAttributes) {
+      promises.push(
+        this.sendExtendedAttributes(batchData.extendedAttributes)
+          .then(result => { results.extendedAttributes = result; })
+      );
+    }
+
+     if (batchData.walletBalanceEvents) {
+      promises.push(
+        this.sendWalletBalanceEvent(batchData.walletBalanceEvents)
+          .then(result => { results.walletBalanceEvents = result; })
+      );
+    }
+
+    if (batchData.referFriendEvents) {
+      promises.push(
+        this.sendReferFriendEvent(batchData.referFriendEvents)
+          .then(result => { results.referFriendEvents = result; })
       );
     }
 

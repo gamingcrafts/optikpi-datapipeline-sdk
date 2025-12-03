@@ -1,12 +1,13 @@
 package com.optikpi.datapipeline.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotBlank;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.validation.constraints.NotBlank;
 
 /**
  * Gaming Activity Event Model
@@ -27,7 +28,7 @@ public class GamingActivityEvent {
     private String userId;
     
     @JsonProperty("event_category")
-    private String eventCategory = "Gaming";
+    private String eventCategory = "Gaming Activity";
     
     @NotBlank(message = "event_name is required")
     @JsonProperty("event_name")
@@ -46,6 +47,9 @@ public class GamingActivityEvent {
     
     @JsonProperty("game_name")
     private String gameName;
+    
+    @JsonProperty("game_title")
+    private String gameTitle;
     
     @JsonProperty("game_provider")
     private String gameProvider;
@@ -133,16 +137,25 @@ public class GamingActivityEvent {
             errors.add("event_time is required");
         }
         
-        // Event category validation
-        if (eventCategory != null && !"Gaming".equals(eventCategory)) {
-            errors.add("event_category must be \"Gaming\" for gaming activity events");
+        // Event category validation - CORRECTED
+        if (eventCategory != null && !"Gaming Activity".equals(eventCategory)) {
+            errors.add("event_category must be \"Gaming Activity\" for gaming activity events");
         }
         
-        // Event name validation
+        // Event name validation - CORRECTED to match API
         String[] validEventNames = {
-            "Game Started", "Game Completed", "Game Abandoned", "Bet Placed",
-            "Bet Won", "Bet Lost", "Free Spin Used", "Bonus Triggered",
-            "Jackpot Won", "Tournament Joined", "Tournament Completed"
+            "Play Casino Game",
+            "Play Slot Game", 
+            "Play Table Game",
+            "Play Live Casino Game",
+            "Bet Placed",
+            "Bet Won",
+            "Bet Lost",
+            "Game Session Started",
+            "Game Session Ended",
+            "Bonus Game Triggered",
+            "Free Spins Triggered",
+            "Jackpot Won"
         };
         
         if (eventName != null && !isValidEventName(eventName, validEventNames)) {
@@ -212,6 +225,9 @@ public class GamingActivityEvent {
     
     public String getGameName() { return gameName; }
     public void setGameName(String gameName) { this.gameName = gameName; }
+    
+    public String getGameTitle() { return gameTitle; }
+    public void setGameTitle(String gameTitle) { this.gameTitle = gameTitle; }
     
     public String getGameProvider() { return gameProvider; }
     public void setGameProvider(String gameProvider) { this.gameProvider = gameProvider; }

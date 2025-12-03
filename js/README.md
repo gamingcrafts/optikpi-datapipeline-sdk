@@ -20,17 +20,7 @@ A comprehensive JavaScript SDK for integrating with the Optikpi Data Pipeline AP
 
 ### NPM
 ```bash
-npm install @optikpi/datapipeline-sdk
-```
-
-### Yarn
-```bash
-yarn add @optikpi/datapipeline-sdk
-```
-
-### CDN (Browser)
-```html
-<script src="https://unpkg.com/@optikpi/datapipeline-sdk@1.0.0/dist/index.umd.js"></script>
+npm install 
 ```
 
 ## 🎯 Quick Start
@@ -38,7 +28,7 @@ yarn add @optikpi/datapipeline-sdk
 ### 1. Initialize the SDK
 
 ```javascript
-const { OptikpiDataPipelineSDK } = require('@optikpi/datapipeline-sdk');
+const OptikpiDataPipelineSDK = require('../src/index');
 
 const sdk = new OptikpiDataPipelineSDK({
   authToken: 'your-auth-token',
@@ -51,7 +41,7 @@ const sdk = new OptikpiDataPipelineSDK({
 ### 2. Send Customer Profile
 
 ```javascript
-const customerData = {
+const customerData = new CustomerProfile({
   account_id: 'your-account-id',
   workspace_id: 'your-workspace-id',
   user_id: 'user123',
@@ -60,7 +50,13 @@ const customerData = {
   full_name: 'John Doe',
   country: 'United States',
   currency: 'USD'
-};
+});
+const validation = customerData.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+console.log('✅ Customer event validated successfully!');
 
 try {
   const result = await sdk.sendCustomerProfile(customerData);
@@ -77,7 +73,7 @@ try {
 ### 3. Send Event Data
 
 ```javascript
-const depositEvent = {
+const deposit=new DepositEvent({
   account_id: 'your-account-id',
   workspace_id: 'your-workspace-id',
   user_id: 'user123',
@@ -87,7 +83,14 @@ const depositEvent = {
   amount: 100.00,
   payment_method: 'bank',
   transaction_id: 'txn_123'
-};
+});
+// Validate the account event
+const validation = deposit.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+console.log('✅ Deposit event validated successfully!');
 
 const result = await sdk.sendDepositEvent(depositEvent);
 ```
@@ -113,7 +116,7 @@ const batchResult = await sdk.sendBatch(batchData);
 | `authToken` | string | ✅ | - | Your authentication token |
 | `accountId` | string | ✅ | - | Your account ID |
 | `workspaceId` | string | ✅ | - | Your workspace ID |
-| `baseURL` | string | ❌ | `https://demo.optikpi.com/apigw/ingest` | API base URL |
+| `baseURL` | string | ❌ | `https://your-api-gateway-url/apigw/ingest` | API base URL |
 | `timeout` | number | ❌ | `30000` | Request timeout in milliseconds |
 | `retries` | number | ❌ | `3` | Number of retry attempts |
 | `retryDelay` | number | ❌ | `1000` | Delay between retries in milliseconds |
@@ -162,6 +165,19 @@ Sends gaming activity events.
 ```javascript
 const result = await sdk.sendGamingActivityEvent(gamingEvent);
 ```
+#### `sendWalletBalanceEvent(data)`
+Sends gaming activity events.
+
+```javascript
+const result = await sdk.sendWalletBalanceEvent(walletBalanceEvent);
+```
+
+#### `sendReferFriendEvent(data)`
+Sends gaming activity events.
+
+```javascript
+const result = await sdk.sendReferFriendEvent(referFrientEvent);
+```
 
 #### `sendBatch(batchData)`
 Sends multiple types of data in a single batch operation.
@@ -180,7 +196,7 @@ The SDK includes comprehensive data models with built-in validation:
 
 ### CustomerProfile
 ```javascript
-const { CustomerProfile } = require('@optikpi/datapipeline-sdk');
+const { CustomerProfile } =  require('../src/models');
 
 const customer = new CustomerProfile({
   account_id: 'your-account-id',
@@ -197,7 +213,7 @@ if (!validation.isValid) {
 
 ### Event Models
 ```javascript
-const { AccountEvent, DepositEvent, GamingActivityEvent } = require('@optikpi/datapipeline-sdk');
+const { AccountEvent, DepositEvent, GamingActivityEvent } =  require('../src/models');
 
 const accountEvent = new AccountEvent({
   account_id: 'your-account-id',
@@ -262,7 +278,8 @@ npm run format
 ### Complete Integration Example
 
 ```javascript
-const { OptikpiDataPipelineSDK, CustomerProfile, DepositEvent } = require('@optikpi/datapipeline-sdk');
+const {OptikpiDataPipelineSDK} = require('../src/index');
+const {CustomerProfile, DepositEvent } =  require('../src/models');
 
 class CustomerDataService {
   constructor() {
@@ -312,6 +329,13 @@ class CustomerDataService {
         payment_method: paymentMethod,
         transaction_id: transactionId
       });
+      // Validate the account event
+      const validation = deposit.validate();
+      if (!validation.isValid) {
+        console.error('❌ Validation errors:', validation.errors);
+        process.exit(1);
+      }
+      console.log('✅ Deposit event validated successfully!');
 
       const result = await this.sdk.sendDepositEvent(depositEvent.toJSON());
       

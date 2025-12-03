@@ -8,3 +8,45 @@ js/dist/**
 js/examples/dist/**
 js/examples/node_modules/**
 js/examples/package-lock.json
+
+# Python - Root level files/folders
+python/__pycache__/
+python/.pytest_cache/
+python/dist/
+python/.coverage
+python/.env
+python/poetry.lock
+
+# Python - src/python specific
+python/src/__pycache__/
+python/src/python/__pycache__/
+python/src/python/**/__pycache__/
+python/src/python/core/__pycache__/
+python/src/python/models/__pycache__/
+python/src/python/utils/__pycache__/
+
+# Python - examples specific
+python/examples/__pycache__/
+
+# Python - tests specific
+python/tests/__pycache__/
+python/tests/.pytest_cache/
+
+# Python - build artifacts
+python/build/
+python/*.egg-info/
+python/.mypy_cache/
+python/.ruff_cache/
+
+# Python - IDE
+python/.idea/
+python/.vscode/
+
+# Python - virtual environment
+python/.venv/
+python/venv/
+
+# Python - compiled files
+python/**/*.pyc
+python/**/*.pyo
+python/**/*.pyd
