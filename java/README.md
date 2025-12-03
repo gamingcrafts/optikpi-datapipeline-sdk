@@ -299,6 +299,7 @@ import java.util.Arrays;
 
 BatchData batchData = new BatchData();
 batchData.setCustomers(Arrays.asList(customer1, customer2));
+batchData.setExtendedAttributes(Arrays.asList(customerExt1, customerExt2));
 batchData.setAccountEvents(Arrays.asList(accountEvent1, accountEvent2));
 batchData.setDepositEvents(Arrays.asList(depositEvent1, depositEvent2));
 batchData.setWithdrawEvents(Arrays.asList(withdrawEvent1, withdrawEvent2));

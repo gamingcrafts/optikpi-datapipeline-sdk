@@ -143,6 +143,7 @@ if (response.isSuccess()) {
 ## Available Examples
 
 - **TestCustomerEndpoint**: Demonstrates customer profile operations
+- **TestCustomerExtEndpoint**: Demonstrates customer Extended Attributes Processing
 - **TestAllEndpoints**: Tests all available API endpoints
 - **TestAccountEndpoint**: Focuses on account event operations
 - **TestDepositEndpoint**: Demonstrates deposit event handling
