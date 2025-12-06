@@ -68,35 +68,6 @@ describe('DataPipelineClient', () => {
     });
   });
 
-  describe('healthCheck', () => {
-    it('should return success response for healthy API', async () => {
-      const mockResponse = {
-        status: 200,
-        data: { status: 'healthy', timestamp: '2024-01-01T00:00:00Z' }
-      };
-
-      mockAxios.get.mockResolvedValue(mockResponse);
-
-      const result = await client.healthCheck();
-
-      expect(result.success).toBe(true);
-      expect(result.status).toBe(200);
-      expect(result.data).toEqual(mockResponse.data);
-      expect(mockAxios.get).toHaveBeenCalledWith('/datapipeline/health');
-    });
-
-    it('should return error response for failed health check', async () => {
-      const mockError = new Error('Network error');
-      mockAxios.get.mockRejectedValue(mockError);
-
-      const result = await client.healthCheck();
-
-      expect(result.success).toBe(false);
-      expect(result.error).toBe('Network error');
-      expect(result.status).toBeUndefined();
-    });
-  });
-
   describe('sendCustomerProfile', () => {
     it('should send customer profile successfully', async () => {
       const customerData = {

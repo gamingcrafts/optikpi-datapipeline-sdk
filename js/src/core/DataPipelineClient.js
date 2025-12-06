@@ -112,29 +112,6 @@ class DataPipelineClient {
   }
 
   /**
-   * Performs a health check on the API
-   * @returns {Promise<Object>} Health check response
-   */
-  async healthCheck() {
-    try {
-      const response = await this.axios.get('/datapipeline/health');
-      return {
-        success: true,
-        status: response.status,
-        data: response.data,
-        timestamp: new Date().toISOString()
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error.message,
-        status: error.response?.status,
-        timestamp: new Date().toISOString()
-      };
-    }
-  }
-
-  /**
    * Sends customer profile data
    * @param {Object|Array} data - Customer profile data or array of profiles
    * @returns {Promise<Object>} API response

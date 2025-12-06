@@ -5,6 +5,7 @@ const WithdrawEvent = require('./WithdrawEvent');
 const GamingActivityEvent = require('./GamingActivityEvent');
 const WalletBalanceEvent = require('./WalletBalanceEvent');
 const ReferFriendEvent = require('./ReferFriendEvent');
+const CustomerExtEvent= require('./CustomerExtEvent');
 
 module.exports = {
   CustomerProfile,
@@ -13,6 +14,7 @@ module.exports = {
   WithdrawEvent,
   GamingActivityEvent,
   WalletBalanceEvent,
-  ReferFriendEvent
+  ReferFriendEvent,
+  CustomerExtEvent
 };
 

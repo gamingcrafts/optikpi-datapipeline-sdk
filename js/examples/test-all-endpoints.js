@@ -1,6 +1,6 @@
 require('dotenv').config();
 const OptikpiDataPipelineSDK = require('../src/index');
-const { AccountEvent, CustomerProfile, DepositEvent, GamingActivityEvent, WithdrawEvent, WalletBalanceEvent, ReferFriendEvent } = require('../src/models');
+const { AccountEvent, CustomerProfile, DepositEvent, GamingActivityEvent, WithdrawEvent, CustomerExtEvent, WalletBalanceEvent, ReferFriendEvent } = require('../src/models');
 
 // Configuration - Read from environment variables
 const API_BASE_URL = process.env.API_BASE_URL;
@@ -124,6 +124,17 @@ const TEST_DATA = {
     "game_title": "Blackjack",
     "provider": "Provider A"
   }),
+  customerExt : new CustomerExtEvent({
+  "account_id": ACCOUNT_ID,
+  "workspace_id": WORKSPACE_ID,
+  "user_id": "opti789",
+  "list_name": "BINGO_PREFERENCES",
+  "ext_data": {
+    "Email": "True",
+    "SMS": "True",
+    "PushNotifications": "False"
+  }
+ }),
   walletBalance: new WalletBalanceEvent({
     "account_id": ACCOUNT_ID,
     "workspace_id": WORKSPACE_ID,
@@ -161,6 +172,7 @@ const eventsToValidate = [
   { key: "account", label: "Account" },
   { key: "deposit", label: "Deposit" },
   { key: "withdraw", label: "Withdraw" },
+  { key: "customerExt", label: "CustomerExt" },
   { key: "gaming", label: "Gaming" },
   { key: "walletBalance", label: "WalletBalance" },
   { key: "referFriend", label: "ReferFriend" }
@@ -200,6 +212,9 @@ async function makeApiRequest(endpoint, data, method) {
         break;
       case 'gaming':
         result = await sdk.sendGamingActivityEvent(data);
+        break;
+      case 'extattributes':
+        result = await sdk.sendExtendedAttributes(data);
         break;
       case 'walletBalance':
         result = await sdk.sendWalletBalanceEvent(data);
@@ -246,6 +261,7 @@ async function testAllEndpoints() {
     { name: 'Deposit Event', endpoint: '/events/deposit', data: TEST_DATA.deposit, method: 'deposit' },
     { name: 'Withdrawal Event', endpoint: '/events/withdraw', data: TEST_DATA.withdraw, method: 'withdraw' },
     { name: 'Gaming Activity', endpoint: '/events/gaming-activity', data: TEST_DATA.gaming, method: 'gaming' },
+    { name: 'Extended Attributes', endpoint: '/extattributes', data: TEST_DATA.customerExt, method: 'extattributes' },
     { name: 'Wallet Balance', endpoint: '/events/wallet-balance', data: TEST_DATA.walletBalance, method: 'walletBalance' },
     { name: 'Refer Friend', endpoint: '/events/refer-friend', data: TEST_DATA.referFriend, method: 'referFriend' }
   ];
@@ -319,40 +335,10 @@ async function testAllEndpoints() {
   return results;
 }
 
-// Health check using SDK
-async function healthCheck() {
-  try {
-    console.log('\n🏥 Performing Health Check...');
-
-    const startTime = Date.now();
-    const result = await sdk.healthCheck();
-    const endTime = Date.now();
-
-    if (result.success) {
-      console.log('✅ Health Check - SUCCESS');
-      console.log(`   Status: ${result.status}`);
-      console.log(`   Response Time: ${endTime - startTime}ms`);
-      console.log(`   Response:`, JSON.stringify(result.data, null, 2));
-    } else {
-      console.log('❌ Health Check - FAILED');
-      console.log(`   Error: ${result.error}`);
-      console.log(`   Status: ${result.status}`);
-    }
-
-    return result;
-  } catch (error) {
-    console.log('❌ Health Check - FAILED');
-    console.log(`   Error: ${error.message}`);
-    throw error;
-  }
-}
 
 // Run tests
 async function runTests() {
   try {
-    // Health check first
-    await healthCheck();
-
     // Test all endpoints
     const results = await testAllEndpoints();
 
@@ -371,7 +357,6 @@ if (require.main === module) {
 
 module.exports = {
   testAllEndpoints,
-  healthCheck,
   makeApiRequest,
   TEST_DATA,
   sdk

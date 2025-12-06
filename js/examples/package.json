@@ -11,7 +11,10 @@
     "test:account": "node test-account-endpoint.js",
     "test:deposit": "node test-deposit-endpoint.js",
     "test:withdraw": "node test-withdraw-endpoint.js",
-    "test:gaming": "node test-gaming-endpoint.js"
+    "test:gaming": "node test-gaming-endpoint.js",
+    "test:referFriend": "node test-refer-friend-endpoint",
+    "test:walletBalance": "node test-wallet-balance-endpoint",
+    "test:batchData": "node test-batch-operations"
   },
   "dependencies": {
     "@optikpi/datapipeline-sdk": "git+https://github.com/gamingcrafts/optikpi-datapipeline-sdk.git"
