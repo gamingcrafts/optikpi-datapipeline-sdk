@@ -19,14 +19,6 @@ public class OptikpiDataPipelineSDK {
     }
     
     /**
-     * Performs a health check on the API
-     * @return Health check response
-     */
-    public ApiResponse<Object> healthCheck() {
-        return client.healthCheck();
-    }
-    
-    /**
      * Sends customer profile data
      * @param data Customer profile data or array of profiles
      * @return API response

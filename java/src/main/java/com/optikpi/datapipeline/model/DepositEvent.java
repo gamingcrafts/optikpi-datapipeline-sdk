@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -93,6 +94,9 @@ public class DepositEvent {
     
     @JsonProperty("net_amount")
     private BigDecimal netAmount;
+
+    @JsonProperty("metadata")
+    private Map<String, Object> metadata;
     
     public DepositEvent() {}
     
@@ -292,4 +296,7 @@ public class DepositEvent {
     
     public BigDecimal getNetAmount() { return netAmount; }
     public void setNetAmount(BigDecimal netAmount) { this.netAmount = netAmount; }
+
+    public Map<String, Object> getMetadata() { return metadata; }
+    public void setMetadata(Map<String, Object> metadata) { this.metadata = metadata; }
 }

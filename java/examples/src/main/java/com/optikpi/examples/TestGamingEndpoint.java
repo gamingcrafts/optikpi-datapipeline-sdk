@@ -2,6 +2,8 @@ package com.optikpi.examples;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.optikpi.datapipeline.ClientConfig;
 import com.optikpi.datapipeline.OptikpiDataPipelineSDK;
@@ -9,9 +11,13 @@ import com.optikpi.datapipeline.model.GamingActivityEvent;
 import com.optikpi.datapipeline.model.ValidationResult;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class TestGamingEndpoint {
 
+    private static final ObjectMapper mapper = new ObjectMapper()
+            .enable(SerializationFeature.INDENT_OUTPUT);
     public static void main(String[] args) {
         Dotenv dotenv = Dotenv.configure()
                 .directory(".")
@@ -33,13 +39,15 @@ public class TestGamingEndpoint {
 
         OptikpiDataPipelineSDK sdk = new OptikpiDataPipelineSDK(config);
 
-        System.out.println("=== Optikpi Data Pipeline SDK - Gaming Event Test ===");
-        System.out.println("Base URL: " + config.getBaseUrl());
-        System.out.println("Account ID: " + config.getAccountId());
-        System.out.println("Workspace ID: " + config.getWorkspaceId());
+        System.out.println("🚀 Testing Gaming Event Endpoints");
+        System.out.println("==================================");
+        System.out.println("Configuration:");
+        System.out.println("📌 API Base URL: " + baseUrl);
+        System.out.println("👤 Account ID: " + accountId);
+        System.out.println("🏢 Workspace ID: " + workspaceId);
+        System.out.println("🔐 Auth Token: " + authToken.substring(0, 6) + "******");
         System.out.println();
-
-        System.out.println("Test 1: Sending gaming event...");
+        
         testGamingEvent(sdk, accountId, workspaceId);
     }
 
@@ -48,12 +56,14 @@ public class TestGamingEndpoint {
             GamingActivityEvent event = new GamingActivityEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("user_001");
+            event.setUserId("vinmathi_002");
             event.setEventName("Play Casino Game");
             event.setEventId("evt_" + System.currentTimeMillis());
             event.setEventTime(Instant.now().toString());
+            event.setEventCategory("Gaming Activity");
             event.setGameId("game_001");
             event.setGameName("Mega Slots");
+            event.setGameTitle("Poker");
             event.setGameProvider("ProviderXYZ");
             event.setGameCategory("slots");
             event.setBetAmount(new BigDecimal("5.00"));
@@ -61,31 +71,41 @@ public class TestGamingEndpoint {
             event.setDevice("mobile");
             event.setSessionId("session_" + System.currentTimeMillis());
 
-            ValidationResult validResult = event.validate();
+            System.out.println("\n📋Gaming Activity Event Data:");
+            System.out.println(mapper.writeValueAsString(event));
 
-            if (!validResult.isValid()) {
-                System.out.println("❌ Invalid gaming event:");
-                System.out.println("Errors: " + validResult.getErrors());
+            ValidationResult valid = event.validate();
+            if (!valid.isValid()) {
+                System.out.println("\n❌ Validation Failed!");
+                System.out.println("Errors: " + valid.getErrors());
                 return;
-            } else {
-                System.out.println("✅ Valid gaming event: " + validResult.isValid());
             }
 
+            System.out.println("\n🕒 making API request using SDK...");
+            long start = System.currentTimeMillis();
             var response = sdk.sendGamingActivityEvent(event);
+            long end = System.currentTimeMillis();
 
+            System.out.println("\n📡 API Response:");
+            System.out.println("⏱ Response Time: " + (end - start) + "ms");
+            System.out.println("HTTP Status: " + response.getStatus());
+            System.out.println("Sending Gaming event...");
+            
             if (response.isSuccess()) {
-                System.out.println("✅ Gaming event sent successfully!");
-                System.out.println("Status: " + response.getStatus());
-                System.out.println("Response: " + response.getData());
+                System.out.println("✅ SUCCESS!");
+                System.out.println("Response: " +
+                        mapper.writeValueAsString(response.getData()));
             } else {
-                System.out.println("❌ Failed to send gaming event");
-                System.out.println("Error: " + response.getError());
-                System.out.println("Status: " + response.getStatus());
+                System.out.println("❌ FAILED!");
+                System.out.println("Error: " +
+                        mapper.writeValueAsString(response.getError()));
             }
 
         } catch (Exception e) {
-            System.err.println("❌ Exception occurred: " + e.getMessage());
+            System.err.println("\n💥 Exception occurred:");
             e.printStackTrace();
         }
     }
 }
+
+

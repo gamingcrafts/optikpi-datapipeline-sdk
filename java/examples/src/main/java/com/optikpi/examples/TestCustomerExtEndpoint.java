@@ -43,14 +43,15 @@ public class TestCustomerExtEndpoint {
 
         OptikpiDataPipelineSDK sdk = new OptikpiDataPipelineSDK(config);
 
-        System.out.println("👤 Testing Customer Extension Events Endpoint - Both Formats");
-        System.out.println("============================================================");
+        System.out.println("🚀 Testing Customer Extended Attributes Endpoints");
+        System.out.println("==================================================");
         System.out.println("Configuration:");
-        System.out.println("API Base URL: " + config.getBaseUrl());
-        System.out.println("Account ID: " + config.getAccountId());
-        System.out.println("Workspace ID: " + config.getWorkspaceId());
-        System.out.println("Auth Token: " + authToken.substring(0, 8) + "...");
+        System.out.println("📌 API Base URL: " + baseUrl);
+        System.out.println("👤 Account ID: " + accountId);
+        System.out.println("🏢 Workspace ID: " + workspaceId);
+        System.out.println("🔐 Auth Token: " + authToken.substring(0, 6) + "******");
         System.out.println();
+        System.out.println("\nMaking API request using SDK...");
 
         // Test Format 1: Object format
         testObjectFormat(sdk, accountId, workspaceId);
@@ -71,7 +72,7 @@ public class TestCustomerExtEndpoint {
             ExtendedAttributesEvent event = new ExtendedAttributesEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("KLT71234");
+            event.setUserId("vinKLT71234");
             event.setListName("BINGO_PREFERENCES");
 
             // Create ext_data as Map (will be auto-converted to JSON string)
@@ -136,7 +137,7 @@ public class TestCustomerExtEndpoint {
             ExtendedAttributesEvent event = new ExtendedAttributesEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("KLT81234");
+            event.setUserId("vinKLT81234");
             event.setListName("GAMING_PREFERENCES");
 
             // Create ext_data as JSON string (legacy format)
@@ -177,11 +178,6 @@ public class TestCustomerExtEndpoint {
                 System.out.println("Error: " + response.getError());
                 System.out.println("Error Data: " + response.getData());
             }
-
-            // Summary
-            System.out.println("\n📊 Test Summary");
-            System.out.println("================");
-            // Note: You'd need to track both results to show proper summary
 
         } catch (Exception e) {
             System.err.println("\n❌ SDK Error occurred!");

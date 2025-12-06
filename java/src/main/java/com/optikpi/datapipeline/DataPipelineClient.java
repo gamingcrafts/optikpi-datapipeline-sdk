@@ -174,29 +174,6 @@ public class DataPipelineClient {
         }
     }
     
-    public ApiResponse<Object> healthCheck() {
-        try {
-            Request request = new Request.Builder()
-                    .url(config.getBaseUrl() + "/datapipeline/health")
-                    .get()
-                    .build();
-            
-            try (Response response = httpClient.newCall(request).execute()) {
-                String responseBody = response.body() != null ? response.body().string() : "";
-                
-                if (response.isSuccessful()) {
-                    Object data = objectMapper.readValue(responseBody, Object.class);
-                    return ApiResponse.success(response.code(), data, Instant.now());
-                } else {
-                    return ApiResponse.error(response.code(), "Health check failed", responseBody, Instant.now());
-                }
-            }
-        } catch (Exception e) {
-            logger.error("Health check failed", e);
-            return ApiResponse.error(0, e.getMessage(), null, Instant.now());
-        }
-    }
-    
     public ApiResponse<Object> sendCustomerProfile(Object data) {
         return sendData("/customers", data);
     }

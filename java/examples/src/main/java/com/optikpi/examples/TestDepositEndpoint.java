@@ -2,6 +2,8 @@ package com.optikpi.examples;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.optikpi.datapipeline.ClientConfig;
 import com.optikpi.datapipeline.OptikpiDataPipelineSDK;
@@ -9,14 +11,16 @@ import com.optikpi.datapipeline.model.DepositEvent;
 import com.optikpi.datapipeline.model.ValidationResult;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class TestDepositEndpoint {
 
+    private static final ObjectMapper mapper = new ObjectMapper()
+            .enable(SerializationFeature.INDENT_OUTPUT);
+
     public static void main(String[] args) {
-        Dotenv dotenv = Dotenv.configure()
-                .directory(".")
-                .filename(".env")
-                .load();
+        Dotenv dotenv = Dotenv.configure().directory(".").filename(".env").load();
 
         String authToken = dotenv.get("AUTH_TOKEN");
         String accountId = dotenv.get("ACCOUNT_ID");
@@ -24,7 +28,7 @@ public class TestDepositEndpoint {
         String baseUrl = dotenv.get("API_BASE_URL");
 
         if (authToken == null || accountId == null || workspaceId == null) {
-            System.err.println("Error: Missing required environment variables");
+            System.err.println("❌ Error: Missing required environment variables (AUTH_TOKEN, ACCOUNT_ID, WORKSPACE_ID)");
             System.exit(1);
         }
 
@@ -33,57 +37,76 @@ public class TestDepositEndpoint {
 
         OptikpiDataPipelineSDK sdk = new OptikpiDataPipelineSDK(config);
 
-        System.out.println("=== Optikpi Data Pipeline SDK - Deposit Event Test ===");
-        System.out.println("Base URL: " + config.getBaseUrl());
-        System.out.println("Account ID: " + config.getAccountId());
-        System.out.println("Workspace ID: " + config.getWorkspaceId());
+        System.out.println("🚀 Testing Deposit Event Endpoints");
+        System.out.println("===================================");
+        System.out.println("Configuration:");
+        System.out.println("📌 API Base URL: " + baseUrl);
+        System.out.println("👤 Account ID: " + accountId);
+        System.out.println("🏢 Workspace ID: " + workspaceId);
+        System.out.println("🔐 Auth Token: " + authToken.substring(0, 6) + "******");
         System.out.println();
-
-        System.out.println("Test 1: Sending deposit event...");
-        testDepositEvent(sdk, accountId, workspaceId);
         
+
+        sendDepositTest(sdk, accountId, workspaceId);
     }
 
-    private static void testDepositEvent(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
+    private static void sendDepositTest(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
         try {
             DepositEvent event = new DepositEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("user_001");
-            event.setEventName("Successful Deposit"); // ✅ CORRECTED
+            event.setUserId("vinmathi_002");
+            event.setEventCategory("Deposit");
+            event.setEventName("Successful Deposit");
             event.setEventId("evt_" + System.currentTimeMillis());
             event.setEventTime(Instant.now().toString());
             event.setAmount(new BigDecimal("100.00"));
             event.setCurrency("USD");
-            event.setPaymentMethod("credit_card");
+            event.setPaymentMethod("bank");
             event.setTransactionId("txn_" + System.currentTimeMillis());
-            event.setStatus("success"); // ✅ CORRECTED (not "completed")
+            event.setStatus("success");
             event.setDevice("mobile");
+            event.setPaymentProviderId("provider123");
+            event.setPaymentProviderName("Chase Bank");
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("bank_name", "Chase Bank");
+            metadata.put("account_last4", "1234");
+            metadata.put("source", "mobile_app");
+            event.setMetadata(metadata);
 
-            ValidationResult validResult = event.validate();
+            System.out.println("\n📋 Deposit Event Data:");
+            System.out.println(mapper.writeValueAsString(event));
 
-            if (!validResult.isValid()) {
-                System.out.println("❌ Invalid deposit event:");
-                System.out.println("Errors: " + validResult.getErrors());
+            ValidationResult valid = event.validate();
+            if (!valid.isValid()) {
+                System.out.println("\n❌ Validation Failed!");
+                System.out.println("Errors: " + valid.getErrors());
                 return;
-            } else {
-                System.out.println("✅ Valid deposit event: " + validResult.isValid());
             }
 
+            System.out.println("\n🕒 making API request using SDK...");
+           
+            long start = System.currentTimeMillis();
             var response = sdk.sendDepositEvent(event);
+            long end = System.currentTimeMillis();
+
+            System.out.println("\n📡 API Response:");
+            System.out.println("⏱ Response Time: " + (end - start) + "ms");
+            System.out.println("HTTP Status: " + response.getStatus());
+            System.out.println("Sending Deposit event...");
 
             if (response.isSuccess()) {
-                System.out.println("✅ Deposit event sent successfully!");
-                System.out.println("Status: " + response.getStatus());
-                System.out.println("Response: " + response.getData());
+                System.out.println("✅ SUCCESS!");
+                System.out.println("Response: " +
+                        mapper.writeValueAsString(response.getData()));
             } else {
-                System.out.println("❌ Failed to send deposit event");
-                System.out.println("Error: " + response.getError());
-                System.out.println("Status: " + response.getStatus());
+                System.out.println("❌ FAILED!");
+                System.out.println("Error: " +
+                        mapper.writeValueAsString(response.getError()));
             }
 
         } catch (Exception e) {
-            System.err.println("❌ Exception occurred: " + e.getMessage());
+            System.err.println("\n💥 Exception occurred:");
             e.printStackTrace();
         }
     }
