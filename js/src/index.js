@@ -33,9 +33,6 @@ class OptikpiDataPipelineSDK {
   }
 
   // Delegate all client methods
-  async healthCheck() {
-    return this.client.healthCheck();
-  }
 
   async sendCustomerProfile(data) {
     return this.client.sendCustomerProfile(data);

@@ -1,8 +1,9 @@
 require('dotenv').config();
 const OptikpiDataPipelineSDK = require('../src/index');
+const { CustomerExtEvent } = require('../src/models');
 
 // Configuration - Read from environment variables
-const API_BASE_URL = process.env.API_BASE_URL ;
+const API_BASE_URL = process.env.API_BASE_URL;
 const AUTH_TOKEN = process.env.AUTH_TOKEN;
 const ACCOUNT_ID = process.env.ACCOUNT_ID;
 const WORKSPACE_ID = process.env.WORKSPACE_ID;
@@ -23,27 +24,31 @@ const sdk = new OptikpiDataPipelineSDK({
   baseURL: API_BASE_URL
 });
 
-// Extended attributes event data - Format 1: Object (will be auto-converted to JSON string)
-const EXTATTRIBUTES_EVENT_OBJECT = {
-  "account_id": ACCOUNT_ID,
-  "workspace_id": WORKSPACE_ID,
-  "user_id": "KLT345345",
-  "list_name": "BINGO_PREFERENCES",
-  "ext_data": {
-    "Email": "True",
-    "SMS": "True",
-    "PushNotifications": "False"
+// Create Customer Extension Event - Format 1: Object (will be auto-converted to JSON string)
+const customerExtObject = new CustomerExtEvent({
+  account_id: ACCOUNT_ID,
+  workspace_id: WORKSPACE_ID,
+  user_id: "opti789",
+  list_name: "BINGO_PREFERENCES",
+  ext_data: {
+    Email: "True",
+    SMS: "True",
+    PushNotifications: "False"
   }
-};
+});
 
-// Extended attributes event data - Format 2: JSON string (legacy format)
-const EXTATTRIBUTES_EVENT_STRING = {
-  "account_id": ACCOUNT_ID,
-  "workspace_id": WORKSPACE_ID,
-  "user_id": "KLT345346",
-  "list_name": "GAMING_PREFERENCES",
-  "ext_data": "{\"Email\":\"True\",\"SMS\":\"True\",\"PushNotifications\":\"True\"}"
-};
+// Create Customer Extension Event - Format 2: JSON string (legacy format)
+const customerExtString = new CustomerExtEvent({
+  account_id: ACCOUNT_ID,
+  workspace_id: WORKSPACE_ID,
+  user_id: "opti456",
+  list_name: "GAMING_PREFERENCES",
+  ext_data: JSON.stringify({
+    Email: "True",
+    SMS: "True",
+    PushNotifications: "True"
+  })
+});
 
 // SDK handles HMAC authentication automatically
 
@@ -59,13 +64,24 @@ async function testCustomerExtEndpoint() {
     console.log(`Workspace ID: ${WORKSPACE_ID}`);
     console.log(`Auth Token: ${AUTH_TOKEN.substring(0, 8)}...`);
     
+    // Validate Format 1
+    console.log('\n📋 Validating Format 1: Object Format');
+    console.log('=====================================');
+    const validation1 = customerExtObject.validate();
+    if (!validation1.isValid) {
+      console.error('❌ Validation errors:', validation1.errors);
+      return;
+    }
+    console.log('✅ Format 1 validated successfully!');
+    
     // Test Format 1: Object format
     console.log('\n📋 Testing Format 1: Object Format (auto-converted to JSON string)');
     console.log('================================================================');
-    console.log('Extended Attributes Data (Object):', JSON.stringify(EXTATTRIBUTES_EVENT_OBJECT, null, 2));
+    console.log('Extended Attributes Data (Object):', JSON.stringify(customerExtObject.toJSON(), null, 2));
     
     const startTime1 = Date.now();
-    const result1 = await sdk.sendExtendedAttributes(EXTATTRIBUTES_EVENT_OBJECT);
+    // Use toAPIFormat() to ensure proper format for API
+    const result1 = await sdk.sendExtendedAttributes(customerExtObject.toAPIFormat());
     const endTime1 = Date.now();
     
     if (result1.success) {
@@ -86,13 +102,23 @@ async function testCustomerExtEndpoint() {
     // Wait a moment between tests
     await new Promise(resolve => setTimeout(resolve, 1000));
     
+    // Validate Format 2
+    console.log('\n📋 Validating Format 2: JSON String Format');
+    console.log('==========================================');
+    const validation2 = customerExtString.validate();
+    if (!validation2.isValid) {
+      console.error('❌ Validation errors:', validation2.errors);
+      return;
+    }
+    console.log('✅ Format 2 validated successfully!');
+    
     // Test Format 2: JSON string format
     console.log('\n📋 Testing Format 2: JSON String Format (legacy)');
     console.log('===============================================');
-    console.log('Extended Attributes Data (String):', JSON.stringify(EXTATTRIBUTES_EVENT_STRING, null, 2));
+    console.log('Extended Attributes Data (String):', JSON.stringify(customerExtString.toJSON(), null, 2));
     
     const startTime2 = Date.now();
-    const result2 = await sdk.sendExtendedAttributes(EXTATTRIBUTES_EVENT_STRING);
+    const result2 = await sdk.sendExtendedAttributes(customerExtString.toJSON());
     const endTime2 = Date.now();
     
     if (result2.success) {
@@ -131,7 +157,7 @@ if (require.main === module) {
 
 module.exports = {
   testCustomerExtEndpoint,
-  EXTATTRIBUTES_EVENT_OBJECT,
-  EXTATTRIBUTES_EVENT_STRING,
+  customerExtObject,
+  customerExtString,
   sdk
 };
