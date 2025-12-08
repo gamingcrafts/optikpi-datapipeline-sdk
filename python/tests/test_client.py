@@ -79,35 +79,6 @@ class TestDataPipelineClient:
             assert client.config['retries'] == 3
             assert client.config['retryDelay'] == 1
     
-    # Health Check Tests
-    class TestHealthCheck:
-        """Tests for health check endpoint"""
-        
-        def test_health_check_success(self, client):
-            """Should return success response for healthy API"""
-            mock_response = Mock()
-            mock_response.ok = True
-            mock_response.status_code = 200
-            mock_response.json.return_value = {
-                'status': 'healthy',
-                'timestamp': '2024-01-01T00:00:00Z'
-            }
-            
-            with patch.object(client.session, 'request', return_value=mock_response):
-                result = client.health_check()
-            
-            assert result['success'] is True
-            assert result['status'] == 200
-            assert result['data']['status'] == 'healthy'
-        
-        def test_health_check_failure(self, client):
-            """Should return error response for failed health check"""
-            with patch.object(client.session, 'request', side_effect=Exception('Network error')):
-                result = client.health_check()
-            
-            assert result['success'] is False
-            assert 'Network error' in result['error']
-    
     # Customer Profile Tests
     class TestSendCustomerProfile:
         """Tests for sending customer profiles"""

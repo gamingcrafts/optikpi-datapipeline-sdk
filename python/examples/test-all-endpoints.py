@@ -15,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "python"))
 
 from index import OptikpiDataPipelineSDK
 from models.AccountEvent import AccountEvent
+from models.CustomerExtEvent import CustomerExtEvent
 from models.CustomerProfile import CustomerProfile
 from models.DepositEvent import DepositEvent
 from models.GamingActivityEvent import GamingActivityEvent
@@ -52,7 +53,7 @@ TEST_DATA = {
     "customer": CustomerProfile(
         account_id=ACCOUNT_ID,
         workspace_id=WORKSPACE_ID,
-        user_id="user123456",
+        user_id="allcu1",
         username="john_doe",
         full_name="John Doe",
         first_name="John",
@@ -92,10 +93,23 @@ TEST_DATA = {
         bank_verification="NotVerified",
         iddoc_verification="Verified"
     ),
+    "customerext": CustomerExtEvent(
+        account_id=ACCOUNT_ID,
+        workspace_id=WORKSPACE_ID,
+        user_id="allce1",
+        list_name="BINGO_PREFERENCES",
+        ext_data={
+            "Email": "True",
+            "SMS": "True",
+             "PushNotifications": "False"
+             },
+        event_id="evt_ce_123456789",
+        event_time="2024-01-15T12:15:00Z"
+    ),
     "account": AccountEvent(
         account_id=ACCOUNT_ID,
         workspace_id=WORKSPACE_ID,
-        user_id="user123456",
+        user_id="allacc1",
         event_category="Account",
         event_name="Player Registration",
         event_id="evt_123456789",
@@ -110,7 +124,7 @@ TEST_DATA = {
     "deposit": DepositEvent(
         account_id=ACCOUNT_ID,
         workspace_id=WORKSPACE_ID,
-        user_id="user123456",
+        user_id="alldep1",
         event_category="Deposit",
         event_name="Successful Deposit",
         event_id="evt_dep_987654321",
@@ -124,7 +138,7 @@ TEST_DATA = {
     "withdraw": WithdrawEvent(
         account_id=ACCOUNT_ID,
         workspace_id=WORKSPACE_ID,
-        user_id="user123456",
+        user_id="allwd1",
         event_category="Withdraw",
         event_name="Successful Withdrawal",
         event_id="evt_with_123456789",
@@ -136,7 +150,7 @@ TEST_DATA = {
     "gaming": GamingActivityEvent(
         account_id=ACCOUNT_ID,
         workspace_id=WORKSPACE_ID,
-        user_id="user123456",
+        user_id="allgame1",
         event_category="Gaming Activity",
         event_name="Play Casino Game",
         event_id="evt_gaming_123456789",
@@ -150,7 +164,7 @@ TEST_DATA = {
     "wallet": WalletBalanceEvent(
         account_id=ACCOUNT_ID,
         workspace_id=WORKSPACE_ID,
-        user_id="user123456",
+        user_id="allwb1",
         event_category="Wallet Balance",
         event_name="Balance Updated",
         event_id="evt_wallet_123456789",
@@ -164,7 +178,7 @@ TEST_DATA = {
     "referral": ReferFriendEvent(
         account_id=ACCOUNT_ID,
         workspace_id=WORKSPACE_ID,
-        user_id="user123456",
+        user_id="allrf1",
         event_category="Refer Friend",
         event_name="Referral Successful",
         event_id="evt_rf_123456789",
@@ -185,6 +199,7 @@ events_to_validate = [
     {"key": "deposit", "label": "Deposit"},
     {"key": "withdraw", "label": "Withdraw"},
     {"key": "gaming", "label": "Gaming"},
+    {"key": "customerext", "label": "Customer Extension"},
     {"key": "wallet", "label": "Wallet Balance"},
     {"key": "referral", "label": "Refer Friend"}
 ]
@@ -232,6 +247,8 @@ def make_api_request(endpoint, data, method):
             result = sdk.send_withdraw_event(data)
         elif method == 'gaming':
             result = sdk.send_gaming_activity_event(data)
+        elif method == 'customerext':
+            result = sdk.send_extended_attributes(data)
         elif method == 'wallet':
             result = sdk.send_wallet_balance_event(data)
         elif method == 'referral':
@@ -262,39 +279,6 @@ def make_api_request(endpoint, data, method):
         }
 
 
-def health_check():
-    """
-    Perform a health check on the API
-    
-    Returns:
-        Health check result dictionary
-    """
-    try:
-        print('\n🏥 Performing Health Check...')
-        
-        start_time = time.time()
-        result = sdk.health_check()
-        end_time = time.time()
-        response_time = int((end_time - start_time) * 1000)
-        
-        if result['success']:
-            print('✅ Health Check - SUCCESS')
-            print(f"   Status: {result['status']}")
-            print(f"   Response Time: {response_time}ms")
-            print(f"   Response: {json.dumps(result['data'], indent=2)}")
-        else:
-            print('❌ Health Check - FAILED')
-            print(f"   Error: {result.get('error')}")
-            print(f"   Status: {result.get('status')}")
-        
-        return result
-    
-    except Exception as error:
-        print('❌ Health Check - FAILED')
-        print(f"   Error: {str(error)}")
-        raise
-
-
 def test_all_endpoints():
     """
     Test all API endpoints
@@ -313,6 +297,7 @@ def test_all_endpoints():
     deposit_dict = TEST_DATA['deposit'].to_dict()
     withdraw_dict = TEST_DATA['withdraw'].to_dict()
     gaming_dict = TEST_DATA['gaming'].to_dict()
+    extattr_dict = TEST_DATA['customerext'].to_dict()
     wallet_dict = TEST_DATA['wallet'].to_dict()
     referral_dict = TEST_DATA['referral'].to_dict()
     endpoints = [
@@ -346,7 +331,13 @@ def test_all_endpoints():
             'data': gaming_dict,
             'method': 'gaming'
         },
-                {
+        {
+            'name': 'Customer Extended Attributes',
+            'endpoint': '/extattributes',
+            'data': extattr_dict,
+            'method': 'customerext'
+        },
+        {
             'name': 'Wallet Balance Event',
             'endpoint': '/events/wallet-balance',
             'data': wallet_dict,
@@ -440,8 +431,6 @@ def run_tests():
         Test results
     """
     try:
-        # Health check first
-        health_check()
         
         # Test all endpoints
         results = test_all_endpoints()

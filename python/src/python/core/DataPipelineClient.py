@@ -198,15 +198,6 @@ class DataPipelineClient:
                 'timestamp': datetime.now().isoformat()
             }
     
-    def health_check(self) -> Dict[str, Any]:
-        """
-        Performs a health check on the API
-        
-        Returns:
-            Health check response dictionary
-        """
-        return self._make_request('GET', '/datapipeline/health')
-    
     def send_customer_profile(self, data: Union[Dict[str, Any], List[Dict[str, Any]]]) -> Dict[str, Any]:
         """
         Sends customer profile data
@@ -318,6 +309,7 @@ class DataPipelineClient:
                 - gamingEvents: List of gaming activity events
                 - walletBalanceEvents: List of wallet balance events
                 - referFriendEvents: List of refer friend events
+                - customerExtEvents: List of customer extended attributes events
             
         Returns:
             Batch response results dictionary
@@ -345,6 +337,12 @@ class DataPipelineClient:
 
         if 'referFriendEvents' in batch_data:
             results['referFriendEvents'] = self.send_refer_friend_event(batch_data['referFriendEvents'])
+
+        if 'extendedAttributes' in batch_data:
+            results['extendedAttributes'] = self.send_extended_attributes(batch_data['extendedAttributes'])
+    
+        
+
 
         return {
             'success': True,

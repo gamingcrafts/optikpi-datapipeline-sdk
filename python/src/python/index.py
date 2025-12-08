@@ -53,15 +53,6 @@ class OptikpiDataPipelineSDK:
             config = {}
         self.client = DataPipelineClient(config)
     
-    def health_check(self):
-        """
-        Perform a health check on the API
-        
-        Returns:
-            Response dictionary with success status and data
-        """
-        return self.client.health_check()
-    
     def send_customer_profile(self, data):
         """
         Send customer profile data
