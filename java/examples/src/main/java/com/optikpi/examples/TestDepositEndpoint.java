@@ -40,10 +40,9 @@ public class TestDepositEndpoint {
         System.out.println("🚀 Testing Deposit Event Endpoints");
         System.out.println("===================================");
         System.out.println("Configuration:");
-        System.out.println("📌 API Base URL: " + baseUrl);
-        System.out.println("👤 Account ID: " + accountId);
-        System.out.println("🏢 Workspace ID: " + workspaceId);
-        System.out.println("🔐 Auth Token: " + authToken.substring(0, 6) + "******");
+        System.out.println("📌 API Base URL: " +  config.getBaseUrl());
+        System.out.println("👤 Account ID: " + config.getAccountId());
+        System.out.println("🏢 Workspace ID: " + config.getWorkspaceId());
         System.out.println();
         
 
@@ -55,7 +54,7 @@ public class TestDepositEndpoint {
             DepositEvent event = new DepositEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("vinmathi_002");
+            event.setUserId("vinmathi_223");
             event.setEventCategory("Deposit");
             event.setEventName("Successful Deposit");
             event.setEventId("evt_" + System.currentTimeMillis());
