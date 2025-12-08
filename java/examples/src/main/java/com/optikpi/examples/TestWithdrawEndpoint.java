@@ -66,6 +66,15 @@ public class TestWithdrawEndpoint {
             event.setTransactionId("txn_" + System.currentTimeMillis());
             event.setStatus("success");
             event.setDevice("desktop");
+            event.setAffiliateId("aff_123456");
+            event.setPartnerId("partner_789");
+            event.setCampaignCode("SUMMER2024");
+            event.setReason("User requested withdrawal");
+            event.setFees(new BigDecimal("1.50"));
+            event.setNetAmount(new BigDecimal("48.50"));
+            event.setWithdrawalReason("Cash out winnings");
+            event.setProcessingTime("2024-01-15T10:30:00Z");
+            event.setFailureReason(null);
             event.setEventCategory("Withdraw");
     
 

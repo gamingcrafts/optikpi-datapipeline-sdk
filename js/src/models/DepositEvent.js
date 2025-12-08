@@ -20,6 +20,7 @@ class DepositEvent {
     this.currency = data.currency;
     this.fees = data.fees;
     this.net_amount = data.net_amount;
+    this.failure_reason = data.failure_reason;
   }
 
   /**

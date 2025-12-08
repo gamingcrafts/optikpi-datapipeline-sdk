@@ -22,6 +22,7 @@ class WithdrawEvent:
     net_amount: Optional[float] = None
     withdrawal_reason: Optional[str] = None
     processing_time: Optional[str] = None
+    failure_reason: Optional[str] = None
 
     # -------------------------------
     # Validation methods

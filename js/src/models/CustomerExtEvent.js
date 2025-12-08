@@ -62,12 +62,12 @@ class CustomerExtEvent {
    */
   toAPIFormat() {
     const formatted = { ...this.toJSON() };
-    
+
     // Convert ext_data to JSON string if it's an object
     if (typeof formatted.ext_data === 'object' && !Array.isArray(formatted.ext_data)) {
       formatted.ext_data = JSON.stringify(formatted.ext_data);
     }
-    
+
     return formatted;
   }
 

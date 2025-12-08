@@ -21,7 +21,8 @@ class DepositEvent:
     currency: Optional[str] = None
     fees: Optional[float] = None
     net_amount: Optional[float] = None
-    metadata: Optional[Dict[str, Any]] = field(default_factory=dict)  # <-- Add this
+    metadata: Optional[Dict[str, Any]] = field(default_factory=dict)
+    failure_reason: Optional[str] = None
 
     def validate(self) -> Dict[str, Any]:
         errors = []

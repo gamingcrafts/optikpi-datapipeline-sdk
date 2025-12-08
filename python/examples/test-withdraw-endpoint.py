@@ -55,7 +55,11 @@ withdraw = WithdrawEvent(
     payment_method="bank",
     transaction_id="txn_wd_123456789",
     status="success",
-    withdrawal_reason=None  # Make sure your class uses 'withdrawal_reason' instead of 'failure_reason'
+    fees=1.50,
+    net_amount=248.50,
+    withdrawal_reason="Cash out winnings",
+    processing_time="2024-01-15T10:30:00Z",
+    failure_reason=None
 )
 
 validation = withdraw.validate()

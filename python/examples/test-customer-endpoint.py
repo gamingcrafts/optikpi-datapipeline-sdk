@@ -83,7 +83,22 @@ customer = CustomerProfile(
     phone_verification="Verified",
     email_verification="Verified",
     bank_verification="NotVerified",
-    iddoc_verification="Verified"
+    iddoc_verification="Verified",
+    cooling_off_expiry_date="2024-12-31T23:59:59Z",
+    self_exclusion_expiry_date="2025-01-31T23:59:59Z",
+    risk_score_level=0.2,
+    marketing_sms_preference="Opt-in",
+    custom_data={
+        "favorite_game": "slots",
+        "newsletter_signup": True
+    },
+    self_exclusion_by="player",
+    self_exclusion_by_type="voluntary",
+    self_exclusion_check_time="2024-01-15T10:30:00Z",
+    self_exclusion_created_time="2024-01-01T00:00:00Z",
+    closed_time=None,
+    real_money_enabled=True,
+    push_token="push_token_abc123"
 )
 validation = customer.validate()
 

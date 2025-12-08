@@ -99,6 +99,171 @@ public class GamingActivityEvent {
     @JsonProperty("tournament_name")
     private String tournamentName;
     
+    @JsonProperty("loss_amount")
+    private BigDecimal lossAmount;
+    
+    @JsonProperty("bonus_id")
+    private String bonusId;
+    
+    @JsonProperty("free_spin_id")
+    private String freeSpinId;
+    
+    @JsonProperty("num_spins_played")
+    private Integer numSpinsPlayed;
+    
+    @JsonProperty("game_theme")
+    private String gameTheme;
+    
+    @JsonProperty("remaining_spins")
+    private Integer remainingSpins;
+    
+    @JsonProperty("bet_value_per_spin")
+    private BigDecimal betValuePerSpin;
+    
+    @JsonProperty("wagering_requirements_met")
+    private Boolean wageringRequirementsMet;
+    
+    @JsonProperty("free_spin_expiry_date")
+    private String freeSpinExpiryDate;
+    
+    @JsonProperty("campaign_id")
+    private String campaignId;
+    
+    @JsonProperty("campaign_name")
+    private String campaignName;
+    
+    @JsonProperty("rtp")
+    private BigDecimal rtp;
+    
+    @JsonProperty("winning_bet_amount")
+    private BigDecimal winningBetAmount;
+    
+    @JsonProperty("jackpot_type")
+    private String jackpotType;
+    
+    @JsonProperty("volatility")
+    private String volatility;
+    
+    @JsonProperty("min_bet")
+    private BigDecimal minBet;
+    
+    @JsonProperty("max_bet")
+    private BigDecimal maxBet;
+    
+    @JsonProperty("number_of_reels")
+    private Integer numberOfReels;
+    
+    @JsonProperty("number_of_paylines")
+    private Integer numberOfPaylines;
+    
+    @JsonProperty("feature_types")
+    private String featureTypes;
+    
+    @JsonProperty("game_release_date")
+    private String gameReleaseDate;
+    
+    @JsonProperty("live_dealer_availability")
+    private Boolean liveDealerAvailability;
+    
+    @JsonProperty("side_bets_availability")
+    private Boolean sideBetsAvailability;
+    
+    @JsonProperty("multiplayer_option")
+    private Boolean multiplayerOption;
+    
+    @JsonProperty("auto_play")
+    private Boolean autoPlay;
+    
+    @JsonProperty("poker_variant")
+    private String pokerVariant;
+    
+    @JsonProperty("buy_in_amount")
+    private BigDecimal buyInAmount;
+    
+    @JsonProperty("table_type")
+    private String tableType;
+    
+    @JsonProperty("stakes_level")
+    private String stakesLevel;
+    
+    @JsonProperty("number_of_players")
+    private Integer numberOfPlayers;
+    
+    @JsonProperty("game_duration")
+    private Integer gameDuration;
+    
+    @JsonProperty("hand_volume")
+    private Integer handVolume;
+    
+    @JsonProperty("player_position")
+    private String playerPosition;
+    
+    @JsonProperty("final_hand")
+    private String finalHand;
+    
+    @JsonProperty("rake_contribution")
+    private BigDecimal rakeContribution;
+    
+    @JsonProperty("multi_tabling_indicator")
+    private Boolean multiTablingIndicator;
+    
+    @JsonProperty("session_result")
+    private String sessionResult;
+    
+    @JsonProperty("vip_status")
+    private String vipStatus;
+    
+    @JsonProperty("blind_level")
+    private String blindLevel;
+    
+    @JsonProperty("rebuy_and_addon_info")
+    private String rebuyAndAddonInfo;
+    
+    @JsonProperty("sport_type")
+    private String sportType;
+    
+    @JsonProperty("betting_market")
+    private String bettingMarket;
+    
+    @JsonProperty("odds")
+    private BigDecimal odds;
+    
+    @JsonProperty("live_betting_availability")
+    private Boolean liveBettingAvailability;
+    
+    @JsonProperty("result")
+    private String result;
+    
+    @JsonProperty("bet_status")
+    private String betStatus;
+    
+    @JsonProperty("betting_channel")
+    private String bettingChannel;
+    
+    @JsonProperty("bonus_type")
+    private String bonusType;
+    
+    @JsonProperty("bonus_amount")
+    private BigDecimal bonusAmount;
+    
+    @JsonProperty("free_spin_start_date")
+    private String freeSpinStartDate;
+    
+    @JsonProperty("num_spins_awarded")
+    private Integer numSpinsAwarded;
+    
+    @JsonProperty("bonus_code")
+    private String bonusCode;
+    
+    @JsonProperty("parent_game_category")
+    private String parentGameCategory;
+    
+    @JsonProperty("money_type")
+    private String moneyType;
+    
+    @JsonProperty("transaction_type")
+    private String transactionType;
+    
     public GamingActivityEvent() {}
     
     public GamingActivityEvent(String accountId, String workspaceId, String userId, String eventName, String eventId, String eventTime) {
@@ -276,4 +441,169 @@ public class GamingActivityEvent {
     
     public String getTournamentName() { return tournamentName; }
     public void setTournamentName(String tournamentName) { this.tournamentName = tournamentName; }
+    
+    public BigDecimal getLossAmount() { return lossAmount; }
+    public void setLossAmount(BigDecimal lossAmount) { this.lossAmount = lossAmount; }
+    
+    public String getBonusId() { return bonusId; }
+    public void setBonusId(String bonusId) { this.bonusId = bonusId; }
+    
+    public String getFreeSpinId() { return freeSpinId; }
+    public void setFreeSpinId(String freeSpinId) { this.freeSpinId = freeSpinId; }
+    
+    public Integer getNumSpinsPlayed() { return numSpinsPlayed; }
+    public void setNumSpinsPlayed(Integer numSpinsPlayed) { this.numSpinsPlayed = numSpinsPlayed; }
+    
+    public String getGameTheme() { return gameTheme; }
+    public void setGameTheme(String gameTheme) { this.gameTheme = gameTheme; }
+    
+    public Integer getRemainingSpins() { return remainingSpins; }
+    public void setRemainingSpins(Integer remainingSpins) { this.remainingSpins = remainingSpins; }
+    
+    public BigDecimal getBetValuePerSpin() { return betValuePerSpin; }
+    public void setBetValuePerSpin(BigDecimal betValuePerSpin) { this.betValuePerSpin = betValuePerSpin; }
+    
+    public Boolean getWageringRequirementsMet() { return wageringRequirementsMet; }
+    public void setWageringRequirementsMet(Boolean wageringRequirementsMet) { this.wageringRequirementsMet = wageringRequirementsMet; }
+    
+    public String getFreeSpinExpiryDate() { return freeSpinExpiryDate; }
+    public void setFreeSpinExpiryDate(String freeSpinExpiryDate) { this.freeSpinExpiryDate = freeSpinExpiryDate; }
+    
+    public String getCampaignId() { return campaignId; }
+    public void setCampaignId(String campaignId) { this.campaignId = campaignId; }
+    
+    public String getCampaignName() { return campaignName; }
+    public void setCampaignName(String campaignName) { this.campaignName = campaignName; }
+    
+    public BigDecimal getRtp() { return rtp; }
+    public void setRtp(BigDecimal rtp) { this.rtp = rtp; }
+    
+    public BigDecimal getWinningBetAmount() { return winningBetAmount; }
+    public void setWinningBetAmount(BigDecimal winningBetAmount) { this.winningBetAmount = winningBetAmount; }
+    
+    public String getJackpotType() { return jackpotType; }
+    public void setJackpotType(String jackpotType) { this.jackpotType = jackpotType; }
+    
+    public String getVolatility() { return volatility; }
+    public void setVolatility(String volatility) { this.volatility = volatility; }
+    
+    public BigDecimal getMinBet() { return minBet; }
+    public void setMinBet(BigDecimal minBet) { this.minBet = minBet; }
+    
+    public BigDecimal getMaxBet() { return maxBet; }
+    public void setMaxBet(BigDecimal maxBet) { this.maxBet = maxBet; }
+    
+    public Integer getNumberOfReels() { return numberOfReels; }
+    public void setNumberOfReels(Integer numberOfReels) { this.numberOfReels = numberOfReels; }
+    
+    public Integer getNumberOfPaylines() { return numberOfPaylines; }
+    public void setNumberOfPaylines(Integer numberOfPaylines) { this.numberOfPaylines = numberOfPaylines; }
+    
+    public String getFeatureTypes() { return featureTypes; }
+    public void setFeatureTypes(String featureTypes) { this.featureTypes = featureTypes; }
+    
+    public String getGameReleaseDate() { return gameReleaseDate; }
+    public void setGameReleaseDate(String gameReleaseDate) { this.gameReleaseDate = gameReleaseDate; }
+    
+    public Boolean getLiveDealerAvailability() { return liveDealerAvailability; }
+    public void setLiveDealerAvailability(Boolean liveDealerAvailability) { this.liveDealerAvailability = liveDealerAvailability; }
+    
+    public Boolean getSideBetsAvailability() { return sideBetsAvailability; }
+    public void setSideBetsAvailability(Boolean sideBetsAvailability) { this.sideBetsAvailability = sideBetsAvailability; }
+    
+    public Boolean getMultiplayerOption() { return multiplayerOption; }
+    public void setMultiplayerOption(Boolean multiplayerOption) { this.multiplayerOption = multiplayerOption; }
+    
+    public Boolean getAutoPlay() { return autoPlay; }
+    public void setAutoPlay(Boolean autoPlay) { this.autoPlay = autoPlay; }
+    
+    public String getPokerVariant() { return pokerVariant; }
+    public void setPokerVariant(String pokerVariant) { this.pokerVariant = pokerVariant; }
+    
+    public BigDecimal getBuyInAmount() { return buyInAmount; }
+    public void setBuyInAmount(BigDecimal buyInAmount) { this.buyInAmount = buyInAmount; }
+    
+    public String getTableType() { return tableType; }
+    public void setTableType(String tableType) { this.tableType = tableType; }
+    
+    public String getStakesLevel() { return stakesLevel; }
+    public void setStakesLevel(String stakesLevel) { this.stakesLevel = stakesLevel; }
+    
+    public Integer getNumberOfPlayers() { return numberOfPlayers; }
+    public void setNumberOfPlayers(Integer numberOfPlayers) { this.numberOfPlayers = numberOfPlayers; }
+    
+    public Integer getGameDuration() { return gameDuration; }
+    public void setGameDuration(Integer gameDuration) { this.gameDuration = gameDuration; }
+    
+    public Integer getHandVolume() { return handVolume; }
+    public void setHandVolume(Integer handVolume) { this.handVolume = handVolume; }
+    
+    public String getPlayerPosition() { return playerPosition; }
+    public void setPlayerPosition(String playerPosition) { this.playerPosition = playerPosition; }
+    
+    public String getFinalHand() { return finalHand; }
+    public void setFinalHand(String finalHand) { this.finalHand = finalHand; }
+    
+    public BigDecimal getRakeContribution() { return rakeContribution; }
+    public void setRakeContribution(BigDecimal rakeContribution) { this.rakeContribution = rakeContribution; }
+    
+    public Boolean getMultiTablingIndicator() { return multiTablingIndicator; }
+    public void setMultiTablingIndicator(Boolean multiTablingIndicator) { this.multiTablingIndicator = multiTablingIndicator; }
+    
+    public String getSessionResult() { return sessionResult; }
+    public void setSessionResult(String sessionResult) { this.sessionResult = sessionResult; }
+    
+    public String getVipStatus() { return vipStatus; }
+    public void setVipStatus(String vipStatus) { this.vipStatus = vipStatus; }
+    
+    public String getBlindLevel() { return blindLevel; }
+    public void setBlindLevel(String blindLevel) { this.blindLevel = blindLevel; }
+    
+    public String getRebuyAndAddonInfo() { return rebuyAndAddonInfo; }
+    public void setRebuyAndAddonInfo(String rebuyAndAddonInfo) { this.rebuyAndAddonInfo = rebuyAndAddonInfo; }
+    
+    public String getSportType() { return sportType; }
+    public void setSportType(String sportType) { this.sportType = sportType; }
+    
+    public String getBettingMarket() { return bettingMarket; }
+    public void setBettingMarket(String bettingMarket) { this.bettingMarket = bettingMarket; }
+    
+    public BigDecimal getOdds() { return odds; }
+    public void setOdds(BigDecimal odds) { this.odds = odds; }
+    
+    public Boolean getLiveBettingAvailability() { return liveBettingAvailability; }
+    public void setLiveBettingAvailability(Boolean liveBettingAvailability) { this.liveBettingAvailability = liveBettingAvailability; }
+    
+    public String getResult() { return result; }
+    public void setResult(String result) { this.result = result; }
+    
+    public String getBetStatus() { return betStatus; }
+    public void setBetStatus(String betStatus) { this.betStatus = betStatus; }
+    
+    public String getBettingChannel() { return bettingChannel; }
+    public void setBettingChannel(String bettingChannel) { this.bettingChannel = bettingChannel; }
+    
+    public String getBonusType() { return bonusType; }
+    public void setBonusType(String bonusType) { this.bonusType = bonusType; }
+    
+    public BigDecimal getBonusAmount() { return bonusAmount; }
+    public void setBonusAmount(BigDecimal bonusAmount) { this.bonusAmount = bonusAmount; }
+    
+    public String getFreeSpinStartDate() { return freeSpinStartDate; }
+    public void setFreeSpinStartDate(String freeSpinStartDate) { this.freeSpinStartDate = freeSpinStartDate; }
+    
+    public Integer getNumSpinsAwarded() { return numSpinsAwarded; }
+    public void setNumSpinsAwarded(Integer numSpinsAwarded) { this.numSpinsAwarded = numSpinsAwarded; }
+    
+    public String getBonusCode() { return bonusCode; }
+    public void setBonusCode(String bonusCode) { this.bonusCode = bonusCode; }
+    
+    public String getParentGameCategory() { return parentGameCategory; }
+    public void setParentGameCategory(String parentGameCategory) { this.parentGameCategory = parentGameCategory; }
+    
+    public String getMoneyType() { return moneyType; }
+    public void setMoneyType(String moneyType) { this.moneyType = moneyType; }
+    
+    public String getTransactionType() { return transactionType; }
+    public void setTransactionType(String transactionType) { this.transactionType = transactionType; }
 }

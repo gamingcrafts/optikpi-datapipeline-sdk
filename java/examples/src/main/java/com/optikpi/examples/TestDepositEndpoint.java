@@ -65,8 +65,17 @@ public class TestDepositEndpoint {
             event.setTransactionId("txn_" + System.currentTimeMillis());
             event.setStatus("success");
             event.setDevice("mobile");
+            event.setAffiliateId("aff_123456");
+            event.setPartnerId("partner_789");
+            event.setCampaignCode("SUMMER2024");
+            event.setReason("Regular deposit");
+            event.setBonusAmount(new BigDecimal("10.00"));
+            event.setFeeAmount(new BigDecimal("2.50"));
             event.setPaymentProviderId("provider123");
             event.setPaymentProviderName("Chase Bank");
+            event.setFees(new BigDecimal("2.50"));
+            event.setNetAmount(new BigDecimal("97.50"));
+            event.setFailureReason(null);
             Map<String, Object> metadata = new HashMap<>();
             metadata.put("bank_name", "Chase Bank");
             metadata.put("account_last4", "1234");

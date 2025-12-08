@@ -90,6 +90,9 @@ public class WithdrawEvent {
     @JsonProperty("processing_time")
     private String processingTime;
     
+    @JsonProperty("failure_reason")
+    private String failureReason;
+    
     public WithdrawEvent() {}
     
     public WithdrawEvent(String accountId, String workspaceId, String userId, String eventName, String eventId, String eventTime, BigDecimal amount) {
@@ -282,4 +285,7 @@ public class WithdrawEvent {
     
     public String getProcessingTime() { return processingTime; }
     public void setProcessingTime(String processingTime) { this.processingTime = processingTime; }
+    
+    public String getFailureReason() { return failureReason; }
+    public void setFailureReason(String failureReason) { this.failureReason = failureReason; }
 }

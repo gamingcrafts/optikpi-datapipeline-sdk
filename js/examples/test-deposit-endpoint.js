@@ -37,7 +37,12 @@ const deposit = new DepositEvent({
   "currency": "USD",
   "payment_method": "bank",
   "transaction_id": "txn_123456789",
+  "payment_provider_id": "provider123",
+  "payment_provider_name": "Chase Bank",
   "status": "success",
+  "fees": 2.50,
+  "net_amount": 497.50,
+  "failure_reason": null,
   "metadata": {
     "bank_name": "Chase Bank",
     "account_last4": "1234"
@@ -58,21 +63,21 @@ async function testDepositEndpoint() {
   try {
     console.log('🚀 Testing Deposit Events Endpoint');
     console.log('==================================');
-    
+
     console.log('Configuration:');
     console.log(`API Base URL: ${API_BASE_URL}`);
     console.log(`Account ID: ${ACCOUNT_ID}`);
     console.log(`Workspace ID: ${WORKSPACE_ID}`);
     console.log(`Auth Token: ${AUTH_TOKEN.substring(0, 8)}...`);
-    
+
     console.log('\nMaking API request using SDK...');
     console.log('Deposit Event Data:', JSON.stringify(deposit, null, 2));
-    
+
     // Make the API call using SDK
     const startTime = Date.now();
     const result = await sdk.sendDepositEvent(deposit);
     const endTime = Date.now();
-    
+
     if (result.success) {
       console.log('\n✅ Success!');
       console.log('==================================');
@@ -88,7 +93,7 @@ async function testDepositEndpoint() {
       console.log(`SDK Success: ${result.success}`);
       console.log('Error Data:', JSON.stringify(result.data, null, 2));
     }
-    
+
   } catch (error) {
     console.error('\n❌ SDK Error occurred!');
     console.error('==================================');

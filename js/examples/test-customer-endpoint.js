@@ -66,7 +66,22 @@ const customer = new CustomerProfile({
   "phone_verification": "Verified",
   "email_verification": "Verified",
   "bank_verification": "NotVerified",
-  "iddoc_verification": "Verified"
+  "iddoc_verification": "Verified",
+  "cooling_off_expiry_date": "2024-12-31T23:59:59Z",
+  "self_exclusion_expiry_date": "2025-01-31T23:59:59Z",
+  "risk_score_level": "low",
+  "marketing_sms_preference": "Opt-in",
+  "custom_data": {
+    "favorite_game": "slots",
+    "newsletter_signup": true
+  },
+  "self_exclusion_by": "player",
+  "self_exclusion_by_type": "voluntary",
+  "self_exclusion_check_time": "2024-01-15T10:30:00Z",
+  "self_exclusion_created_time": "2024-01-01T00:00:00Z",
+  "closed_time": null,
+  "real_money_enabled": true,
+  "push_token": "push_token_abc123"
 });
 
 const validation = customer.validate();
@@ -83,21 +98,21 @@ async function testCustomerEndpoint() {
   try {
     console.log('🚀 Testing Customer Endpoint');
     console.log('============================');
-    
+
     console.log('Configuration:');
     console.log(`API Base URL: ${API_BASE_URL}`);
     console.log(`Account ID: ${ACCOUNT_ID}`);
     console.log(`Workspace ID: ${WORKSPACE_ID}`);
     console.log(`Auth Token: ${AUTH_TOKEN.substring(0, 8)}...`);
-    
+
     console.log('\nMaking API request using SDK...');
     console.log('Customer Data:', JSON.stringify(customer, null, 2));
-    
+
     // Make the API call using SDK
     const startTime = Date.now();
     const result = await sdk.sendCustomerProfile(customer);
     const endTime = Date.now();
-    
+
     if (result.success) {
       console.log('\n✅ Success!');
       console.log('============================');
@@ -113,7 +128,7 @@ async function testCustomerEndpoint() {
       console.log(`SDK Success: ${result.success}`);
       console.log('Error Data:', JSON.stringify(result.data, null, 2));
     }
-    
+
   } catch (error) {
     console.error('\n❌ SDK Error occurred!');
     console.error('============================');
