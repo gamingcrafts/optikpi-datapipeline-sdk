@@ -46,12 +46,11 @@ public class TestCustomerExtEndpoint {
         System.out.println("🚀 Testing Customer Extended Attributes Endpoints");
         System.out.println("==================================================");
         System.out.println("Configuration:");
-        System.out.println("📌 API Base URL: " + baseUrl);
-        System.out.println("👤 Account ID: " + accountId);
-        System.out.println("🏢 Workspace ID: " + workspaceId);
-        System.out.println("🔐 Auth Token: " + authToken.substring(0, 6) + "******");
+        System.out.println("📌 API Base URL: " +  config.getBaseUrl());
+        System.out.println("👤 Account ID: " + config.getAccountId());
+        System.out.println("🏢 Workspace ID: " + config.getWorkspaceId());
         System.out.println();
-        System.out.println("\nMaking API request using SDK...");
+     
 
         // Test Format 1: Object format
         testObjectFormat(sdk, accountId, workspaceId);
