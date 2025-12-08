@@ -1,6 +1,8 @@
 package com.optikpi.examples;
 
-import java.time.Instant; 
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map; 
 
 import com.optikpi.datapipeline.ClientConfig;
 import com.optikpi.datapipeline.OptikpiDataPipelineSDK;
@@ -8,8 +10,14 @@ import com.optikpi.datapipeline.model.ReferFriendEvent;
 import com.optikpi.datapipeline.model.ValidationResult;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 
 public class TestReferFriendEndpoint {
+
+    private static final ObjectMapper mapper = new ObjectMapper()
+            .enable(SerializationFeature.INDENT_OUTPUT);
 
     public static void main(String[] args) {
         Dotenv dotenv = Dotenv.configure()
@@ -32,11 +40,15 @@ public class TestReferFriendEndpoint {
 
         OptikpiDataPipelineSDK sdk = new OptikpiDataPipelineSDK(config);
 
-        System.out.println("=== Optikpi Data Pipeline SDK - Refer Friend Event Test ===");
-        System.out.println("Base URL: " + config.getBaseUrl());
-        System.out.println("Account ID: " + config.getAccountId());
-        System.out.println("Workspace ID: " + config.getWorkspaceId());
+        System.out.println("🚀 Testing Refer Friend Event Endpoints");
+        System.out.println("=======================================");
+        System.out.println("Configuration:");
+        System.out.println("📌 API Base URL: " + baseUrl);
+        System.out.println("👤 Account ID: " + accountId);
+        System.out.println("🏢 Workspace ID: " + workspaceId);
+        System.out.println("🔐 Auth Token: " + authToken.substring(0, 6) + "******");
         System.out.println();
+        System.out.println("\nMaking API request using SDK...");
 
         System.out.println("Test 1: Sending refer friend event...");
         testReferFriendEvent(sdk, accountId, workspaceId);
@@ -47,7 +59,7 @@ public class TestReferFriendEndpoint {
             ReferFriendEvent event = new ReferFriendEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("user12345");
+            event.setUserId("vinmathi_002");
             event.setEventName("Referral Successful");
             event.setEventId("evt_rf_987654321");
             event.setEventTime(Instant.now().toString());
@@ -59,31 +71,41 @@ public class TestReferFriendEndpoint {
             event.setRefereeRegistrationDate("2024-01-15T10:30:00Z");
             event.setRefereeFirstDeposit(100.00);
 
-            ValidationResult validResult = event.validate();
+            System.out.println("\n📋ReferFriend Event Data:");
+            System.out.println(mapper.writeValueAsString(event));
 
-            if (!validResult.isValid()) {
-                System.out.println("❌ Invalid refer friend event:");
-                System.out.println("Errors: " + validResult.getErrors());
+            ValidationResult valid = event.validate();
+            if (!valid.isValid()) {
+                System.out.println("\n❌ Validation Failed!");
+                System.out.println("Errors: " + valid.getErrors());
                 return;
-            } else {
-                System.out.println("✅ Valid refer friend event: " + validResult.isValid());
             }
 
+            System.out.println("\n🕒 making API request using SDK...");
+            long start = System.currentTimeMillis();
             var response = sdk.sendReferFriendEvent(event);
+            long end = System.currentTimeMillis();
 
+            System.out.println("\n📡 API Response:");
+            System.out.println("⏱ Response Time: " + (end - start) + "ms");
+            System.out.println("HTTP Status: " + response.getStatus());
+            System.out.println("Sending ReferFriend event...");
+            
             if (response.isSuccess()) {
-                System.out.println("✅ Refer friend event sent successfully!");
-                System.out.println("Status: " + response.getStatus());
-                System.out.println("Response: " + response.getData());
+                System.out.println("✅ SUCCESS!");
+                System.out.println("Response: " +
+                        mapper.writeValueAsString(response.getData()));
             } else {
-                System.out.println("❌ Failed to send refer friend event");
-                System.out.println("Error: " + response.getError());
-                System.out.println("Status: " + response.getStatus());
+                System.out.println("❌ FAILED!");
+                System.out.println("Error: " +
+                        mapper.writeValueAsString(response.getError()));
             }
 
         } catch (Exception e) {
-            System.err.println("❌ Exception occurred: " + e.getMessage());
+            System.err.println("\n💥 Exception occurred:");
             e.printStackTrace();
         }
     }
 }
+
+

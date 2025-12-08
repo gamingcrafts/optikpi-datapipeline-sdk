@@ -1,18 +1,16 @@
 package com.optikpi.examples;
 
-import java.lang.ref.Reference;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.optikpi.datapipeline.BatchData;
 import com.optikpi.datapipeline.ClientConfig;
 import com.optikpi.datapipeline.OptikpiDataPipelineSDK;
 import com.optikpi.datapipeline.model.AccountEvent;
 import com.optikpi.datapipeline.model.CustomerProfile;
 import com.optikpi.datapipeline.model.DepositEvent;
+import com.optikpi.datapipeline.model.ExtendedAttributesEvent;
 import com.optikpi.datapipeline.model.GamingActivityEvent;
 import com.optikpi.datapipeline.model.ValidationResult;
 import com.optikpi.datapipeline.model.WalletBalanceEvent;
@@ -20,13 +18,17 @@ import com.optikpi.datapipeline.model.ReferFriendEvent;
 import com.optikpi.datapipeline.model.WithdrawEvent;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 /**
- * Example: Test All Endpoints Demonstrates how to use all available endpoints
- * in the Optikpi Data Pipeline SDK
+ * Example: Test All Endpoints
+ * Demonstrates how to use all available endpoints in the Optikpi Data Pipeline SDK
  */
 public class TestAllEndpoints {
 
+    private static final ObjectMapper mapper = new ObjectMapper()
+            .enable(SerializationFeature.INDENT_OUTPUT);
     public static void main(String[] args) {
         // Load environment variables
         Dotenv dotenv = Dotenv.configure()
@@ -42,7 +44,7 @@ public class TestAllEndpoints {
 
         if (authToken == null || accountId == null || workspaceId == null) {
             System.err.println("Error: Missing required environment variables:");
-            System.err.println("Please set OPTIKPI_AUTH_TOKEN, OPTIKPI_ACCOUNT_ID, and OPTIKPI_WORKSPACE_ID");
+            System.err.println("Please set AUTH_TOKEN, ACCOUNT_ID, and WORKSPACE_ID");
             System.exit(1);
         }
 
@@ -53,40 +55,34 @@ public class TestAllEndpoints {
         // Create SDK instance
         OptikpiDataPipelineSDK sdk = new OptikpiDataPipelineSDK(config);
 
-        System.out.println("=== Optikpi Data Pipeline SDK - All Endpoints Test ===");
-        System.out.println("Base URL: " + config.getBaseUrl());
-        System.out.println("Account ID: " + config.getAccountId());
-        System.out.println("Workspace ID: " + config.getWorkspaceId());
+        System.out.println("🚀 Testing All Endpoints");
+        System.out.println("=========================");
+        System.out.println("Configuration:");
+        System.out.println("📌 API Base URL: " + baseUrl);
+        System.out.println("👤 Account ID: " + accountId);
+        System.out.println("🏢 Workspace ID: " + workspaceId);
+        System.out.println("🔐 Auth Token: " + authToken.substring(0, 6) + "******");
         System.out.println();
+       
 
         // Test all endpoints
-        testHealthCheck(sdk);
         testCustomerProfile(sdk, accountId, workspaceId);
+        testExtendedAttributes(sdk, accountId, workspaceId); 
         testAccountEvent(sdk, accountId, workspaceId);
         testDepositEvent(sdk, accountId, workspaceId);
         testWithdrawEvent(sdk, accountId, workspaceId);
         testGamingActivityEvent(sdk, accountId, workspaceId);
         testReferFriendEvent(sdk, accountId, workspaceId);      
         testWalletBalanceEvent(sdk, accountId, workspaceId);
-        testBatchOperations(sdk, accountId, workspaceId);
-    }
-
-    private static void testHealthCheck(OptikpiDataPipelineSDK sdk) {
-        System.out.println("=== Health Check ===");
-        try {
-            var response = sdk.healthCheck();
-            printResponse("Health Check", response);
-        } catch (Exception e) {
-            System.err.println("❌ Health check failed: " + e.getMessage());
-        }
-        System.out.println();
     }
 
     private static void testCustomerProfile(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
         System.out.println("=== Customer Profile ===");
         try {
             CustomerProfile customer = createSampleCustomer(accountId, workspaceId);
-            validateEvent(customer, "customer event");
+            validateEvent(customer, "Customer Profile");
+            System.out.println("\n📋 Event Data:");
+            System.out.println(mapper.writeValueAsString(customer));
             var response = sdk.sendCustomerProfile(customer);
             printResponse("Customer Profile", response);
         } catch (Exception e) {
@@ -95,11 +91,41 @@ public class TestAllEndpoints {
         System.out.println();
     }
 
+    private static void testExtendedAttributes(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
+        System.out.println("=== Extended Attributes ===");
+        
+        // Test Format 1: ExtendedAttributesEvent with Map
+        try {
+            System.out.println("Testing Format 1: Object Format (BINGO_PREFERENCES)");
+            ExtendedAttributesEvent extEvent1 = createSampleExtendedAttributesMapFormat(accountId, workspaceId);
+            validateEvent(extEvent1, "Extended Attributes (Map Format)");
+            var response1 = sdk.sendExtendedAttributes(extEvent1);
+            printResponse("Extended Attributes (Map Format)", response1);
+        } catch (Exception e) {
+            System.err.println("❌ Extended attributes (Map) failed: " + e.getMessage());
+        }
+        
+        // Test Format 2: ExtendedAttributesEvent with String
+        try {
+            System.out.println("Testing Format 2: JSON String Format (GAMING_PREFERENCES)");
+            ExtendedAttributesEvent extEvent2 = createSampleExtendedAttributesStringFormat(accountId, workspaceId);
+            validateEvent(extEvent2, "Extended Attributes (String Format)");
+            var response2 = sdk.sendExtendedAttributes(extEvent2);
+            printResponse("Extended Attributes (String Format)", response2);
+        } catch (Exception e) {
+            System.err.println("❌ Extended attributes (String) failed: " + e.getMessage());
+        }
+        
+        System.out.println();
+    }
+
     private static void testAccountEvent(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
         System.out.println("=== Account Event ===");
         try {
             AccountEvent event = createSampleAccountEvent(accountId, workspaceId);
-            validateEvent(event, "Account event");
+            validateEvent(event, "Account Event");
+            System.out.println("\n📋 Event Data:");
+            System.out.println(mapper.writeValueAsString(event));
             var response = sdk.sendAccountEvent(event);
             printResponse("Account Event", response);
         } catch (Exception e) {
@@ -112,7 +138,9 @@ public class TestAllEndpoints {
         System.out.println("=== Deposit Event ===");
         try {
             DepositEvent event = createSampleDepositEvent(accountId, workspaceId);
-            validateEvent(event, "Deposit event");
+            validateEvent(event, "Deposit Event");
+            System.out.println("\n📋 Event Data:");
+            System.out.println(mapper.writeValueAsString(event));
             var response = sdk.sendDepositEvent(event);
             printResponse("Deposit Event", response);
         } catch (Exception e) {
@@ -125,7 +153,9 @@ public class TestAllEndpoints {
         System.out.println("=== Withdraw Event ===");
         try {
             WithdrawEvent event = createSampleWithdrawEvent(accountId, workspaceId);
-            validateEvent(event, "Withdraw event");
+            validateEvent(event, "Withdraw Event");
+            System.out.println("\n📋 Event Data:");
+            System.out.println(mapper.writeValueAsString(event));
             var response = sdk.sendWithdrawEvent(event);
             printResponse("Withdraw Event", response);
         } catch (Exception e) {
@@ -138,7 +168,9 @@ public class TestAllEndpoints {
         System.out.println("=== Gaming Activity Event ===");
         try {
             GamingActivityEvent event = createSampleGamingActivityEvent(accountId, workspaceId);
-            validateEvent(event, "Gaming event");
+            validateEvent(event, "Gaming Activity Event");
+            System.out.println("\n📋 Event Data:");
+            System.out.println(mapper.writeValueAsString(event));
             var response = sdk.sendGamingActivityEvent(event);
             printResponse("Gaming Activity Event", response);
         } catch (Exception e) {
@@ -151,7 +183,9 @@ public class TestAllEndpoints {
         System.out.println("=== Refer Friend Event ===");
         try {
             ReferFriendEvent event = createSampleReferFriendEvent(accountId, workspaceId);
-            validateEvent(event, "ReferFriend Event");
+            validateEvent(event, "Refer Friend Event");
+            System.out.println("\n📋 Event Data:");
+            System.out.println(mapper.writeValueAsString(event));
             var response = sdk.sendReferFriendEvent(event);
             printResponse("Refer Friend Event", response);
         } catch (Exception e) {
@@ -160,11 +194,13 @@ public class TestAllEndpoints {
         System.out.println();
     }
 
-     private static void testWalletBalanceEvent(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
+    private static void testWalletBalanceEvent(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
         System.out.println("=== Wallet Balance Event ===");
         try {
             WalletBalanceEvent event = createSampleWalletBalanceEvent(accountId, workspaceId);
             validateEvent(event, "Wallet Balance Event");
+            System.out.println("\n📋 Event Data:");
+            System.out.println(mapper.writeValueAsString(event));
             var response = sdk.sendWalletBalanceEvent(event);
             printResponse("Wallet Balance Event", response);
         } catch (Exception e) {
@@ -173,59 +209,11 @@ public class TestAllEndpoints {
         System.out.println();
     }
 
-    private static void testBatchOperations(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
-        System.out.println("=== Batch Operations ===");
-        try {
-            BatchData batchData = new BatchData();
-            batchData.setCustomers(Arrays.asList(createSampleCustomer(accountId, workspaceId)));
-            batchData.setAccountEvents(Arrays.asList(createSampleAccountEvent(accountId, workspaceId)));
-            batchData.setDepositEvents(Arrays.asList(createSampleDepositEvent(accountId, workspaceId)));
-            batchData.setWithdrawEvents(Arrays.asList(createSampleWithdrawEvent(accountId, workspaceId)));
-            batchData.setGamingEvents(Arrays.asList(createSampleGamingActivityEvent(accountId, workspaceId)));
-            batchData.setReferFriendEvents(Arrays.asList(createSampleReferFriendEvent(accountId, workspaceId)));
-            batchData.setWalletBalanceEvents(Arrays.asList(createSampleWalletBalanceEvent(accountId, workspaceId)));
-            validateEvent(batchData, "BatchData");
-            var response = sdk.sendBatch(batchData);
-
-            if (response.isSuccess()) {
-                System.out.println("✅ Batch operation completed successfully!");
-                System.out.println("Timestamp: " + response.getTimestamp());
-
-                if (response.getCustomers() != null) {
-                    System.out.println("Customer profiles: " + (response.getCustomers().isSuccess() ? "Success" : "Failed"));
-                }
-                if (response.getAccountEvents() != null) {
-                    System.out.println("Account events: " + (response.getAccountEvents().isSuccess() ? "Success" : "Failed"));
-                }
-                if (response.getDepositEvents() != null) {
-                    System.out.println("Deposit events: " + (response.getDepositEvents().isSuccess() ? "Success" : "Failed"));
-                }
-                if (response.getWithdrawEvents() != null) {
-                    System.out.println("Withdraw events: " + (response.getWithdrawEvents().isSuccess() ? "Success" : "Failed"));
-                }
-                if (response.getGamingEvents() != null) {
-                    System.out.println("Gaming events: " + (response.getGamingEvents().isSuccess() ? "Success" : "Failed"));
-                }
-                if (response.getReferFriendEvents() != null) {
-                    System.out.println("Refer Friend events: " + (response.getReferFriendEvents().isSuccess() ? "Success" : "Failed"));
-                }
-                if (response.getWalletBalanceEvents() != null) {
-                    System.out.println("Wallet Balance events: " + (response.getWalletBalanceEvents().isSuccess() ? "Success" : "Failed"));
-                }
-            } else {
-                System.out.println("❌ Batch operation failed");
-            }
-        } catch (Exception e) {
-            System.err.println("❌ Batch operation failed: " + e.getMessage());
-        }
-        System.out.println();
-    }
-
     private static CustomerProfile createSampleCustomer(String accountId, String workspaceId) {
         CustomerProfile customer = new CustomerProfile();
         customer.setAccountId(accountId);
         customer.setWorkspaceId(workspaceId);
-        customer.setUserId("user_011");
+        customer.setUserId("sdk_91");
         customer.setUsername("john_doe");
         customer.setEmail("john.doe@example.com");
         customer.setFullName("John Doe");
@@ -241,7 +229,6 @@ public class TestAllEndpoints {
         customer.setVipStatus("Regular");
         customer.setCreationTimestamp(Instant.now().toString());
 
-        // Add some custom data
         Map<String, Object> customData = new HashMap<>();
         customData.put("preferred_game_category", "slots");
         customData.put("marketing_source", "google_ads");
@@ -250,104 +237,148 @@ public class TestAllEndpoints {
         return customer;
     }
 
-    private static AccountEvent createSampleAccountEvent(String accountId, String workspaceId) {
-        AccountEvent event = new AccountEvent();
+    private static ExtendedAttributesEvent createSampleExtendedAttributesMapFormat(String accountId, String workspaceId) {
+        ExtendedAttributesEvent event = new ExtendedAttributesEvent();
         event.setAccountId(accountId);
         event.setWorkspaceId(workspaceId);
-        event.setUserId("user_012");
-        event.setEventName("Login");
-        event.setEventId("evt_" + System.currentTimeMillis());
-        event.setEventTime(Instant.now().toString());
-        event.setDevice("desktop");
-        event.setStatus("completed");
+        event.setUserId("sdk_ext_001");
+        event.setListName("BINGO_PREFERENCES");
+        
+        Map<String, String> extDataMap = new HashMap<>();
+        extDataMap.put("Email", "True");
+        extDataMap.put("SMS", "True");
+        extDataMap.put("PushNotifications", "False");
+        event.setExtData(extDataMap);
+        
+        return event;
+    }
+
+    private static ExtendedAttributesEvent createSampleExtendedAttributesStringFormat(String accountId, String workspaceId) {
+        ExtendedAttributesEvent event = new ExtendedAttributesEvent();
+        event.setAccountId(accountId);
+        event.setWorkspaceId(workspaceId);
+        event.setUserId("sdk_ext_002");
+        event.setListName("GAMING_PREFERENCES");
+        
+        String extDataJson = "{\"Email\":\"True\",\"SMS\":\"True\",\"PushNotifications\":\"True\"}";
+        event.setExtDataAsString(extDataJson);
+        
+        return event;
+    }
+
+    private static AccountEvent createSampleAccountEvent(String accountId, String workspaceId) {
+        AccountEvent event = new AccountEvent();
+            event.setAccountId(accountId);
+            event.setWorkspaceId(workspaceId);
+            event.setUserId("sdk_003");
+            event.setEventName("Player Registration");
+            event.setEventId("evt_login_" + System.currentTimeMillis());
+            event.setEventTime(Instant.now().toString());
+            event.setDevice("desktop");
+            event.setStatus("completed");
+            event.setAffiliateId("aff_001");
+            event.setPartnerId("partner_001");
+            event.setCampaignCode("CAMPAIGN_001");
+            event.setReason("Registration completed successfully");
         return event;
     }
 
     private static DepositEvent createSampleDepositEvent(String accountId, String workspaceId) {
         DepositEvent event = new DepositEvent();
-        event.setAccountId(accountId);
-        event.setWorkspaceId(workspaceId);
-        event.setUserId("user_013");
-        event.setEventName("Successful Deposit");
-        event.setEventId("evt_" + System.currentTimeMillis());
-        event.setEventTime(Instant.now().toString());
-        event.setAmount(new BigDecimal("100.00"));
-        event.setCurrency("USD");
-        event.setPaymentMethod("credit_card");
-        event.setTransactionId("txn_" + System.currentTimeMillis());
-        event.setStatus("success");
-        event.setDevice("mobile");
+            event.setAccountId(accountId);
+            event.setWorkspaceId(workspaceId);
+            event.setUserId("sdk_94");
+            event.setEventCategory("Deposit");
+            event.setEventName("Successful Deposit");
+            event.setEventId("evt_" + System.currentTimeMillis());
+            event.setEventTime(Instant.now().toString());
+            event.setAmount(new BigDecimal("100.00"));
+            event.setCurrency("USD");
+            event.setPaymentMethod("bank");
+            event.setTransactionId("txn_" + System.currentTimeMillis());
+            event.setStatus("success");
+            event.setDevice("mobile");
+            event.setPaymentProviderId("provider123");
+            event.setPaymentProviderName("Chase Bank");
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("bank_name", "Chase Bank");
+            metadata.put("account_last4", "1234");
+            metadata.put("source", "mobile_app");
+            event.setMetadata(metadata);
         return event;
     }
 
     private static WithdrawEvent createSampleWithdrawEvent(String accountId, String workspaceId) {
         WithdrawEvent event = new WithdrawEvent();
-        event.setAccountId(accountId);
-        event.setWorkspaceId(workspaceId);
-        event.setUserId("user_014");
-        event.setEventName("Successful Withdrawal");
-        event.setEventId("evt_" + System.currentTimeMillis());
-        event.setEventTime(Instant.now().toString());
-        event.setAmount(new BigDecimal("50.00"));
-        event.setCurrency("USD");
-        event.setPaymentMethod("bank");
-        event.setTransactionId("txn_" + System.currentTimeMillis());
-        event.setStatus("success");
-        event.setDevice("desktop");
+            event.setAccountId(accountId);
+            event.setWorkspaceId(workspaceId);
+            event.setUserId("sdk_95");
+            event.setEventName("Successful Withdrawal");
+            event.setEventId("evt_" + System.currentTimeMillis());
+            event.setEventTime(Instant.now().toString());
+            event.setAmount(new BigDecimal("50.00"));
+            event.setCurrency("USD");
+            event.setPaymentMethod("bank");
+            event.setTransactionId("txn_" + System.currentTimeMillis());
+            event.setStatus("success");
+            event.setDevice("desktop");
         return event;
     }
 
     private static GamingActivityEvent createSampleGamingActivityEvent(String accountId, String workspaceId) {
         GamingActivityEvent event = new GamingActivityEvent();
-        event.setAccountId(accountId);
-        event.setWorkspaceId(workspaceId);
-        event.setUserId("user_015");
-        event.setEventName("Play Casino Game");
-        event.setEventId("evt_" + System.currentTimeMillis());
-        event.setEventTime(Instant.now().toString());
-        event.setGameId("game_001");
-        event.setGameName("Mega Slots");
-        event.setGameProvider("ProviderXYZ");
-        event.setGameCategory("slots");
-        event.setBetAmount(new BigDecimal("5.00"));
-        event.setCurrency("USD");
-        event.setDevice("mobile");
-        event.setSessionId("session_" + System.currentTimeMillis());
-        return event;
-    }
-    private static ReferFriendEvent createSampleReferFriendEvent(String accountId, String workspaceId) {
-     ReferFriendEvent event = new ReferFriendEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("user_016");
-            event.setEventName("Referral Successful");
-            event.setEventId("evt_rf_987654321");
+            event.setUserId("sdk_96");
+            event.setEventName("Play Casino Game");
+            event.setEventId("evt_" + System.currentTimeMillis());
             event.setEventTime(Instant.now().toString());
-            event.setReferralCodeUsed("REF123456");
-            event.setSuccessfulReferralConfirmation(true);
-            event.setRewardType("bonus");
-            event.setRewardClaimedStatus("claimed");
-            event.setRefereeUserId("user789012");
-            event.setRefereeRegistrationDate("2024-01-15T10:30:00Z");
-            event.setRefereeFirstDeposit(100.00);
-            return event;
+            event.setEventCategory("Gaming Activity");
+            event.setGameId("game_001");
+            event.setGameName("Mega Slots");
+            event.setGameTitle("Poker");
+            event.setGameProvider("ProviderXYZ");
+            event.setGameCategory("slots");
+            event.setBetAmount(new BigDecimal("5.00"));
+            event.setCurrency("USD");
+            event.setDevice("mobile");
+            event.setSessionId("session_" + System.currentTimeMillis());
+        return event;
+    }
+
+    private static ReferFriendEvent createSampleReferFriendEvent(String accountId, String workspaceId) {
+        ReferFriendEvent event = new ReferFriendEvent();
+        event.setAccountId(accountId);
+        event.setWorkspaceId(workspaceId);
+        event.setUserId("sdk_97");
+        event.setEventName("Referral Successful");
+        event.setEventId("evt_rf_987654321");
+        event.setEventTime(Instant.now().toString());
+        event.setReferralCodeUsed("REF123456");
+        event.setSuccessfulReferralConfirmation(true);
+        event.setRewardType("bonus");
+        event.setRewardClaimedStatus("claimed");
+        event.setRefereeUserId("user789012");
+        event.setRefereeRegistrationDate("2024-01-15T10:30:00Z");
+        event.setRefereeFirstDeposit(100.00);
+        return event;
     }
 
     private static WalletBalanceEvent createSampleWalletBalanceEvent(String accountId, String workspaceId) {
-      WalletBalanceEvent event = new WalletBalanceEvent();
-            event.setAccountId(accountId);
-            event.setWorkspaceId(workspaceId);
-            event.setUserId("user_017");
-            event.setEventName("Balance Update");
-            event.setEventId("evt_wb_987654321");
-            event.setEventTime(Instant.now().toString());
-            event.setWalletType("main");
-            event.setCurrency("USD");
-            event.setCurrentCashBalance(new BigDecimal("1250.50"));
-            event.setCurrentBonusBalance(new BigDecimal("100.00"));
-            event.setCurrentTotalBalance(new BigDecimal("1350.50"));
-            event.setBlockedAmount(new BigDecimal("50.00"));
-            return event;
+        WalletBalanceEvent event = new WalletBalanceEvent();
+        event.setAccountId(accountId);
+        event.setWorkspaceId(workspaceId);
+        event.setUserId("sdk_98");
+        event.setEventName("Balance Update");
+        event.setEventId("evt_wb_987654321");
+        event.setEventTime(Instant.now().toString());
+        event.setWalletType("main");
+        event.setCurrency("USD");
+        event.setCurrentCashBalance(new BigDecimal("1250.50"));
+        event.setCurrentBonusBalance(new BigDecimal("100.00"));
+        event.setCurrentTotalBalance(new BigDecimal("1350.50"));
+        event.setBlockedAmount(new BigDecimal("50.00"));
+        return event;
     }
 
     private static void printResponse(String operation, com.optikpi.datapipeline.ApiResponse<Object> response) {
@@ -362,11 +393,13 @@ public class TestAllEndpoints {
         }
     }
 
-    // ✅ Universal validation method for all event types (including BatchData)
     private static void validateEvent(Object event, String eventName) {
         if (event instanceof CustomerProfile) {
             ValidationResult result = ((CustomerProfile) event).validate();
-            printValidationResult(result, eventName);
+            printValidationResult(result, eventName);    
+        } else if (event instanceof ExtendedAttributesEvent) {
+            ValidationResult result = ((ExtendedAttributesEvent) event).validate();
+            printValidationResult(result, eventName);    
         } else if (event instanceof AccountEvent) {
             ValidationResult result = ((AccountEvent) event).validate();
             printValidationResult(result, eventName);
@@ -385,48 +418,6 @@ public class TestAllEndpoints {
         } else if (event instanceof WalletBalanceEvent) {
             ValidationResult result = ((WalletBalanceEvent) event).validate();
             printValidationResult(result, eventName);   
-        } else if (event instanceof BatchData) {
-            System.out.println("=== Validating BatchData contents ===");
-
-            BatchData batch = (BatchData) event;
-
-            if (batch.getCustomers() != null) {
-                for (Object c : batch.getCustomers()) {
-                    validateEvent(c, "CustomerProfile (Batch)");
-                }
-            }
-            if (batch.getAccountEvents() != null) {
-                for (Object a : batch.getAccountEvents()) {
-                    validateEvent(a, "AccountEvent (Batch)");
-                }
-            }
-            if (batch.getDepositEvents() != null) {
-                for (Object d : batch.getDepositEvents()) {
-                    validateEvent(d, "DepositEvent (Batch)");
-                }
-            }
-            if (batch.getWithdrawEvents() != null) {
-                for (Object w : batch.getWithdrawEvents()) {
-                    validateEvent(w, "WithdrawEvent (Batch)");
-                }
-            }
-            if (batch.getGamingEvents() != null) {
-                for (Object g : batch.getGamingEvents()) {
-                    validateEvent(g, "GamingActivityEvent (Batch)");
-                }
-            }
-            if (batch.getReferFriendEvents() != null) {
-                for (Object g : batch.getReferFriendEvents()) {
-                    validateEvent(g, "ReferFriendEvent (Batch)");
-                }
-            }
-            if (batch.getWalletBalanceEvents() != null) {
-                for (Object g : batch.getWalletBalanceEvents()) {
-                    validateEvent(g, "WalletBalanceEvent (Batch)");
-                }
-            }
-            
-
         } else {
             System.out.println("⚠️ Unknown event type: " + eventName);
         }
@@ -440,5 +431,4 @@ public class TestAllEndpoints {
             System.out.println("✅ Valid " + eventName + ": " + result.isValid());
         }
     }
-
 }
