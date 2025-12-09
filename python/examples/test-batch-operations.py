@@ -50,7 +50,7 @@ def create_sample_customer(account_id, workspace_id):
     return CustomerProfile(
         account_id=ACCOUNT_ID,
         workspace_id=WORKSPACE_ID,
-        user_id="1allcust_py_1",
+        user_id="2batchcust_py_1",
         username="john_doe",
         full_name="John Doe",
         first_name="John",
@@ -112,7 +112,7 @@ def create_sample_extended_attributes_map_format(account_id, workspace_id):
     return CustomerExtEvent(
         account_id=account_id,
         workspace_id=workspace_id,
-        user_id="1allce1",
+        user_id="2batchce1",
         list_name="BINGO_PREFERENCES",
         ext_data={
             "Email": "True",
@@ -127,7 +127,7 @@ def create_sample_extended_attributes_string_format(account_id, workspace_id):
     return CustomerExtEvent(
         account_id=account_id,
         workspace_id=workspace_id,
-        user_id='batch_py_ext2',
+        user_id='2batch_py_ext2',
         list_name='GAMING_PREFERENCES',
         ext_data=json.dumps({
             'Email': 'True',
@@ -142,7 +142,7 @@ def create_sample_account_event(account_id, workspace_id):
     return AccountEvent(
         account_id=account_id,
         workspace_id=workspace_id,
-        user_id="1allacc1",
+        user_id="2batchacc1",
         event_category="Account",
         event_name="Player Registration",
         event_id="evt_123456789",
@@ -161,7 +161,7 @@ def create_sample_deposit_event(account_id, workspace_id):
     return DepositEvent(
         account_id=account_id,
         workspace_id=workspace_id,
-        user_id="1all_dep_py_1",
+        user_id="2batch_dep_py_1",
         event_category="Deposit",
         event_name="Successful Deposit",
         event_id="evt_dep_987654321",
@@ -188,18 +188,22 @@ def create_sample_withdraw_event(account_id, workspace_id):
     return WithdrawEvent(
         account_id=account_id,
         workspace_id=workspace_id,
-        user_id="1all_wd_py_1",
+        user_id="2batch_wd_py_1",
         event_category="Withdraw",
         event_name="Successful Withdrawal",
         event_id="evt_wd_987654321",
         event_time="2024-01-15T14:45:00Z",
-        wallet_type= "main",
         amount=250.00,
         currency="USD",
         payment_method="bank",
         transaction_id="txn_wd_123456789",
         status="success",
         fees=1.50,
+        device="desktop",
+        affiliate_id="aff_123456",
+        partner_id="partner_789",
+        campaign_code="SUMMER2024",
+        reason="User requested withdrawal",
         net_amount=248.50,
         withdrawal_reason="Cash out winnings",
         processing_time="2024-01-15T10:30:00Z",
@@ -212,7 +216,7 @@ def create_sample_gaming_activity_event(account_id, workspace_id):
     return GamingActivityEvent(
         account_id=account_id,
         workspace_id=workspace_id,
-        user_id="1batchgame_py_1",
+        user_id="2batchgame_py_1",
         event_category="Gaming Activity",
         event_name="Play Casino Game",
         event_id="evt_" + str(int(time.time())),
@@ -289,7 +293,7 @@ def create_sample_refer_friend_event(account_id, workspace_id):
     return ReferFriendEvent(
         account_id=account_id,
         workspace_id=workspace_id,
-        user_id="1batchrf1",
+        user_id="2batchrf1",
         event_category="Refer Friend",
         event_name="Referral Successful",
         event_id="evt_rf_123456789",
@@ -309,11 +313,12 @@ def create_sample_wallet_balance_event(account_id, workspace_id):
     return WalletBalanceEvent(
         account_id=account_id,
         workspace_id=workspace_id,
-        user_id="1allwb1",
+        user_id="2batchwb1",
         event_category="Wallet Balance",
         event_name="Balance Updated",
         event_id="evt_wallet_123456789",
         event_time="2024-01-15T17:00:00Z",
+        wallet_type="main",
         currency="USD",
         current_cash_balance=450.00,
         current_bonus_balance=100.00,
