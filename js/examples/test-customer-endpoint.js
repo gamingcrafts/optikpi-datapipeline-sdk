@@ -80,7 +80,7 @@ const customer = new CustomerProfile({
   "self_exclusion_check_time": "2024-01-15T10:30:00Z",
   "self_exclusion_created_time": "2024-01-01T00:00:00Z",
   "closed_time": null,
-  "real_money_enabled": true,
+  "real_money_enabled": "true",
   "push_token": "push_token_abc123"
 });
 
