@@ -57,7 +57,8 @@ public class TestWalletBalanceEndpoint {
             WalletBalanceEvent event = new WalletBalanceEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("vinmathi_002");
+            event.setUserId("java_01");
+            event.setEventCategory("Wallet Balance");
             event.setEventName("Balance Update");
             event.setEventId("evt_wb_987654321");
             event.setEventTime(Instant.now().toString());
@@ -67,16 +68,17 @@ public class TestWalletBalanceEndpoint {
             event.setCurrentBonusBalance(new BigDecimal("100.00"));
             event.setCurrentTotalBalance(new BigDecimal("1350.50"));
             event.setBlockedAmount(new BigDecimal("50.00"));
-
-           System.out.println("\n📋WalletBalance Event Data:");
-            System.out.println(mapper.writeValueAsString(event));
-
+            
             ValidationResult valid = event.validate();
             if (!valid.isValid()) {
                 System.out.println("\n❌ Validation Failed!");
                 System.out.println("Errors: " + valid.getErrors());
                 return;
             }
+
+            System.out.println("✅ WalletBalance event validated successfully!");
+            System.out.println("\n📋WalletBalance Event Data:");
+            System.out.println(mapper.writeValueAsString(event));
 
             System.out.println("\n🕒 making API request using SDK...");
             long start = System.currentTimeMillis();

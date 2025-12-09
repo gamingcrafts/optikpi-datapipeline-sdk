@@ -58,7 +58,8 @@ public class TestReferFriendEndpoint {
             ReferFriendEvent event = new ReferFriendEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("vinmathi_002");
+            event.setUserId("java_01");
+            event.setEventCategory("Refer Friend");
             event.setEventName("Referral Successful");
             event.setEventId("evt_rf_987654321");
             event.setEventTime(Instant.now().toString());
@@ -70,15 +71,16 @@ public class TestReferFriendEndpoint {
             event.setRefereeRegistrationDate("2024-01-15T10:30:00Z");
             event.setRefereeFirstDeposit(100.00);
 
-            System.out.println("\n📋ReferFriend Event Data:");
-            System.out.println(mapper.writeValueAsString(event));
-
             ValidationResult valid = event.validate();
             if (!valid.isValid()) {
                 System.out.println("\n❌ Validation Failed!");
                 System.out.println("Errors: " + valid.getErrors());
                 return;
             }
+            
+            System.out.println("✅ ReferFriend event validated successfully!");
+            System.out.println("\n📋ReferFriend Event Data:");
+            System.out.println(mapper.writeValueAsString(event));
 
             System.out.println("\n🕒 making API request using SDK...");
             long start = System.currentTimeMillis();
