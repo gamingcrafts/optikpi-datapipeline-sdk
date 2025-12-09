@@ -211,27 +211,74 @@ public class TestAllEndpoints {
     private static CustomerProfile createSampleCustomer(String accountId, String workspaceId) {
         CustomerProfile customer = new CustomerProfile();
         customer.setAccountId(accountId);
-        customer.setWorkspaceId(workspaceId);
-        customer.setUserId("sdk_91");
-        customer.setUsername("john_doe");
-        customer.setEmail("john.doe@example.com");
-        customer.setFullName("John Doe");
-        customer.setFirstName("John");
-        customer.setLastName("Doe");
-        customer.setDateOfBirth("1990-01-15");
-        customer.setGender("Male");
-        customer.setCountry("US");
-        customer.setCity("New York");
-        customer.setLanguage("en");
-        customer.setCurrency("USD");
-        customer.setAccountStatus("Active");
-        customer.setVipStatus("Regular");
-        customer.setCreationTimestamp(Instant.now().toString());
+            customer.setWorkspaceId(workspaceId);
+            customer.setUserId("javasdk_01");
+            customer.setUsername("john_doe");
+            customer.setFullName("John Doe");
+            customer.setFirstName("John");
+            customer.setLastName("Doe");
+            customer.setDateOfBirth("1990-01-15");
+            customer.setEmail("john.doe@example.com");
+            customer.setPhoneNumber("+1234567890");
+            customer.setGender("Male");
+            customer.setCountry("United States");
+            customer.setCity("New York");
+            customer.setLanguage("en");
+            customer.setCurrency("USD");
 
-        Map<String, Object> customData = new HashMap<>();
-        customData.put("preferred_game_category", "slots");
-        customData.put("marketing_source", "google_ads");
-        customer.setCustomData(customData);
+            customer.setPhoneVerification("Verified");
+            customer.setEmailVerification("Verified");
+            customer.setBankVerification("NotVerified");
+            customer.setIddocVerification("Verified");
+        
+            customer.setMarketingEmailPreference("Opt-in");
+            customer.setNotificationsPreference("Opt-in");
+            customer.setSubscription("Subscribed");
+    
+            customer.setPrivacySettings("private");
+            
+            customer.setDepositLimits(1000.00);
+            customer.setLossLimits(500.00);
+            customer.setWageringLimits(2000.00);
+            customer.setSessionTimeLimits(120);
+
+            customer.setCoolingOffExpiryDate("2024-12-31T23:59:59Z");
+            customer.setSelfExclusionExpiryDate("2025-01-31T23:59:59Z");
+            customer.setAffliateId("affiliate456");
+            
+            customer.setCoolingOffPeriod(7);
+            customer.setSelfExclusionPeriod(30);
+
+            customer.setRealityChecksNotification("daily");
+            customer.setVipStatus("Regular");
+            customer.setLoyaltyProgramTiers("Bronze");
+            customer.setAccountStatus("Active");
+            customer.setBonusAbuser("Not flagged");
+            customer.setFinancialRiskLevel(0.3);
+            
+            customer.setAcquisitionSource("Google Ads");
+            customer.setPartnerId("partner123");
+            customer.setReferralLinkCode("REF789");
+            customer.setReferralLimitReached("Not Reached");
+            customer.setCreationTimestamp("2024-01-15T10:30:00Z");
+        
+            customer.setRiskScoreLevel("low");
+            customer.setMarketingSmsPreference("Opt-in");
+            
+            // Custom data as Map (same in both)
+            Map<String, Object> customData = new HashMap<>();
+            customData.put("favorite_game", "slots");
+            customData.put("newsletter_signup", true);
+            customer.setCustomData(customData);
+            
+            customer.setSelfExclusionBy("player");
+            customer.setSelfExclusionByType("voluntary");
+            customer.setSelfExclusionCheckTime("2024-01-15T10:30:00Z");
+            customer.setSelfExclusionCreatedTime("2024-01-01T00:00:00Z");
+            customer.setClosedTime(null);
+
+            customer.setRealMoneyEnabled("true");
+            customer.setPushToken("push_token_abc123");
 
         return customer;
     }
@@ -267,17 +314,18 @@ public class TestAllEndpoints {
 
     private static AccountEvent createSampleAccountEvent(String accountId, String workspaceId) {
         AccountEvent event = new AccountEvent();
-            event.setAccountId(accountId);
+             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("sdk_003");
+            event.setUserId("javasdk_01");
+            event.setEventCategory("Account");
             event.setEventName("Player Registration");
             event.setEventId("evt_login_" + System.currentTimeMillis());
             event.setEventTime(Instant.now().toString());
-            event.setDevice("desktop");
-            event.setStatus("completed");
             event.setAffiliateId("aff_001");
             event.setPartnerId("partner_001");
+            event.setDevice("desktop");
             event.setCampaignCode("CAMPAIGN_001");
+            event.setStatus("completed");
             event.setReason("Registration completed successfully");
         return event;
     }
@@ -286,23 +334,24 @@ public class TestAllEndpoints {
         DepositEvent event = new DepositEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("sdk_94");
+            event.setUserId("java_01");
             event.setEventCategory("Deposit");
             event.setEventName("Successful Deposit");
             event.setEventId("evt_" + System.currentTimeMillis());
             event.setEventTime(Instant.now().toString());
-            event.setAmount(new BigDecimal("100.00"));
-            event.setCurrency("USD");
             event.setPaymentMethod("bank");
             event.setTransactionId("txn_" + System.currentTimeMillis());
-            event.setStatus("success");
-            event.setDevice("mobile");
+            event.setAmount(new BigDecimal("100.00"));
             event.setPaymentProviderId("provider123");
             event.setPaymentProviderName("Chase Bank");
+            event.setFailureReason(null);
+            event.setCurrency("USD");
+            event.setFees(new BigDecimal("2.50"));
+            event.setNetAmount(new BigDecimal("97.50"));
+            event.setStatus("success");
             Map<String, Object> metadata = new HashMap<>();
             metadata.put("bank_name", "Chase Bank");
             metadata.put("account_last4", "1234");
-            metadata.put("source", "mobile_app");
             event.setMetadata(metadata);
         return event;
     }
@@ -311,7 +360,7 @@ public class TestAllEndpoints {
         WithdrawEvent event = new WithdrawEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("sdk_95");
+            event.setUserId("javasdk_01");
             event.setEventName("Successful Withdrawal");
             event.setEventId("evt_" + System.currentTimeMillis());
             event.setEventTime(Instant.now().toString());
@@ -321,6 +370,16 @@ public class TestAllEndpoints {
             event.setTransactionId("txn_" + System.currentTimeMillis());
             event.setStatus("success");
             event.setDevice("desktop");
+            event.setAffiliateId("aff_123456");
+            event.setPartnerId("partner_789");
+            event.setCampaignCode("SUMMER2024");
+            event.setReason("User requested withdrawal");
+            event.setFees(new BigDecimal("1.50"));
+            event.setNetAmount(new BigDecimal("48.50"));
+            event.setWithdrawalReason("Cash out winnings");
+            event.setProcessingTime("2024-01-15T10:30:00Z");
+            event.setFailureReason(null);
+            event.setEventCategory("Withdraw");
         return event;
     }
 
@@ -328,55 +387,113 @@ public class TestAllEndpoints {
         GamingActivityEvent event = new GamingActivityEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("sdk_96");
+            event.setUserId("javasdk_01");
+            event.setEventCategory("Gaming Activity");
             event.setEventName("Play Casino Game");
             event.setEventId("evt_" + System.currentTimeMillis());
             event.setEventTime(Instant.now().toString());
-            event.setEventCategory("Gaming Activity");
+            event.setWagerAmount(new BigDecimal("10.00"));
+            event.setWinAmount(new BigDecimal("25.00"));
+            event.setLossAmount(new BigDecimal("0.00"));
             event.setGameId("game_001");
-            event.setGameName("Mega Slots");
-            event.setGameTitle("Poker");
+            event.setGameTitle("Mega Fortune Slots");
             event.setGameProvider("ProviderXYZ");
+            event.setBonusId("bonus_12345");
+            event.setFreeSpinId("freespin_67890");
+            event.setJackpotAmount(new BigDecimal("1000.00"));
+            event.setNumSpinsPlayed(50);
+            event.setGameTheme("Egyptian");
+            event.setRemainingSpins(10);
+            event.setBetValuePerSpin(new BigDecimal("0.50"));
+            event.setWageringRequirementsMet(true);
+            event.setFreeSpinExpiryDate("2024-12-31T23:59:59Z");
+            event.setCampaignId("camp_summer2024");
+            event.setCampaignName("Summer Bonanza");
+            event.setRtp(new BigDecimal("96.5"));
             event.setGameCategory("slots");
-            event.setBetAmount(new BigDecimal("5.00"));
+            event.setWinningBetAmount(new BigDecimal("25.00"));
+            event.setJackpotType("progressive");
+            event.setVolatility("high");
+            event.setMinBet(new BigDecimal("0.10"));
+            event.setMaxBet(new BigDecimal("100.00"));
+            event.setNumberOfReels(5);
+            event.setNumberOfPaylines(20);
+            event.setFeatureTypes("wild,scatter,freespins");
+            event.setGameReleaseDate("2023-01-15T00:00:00Z");
+            event.setLiveDealerAvailability(false);
+            event.setSideBetsAvailability(true);
+            event.setMultiplayerOption(false);
+            event.setAutoPlay(true);
+            event.setPokerVariant("texas_holdem");
+            event.setTournamentName("Weekend Warriors");
+            event.setBuyInAmount(new BigDecimal("50.00"));
+            event.setTableType("cash_game");
+            event.setStakesLevel("medium");
+            event.setNumberOfPlayers(6);
+            event.setGameDuration(45);
+            event.setHandVolume(120);
+            event.setPlayerPosition("button");
+            event.setFinalHand("royal_flush");
+            event.setRakeContribution(new BigDecimal("2.50"));
+            event.setMultiTablingIndicator(false);
+            event.setSessionResult("win");
+            event.setVipStatus("gold");
+            event.setBlindLevel("50/100");
+            event.setRebuyAndAddonInfo("1 rebuy, 1 addon");
+            event.setSportType("football");
+            event.setBettingMarket("match_winner");
+            event.setOdds(new BigDecimal("2.50"));
+            event.setLiveBettingAvailability(true);
+            event.setResult("won");
+            event.setBetStatus("settled");
+            event.setBettingChannel("online");
+            event.setBonusType("welcome_bonus");
+            event.setBonusAmount(new BigDecimal("100.00"));
+            event.setFreeSpinStartDate("2024-01-01T00:00:00Z");
+            event.setNumSpinsAwarded(20);
+            event.setBonusCode("WELCOME100");
+            event.setParentGameCategory("casino");
             event.setCurrency("USD");
-            event.setDevice("mobile");
-            event.setSessionId("session_" + System.currentTimeMillis());
+            event.setMoneyType("real");
+            event.setTransactionType("bet");
+
         return event;
     }
 
     private static ReferFriendEvent createSampleReferFriendEvent(String accountId, String workspaceId) {
         ReferFriendEvent event = new ReferFriendEvent();
-        event.setAccountId(accountId);
-        event.setWorkspaceId(workspaceId);
-        event.setUserId("sdk_97");
-        event.setEventName("Referral Successful");
-        event.setEventId("evt_rf_987654321");
-        event.setEventTime(Instant.now().toString());
-        event.setReferralCodeUsed("REF123456");
-        event.setSuccessfulReferralConfirmation(true);
-        event.setRewardType("bonus");
-        event.setRewardClaimedStatus("claimed");
-        event.setRefereeUserId("user789012");
-        event.setRefereeRegistrationDate("2024-01-15T10:30:00Z");
-        event.setRefereeFirstDeposit(100.00);
+            event.setAccountId(accountId);
+            event.setWorkspaceId(workspaceId);
+            event.setUserId("javasdk_01");
+            event.setEventCategory("Refer Friend");
+            event.setEventName("Referral Successful");
+            event.setEventId("evt_rf_987654321");
+            event.setEventTime(Instant.now().toString());
+            event.setReferralCodeUsed("REF123456");
+            event.setSuccessfulReferralConfirmation(true);
+            event.setRewardType("bonus");
+            event.setRewardClaimedStatus("claimed");
+            event.setRefereeUserId("user789012");
+            event.setRefereeRegistrationDate("2024-01-15T10:30:00Z");
+            event.setRefereeFirstDeposit(100.00);
         return event;
     }
 
     private static WalletBalanceEvent createSampleWalletBalanceEvent(String accountId, String workspaceId) {
         WalletBalanceEvent event = new WalletBalanceEvent();
-        event.setAccountId(accountId);
-        event.setWorkspaceId(workspaceId);
-        event.setUserId("sdk_98");
-        event.setEventName("Balance Update");
-        event.setEventId("evt_wb_987654321");
-        event.setEventTime(Instant.now().toString());
-        event.setWalletType("main");
-        event.setCurrency("USD");
-        event.setCurrentCashBalance(new BigDecimal("1250.50"));
-        event.setCurrentBonusBalance(new BigDecimal("100.00"));
-        event.setCurrentTotalBalance(new BigDecimal("1350.50"));
-        event.setBlockedAmount(new BigDecimal("50.00"));
+            event.setAccountId(accountId);
+            event.setWorkspaceId(workspaceId);
+            event.setUserId("javasdk_01");
+            event.setEventCategory("Wallet Balance");
+            event.setEventName("Balance Update");
+            event.setEventId("evt_wb_987654321");
+            event.setEventTime(Instant.now().toString());
+            event.setWalletType("main");
+            event.setCurrency("USD");
+            event.setCurrentCashBalance(new BigDecimal("1250.50"));
+            event.setCurrentBonusBalance(new BigDecimal("100.00"));
+            event.setCurrentTotalBalance(new BigDecimal("1350.50"));
+            event.setBlockedAmount(new BigDecimal("50.00"));
         return event;
     }
 

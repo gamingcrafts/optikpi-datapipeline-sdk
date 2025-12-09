@@ -55,17 +55,17 @@ public class TestGamingEndpoint {
             GamingActivityEvent event = new GamingActivityEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("vinmathi_002");
+            event.setUserId("java_012");
+            event.setEventCategory("Gaming Activity");
             event.setEventName("Play Casino Game");
             event.setEventId("evt_" + System.currentTimeMillis());
             event.setEventTime(Instant.now().toString());
-            event.setEventCategory("Gaming Activity");
             event.setWagerAmount(new BigDecimal("10.00"));
             event.setWinAmount(new BigDecimal("25.00"));
             event.setLossAmount(new BigDecimal("0.00"));
             event.setGameId("game_001");
             event.setGameTitle("Mega Fortune Slots");
-            event.setProvider("ProviderXYZ");
+            event.setGameProvider("ProviderXYZ");
             event.setBonusId("bonus_12345");
             event.setFreeSpinId("freespin_67890");
             event.setJackpotAmount(new BigDecimal("1000.00"));
@@ -124,27 +124,17 @@ public class TestGamingEndpoint {
             event.setCurrency("USD");
             event.setMoneyType("real");
             event.setTransactionType("bet");
-            event.setGameName("Mega Slots");
-            event.setGameProvider("ProviderXYZ");
-            event.setDevice("mobile");
-            event.setSessionId("session_" + System.currentTimeMillis());
-            event.setRoundId("round_" + System.currentTimeMillis());
-            event.setAffiliateId("aff_123456");
-            event.setPartnerId("partner_789");
-            event.setCampaignCode("SUMMER2024");
-            event.setBonusUsed(new BigDecimal("10.00"));
-            event.setFreeSpinsUsed(5);
-            event.setTournamentId("tour_001");
-
-            System.out.println("\n📋Gaming Activity Event Data:");
-            System.out.println(mapper.writeValueAsString(event));
-
+            
             ValidationResult valid = event.validate();
             if (!valid.isValid()) {
                 System.out.println("\n❌ Validation Failed!");
                 System.out.println("Errors: " + valid.getErrors());
                 return;
             }
+            
+            System.out.println("✅ Gaming Activity event validated successfully!");
+            System.out.println("\n📋Gaming Activity Event Data:");
+            System.out.println(mapper.writeValueAsString(event));
 
             System.out.println("\n🕒 making API request using SDK...");
             long start = System.currentTimeMillis();

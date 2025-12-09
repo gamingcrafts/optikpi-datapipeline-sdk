@@ -60,6 +60,9 @@ public class GamingActivityEvent {
     @JsonProperty("bet_amount")
     private BigDecimal betAmount;
     
+    @JsonProperty("wager_amount")
+    private BigDecimal wagerAmount;
+
     @JsonProperty("win_amount")
     private BigDecimal winAmount;
     
@@ -402,6 +405,9 @@ public class GamingActivityEvent {
     
     public BigDecimal getBetAmount() { return betAmount; }
     public void setBetAmount(BigDecimal betAmount) { this.betAmount = betAmount; }
+
+    public BigDecimal getWagerAmount() { return wagerAmount; }
+    public void setWagerAmount(BigDecimal wagerAmount) { this.wagerAmount = wagerAmount; }
     
     public BigDecimal getWinAmount() { return winAmount; }
     public void setWinAmount(BigDecimal winAmount) { this.winAmount = winAmount; }

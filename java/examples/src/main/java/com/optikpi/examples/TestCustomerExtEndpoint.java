@@ -94,7 +94,7 @@ public class TestCustomerExtEndpoint {
                 System.out.println("Errors: " + validResult.getErrors());
                 return;
             }
-
+            System.out.println("✅ Customer extended Attributes event validated successfully!");
             // Send event
             long startTime = System.currentTimeMillis();
             ApiResponse<Object> response = sdk.sendExtendedAttributes(event);
@@ -156,7 +156,7 @@ public class TestCustomerExtEndpoint {
                 System.out.println("Errors: " + validResult.getErrors());
                 return;
             }
-
+            System.out.println("✅ Customer Extended Attributes event validated successfully!");
             // Send event
             long startTime = System.currentTimeMillis();
             ApiResponse<Object> response = sdk.sendExtendedAttributes(event);

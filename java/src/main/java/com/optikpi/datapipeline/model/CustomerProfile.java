@@ -15,6 +15,7 @@ import java.util.Map;
 /**
  * Customer Profile Model
  * Represents a customer profile for the Data Pipeline API
+ * Updated to match JavaScript model structure
  */
 public class CustomerProfile {
     
@@ -70,38 +71,48 @@ public class CustomerProfile {
     @JsonProperty("currency")
     private String currency;
     
+    // Changed to String to match JS model
     @JsonProperty("marketing_email_preference")
-    private Boolean marketingEmailPreference;
+    private String marketingEmailPreference;
     
+    // Changed to String to match JS model
     @JsonProperty("notifications_preference")
-    private Boolean notificationsPreference;
+    private String notificationsPreference;
     
     @JsonProperty("subscription")
     private String subscription;
     
+    // Changed to String to match JS model (was Map)
     @JsonProperty("privacy_settings")
-    private Map<String, Object> privacySettings;
+    private String privacySettings;
     
+    // Changed to Double to match JS model (was Map)
     @JsonProperty("deposit_limits")
-    private Map<String, Object> depositLimits;
+    private Double depositLimits;
     
+    // Changed to Double to match JS model (was Map)
     @JsonProperty("loss_limits")
-    private Map<String, Object> lossLimits;
+    private Double lossLimits;
     
+    // Changed to Double to match JS model (was Map)
     @JsonProperty("wagering_limits")
-    private Map<String, Object> wageringLimits;
+    private Double wageringLimits;
     
+    // Changed to Integer to match JS model (was Map)
     @JsonProperty("session_time_limits")
-    private Map<String, Object> sessionTimeLimits;
+    private Integer sessionTimeLimits;
     
+    // Changed to Integer to match JS model (was String)
     @JsonProperty("cooling_off_period")
-    private String coolingOffPeriod;
+    private Integer coolingOffPeriod;
     
+    // Changed to Integer to match JS model (was String)
     @JsonProperty("self_exclusion_period")
-    private String selfExclusionPeriod;
+    private Integer selfExclusionPeriod;
     
+    // Changed to String to match JS model (was Boolean)
     @JsonProperty("reality_checks_notification")
-    private Boolean realityChecksNotification;
+    private String realityChecksNotification;
     
     @Pattern(regexp = "Active|Inactive|Suspended|Closed", message = "account_status must be one of: Active, Inactive, Suspended, Closed")
     @JsonProperty("account_status")
@@ -111,14 +122,17 @@ public class CustomerProfile {
     @JsonProperty("vip_status")
     private String vipStatus;
     
+    // Changed to String to match JS model (was Map)
     @JsonProperty("loyalty_program_tiers")
-    private Map<String, Object> loyaltyProgramTiers;
+    private String loyaltyProgramTiers;
     
+    // Changed to String to match JS model (was Boolean)
     @JsonProperty("bonus_abuser")
-    private Boolean bonusAbuser;
+    private String bonusAbuser;
     
+    // Changed to Double to match JS model (was String)
     @JsonProperty("financial_risk_level")
-    private String financialRiskLevel;
+    private Double financialRiskLevel;
     
     @JsonProperty("acquisition_source")
     private String acquisitionSource;
@@ -126,29 +140,35 @@ public class CustomerProfile {
     @JsonProperty("partner_id")
     private String partnerId;
     
-    @JsonProperty("affiliate_id")
-    private String affiliateId;
+    // Fixed typo: affiliate_id (was affiliateId in Java, but affliate_id in JS)
+    @JsonProperty("affliate_id")
+    private String affliateId;
     
     @JsonProperty("referral_link_code")
     private String referralLinkCode;
     
+    // Changed to String to match JS model (was Boolean)
     @JsonProperty("referral_limit_reached")
-    private Boolean referralLimitReached;
+    private String referralLimitReached;
     
     @JsonProperty("creation_timestamp")
     private String creationTimestamp;
     
+    // Changed to String to match JS model (was Boolean)
     @JsonProperty("phone_verification")
-    private Boolean phoneVerification;
+    private String phoneVerification;
     
+    // Changed to String to match JS model (was Boolean)
     @JsonProperty("email_verification")
-    private Boolean emailVerification;
+    private String emailVerification;
     
+    // Changed to String to match JS model (was Boolean)
     @JsonProperty("bank_verification")
-    private Boolean bankVerification;
+    private String bankVerification;
     
+    // Changed to String to match JS model (was Boolean)
     @JsonProperty("iddoc_verification")
-    private Boolean iddocVerification;
+    private String iddocVerification;
     
     @JsonProperty("cooling_off_expiry_date")
     private String coolingOffExpiryDate;
@@ -159,8 +179,9 @@ public class CustomerProfile {
     @JsonProperty("risk_score_level")
     private String riskScoreLevel;
     
+    // Changed to String to match JS model (was Boolean)
     @JsonProperty("marketing_sms_preference")
-    private Boolean marketingSmsPreference;
+    private String marketingSmsPreference;
     
     @JsonProperty("custom_data")
     private Map<String, Object> customData;
@@ -180,8 +201,9 @@ public class CustomerProfile {
     @JsonProperty("closed_time")
     private String closedTime;
     
+    // Changed to String to match JS model (was Boolean)
     @JsonProperty("real_money_enabled")
-    private Boolean realMoneyEnabled;
+    private String realMoneyEnabled;
     
     @JsonProperty("push_token")
     private String pushToken;
@@ -319,38 +341,38 @@ public class CustomerProfile {
     public String getCurrency() { return currency; }
     public void setCurrency(String currency) { this.currency = currency; }
     
-    public Boolean getMarketingEmailPreference() { return marketingEmailPreference; }
-    public void setMarketingEmailPreference(Boolean marketingEmailPreference) { this.marketingEmailPreference = marketingEmailPreference; }
+    public String getMarketingEmailPreference() { return marketingEmailPreference; }
+    public void setMarketingEmailPreference(String marketingEmailPreference) { this.marketingEmailPreference = marketingEmailPreference; }
     
-    public Boolean getNotificationsPreference() { return notificationsPreference; }
-    public void setNotificationsPreference(Boolean notificationsPreference) { this.notificationsPreference = notificationsPreference; }
+    public String getNotificationsPreference() { return notificationsPreference; }
+    public void setNotificationsPreference(String notificationsPreference) { this.notificationsPreference = notificationsPreference; }
     
     public String getSubscription() { return subscription; }
     public void setSubscription(String subscription) { this.subscription = subscription; }
     
-    public Map<String, Object> getPrivacySettings() { return privacySettings; }
-    public void setPrivacySettings(Map<String, Object> privacySettings) { this.privacySettings = privacySettings; }
+    public String getPrivacySettings() { return privacySettings; }
+    public void setPrivacySettings(String privacySettings) { this.privacySettings = privacySettings; }
     
-    public Map<String, Object> getDepositLimits() { return depositLimits; }
-    public void setDepositLimits(Map<String, Object> depositLimits) { this.depositLimits = depositLimits; }
+    public Double getDepositLimits() { return depositLimits; }
+    public void setDepositLimits(Double depositLimits) { this.depositLimits = depositLimits; }
     
-    public Map<String, Object> getLossLimits() { return lossLimits; }
-    public void setLossLimits(Map<String, Object> lossLimits) { this.lossLimits = lossLimits; }
+    public Double getLossLimits() { return lossLimits; }
+    public void setLossLimits(Double lossLimits) { this.lossLimits = lossLimits; }
     
-    public Map<String, Object> getWageringLimits() { return wageringLimits; }
-    public void setWageringLimits(Map<String, Object> wageringLimits) { this.wageringLimits = wageringLimits; }
+    public Double getWageringLimits() { return wageringLimits; }
+    public void setWageringLimits(Double wageringLimits) { this.wageringLimits = wageringLimits; }
     
-    public Map<String, Object> getSessionTimeLimits() { return sessionTimeLimits; }
-    public void setSessionTimeLimits(Map<String, Object> sessionTimeLimits) { this.sessionTimeLimits = sessionTimeLimits; }
+    public Integer getSessionTimeLimits() { return sessionTimeLimits; }
+    public void setSessionTimeLimits(Integer sessionTimeLimits) { this.sessionTimeLimits = sessionTimeLimits; }
     
-    public String getCoolingOffPeriod() { return coolingOffPeriod; }
-    public void setCoolingOffPeriod(String coolingOffPeriod) { this.coolingOffPeriod = coolingOffPeriod; }
+    public Integer getCoolingOffPeriod() { return coolingOffPeriod; }
+    public void setCoolingOffPeriod(Integer coolingOffPeriod) { this.coolingOffPeriod = coolingOffPeriod; }
     
-    public String getSelfExclusionPeriod() { return selfExclusionPeriod; }
-    public void setSelfExclusionPeriod(String selfExclusionPeriod) { this.selfExclusionPeriod = selfExclusionPeriod; }
+    public Integer getSelfExclusionPeriod() { return selfExclusionPeriod; }
+    public void setSelfExclusionPeriod(Integer selfExclusionPeriod) { this.selfExclusionPeriod = selfExclusionPeriod; }
     
-    public Boolean getRealityChecksNotification() { return realityChecksNotification; }
-    public void setRealityChecksNotification(Boolean realityChecksNotification) { this.realityChecksNotification = realityChecksNotification; }
+    public String getRealityChecksNotification() { return realityChecksNotification; }
+    public void setRealityChecksNotification(String realityChecksNotification) { this.realityChecksNotification = realityChecksNotification; }
     
     public String getAccountStatus() { return accountStatus; }
     public void setAccountStatus(String accountStatus) { this.accountStatus = accountStatus; }
@@ -358,14 +380,14 @@ public class CustomerProfile {
     public String getVipStatus() { return vipStatus; }
     public void setVipStatus(String vipStatus) { this.vipStatus = vipStatus; }
     
-    public Map<String, Object> getLoyaltyProgramTiers() { return loyaltyProgramTiers; }
-    public void setLoyaltyProgramTiers(Map<String, Object> loyaltyProgramTiers) { this.loyaltyProgramTiers = loyaltyProgramTiers; }
+    public String getLoyaltyProgramTiers() { return loyaltyProgramTiers; }
+    public void setLoyaltyProgramTiers(String loyaltyProgramTiers) { this.loyaltyProgramTiers = loyaltyProgramTiers; }
     
-    public Boolean getBonusAbuser() { return bonusAbuser; }
-    public void setBonusAbuser(Boolean bonusAbuser) { this.bonusAbuser = bonusAbuser; }
+    public String getBonusAbuser() { return bonusAbuser; }
+    public void setBonusAbuser(String bonusAbuser) { this.bonusAbuser = bonusAbuser; }
     
-    public String getFinancialRiskLevel() { return financialRiskLevel; }
-    public void setFinancialRiskLevel(String financialRiskLevel) { this.financialRiskLevel = financialRiskLevel; }
+    public Double getFinancialRiskLevel() { return financialRiskLevel; }
+    public void setFinancialRiskLevel(Double financialRiskLevel) { this.financialRiskLevel = financialRiskLevel; }
     
     public String getAcquisitionSource() { return acquisitionSource; }
     public void setAcquisitionSource(String acquisitionSource) { this.acquisitionSource = acquisitionSource; }
@@ -373,29 +395,29 @@ public class CustomerProfile {
     public String getPartnerId() { return partnerId; }
     public void setPartnerId(String partnerId) { this.partnerId = partnerId; }
     
-    public String getAffiliateId() { return affiliateId; }
-    public void setAffiliateId(String affiliateId) { this.affiliateId = affiliateId; }
+    public String getAffliateId() { return affliateId; }
+    public void setAffliateId(String affliateId) { this.affliateId = affliateId; }
     
     public String getReferralLinkCode() { return referralLinkCode; }
     public void setReferralLinkCode(String referralLinkCode) { this.referralLinkCode = referralLinkCode; }
     
-    public Boolean getReferralLimitReached() { return referralLimitReached; }
-    public void setReferralLimitReached(Boolean referralLimitReached) { this.referralLimitReached = referralLimitReached; }
+    public String getReferralLimitReached() { return referralLimitReached; }
+    public void setReferralLimitReached(String referralLimitReached) { this.referralLimitReached = referralLimitReached; }
     
     public String getCreationTimestamp() { return creationTimestamp; }
     public void setCreationTimestamp(String creationTimestamp) { this.creationTimestamp = creationTimestamp; }
     
-    public Boolean getPhoneVerification() { return phoneVerification; }
-    public void setPhoneVerification(Boolean phoneVerification) { this.phoneVerification = phoneVerification; }
+    public String getPhoneVerification() { return phoneVerification; }
+    public void setPhoneVerification(String phoneVerification) { this.phoneVerification = phoneVerification; }
     
-    public Boolean getEmailVerification() { return emailVerification; }
-    public void setEmailVerification(Boolean emailVerification) { this.emailVerification = emailVerification; }
+    public String getEmailVerification() { return emailVerification; }
+    public void setEmailVerification(String emailVerification) { this.emailVerification = emailVerification; }
     
-    public Boolean getBankVerification() { return bankVerification; }
-    public void setBankVerification(Boolean bankVerification) { this.bankVerification = bankVerification; }
+    public String getBankVerification() { return bankVerification; }
+    public void setBankVerification(String bankVerification) { this.bankVerification = bankVerification; }
     
-    public Boolean getIddocVerification() { return iddocVerification; }
-    public void setIddocVerification(Boolean iddocVerification) { this.iddocVerification = iddocVerification; }
+    public String getIddocVerification() { return iddocVerification; }
+    public void setIddocVerification(String iddocVerification) { this.iddocVerification = iddocVerification; }
     
     public String getCoolingOffExpiryDate() { return coolingOffExpiryDate; }
     public void setCoolingOffExpiryDate(String coolingOffExpiryDate) { this.coolingOffExpiryDate = coolingOffExpiryDate; }
@@ -406,8 +428,8 @@ public class CustomerProfile {
     public String getRiskScoreLevel() { return riskScoreLevel; }
     public void setRiskScoreLevel(String riskScoreLevel) { this.riskScoreLevel = riskScoreLevel; }
     
-    public Boolean getMarketingSmsPreference() { return marketingSmsPreference; }
-    public void setMarketingSmsPreference(Boolean marketingSmsPreference) { this.marketingSmsPreference = marketingSmsPreference; }
+    public String getMarketingSmsPreference() { return marketingSmsPreference; }
+    public void setMarketingSmsPreference(String marketingSmsPreference) { this.marketingSmsPreference = marketingSmsPreference; }
     
     public Map<String, Object> getCustomData() { return customData; }
     public void setCustomData(Map<String, Object> customData) { this.customData = customData; }
@@ -427,8 +449,8 @@ public class CustomerProfile {
     public String getClosedTime() { return closedTime; }
     public void setClosedTime(String closedTime) { this.closedTime = closedTime; }
     
-    public Boolean getRealMoneyEnabled() { return realMoneyEnabled; }
-    public void setRealMoneyEnabled(Boolean realMoneyEnabled) { this.realMoneyEnabled = realMoneyEnabled; }
+    public String getRealMoneyEnabled() { return realMoneyEnabled; }
+    public void setRealMoneyEnabled(String realMoneyEnabled) { this.realMoneyEnabled = realMoneyEnabled; }
     
     public String getPushToken() { return pushToken; }
     public void setPushToken(String pushToken) { this.pushToken = pushToken; }
