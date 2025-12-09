@@ -13,6 +13,7 @@ class WithdrawEvent:
     event_name: Optional[str] = None
     event_id: Optional[str] = None
     event_time: Optional[str] = None
+    wallet_type: Optional[str] = None
     amount: Optional[float] = None
     payment_method: Optional[str] = None
     transaction_id: Optional[str] = None

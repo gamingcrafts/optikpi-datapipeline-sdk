@@ -29,6 +29,7 @@ class GamingActivityEvent:
     loss_amount: Optional[float] = None
     bonus_id: Optional[str] = None
     free_spin_id: Optional[str] = None
+    jackpot_amount: Optional[float] = None
     num_spins_played: Optional[int] = None
     game_theme: Optional[str] = None
     remaining_spins: Optional[int] = None
@@ -53,6 +54,7 @@ class GamingActivityEvent:
     multiplayer_option: Optional[bool] = None
     auto_play: Optional[bool] = None
     poker_variant: Optional[str] = None
+    tournament_name: Optional[str] = None
     buy_in_amount: Optional[float] = None
     table_type: Optional[str] = None
     stakes_level: Optional[str] = None

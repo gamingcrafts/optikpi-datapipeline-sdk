@@ -45,7 +45,7 @@ sdk = OptikpiDataPipelineSDK({
 customer = CustomerProfile(
     account_id=ACCOUNT_ID,
     workspace_id=WORKSPACE_ID,
-    user_id="cust_py_1",
+    user_id="1cust_py_1",
     username="john_doe",
     full_name="John Doe",
     first_name="John",
@@ -86,7 +86,7 @@ customer = CustomerProfile(
     iddoc_verification="Verified",
     cooling_off_expiry_date="2024-12-31T23:59:59Z",
     self_exclusion_expiry_date="2025-01-31T23:59:59Z",
-    risk_score_level=0.2,
+    risk_score_level="0.2",
     marketing_sms_preference="Opt-in",
     custom_data={
         "favorite_game": "slots",
@@ -97,7 +97,7 @@ customer = CustomerProfile(
     self_exclusion_check_time="2024-01-15T10:30:00Z",
     self_exclusion_created_time="2024-01-01T00:00:00Z",
     closed_time=None,
-    real_money_enabled=True,
+    real_money_enabled="True",
     push_token="push_token_abc123"
 )
 validation = customer.validate()

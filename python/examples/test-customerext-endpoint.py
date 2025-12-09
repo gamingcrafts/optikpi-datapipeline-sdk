@@ -36,15 +36,13 @@ sdk = OptikpiDataPipelineSDK({
 extattr = CustomerExtEvent(
     account_id=ACCOUNT_ID,
     workspace_id=WORKSPACE_ID,
-    user_id="custext_py_1",
+    user_id="1custext_py_1",
     list_name="BINGO_PREFERENCES",
     ext_data={
         "Email": "True",
         "SMS": "True",
         "PushNotifications": "False"
-    },
-    event_id="evt_ce_123456789",
-    event_time="2024-01-15T12:15:00Z"
+    }
 )
 
 validation = extattr.validate()

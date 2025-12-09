@@ -305,6 +305,7 @@ https://your-api-gateway-url/apigw/ingest
 ### Extended Attributes
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
+| account_id | String | Yes | Account identifier - one account can have multiple workspaces |
 | workspace_id | String | Yes | Workspace identifier - belongs to an account |
 | user_id | String | Yes | Unique user identifier |
 | list_name | String | Yes | Name of the list or category for the extended attributes |
