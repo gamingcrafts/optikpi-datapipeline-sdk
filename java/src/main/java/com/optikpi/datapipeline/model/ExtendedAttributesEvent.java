@@ -9,14 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-/**
- * Extended Attributes Event Model
- * Represents customer extension data for the Optikpi Data Pipeline API
- * 
- * Supports two formats for ext_data:
- * 1. Map<String, String> - automatically converted to JSON string
- * 2. String - JSON string (legacy format)
- */
 public class ExtendedAttributesEvent {
     
     @JsonProperty("account_id")
