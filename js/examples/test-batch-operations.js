@@ -40,7 +40,7 @@ function createSampleCustomer(accountId, workspaceId) {
   return new CustomerProfile({
     account_id: accountId,
     workspace_id: workspaceId,
-    user_id: "user123456",
+    user_id: "user0111",
     username: "john_doe",
     full_name: "John Doe",
     first_name: "John",
@@ -92,9 +92,8 @@ function createSampleCustomer(accountId, workspaceId) {
     self_exclusion_check_time: "2024-01-15T10:30:00Z",
     self_exclusion_created_time: "2024-01-01T00:00:00Z",
     closed_time: null,
-    real_money_enabled: true,
+    real_money_enabled: "true",  // Changed from boolean to string
     push_token: "push_token_abc123"
-
   });
 }
 
@@ -105,7 +104,7 @@ function createSampleExtendedAttributesMapFormat(accountId, workspaceId) {
   return new CustomerExtEvent({
     account_id: accountId,
     workspace_id: workspaceId,
-    user_id: "opti789",
+    user_id: "user0112",
     list_name: "BINGO_PREFERENCES",
     ext_data: {
       Email: "True",
@@ -122,7 +121,7 @@ function createSampleExtendedAttributesStringFormat(accountId, workspaceId) {
   return new CustomerExtEvent({
     account_id: accountId,
     workspace_id: workspaceId,
-    user_id: "opti456",
+    user_id: "user0113",
     list_name: "GAMING_PREFERENCES",
     ext_data: JSON.stringify({
       Email: "True",
@@ -139,7 +138,7 @@ function createSampleAccountEvent(accountId, workspaceId) {
   return new AccountEvent({
     account_id: accountId,
     workspace_id: workspaceId,
-    user_id: "user123456",
+    user_id: "user0114",
     event_category: "Account",
     event_name: "Player Registration",
     event_id: "evt_123456789",
@@ -160,7 +159,7 @@ function createSampleDepositEvent(accountId, workspaceId) {
   return new DepositEvent({
     account_id: accountId,
     workspace_id: workspaceId,
-    user_id: "user123456",
+    user_id: "user0115",
     event_category: "Deposit",
     event_name: "Successful Deposit",
     event_id: "evt_dep_987654321",
@@ -179,7 +178,6 @@ function createSampleDepositEvent(accountId, workspaceId) {
       bank_name: "Chase Bank",
       account_last4: "1234"
     }
-
   });
 }
 
@@ -190,7 +188,7 @@ function createSampleWithdrawEvent(accountId, workspaceId) {
   return new WithdrawEvent({
     account_id: accountId,
     workspace_id: workspaceId,
-    user_id: "user123456",
+    user_id: "user0116",
     event_category: "Withdraw",
     event_name: "Successful Withdrawal",
     event_id: "evt_wd_987654321",
@@ -210,7 +208,6 @@ function createSampleWithdrawEvent(accountId, workspaceId) {
     withdrawal_reason: "Cash out winnings",
     processing_time: "2024-01-15T10:30:00Z",
     failure_reason: null
-
   });
 }
 
@@ -221,7 +218,7 @@ function createSampleGamingActivityEvent(accountId, workspaceId) {
   return new GamingActivityEvent({
     account_id: accountId,
     workspace_id: workspaceId,
-    user_id: "user123411",
+    user_id: "user0117",
     event_category: "Gaming Activity",
     event_name: "Play Casino Game",
     event_id: "evt_" + Date.now(),
@@ -290,7 +287,6 @@ function createSampleGamingActivityEvent(accountId, workspaceId) {
     currency: "USD",
     money_type: "real",
     transaction_type: "bet"
-
   });
 }
 
@@ -301,7 +297,7 @@ function createSampleReferFriendEvent(accountId, workspaceId) {
   return new ReferFriendEvent({
     account_id: accountId,
     workspace_id: workspaceId,
-    user_id: "user123456",
+    user_id: "user0118",
     event_category: "Refer Friend",
     event_name: "Referral Successful",
     event_id: "evt_rf_987654321",
@@ -313,7 +309,6 @@ function createSampleReferFriendEvent(accountId, workspaceId) {
     referee_user_id: "user789012",
     referee_registration_date: "2024-01-15T10:30:00Z",
     referee_first_deposit: 100.00
-
   });
 }
 
@@ -324,7 +319,7 @@ function createSampleWalletBalanceEvent(accountId, workspaceId) {
   return new WalletBalanceEvent({
     account_id: accountId,
     workspace_id: workspaceId,
-    user_id: "user123456",
+    user_id: "user0119",
     event_category: "Wallet Balance",
     event_name: "Balance Update",
     event_id: "evt_wb_987654321",
@@ -335,7 +330,6 @@ function createSampleWalletBalanceEvent(accountId, workspaceId) {
     current_bonus_balance: 100.00,
     current_total_balance: 1350.50,
     blocked_amount: 50.00
-
   });
 }
 
@@ -347,13 +341,13 @@ function printValidationResult(result, eventName) {
     console.log(`❌ Invalid ${eventName}:`);
     console.log(`Errors: ${JSON.stringify(result.errors)}`);
   } else {
-    console.log(`✅ Valid ${eventName}: ${result.isValid}`);
+    console.log(`✅ Valid ${eventName}`);
   }
 }
 
 function PrintData(data) {
   const className = data.constructor?.name;
-  console.log(`🔍 Testing : ${className}`);
+  console.log(`\n🔍 Testing: ${className}`);
   console.log('─'.repeat(50));
   console.log(`📋 Data:`, JSON.stringify(data, null, 2));
 }
@@ -362,7 +356,7 @@ function PrintData(data) {
  * Validate batch data
  */
 function validateBatchData(batch) {
-  console.log('=== Validating BatchData contents ===');
+  console.log('\n=== Validating BatchData contents ===\n');
 
   if (batch.customers != null) {
     for (const c of batch.customers) {
@@ -374,8 +368,8 @@ function validateBatchData(batch) {
     }
   }
 
-  if (batch.extended_attributes != null) {
-    for (const ea of batch.extended_attributes) {
+  if (batch.extendedAttributes != null) {
+    for (const ea of batch.extendedAttributes) {
       if (ea instanceof CustomerExtEvent) {
         const result = ea.validate();
         printValidationResult(result, 'ExtendedAttributes (Batch)');
@@ -384,8 +378,8 @@ function validateBatchData(batch) {
     }
   }
 
-  if (batch.account_events != null) {
-    for (const a of batch.account_events) {
+  if (batch.accountEvents != null) {
+    for (const a of batch.accountEvents) {
       if (a instanceof AccountEvent) {
         const result = a.validate();
         printValidationResult(result, 'AccountEvent (Batch)');
@@ -394,8 +388,8 @@ function validateBatchData(batch) {
     }
   }
 
-  if (batch.deposit_events != null) {
-    for (const d of batch.deposit_events) {
+  if (batch.depositEvents != null) {
+    for (const d of batch.depositEvents) {
       if (d instanceof DepositEvent) {
         const result = d.validate();
         printValidationResult(result, 'DepositEvent (Batch)');
@@ -404,8 +398,8 @@ function validateBatchData(batch) {
     }
   }
 
-  if (batch.withdraw_events != null) {
-    for (const w of batch.withdraw_events) {
+  if (batch.withdrawEvents != null) {
+    for (const w of batch.withdrawEvents) {
       if (w instanceof WithdrawEvent) {
         const result = w.validate();
         printValidationResult(result, 'WithdrawEvent (Batch)');
@@ -414,8 +408,8 @@ function validateBatchData(batch) {
     }
   }
 
-  if (batch.gaming_events != null) {
-    for (const g of batch.gaming_events) {
+  if (batch.gamingEvents != null) {
+    for (const g of batch.gamingEvents) {
       if (g instanceof GamingActivityEvent) {
         const result = g.validate();
         printValidationResult(result, 'GamingActivityEvent (Batch)');
@@ -424,8 +418,8 @@ function validateBatchData(batch) {
     }
   }
 
-  if (batch.refer_friend_events != null) {
-    for (const r of batch.refer_friend_events) {
+  if (batch.referFriendEvents != null) {
+    for (const r of batch.referFriendEvents) {
       if (r instanceof ReferFriendEvent) {
         const result = r.validate();
         printValidationResult(result, 'ReferFriendEvent (Batch)');
@@ -434,8 +428,8 @@ function validateBatchData(batch) {
     }
   }
 
-  if (batch.wallet_balance_events != null) {
-    for (const wb of batch.wallet_balance_events) {
+  if (batch.walletBalanceEvents != null) {
+    for (const wb of batch.walletBalanceEvents) {
       if (wb instanceof WalletBalanceEvent) {
         const result = wb.validate();
         printValidationResult(result, 'WalletBalanceEvent (Batch)');
@@ -448,82 +442,202 @@ function validateBatchData(batch) {
 /**
  * Test batch operations
  */
-async function testBatchOperations(sdk, accountId, workspaceId) {
-  console.log('=== Batch Operations ===');
+async function testBatchOperations(accountId, workspaceId) {
+  console.log('\n=== Batch Operations ===\n');
 
   try {
-    // Create batch data object (plain JavaScript object, no BatchData class)
+    // Create batch data object using camelCase (matching SDK expectations)
     const batchData = {
       customers: [createSampleCustomer(accountId, workspaceId)],
-      extended_attributes: [
+      extendedAttributes: [
         createSampleExtendedAttributesMapFormat(accountId, workspaceId),
         createSampleExtendedAttributesStringFormat(accountId, workspaceId)
       ],
-      account_events: [createSampleAccountEvent(accountId, workspaceId)],
-      deposit_events: [createSampleDepositEvent(accountId, workspaceId)],
-      withdraw_events: [createSampleWithdrawEvent(accountId, workspaceId)],
-      gaming_events: [createSampleGamingActivityEvent(accountId, workspaceId)],
-      refer_friend_events: [createSampleReferFriendEvent(accountId, workspaceId)],
-      wallet_balance_events: [createSampleWalletBalanceEvent(accountId, workspaceId)]
+      accountEvents: [createSampleAccountEvent(accountId, workspaceId)],
+      depositEvents: [createSampleDepositEvent(accountId, workspaceId)],
+      withdrawEvents: [createSampleWithdrawEvent(accountId, workspaceId)],
+      gamingEvents: [createSampleGamingActivityEvent(accountId, workspaceId)],
+      referFriendEvents: [createSampleReferFriendEvent(accountId, workspaceId)],
+      walletBalanceEvents: [createSampleWalletBalanceEvent(accountId, workspaceId)]
     };
 
     // Validate batch data
     validateBatchData(batchData);
 
+    console.log('\n📦 Batch Data Summary:');
+    console.log(`   Customers: ${batchData.customers?.length || 0}`);
+    console.log(`   Extended Attributes: ${batchData.extendedAttributes?.length || 0}`);
+    console.log(`   Account Events: ${batchData.accountEvents?.length || 0}`);
+    console.log(`   Deposit Events: ${batchData.depositEvents?.length || 0}`);
+    console.log(`   Withdraw Events: ${batchData.withdrawEvents?.length || 0}`);
+    console.log(`   Gaming Events: ${batchData.gamingEvents?.length || 0}`);
+    console.log(`   Refer Friend Events: ${batchData.referFriendEvents?.length || 0}`);
+    console.log(`   Wallet Balance Events: ${batchData.walletBalanceEvents?.length || 0}`);
+
+    console.log('\n📤 Sending batch request to API...\n');
+    
+    // Debug: Log what we're actually sending
+    console.log('🔍 Request Payload Preview:');
+    const payloadPreview = {
+      customers: batchData.customers?.length || 0,
+      extendedAttributes: batchData.extendedAttributes?.length || 0,
+      accountEvents: batchData.accountEvents?.length || 0,
+      depositEvents: batchData.depositEvents?.length || 0,
+      withdrawEvents: batchData.withdrawEvents?.length || 0,
+      gamingEvents: batchData.gamingEvents?.length || 0,
+      referFriendEvents: batchData.referFriendEvents?.length || 0,
+      walletBalanceEvents: batchData.walletBalanceEvents?.length || 0
+    };
+    console.log(JSON.stringify(payloadPreview, null, 2));
+    console.log('\n');
+    
     // Send batch request
     const response = await sdk.sendBatch(batchData);
 
-    if (response.success) {
-      console.log('✅ Batch operation completed successfully!');
-      console.log(`Timestamp: ${response.timestamp || new Date().toISOString()}`);
+    console.log('\n=== API Response ===\n');
+    console.log('📊 Full Response Object:');
+    console.log(JSON.stringify(response, null, 2));
+    console.log('\n' + '─'.repeat(50));
 
-      if (response.data) {
-        if (response.data.customers != null) {
-          console.log(`Customer profiles: ${response.data.customers.success ? 'Success' : 'Failed'}`);
+    if (response.success) {
+      console.log('\n✅ Batch operation completed successfully!');
+      console.log(`⏰ Timestamp: ${response.timestamp || new Date().toISOString()}`);
+
+
+      // Handle different response structures - Check for 'results' property
+      if (response.results) {
+        console.log('\n📋 Detailed Results:\n');
+
+        // Check each event type with safe property access
+        const checkResult = (key, displayName) => {
+          if (response.results[key] !== undefined && response.results[key] !== null) {
+            const result = response.results[key];
+            console.log(`\n${displayName}:`);
+            
+            // Try different possible response formats
+            if (typeof result === 'object') {
+              if (result.success !== undefined) {
+                console.log(`  ${result.success ? '✅' : '❌'} Result: ${result.success ? 'Success' : 'Failed'}`);
+              }
+              if (result.status !== undefined) {
+                console.log(`  📊 HTTP Status: ${result.status}`);
+              }
+              if (result.error !== undefined) {
+                console.log(`  🔴 Error: ${result.error}`);
+              }
+              if (result.message !== undefined) {
+                console.log(`  💬 Message: ${result.message}`);
+              }
+              if (result.data && result.data.message !== undefined) {
+                console.log(`  💬 Data Message: ${result.data.message}`);
+              }
+              if (result.data && result.data.validRecordsCount !== undefined) {
+                console.log(`  ✅ Valid Records: ${result.data.validRecordsCount}/${result.data.totalRecordsCount}`);
+              }
+              if (result.data && result.data.validationErrors && result.data.validationErrors.length > 0) {
+                console.log(`  ⚠️  Validation Errors:`);
+                result.data.validationErrors.forEach((err, idx) => {
+                  console.log(`    Record ${err.recordIndex}:`);
+                  err.errors.forEach(e => {
+                    console.log(`      - Field: ${e.field}`);
+                    console.log(`        Message: ${e.message}`);
+                    console.log(`        Value: ${JSON.stringify(e.value)}`);
+                  });
+                });
+              }
+              if (result.count !== undefined) {
+                console.log(`  🔢 Count: ${result.count}`);
+              }
+            } else if (typeof result === 'boolean') {
+              console.log(`  ${result ? '✅' : '❌'} Result: ${result ? 'Success' : 'Failed'}`);
+            } else if (typeof result === 'string') {
+              console.log(`  📝 Result: ${result}`);
+            }
+          }
+        };
+
+        checkResult('customers', '👤 Customer Profiles');
+        checkResult('extendedAttributes', '🔧 Extended Attributes');
+        checkResult('accountEvents', '📝 Account Events');
+        checkResult('depositEvents', '💰 Deposit Events');
+        checkResult('withdrawEvents', '💸 Withdraw Events');
+        checkResult('gamingEvents', '🎮 Gaming Events');
+        checkResult('referFriendEvents', '👥 Refer Friend Events');
+        checkResult('walletBalanceEvents', '💳 Wallet Balance Events');
+
+        // Check for missing results
+        const expectedKeys = [
+          'customers', 
+          'extendedAttributes', 
+          'accountEvents', 
+          'depositEvents', 
+          'withdrawEvents', 
+          'gamingEvents', 
+          'referFriendEvents', 
+          'walletBalanceEvents'
+        ];
+        
+        const receivedKeys = Object.keys(response.results);
+        const missingKeys = expectedKeys.filter(key => !receivedKeys.includes(key));
+        
+        if (missingKeys.length > 0) {
+          console.log('\n⚠️  Missing Results:');
+          missingKeys.forEach(key => {
+            console.log(`   - ${key}: No response received`);
+          });
         }
-        if (response.data.extended_attributes != null) {
-          console.log(`Extended Attributes: ${response.data.extended_attributes.success ? 'Success' : 'Failed'}`);
-        }
-        if (response.data.account_events != null) {
-          console.log(`Account events: ${response.data.account_events.success ? 'Success' : 'Failed'}`);
-        }
-        if (response.data.deposit_events != null) {
-          console.log(`Deposit events: ${response.data.deposit_events.success ? 'Success' : 'Failed'}`);
-        }
-        if (response.data.withdraw_events != null) {
-          console.log(`Withdraw events: ${response.data.withdraw_events.success ? 'Success' : 'Failed'}`);
-        }
-        if (response.data.gaming_events != null) {
-          console.log(`Gaming events: ${response.data.gaming_events.success ? 'Success' : 'Failed'}`);
-        }
-        if (response.data.refer_friend_events != null) {
-          console.log(`Refer Friend events: ${response.data.refer_friend_events.success ? 'Success' : 'Failed'}`);
-        }
-        if (response.data.wallet_balance_events != null) {
-          console.log(`Wallet Balance events: ${response.data.wallet_balance_events.success ? 'Success' : 'Failed'}`);
-        }
+        
+        console.log(`\n📊 Summary: ${receivedKeys.length}/${expectedKeys.length} event types processed`);
+
+      } else if (response.data) {
+        console.log('\n📋 Detailed Results (from data property):\n');
+        console.log(JSON.stringify(response.data, null, 2));
+      } else {
+        console.log('\n⚠️  Warning: No results or data property in response');
       }
+
     } else {
-      console.log('❌ Batch operation failed');
+      console.log('\n❌ Batch operation failed');
+      console.log(`📈 HTTP Status: ${response.status}`);
+      
+      if (response.error) {
+        console.log('\n🔴 Error Details:');
+        console.log(JSON.stringify(response.error, null, 2));
+      }
+      
+      if (response.data) {
+        console.log('\n📦 Response Data:');
+        console.log(JSON.stringify(response.data, null, 2));
+      }
     }
 
   } catch (error) {
-    console.error('❌ Batch operation failed:', error.message);
-    console.error(error.stack);
+    console.error('\n❌ Batch operation failed with exception:');
+    console.error('Error Message:', error.message);
+    console.error('Error Stack:', error.stack);
+    
+    if (error.response) {
+      console.error('\n📡 HTTP Response Details:');
+      console.error('Status:', error.response.status);
+      console.error('Data:', JSON.stringify(error.response.data, null, 2));
+    }
   }
 
-  console.log();
+  console.log('\n' + '='.repeat(50) + '\n');
 }
 
 // Run the test
 if (require.main === module) {
-  console.log('=== Optikpi Data Pipeline SDK - Batch Operations Test ===');
-  console.log(`Base URL: ${API_BASE_URL}`);
-  console.log(`Account ID: ${ACCOUNT_ID}`);
-  console.log(`Workspace ID: ${WORKSPACE_ID}`);
-  console.log();
-
-  testBatchOperations(sdk, ACCOUNT_ID, WORKSPACE_ID);
+  console.log('\n' + '='.repeat(50));
+  console.log('🚀 Optikpi Data Pipeline SDK - Batch Operations Test');
+  console.log('='.repeat(50));
+  console.log(`\n📍 Configuration:`);
+  console.log(`   Base URL: ${API_BASE_URL || 'Not set'}`);
+  console.log(`   Account ID: ${ACCOUNT_ID}`);
+  console.log(`   Workspace ID: ${WORKSPACE_ID}`);
+  console.log(`   Auth Token: ${AUTH_TOKEN ? AUTH_TOKEN.substring(0, 8) + '...' : 'Not set'}`);
+  
+  testBatchOperations(ACCOUNT_ID, WORKSPACE_ID);
 }
 
 module.exports = {

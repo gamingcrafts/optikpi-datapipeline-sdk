@@ -164,12 +164,17 @@ if (result.success) {
 ### Batch Operations
 ```javascript
 const batchData = {
-  customers: [customer1, customer2],
-  depositEvents: [deposit1, deposit2],
-  gamingEvents: [gaming1, gaming2],
-  walletBalanceEvents: [walletBalance1, walletBalance2],
-  referFriendEvents: [referFriend1, referFriend2],
-  extendedAttributes: [extAttr1, extAttr2]
+  customers: [createSampleCustomer(accountId, workspaceId)],
+  extendedAttributes: [
+    createSampleExtendedAttributesMapFormat(accountId, workspaceId),
+    createSampleExtendedAttributesStringFormat(accountId, workspaceId)
+  ],
+  accountEvents: [createSampleAccountEvent(accountId, workspaceId)],
+  depositEvents: [createSampleDepositEvent(accountId, workspaceId)],
+  withdrawEvents: [createSampleWithdrawEvent(accountId, workspaceId)],
+  gamingEvents: [createSampleGamingActivityEvent(accountId, workspaceId)],
+  referFriendEvents: [createSampleReferFriendEvent(accountId, workspaceId)],
+  walletBalanceEvents: [createSampleWalletBalanceEvent(accountId, workspaceId)]
 };
 const batchResult = await sdk.sendBatch(batchData);
 ```

@@ -48,9 +48,9 @@ sdk = OptikpiDataPipelineSDK({
 def create_sample_customer(account_id, workspace_id):
     """Create sample customer profile"""
     return CustomerProfile(
-        account_id=ACCOUNT_ID,
-        workspace_id=WORKSPACE_ID,
-        user_id="2batchcust_py_1",
+        account_id=account_id,
+        workspace_id=workspace_id,
+        user_id="user1111",
         username="john_doe",
         full_name="John Doe",
         first_name="John",
@@ -91,7 +91,7 @@ def create_sample_customer(account_id, workspace_id):
         iddoc_verification="Verified",
         cooling_off_expiry_date="2024-12-31T23:59:59Z",
         self_exclusion_expiry_date="2025-01-31T23:59:59Z",
-        risk_score_level=0.2,
+        risk_score_level="low",
         marketing_sms_preference="Opt-in",
         custom_data={
             "favorite_game": "slots",
@@ -102,7 +102,7 @@ def create_sample_customer(account_id, workspace_id):
         self_exclusion_check_time="2024-01-15T10:30:00Z",
         self_exclusion_created_time="2024-01-01T00:00:00Z",
         closed_time=None,
-        real_money_enabled=True,
+        real_money_enabled="true",  # String as in JS
         push_token="push_token_abc123"
     )
 
@@ -112,13 +112,13 @@ def create_sample_extended_attributes_map_format(account_id, workspace_id):
     return CustomerExtEvent(
         account_id=account_id,
         workspace_id=workspace_id,
-        user_id="2batchce1",
+        user_id="user1112",
         list_name="BINGO_PREFERENCES",
         ext_data={
             "Email": "True",
             "SMS": "True",
-             "PushNotifications": "False"
-             }
+            "PushNotifications": "False"
+        }
     )
 
 
@@ -127,12 +127,12 @@ def create_sample_extended_attributes_string_format(account_id, workspace_id):
     return CustomerExtEvent(
         account_id=account_id,
         workspace_id=workspace_id,
-        user_id='2batch_py_ext2',
-        list_name='GAMING_PREFERENCES',
+        user_id="user1113",
+        list_name="GAMING_PREFERENCES",
         ext_data=json.dumps({
-            'Email': 'True',
-            'SMS': 'True',
-            'PushNotifications': 'True'
+            "Email": "True",
+            "SMS": "True",
+            "PushNotifications": "True"
         })
     )
 
@@ -142,7 +142,7 @@ def create_sample_account_event(account_id, workspace_id):
     return AccountEvent(
         account_id=account_id,
         workspace_id=workspace_id,
-        user_id="2batchacc1",
+        user_id="user1114",
         event_category="Account",
         event_name="Player Registration",
         event_id="evt_123456789",
@@ -161,7 +161,7 @@ def create_sample_deposit_event(account_id, workspace_id):
     return DepositEvent(
         account_id=account_id,
         workspace_id=workspace_id,
-        user_id="2batch_dep_py_1",
+        user_id="user1115",
         event_category="Deposit",
         event_name="Successful Deposit",
         event_id="evt_dep_987654321",
@@ -177,8 +177,8 @@ def create_sample_deposit_event(account_id, workspace_id):
         net_amount=497.50,
         failure_reason=None,
         metadata={
-        "bank_name": "Chase Bank",
-        "account_last4": "1234"
+            "bank_name": "Chase Bank",
+            "account_last4": "1234"
         }
     )
 
@@ -188,7 +188,7 @@ def create_sample_withdraw_event(account_id, workspace_id):
     return WithdrawEvent(
         account_id=account_id,
         workspace_id=workspace_id,
-        user_id="2batch_wd_py_1",
+        user_id="user1116",
         event_category="Withdraw",
         event_name="Successful Withdrawal",
         event_id="evt_wd_987654321",
@@ -198,12 +198,12 @@ def create_sample_withdraw_event(account_id, workspace_id):
         payment_method="bank",
         transaction_id="txn_wd_123456789",
         status="success",
-        fees=1.50,
         device="desktop",
         affiliate_id="aff_123456",
         partner_id="partner_789",
         campaign_code="SUMMER2024",
         reason="User requested withdrawal",
+        fees=1.50,
         net_amount=248.50,
         withdrawal_reason="Cash out winnings",
         processing_time="2024-01-15T10:30:00Z",
@@ -216,11 +216,11 @@ def create_sample_gaming_activity_event(account_id, workspace_id):
     return GamingActivityEvent(
         account_id=account_id,
         workspace_id=workspace_id,
-        user_id="2batchgame_py_1",
+        user_id="user1117",
         event_category="Gaming Activity",
         event_name="Play Casino Game",
-        event_id="evt_" + str(int(time.time())),
-        event_time="2024-01-15T10:30:00Z",
+        event_id="evt_" + str(int(time.time() * 1000)),
+        event_time=datetime.now().isoformat() + "Z",
         wager_amount=10.00,
         win_amount=25.00,
         loss_amount=0.00,
@@ -293,17 +293,17 @@ def create_sample_refer_friend_event(account_id, workspace_id):
     return ReferFriendEvent(
         account_id=account_id,
         workspace_id=workspace_id,
-        user_id="2batchrf1",
+        user_id="user1118",
         event_category="Refer Friend",
         event_name="Referral Successful",
-        event_id="evt_rf_123456789",
-        event_time="2024-01-15T17:30:00Z",
-        referral_code_used="REF123",
+        event_id="evt_rf_987654321",
+        event_time="2024-01-15T14:45:00Z",
+        referral_code_used="REF123456",
         successful_referral_confirmation=True,
         reward_type="bonus",
         reward_claimed_status="claimed",
-        referee_user_id="user654321",
-        referee_registration_date="2024-01-15T16:00:00Z",
+        referee_user_id="user789012",
+        referee_registration_date="2024-01-15T10:30:00Z",
         referee_first_deposit=100.00
     )
 
@@ -313,17 +313,17 @@ def create_sample_wallet_balance_event(account_id, workspace_id):
     return WalletBalanceEvent(
         account_id=account_id,
         workspace_id=workspace_id,
-        user_id="2batchwb1",
+        user_id="user1119",
         event_category="Wallet Balance",
-        event_name="Balance Updated",
-        event_id="evt_wallet_123456789",
-        event_time="2024-01-15T17:00:00Z",
+        event_name="Balance Update",
+        event_id="evt_wb_987654321",
+        event_time="2024-01-15T14:45:00Z",
         wallet_type="main",
         currency="USD",
-        current_cash_balance=450.00,
+        current_cash_balance=1250.50,
         current_bonus_balance=100.00,
-        current_total_balance=550.00,
-        blocked_amount=20.00
+        current_total_balance=1350.50,
+        blocked_amount=50.00
     )
 
 
@@ -341,13 +341,13 @@ def print_validation_result(result, event_name):
         print(f"❌ Invalid {event_name}:")
         print(f"Errors: {json.dumps(errors)}")
     else:
-        print(f"✅ Valid {event_name}: {is_valid}")
+        print(f"✅ Valid {event_name}")
 
 
 def print_data(data):
-    """Print data with class name"""
+    """Print data object"""
     class_name = data.__class__.__name__
-    print(f"🔍 Testing : {class_name}")
+    print(f"\n🔍 Testing: {class_name}")
     print('─' * 50)
     
     # Try different methods to get dictionary representation
@@ -361,12 +361,11 @@ def print_data(data):
         print(f"📋 Data: {json.dumps(data_dict, indent=2, default=str)}")
     except Exception as e:
         print(f"📋 Data: {data}")
-        print(f"Note: Could not serialize to JSON: {e}")
 
 
 def validate_batch_data(batch):
     """Validate batch data"""
-    print('=== Validating BatchData contents ===')
+    print('\n=== Validating BatchData contents ===\n')
     
     if batch.get('customers'):
         for c in batch['customers']:
@@ -425,72 +424,209 @@ def validate_batch_data(batch):
                 print_data(wb)
 
 
-def test_batch_operations(sdk, account_id, workspace_id):
+def test_batch_operations(account_id, workspace_id):
     """Test batch operations"""
-    print('=== Batch Operations ===')
+    print('\n=== Batch Operations ===\n')
     
     try:
-        # Create batch data object (plain dictionary)
+        # Create batch data object using camelCase (matching SDK expectations)
         batch_data = {
-            'customers': [create_sample_customer(account_id, workspace_id)],
-            'extended_attributes': [
-                create_sample_extended_attributes_map_format(account_id, workspace_id),
-                create_sample_extended_attributes_string_format(account_id, workspace_id)
-            ],
-            'account_events': [create_sample_account_event(account_id, workspace_id)],
-            'deposit_events': [create_sample_deposit_event(account_id, workspace_id)],
-            'withdraw_events': [create_sample_withdraw_event(account_id, workspace_id)],
-            'gaming_events': [create_sample_gaming_activity_event(account_id, workspace_id)],
-            'refer_friend_events': [create_sample_refer_friend_event(account_id, workspace_id)],
-            'wallet_balance_events': [create_sample_wallet_balance_event(account_id, workspace_id)]
-        }
+    'customers': [
+        create_sample_customer(account_id, workspace_id).to_dict()
+    ],
+    'extendedAttributes': [
+        create_sample_extended_attributes_map_format(account_id, workspace_id).to_dict(),
+        create_sample_extended_attributes_string_format(account_id, workspace_id).to_dict()
+    ],
+    'accountEvents': [
+        create_sample_account_event(account_id, workspace_id).to_dict()
+    ],
+    'depositEvents': [
+        create_sample_deposit_event(account_id, workspace_id).to_dict()
+    ],
+    'withdrawEvents': [
+        create_sample_withdraw_event(account_id, workspace_id).to_dict()
+    ],
+    'gamingEvents': [
+        create_sample_gaming_activity_event(account_id, workspace_id).to_dict()
+    ],
+    'referFriendEvents': [
+        create_sample_refer_friend_event(account_id, workspace_id).to_dict()
+    ],
+    'walletBalanceEvents': [
+        create_sample_wallet_balance_event(account_id, workspace_id).to_dict()
+    ]
+}
+
         
         # Validate batch data
-        validate_batch_data(batch_data)
+        validate_batch_data({
+            'customers': batch_data['customers'],
+            'extended_attributes': batch_data['extendedAttributes'],
+            'account_events': batch_data['accountEvents'],
+            'deposit_events': batch_data['depositEvents'],
+            'withdraw_events': batch_data['withdrawEvents'],
+            'gaming_events': batch_data['gamingEvents'],
+            'refer_friend_events': batch_data['referFriendEvents'],
+            'wallet_balance_events': batch_data['walletBalanceEvents']
+        })
+        
+        print('\n📦 Batch Data Summary:')
+        print(f"   Customers: {len(batch_data.get('customers', []))}")
+        print(f"   Extended Attributes: {len(batch_data.get('extendedAttributes', []))}")
+        print(f"   Account Events: {len(batch_data.get('accountEvents', []))}")
+        print(f"   Deposit Events: {len(batch_data.get('depositEvents', []))}")
+        print(f"   Withdraw Events: {len(batch_data.get('withdrawEvents', []))}")
+        print(f"   Gaming Events: {len(batch_data.get('gamingEvents', []))}")
+        print(f"   Refer Friend Events: {len(batch_data.get('referFriendEvents', []))}")
+        print(f"   Wallet Balance Events: {len(batch_data.get('walletBalanceEvents', []))}")
+        
+        print('\n📤 Sending batch request to API...\n')
+        
+        # Debug: Log what we're actually sending
+        print('🔍 Request Payload Preview:')
+        payload_preview = {
+            'customers': len(batch_data.get('customers', [])),
+            'extendedAttributes': len(batch_data.get('extendedAttributes', [])),
+            'accountEvents': len(batch_data.get('accountEvents', [])),
+            'depositEvents': len(batch_data.get('depositEvents', [])),
+            'withdrawEvents': len(batch_data.get('withdrawEvents', [])),
+            'gamingEvents': len(batch_data.get('gamingEvents', [])),
+            'referFriendEvents': len(batch_data.get('referFriendEvents', [])),
+            'walletBalanceEvents': len(batch_data.get('walletBalanceEvents', []))
+        }
+        print(json.dumps(payload_preview, indent=2))
+        print()
         
         # Send batch request
         response = sdk.send_batch(batch_data)
         
+        print('\n=== API Response ===\n')
+        print('📊 Full Response Object:')
+        print(json.dumps(response, indent=2, default=str))
+        print('\n' + '─' * 50)
+        
         if response.get('success'):
-            print('✅ Batch operation completed successfully!')
-            print(f"Timestamp: {response.get('timestamp', datetime.now().isoformat())}")
+            print('\n✅ Batch operation completed successfully!')
+            print(f"⏰ Timestamp: {response.get('timestamp', datetime.now().isoformat())}")
+            
+            # Handle different response structures - Check for 'results' property
+            if response.get('results'):
+                print('\n📋 Detailed Results:\n')
+                
+                def check_result(key, display_name):
+                    """Check and display result for a specific key"""
+                    if key in response['results'] and response['results'][key] is not None:
+                        result = response['results'][key]
+                        print(f"\n{display_name}:")
+                        
+                        # Try different possible response formats
+                        if isinstance(result, dict):
+                            if 'success' in result:
+                                status = '✅' if result['success'] else '❌'
+                                print(f"  {status} Result: {'Success' if result['success'] else 'Failed'}")
+                            if 'status' in result:
+                                print(f"  📊 HTTP Status: {result['status']}")
+                            if 'error' in result:
+                                print(f"  🔴 Error: {result['error']}")
+                            if 'message' in result:
+                                print(f"  💬 Message: {result['message']}")
+                            if 'data' in result and result['data']:
+                                if 'message' in result['data']:
+                                    print(f"  💬 Data Message: {result['data']['message']}")
+                                if 'validRecordsCount' in result['data']:
+                                    print(f"  ✅ Valid Records: {result['data']['validRecordsCount']}/{result['data']['totalRecordsCount']}")
+                                if 'validationErrors' in result['data'] and result['data']['validationErrors']:
+                                    print(f"  ⚠️  Validation Errors:")
+                                    for err in result['data']['validationErrors']:
+                                        print(f"    Record {err['recordIndex']}:")
+                                        for e in err['errors']:
+                                            print(f"      - Field: {e['field']}")
+                                            print(f"        Message: {e['message']}")
+                                            print(f"        Value: {json.dumps(e['value'])}")
+                            if 'count' in result:
+                                print(f"  🔢 Count: {result['count']}")
+                        elif isinstance(result, bool):
+                            status = '✅' if result else '❌'
+                            print(f"  {status} Result: {'Success' if result else 'Failed'}")
+                        elif isinstance(result, str):
+                            print(f"  📝 Result: {result}")
+                
+                check_result('customers', '👤 Customer Profiles')
+                check_result('extendedAttributes', '🔧 Extended Attributes')
+                check_result('accountEvents', '📝 Account Events')
+                check_result('depositEvents', '💰 Deposit Events')
+                check_result('withdrawEvents', '💸 Withdraw Events')
+                check_result('gamingEvents', '🎮 Gaming Events')
+                check_result('referFriendEvents', '👥 Refer Friend Events')
+                check_result('walletBalanceEvents', '💳 Wallet Balance Events')
+                
+                # Check for missing results
+                expected_keys = [
+                    'customers', 
+                    'extendedAttributes', 
+                    'accountEvents', 
+                    'depositEvents', 
+                    'withdrawEvents', 
+                    'gamingEvents', 
+                    'referFriendEvents', 
+                    'walletBalanceEvents'
+                ]
+                
+                received_keys = list(response['results'].keys())
+                missing_keys = [key for key in expected_keys if key not in received_keys]
+                
+                if missing_keys:
+                    print('\n⚠️  Missing Results:')
+                    for key in missing_keys:
+                        print(f"   - {key}: No response received")
+                
+                print(f"\n📊 Summary: {len(received_keys)}/{len(expected_keys)} event types processed")
+            
+            elif response.get('data'):
+                print('\n📋 Detailed Results (from data property):\n')
+                print(json.dumps(response['data'], indent=2, default=str))
+            else:
+                print('\n⚠️  Warning: No results or data property in response')
+        
+        else:
+            print('\n❌ Batch operation failed')
+            print(f"📈 HTTP Status: {response.get('status')}")
+            
+            if response.get('error'):
+                print('\n🔴 Error Details:')
+                print(json.dumps(response['error'], indent=2, default=str))
             
             if response.get('data'):
-                data = response['data']
-                if data.get('customers'):
-                    print(f"Customer profiles: {'Success' if data['customers'].get('success') else 'Failed'}")
-                if data.get('extended_attributes'):
-                    print(f"Extended Attributes: {'Success' if data['extended_attributes'].get('success') else 'Failed'}")
-                if data.get('account_events'):
-                    print(f"Account events: {'Success' if data['account_events'].get('success') else 'Failed'}")
-                if data.get('deposit_events'):
-                    print(f"Deposit events: {'Success' if data['deposit_events'].get('success') else 'Failed'}")
-                if data.get('withdraw_events'):
-                    print(f"Withdraw events: {'Success' if data['withdraw_events'].get('success') else 'Failed'}")
-                if data.get('gaming_events'):
-                    print(f"Gaming events: {'Success' if data['gaming_events'].get('success') else 'Failed'}")
-                if data.get('refer_friend_events'):
-                    print(f"Refer Friend events: {'Success' if data['refer_friend_events'].get('success') else 'Failed'}")
-                if data.get('wallet_balance_events'):
-                    print(f"Wallet Balance events: {'Success' if data['wallet_balance_events'].get('success') else 'Failed'}")
-        else:
-            print('❌ Batch operation failed')
+                print('\n📦 Response Data:')
+                print(json.dumps(response['data'], indent=2, default=str))
     
     except Exception as error:
-        print(f'❌ Batch operation failed: {str(error)}')
+        print('\n❌ Batch operation failed with exception:')
+        print(f"Error Message: {str(error)}")
         import traceback
         traceback.print_exc()
+        
+        if hasattr(error, 'response'):
+            print('\n📡 HTTP Response Details:')
+            print(f"Status: {error.response.status_code}")
+            try:
+                print(f"Data: {json.dumps(error.response.json(), indent=2)}")
+            except:
+                print(f"Data: {error.response.text}")
     
-    print()
+    print('\n' + '=' * 50 + '\n')
 
 
 # Run the test
 if __name__ == '__main__':
-    print('=== Optikpi Data Pipeline SDK - Batch Operations Test ===')
-    print(f'Base URL: {API_BASE_URL}')
-    print(f'Account ID: {ACCOUNT_ID}')
-    print(f'Workspace ID: {WORKSPACE_ID}')
-    print()
+    print('\n' + '=' * 50)
+    print('🚀 Optikpi Data Pipeline SDK - Batch Operations Test')
+    print('=' * 50)
+    print(f"\n📍 Configuration:")
+    print(f"   Base URL: {API_BASE_URL or 'Not set'}")
+    print(f"   Account ID: {ACCOUNT_ID}")
+    print(f"   Workspace ID: {WORKSPACE_ID}")
+    print(f"   Auth Token: {AUTH_TOKEN[:8] + '...' if AUTH_TOKEN else 'Not set'}")
     
-    # Run the test (no async needed)
-    test_batch_operations(sdk, ACCOUNT_ID, WORKSPACE_ID)
+    test_batch_operations(ACCOUNT_ID, WORKSPACE_ID)

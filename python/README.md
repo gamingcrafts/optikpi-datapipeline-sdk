@@ -189,13 +189,32 @@ result = sdk.send_customer_profile(customer_dict)
 
 ```python
 batch_data = {
-    "customers": [customer1, customer2],
-    "depositEvents": [deposit1, deposit2],
-    "gamingEvents": [gaming1, gaming2],
-    "walletBalanceEvents": [wallet_balance1, wallet_balance2],
-    "referFriendEvents": [refer_friend1, refer_friend2],
-    "extendedAttributes": [ext_attr1, ext_attr2]
-}
+    'customers': [
+        create_sample_customer(account_id, workspace_id).to_dict()
+    ],
+    'extendedAttributes': [
+        create_sample_extended_attributes_map_format(account_id, workspace_id).to_dict(),
+        create_sample_extended_attributes_string_format(account_id, workspace_id).to_dict()
+    ],
+    'accountEvents': [
+        create_sample_account_event(account_id, workspace_id).to_dict()
+    ],
+    'depositEvents': [
+        create_sample_deposit_event(account_id, workspace_id).to_dict()
+    ],
+    'withdrawEvents': [
+        create_sample_withdraw_event(account_id, workspace_id).to_dict()
+    ],
+    'gamingEvents': [
+        create_sample_gaming_activity_event(account_id, workspace_id).to_dict()
+    ],
+    'referFriendEvents': [
+        create_sample_refer_friend_event(account_id, workspace_id).to_dict()
+    ],
+    'walletBalanceEvents': [
+        create_sample_wallet_balance_event(account_id, workspace_id).to_dict()
+    ]
+    }
 batchResult = sdk.send_batch(batch_data)
 ```
 
