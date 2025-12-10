@@ -45,7 +45,7 @@ sdk = OptikpiDataPipelineSDK({
 withdraw = WithdrawEvent(
     account_id=ACCOUNT_ID,
     workspace_id=WORKSPACE_ID,
-    user_id="wd_py_1",
+    user_id="2wd_py_1",
     event_category="Withdraw",
     event_name="Successful Withdrawal",
     event_id="evt_wd_987654321",
@@ -55,7 +55,16 @@ withdraw = WithdrawEvent(
     payment_method="bank",
     transaction_id="txn_wd_123456789",
     status="success",
-    withdrawal_reason=None  # Make sure your class uses 'withdrawal_reason' instead of 'failure_reason'
+    device="desktop",
+    affiliate_id="aff_123456",
+    partner_id="partner_789",
+    campaign_code="SUMMER2024",
+    reason="User requested withdrawal",
+    fees=1.50,
+    net_amount=248.50,
+    withdrawal_reason="Cash out winnings",
+    processing_time="2024-01-15T10:30:00Z",
+    failure_reason=None
 )
 
 validation = withdraw.validate()

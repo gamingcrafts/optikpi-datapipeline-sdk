@@ -98,6 +98,9 @@ public class DepositEvent {
     @JsonProperty("metadata")
     private Map<String, Object> metadata;
     
+    @JsonProperty("failure_reason")
+    private String failureReason;
+    
     public DepositEvent() {}
     
     public DepositEvent(String accountId, String workspaceId, String userId, String eventName, String eventId, String eventTime, BigDecimal amount) {
@@ -299,4 +302,7 @@ public class DepositEvent {
 
     public Map<String, Object> getMetadata() { return metadata; }
     public void setMetadata(Map<String, Object> metadata) { this.metadata = metadata; }
+    
+    public String getFailureReason() { return failureReason; }
+    public void setFailureReason(String failureReason) { this.failureReason = failureReason; }
 }

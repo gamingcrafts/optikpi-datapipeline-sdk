@@ -54,27 +54,25 @@ public class TestDepositEndpoint {
             DepositEvent event = new DepositEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("vinmathi_223");
+            event.setUserId("java_01");
             event.setEventCategory("Deposit");
             event.setEventName("Successful Deposit");
             event.setEventId("evt_" + System.currentTimeMillis());
             event.setEventTime(Instant.now().toString());
-            event.setAmount(new BigDecimal("100.00"));
-            event.setCurrency("USD");
             event.setPaymentMethod("bank");
             event.setTransactionId("txn_" + System.currentTimeMillis());
-            event.setStatus("success");
-            event.setDevice("mobile");
+            event.setAmount(new BigDecimal("100.00"));
             event.setPaymentProviderId("provider123");
             event.setPaymentProviderName("Chase Bank");
+            event.setFailureReason(null);
+            event.setCurrency("USD");
+            event.setFees(new BigDecimal("2.50"));
+            event.setNetAmount(new BigDecimal("97.50"));
+            event.setStatus("success");
             Map<String, Object> metadata = new HashMap<>();
             metadata.put("bank_name", "Chase Bank");
             metadata.put("account_last4", "1234");
-            metadata.put("source", "mobile_app");
             event.setMetadata(metadata);
-
-            System.out.println("\n📋 Deposit Event Data:");
-            System.out.println(mapper.writeValueAsString(event));
 
             ValidationResult valid = event.validate();
             if (!valid.isValid()) {
@@ -82,9 +80,12 @@ public class TestDepositEndpoint {
                 System.out.println("Errors: " + valid.getErrors());
                 return;
             }
+            
+            System.out.println("✅ Deposit event validated successfully!");
+            System.out.println("\n📋 Deposit Event Data:");
+            System.out.println(mapper.writeValueAsString(event));
 
             System.out.println("\n🕒 making API request using SDK...");
-           
             long start = System.currentTimeMillis();
             var response = sdk.sendDepositEvent(event);
             long end = System.currentTimeMillis();

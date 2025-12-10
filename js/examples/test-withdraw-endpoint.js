@@ -38,6 +38,15 @@ const withdraw = new WithdrawEvent({
   "payment_method": "bank",
   "transaction_id": "txn_wd_123456789",
   "status": "success",
+  "device": "desktop",
+  "affiliate_id": "aff_123456",
+  "partner_id": "partner_789",
+  "campaign_code": "SUMMER2024",
+  "reason": "User requested withdrawal",
+  "fees": 1.50,
+  "net_amount": 248.50,
+  "withdrawal_reason": "Cash out winnings",
+  "processing_time": "2024-01-15T10:30:00Z",
   "failure_reason": null
 });
 
@@ -53,22 +62,22 @@ async function testWithdrawEndpoint() {
   try {
     console.log('🚀 Testing Withdraw Events Endpoint');
     console.log('===================================');
-    
+
     console.log('Configuration:');
     console.log(`API Base URL: ${API_BASE_URL}`);
     console.log(`Account ID: ${ACCOUNT_ID}`);
     console.log(`Workspace ID: ${WORKSPACE_ID}`);
     console.log(`Auth Token: ${AUTH_TOKEN.substring(0, 8)}...`);
-    
+
     // Generate HMAC signature
     console.log('\nMaking API request using SDK...');
-       console.log('Gaming Event Data:', JSON.stringify(withdraw, null, 2));
-       
-       // Make the API call using SDK
-       const startTime = Date.now();
-       const result = await sdk.sendWithdrawEvent(withdraw);
-       const endTime = Date.now();
-    
+    console.log('Gaming Event Data:', JSON.stringify(withdraw, null, 2));
+
+    // Make the API call using SDK
+    const startTime = Date.now();
+    const result = await sdk.sendWithdrawEvent(withdraw);
+    const endTime = Date.now();
+
     if (result.success) {
       console.log('\n✅ Success!');
       console.log('==========================================');
@@ -84,7 +93,7 @@ async function testWithdrawEndpoint() {
       console.log(`SDK Success: ${result.success}`);
       console.log('Error Data:', JSON.stringify(result.data, null, 2));
     }
-    
+
   } catch (error) {
     console.error('\n❌ SDK Error occurred!');
     console.error('==========================================');

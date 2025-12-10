@@ -56,46 +56,97 @@ public class TestCustomerEndpoint {
         System.out.println("👤 Account ID: " + config.getAccountId());
         System.out.println("🏢 Workspace ID: " + config.getWorkspaceId());
         System.out.println();
-        
 
-        testSingleCustomerProfile(sdk, accountId, workspaceId);
-
+        testCustomerEndpoint(sdk, accountId, workspaceId);
     }
 
-    private static void testSingleCustomerProfile(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
+    private static void testCustomerEndpoint(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
         try {
-            // Create a customer profile
+            // Create customer data matching JavaScript example
             CustomerProfile customer = new CustomerProfile();
             customer.setAccountId(accountId);
             customer.setWorkspaceId(workspaceId);
-            customer.setUserId("vinmathi_002");
+            customer.setUserId("java_01");
             customer.setUsername("john_doe");
-            customer.setEmail("john.doe@example.com");
             customer.setFullName("John Doe");
             customer.setFirstName("John");
             customer.setLastName("Doe");
             customer.setDateOfBirth("1990-01-15");
+            customer.setEmail("john.doe@example.com");
+            customer.setPhoneNumber("+1234567890");
             customer.setGender("Male");
-            customer.setCountry("US");
+            customer.setCountry("United States");
             customer.setCity("New York");
             customer.setLanguage("en");
             customer.setCurrency("USD");
-            customer.setAccountStatus("Active");
+
+            customer.setPhoneVerification("Verified");
+            customer.setEmailVerification("Verified");
+            customer.setBankVerification("NotVerified");
+            customer.setIddocVerification("Verified");
+        
+            customer.setMarketingEmailPreference("Opt-in");
+            customer.setNotificationsPreference("Opt-in");
+            customer.setSubscription("Subscribed");
+    
+            customer.setPrivacySettings("private");
+            
+            customer.setDepositLimits(1000.00);
+            customer.setLossLimits(500.00);
+            customer.setWageringLimits(2000.00);
+            customer.setSessionTimeLimits(120);
+
+            customer.setCoolingOffExpiryDate("2024-12-31T23:59:59Z");
+            customer.setSelfExclusionExpiryDate("2025-01-31T23:59:59Z");
+            customer.setAffliateId("affiliate456");
+            
+            customer.setCoolingOffPeriod(7);
+            customer.setSelfExclusionPeriod(30);
+
+            customer.setRealityChecksNotification("daily");
             customer.setVipStatus("Regular");
-            customer.setCreationTimestamp(Instant.now().toString());
+            customer.setLoyaltyProgramTiers("Bronze");
+            customer.setAccountStatus("Active");
+            customer.setBonusAbuser("Not flagged");
+            customer.setFinancialRiskLevel(0.3);
+            
+            customer.setAcquisitionSource("Google Ads");
+            customer.setPartnerId("partner123");
+            customer.setReferralLinkCode("REF789");
+            customer.setReferralLimitReached("Not Reached");
+            customer.setCreationTimestamp("2024-01-15T10:30:00Z");
+        
+            customer.setRiskScoreLevel("low");
+            customer.setMarketingSmsPreference("Opt-in");
+            
+            // Custom data as Map (same in both)
+            Map<String, Object> customData = new HashMap<>();
+            customData.put("favorite_game", "slots");
+            customData.put("newsletter_signup", true);
+            customer.setCustomData(customData);
+            
+            customer.setSelfExclusionBy("player");
+            customer.setSelfExclusionByType("voluntary");
+            customer.setSelfExclusionCheckTime("2024-01-15T10:30:00Z");
+            customer.setSelfExclusionCreatedTime("2024-01-01T00:00:00Z");
+            customer.setClosedTime(null);
 
-            System.out.println("\n📋 Customer Profile Data:");
-            System.out.println(mapper.writeValueAsString(customer));
+            customer.setRealMoneyEnabled("true");
+            customer.setPushToken("push_token_abc123");
 
+            // Validate customer data
             ValidationResult valid = customer.validate();
             if (!valid.isValid()) {
                 System.out.println("\n❌ Validation Failed!");
                 System.out.println("Errors: " + valid.getErrors());
                 return;
             }
+            
+            System.out.println("✅ Customer event validated successfully!");
+            System.out.println("Customer Data:");
+            System.out.println(mapper.writeValueAsString(customer));
 
             System.out.println("\n🕒 Making API request using SDK...");
-         
             long start = System.currentTimeMillis();
             var response = sdk.sendCustomerProfile(customer);
             long end = System.currentTimeMillis();

@@ -120,7 +120,7 @@ class CustomerProfile {
   isValidDate(date) {
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!dateRegex.test(date)) return false;
-    
+
     const d = new Date(date);
     return d instanceof Date && !isNaN(d) && d.toISOString().slice(0, 10) === date;
   }

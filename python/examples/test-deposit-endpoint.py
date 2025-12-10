@@ -45,7 +45,7 @@ sdk = OptikpiDataPipelineSDK({
 deposit = DepositEvent(
     account_id=ACCOUNT_ID,
     workspace_id=WORKSPACE_ID,
-    user_id="dep_py_1",
+    user_id="1dep_py_1",
     event_category="Deposit",
     event_name="Successful Deposit",
     event_id="evt_dep_987654321",
@@ -54,7 +54,12 @@ deposit = DepositEvent(
     currency="USD",
     payment_method="bank",
     transaction_id="txn_123456789",
+    payment_provider_id="provider123",
+    payment_provider_name="Chase Bank",
     status="success",
+    fees=2.50,
+    net_amount=497.50,
+    failure_reason=None,
     metadata={
         "bank_name": "Chase Bank",
         "account_last4": "1234"

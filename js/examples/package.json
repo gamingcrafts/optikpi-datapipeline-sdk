@@ -17,7 +17,6 @@
     "test:batchData": "node test-batch-operations"
   },
   "dependencies": {
-    "@optikpi/datapipeline-sdk": "git+https://github.com/gamingcrafts/optikpi-datapipeline-sdk.git"
   },
   "devDependencies": {
     "dotenv": "^16.3.1"
@@ -31,4 +30,4 @@
   ],
   "author": "Optikpi",
   "license": "MIT"
-} 
+}

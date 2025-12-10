@@ -56,7 +56,8 @@ public class TestWithdrawEndpoint {
             WithdrawEvent event = new WithdrawEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("vinmathi002");
+            event.setUserId("java_01");
+            event.setEventCategory("Withdraw");
             event.setEventName("Successful Withdrawal");
             event.setEventId("evt_" + System.currentTimeMillis());
             event.setEventTime(Instant.now().toString());
@@ -66,18 +67,26 @@ public class TestWithdrawEndpoint {
             event.setTransactionId("txn_" + System.currentTimeMillis());
             event.setStatus("success");
             event.setDevice("desktop");
-            event.setEventCategory("Withdraw");
+            event.setAffiliateId("aff_123456");
+            event.setPartnerId("partner_789");
+            event.setCampaignCode("SUMMER2024");
+            event.setReason("User requested withdrawal");
+            event.setFees(new BigDecimal("1.50"));
+            event.setNetAmount(new BigDecimal("48.50"));
+            event.setWithdrawalReason("Cash out winnings");
+            event.setProcessingTime("2024-01-15T10:30:00Z");
+            event.setFailureReason(null);
     
-
-            System.out.println("\n📋Withdraw Event Data:");
-            System.out.println(mapper.writeValueAsString(event));
-
             ValidationResult valid = event.validate();
             if (!valid.isValid()) {
                 System.out.println("\n❌ Validation Failed!");
                 System.out.println("Errors: " + valid.getErrors());
                 return;
             }
+
+            System.out.println("✅Withdraw event validated successfully!");
+            System.out.println("\n📋Withdraw Event Data:");
+            System.out.println(mapper.writeValueAsString(event));
 
             System.out.println("\n🕒 making API request using SDK...");
             long start = System.currentTimeMillis();

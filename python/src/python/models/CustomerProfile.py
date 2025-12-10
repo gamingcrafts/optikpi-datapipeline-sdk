@@ -49,7 +49,7 @@ class CustomerProfile:
     iddoc_verification: Optional[str] = None
     cooling_off_expiry_date: Optional[str] = None
     self_exclusion_expiry_date: Optional[str] = None
-    risk_score_level: Optional[float] = None
+    risk_score_level: Optional[str] = None
     marketing_sms_preference: Optional[str] = None
     custom_data: Optional[Dict[str, Any]] = field(default_factory=dict)
     self_exclusion_by: Optional[str] = None
@@ -57,7 +57,7 @@ class CustomerProfile:
     self_exclusion_check_time: Optional[str] = None
     self_exclusion_created_time: Optional[str] = None
     closed_time: Optional[str] = None
-    real_money_enabled: Optional[bool] = None
+    real_money_enabled: Optional[str] = None
     push_token: Optional[str] = None
 
     # -------------------------------

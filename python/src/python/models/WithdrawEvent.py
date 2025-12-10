@@ -19,9 +19,15 @@ class WithdrawEvent:
     status: Optional[str] = None
     currency: Optional[str] = None
     fees: Optional[float] = None
+    device: Optional[str] = None
+    affiliate_id: Optional[str] = None
+    partner_id: Optional[str] = None
+    campaign_code: Optional[str] = None
+    reason: Optional[str] = None
     net_amount: Optional[float] = None
     withdrawal_reason: Optional[str] = None
     processing_time: Optional[str] = None
+    failure_reason: Optional[str] = None
 
     # -------------------------------
     # Validation methods

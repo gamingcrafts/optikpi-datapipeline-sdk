@@ -20,6 +20,7 @@ class WithdrawEvent {
     this.net_amount = data.net_amount;
     this.withdrawal_reason = data.withdrawal_reason;
     this.processing_time = data.processing_time;
+    this.failure_reason = data.failure_reason;
   }
 
   /**
