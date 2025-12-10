@@ -4,7 +4,7 @@
   "description": "JavaScript client example for Optikpi API integration",
   "main": "test-customer-endpoint.js",
   "scripts": {
-    "test": "node test-customer-endpoint.js",
+    "test:customer": "node test-customer-endpoint.js",
     "test:all": "node test-all-endpoints.js",
     "test:failures": "node test-validation-failures.js",
     "test:simple-failures": "node test-simple-failures.js",
@@ -14,7 +14,8 @@
     "test:gaming": "node test-gaming-endpoint.js",
     "test:referFriend": "node test-refer-friend-endpoint",
     "test:walletBalance": "node test-wallet-balance-endpoint",
-    "test:batchData": "node test-batch-operations"
+    "test:batchData": "node test-batch-operations",
+    "test:customerExt":"node test-customerext-endpoint.js"
   },
   "dependencies": {
   },
