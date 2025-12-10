@@ -119,8 +119,8 @@ https://your-api-gateway-url/apigw/ingest
 | loss_limits | Number | No | Loss limits |
 | wagering_limits | Number | No | Wagering limits |
 | session_time_limits | Number | No | Session time limits |
-| cooling_off_expiry_date | String | No | Cooling off expiry date (date-time format). Example: `"2024-01-15T10:30:00Z"`
-| self_exclusion_expiry_date | String | No | Self exclusion expiry date (date-time format). Example: `"2024-01-15T10:30:00Z"`
+| cooling_off_period | Number | No | cooling_off_period |
+| self_exclusion_period   | Number | No | self_exclusion_period |
 | reality_checks_notification | String | No | Reality checks notification frequency |
 | vip_status | String | No | VIP status |
 | loyalty_program_tiers | String | No | Loyalty program tier |
@@ -129,9 +129,12 @@ https://your-api-gateway-url/apigw/ingest
 | financial_risk_level | Number | No | Financial risk level |
 | acquisition_source | String | No | Acquisition source |
 | partner_id | String | No | Partner identifier |
+| affiliate_id | String | No | Affiliate identifier |
 | referral_link_code | String | No | Referral link code |
 | referral_limit_reached | String | No | Referral limit status |
 | creation_timestamp | String | Yes | Account creation UTC timestamp (date-time format). Example: `"2024-01-15T10:30:00Z"`
+| cooling_off_expiry_date | String | No | Cooling off expiry date (date-time format). Example: `"2024-01-15T10:30:00Z"`
+| self_exclusion_expiry_date | String | No | Self exclusion expiry date (date-time format). Example: `"2024-01-15T10:30:00Z"`
 | risk_score_level | String | No | Risk score level |
 | marketing_sms_preference | String | No | Marketing SMS preference |
 | custom_data | Object/String | No | Custom data in JSON format. Examples: `{"email":true,"sms":false}` or `"{\"email\":true,\"sms\":true}"`
@@ -176,6 +179,11 @@ https://your-api-gateway-url/apigw/ingest
 | payment_provider_id | String | No | Payment provider identifier |
 | payment_provider_name | String | No | Payment provider name |
 | failure_reason | String | No | Reason for deposit failure |
+| currency | String | No | Currency used |
+| status | String | No | Verification status |
+| fees | Number | No | Deposit fees |
+| net_amount | Number | No | Deposit net_amount | 
+| metadata | Object | yes | metadata |
 
 ### Withdraw Event
 | Field | Type | Required | Description |
@@ -190,7 +198,18 @@ https://your-api-gateway-url/apigw/ingest
 | amount | Number | Yes | Withdrawal amount |
 | payment_method | String | No | Payment method used |
 | transaction_id | String | No | Transaction identifier |
+| status | String | No | Verification status |
+| currency | String | No | Currency used |
+| device | String | No | Device type used |
+| affiliate_id | String | No | Affiliate identifier |
+| partner_id | String | No | Partner identifier |
+| campaign_code | String | No | Campaign code |
+| reason | String | No | Reason for failure or additional information |
+| fees | Number | No | Deposit fees |
+| net_amount | Number | No | Deposit net_amount |
+| withdrawal_reason | String | No | Reason for withdrawal_reason |
 | failure_reason | String | No | Reason for withdrawal failure |
+| processing_time | String | Yes | Timestamp when the processing_time occurred (date-time format). Example: "2024-01-15T10:30:00Z" |
 
 ### Gaming Activity Event
 | Field | Type | Required | Description |

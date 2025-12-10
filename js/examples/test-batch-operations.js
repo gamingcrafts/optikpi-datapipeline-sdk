@@ -38,8 +38,8 @@ const sdk = new OptikpiDataPipelineSDK({
  */
 function createSampleCustomer(accountId, workspaceId) {
   return new CustomerProfile({
-    account_id: ACCOUNT_ID,
-    workspace_id: WORKSPACE_ID,
+    account_id: accountId,
+    workspace_id: workspaceId,
     user_id: "user123456",
     username: "john_doe",
     full_name: "John Doe",
@@ -103,8 +103,8 @@ function createSampleCustomer(accountId, workspaceId) {
  */
 function createSampleExtendedAttributesMapFormat(accountId, workspaceId) {
   return new CustomerExtEvent({
-    account_id: ACCOUNT_ID,
-    workspace_id: WORKSPACE_ID,
+    account_id: accountId,
+    workspace_id: workspaceId,
     user_id: "opti789",
     list_name: "BINGO_PREFERENCES",
     ext_data: {
@@ -120,8 +120,8 @@ function createSampleExtendedAttributesMapFormat(accountId, workspaceId) {
  */
 function createSampleExtendedAttributesStringFormat(accountId, workspaceId) {
   return new CustomerExtEvent({
-    account_id: ACCOUNT_ID,
-    workspace_id: WORKSPACE_ID,
+    account_id: accountId,
+    workspace_id: workspaceId,
     user_id: "opti456",
     list_name: "GAMING_PREFERENCES",
     ext_data: JSON.stringify({
@@ -137,8 +137,8 @@ function createSampleExtendedAttributesStringFormat(accountId, workspaceId) {
  */
 function createSampleAccountEvent(accountId, workspaceId) {
   return new AccountEvent({
-    account_id: ACCOUNT_ID,
-    workspace_id: WORKSPACE_ID,
+    account_id: accountId,
+    workspace_id: workspaceId,
     user_id: "user123456",
     event_category: "Account",
     event_name: "Player Registration",
@@ -158,8 +158,8 @@ function createSampleAccountEvent(accountId, workspaceId) {
  */
 function createSampleDepositEvent(accountId, workspaceId) {
   return new DepositEvent({
-    account_id: ACCOUNT_ID,
-    workspace_id: WORKSPACE_ID,
+    account_id: accountId,
+    workspace_id: workspaceId,
     user_id: "user123456",
     event_category: "Deposit",
     event_name: "Successful Deposit",
@@ -188,8 +188,8 @@ function createSampleDepositEvent(accountId, workspaceId) {
  */
 function createSampleWithdrawEvent(accountId, workspaceId) {
   return new WithdrawEvent({
-    account_id: ACCOUNT_ID,
-    workspace_id: WORKSPACE_ID,
+    account_id: accountId,
+    workspace_id: workspaceId,
     user_id: "user123456",
     event_category: "Withdraw",
     event_name: "Successful Withdrawal",
@@ -219,8 +219,8 @@ function createSampleWithdrawEvent(accountId, workspaceId) {
  */
 function createSampleGamingActivityEvent(accountId, workspaceId) {
   return new GamingActivityEvent({
-    account_id: ACCOUNT_ID,
-    workspace_id: WORKSPACE_ID,
+    account_id: accountId,
+    workspace_id: workspaceId,
     user_id: "user123411",
     event_category: "Gaming Activity",
     event_name: "Play Casino Game",
@@ -299,8 +299,8 @@ function createSampleGamingActivityEvent(accountId, workspaceId) {
  */
 function createSampleReferFriendEvent(accountId, workspaceId) {
   return new ReferFriendEvent({
-    account_id: ACCOUNT_ID,
-    workspace_id: WORKSPACE_ID,
+    account_id: accountId,
+    workspace_id: workspaceId,
     user_id: "user123456",
     event_category: "Refer Friend",
     event_name: "Referral Successful",
@@ -322,8 +322,8 @@ function createSampleReferFriendEvent(accountId, workspaceId) {
  */
 function createSampleWalletBalanceEvent(accountId, workspaceId) {
   return new WalletBalanceEvent({
-    account_id: ACCOUNT_ID,
-    workspace_id: WORKSPACE_ID,
+    account_id: accountId,
+    workspace_id: workspaceId,
     user_id: "user123456",
     event_category: "Wallet Balance",
     event_name: "Balance Update",
