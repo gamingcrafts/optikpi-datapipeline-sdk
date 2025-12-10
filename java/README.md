@@ -23,8 +23,12 @@ This directory contains example applications demonstrating how to use the Optikp
 
 ## Running Examples
 - Before executing the file, please change your current path to:
+cd ../java/
+ ```bash
+mvn clean install
+```
+- change path to:
 cd ../java/examples
-
 ### Give execute permission
 ```bash
 chmod +x run.sh
