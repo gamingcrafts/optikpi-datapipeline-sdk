@@ -53,7 +53,7 @@ TEST_DATA = {
     "customer": CustomerProfile(
         account_id=ACCOUNT_ID,
         workspace_id=WORKSPACE_ID,
-        user_id="3allcust_py_1",
+        user_id="optuser0001",
         username="john_doe",
         full_name="John Doe",
         first_name="John",
@@ -94,7 +94,7 @@ TEST_DATA = {
         iddoc_verification="Verified",
         cooling_off_expiry_date="2024-12-31T23:59:59Z",
         self_exclusion_expiry_date="2025-01-31T23:59:59Z",
-        risk_score_level=0.2,
+        risk_score_level="low",
         marketing_sms_preference="Opt-in",
         custom_data={
             "favorite_game": "slots",
@@ -105,13 +105,13 @@ TEST_DATA = {
         self_exclusion_check_time="2024-01-15T10:30:00Z",
         self_exclusion_created_time="2024-01-01T00:00:00Z",
         closed_time=None,
-        real_money_enabled=True,
+        real_money_enabled="True",
         push_token="push_token_abc123"
     ),
     "customerext": CustomerExtEvent(
         account_id=ACCOUNT_ID,
         workspace_id=WORKSPACE_ID,
-        user_id="3allce1",
+        user_id="optuser0008",
         list_name="BINGO_PREFERENCES",
         ext_data={
             "Email": "True",
@@ -122,7 +122,7 @@ TEST_DATA = {
     "account": AccountEvent(
         account_id=ACCOUNT_ID,
         workspace_id=WORKSPACE_ID,
-        user_id="3allacc1",
+        user_id="optuser0002",
         event_category="Account",
         event_name="Player Registration",
         event_id="evt_123456789",
@@ -137,7 +137,7 @@ TEST_DATA = {
     "deposit": DepositEvent(
         account_id=ACCOUNT_ID,
         workspace_id=WORKSPACE_ID,
-        user_id="3all_dep_py_1",
+        user_id="optuser0003",
         event_category="Deposit",
         event_name="Successful Deposit",
         event_id="evt_dep_987654321",
@@ -160,7 +160,7 @@ TEST_DATA = {
     "withdraw": WithdrawEvent(
         account_id=ACCOUNT_ID,
         workspace_id=WORKSPACE_ID,
-        user_id="3all_wd_py_1",
+        user_id="optuser0004",
         event_category="Withdraw",
         event_name="Successful Withdrawal",
         event_id="evt_wd_987654321",
@@ -184,7 +184,7 @@ TEST_DATA = {
     "gaming": GamingActivityEvent(
         account_id=ACCOUNT_ID,
         workspace_id=WORKSPACE_ID,
-        user_id="3allgame_py_1",
+        user_id="optuser0005",
         event_category="Gaming Activity",
         event_name="Play Casino Game",
         event_id="evt_" + str(int(time.time())),
@@ -257,7 +257,7 @@ TEST_DATA = {
     "wallet": WalletBalanceEvent(
         account_id=ACCOUNT_ID,
         workspace_id=WORKSPACE_ID,
-        user_id="3allwb1",
+        user_id="optuser0006",
         event_category="Wallet Balance",
         event_name="Balance Updated",
         event_id="evt_wallet_123456789",
@@ -272,7 +272,7 @@ TEST_DATA = {
     "referral": ReferFriendEvent(
         account_id=ACCOUNT_ID,
         workspace_id=WORKSPACE_ID,
-        user_id="3allrf1",
+        user_id="optuser0007",
         event_category="Refer Friend",
         event_name="Referral Successful",
         event_id="evt_rf_123456789",
