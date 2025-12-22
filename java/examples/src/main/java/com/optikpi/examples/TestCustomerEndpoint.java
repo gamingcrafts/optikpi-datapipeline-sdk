@@ -136,7 +136,7 @@ public class TestCustomerEndpoint {
             customer.setAndroidPushToken("bRdkk1jSTdKFxOkO3c26rt:APA91bEoaBQn0TnxH7gqJJtyzD9cwUQBGJOtVhQ8kJv6v52Opqb2CTUlfFnPxSPM1PSSG9Ctlb1ASuVfPvKCTchaz_LzZH03TuigP4TsYKYZ76FEKh_GZoA");
             customer.setIosPushToken("bRdkk1jSTdKFxOkO3c26rt:APA91bEoaBQn0TnxH7gqJJtyzD9cwUQBGJOtVhQ8kJv6v52Opqb2CTUlfFnPxSPM1PSSG9Ctlb1ASuVfPvKCTchaz_LzZH03TuigP4TsYKYZ76FEKh_GZoA");
             customer.setWindowsPushToken("bRdkk1jSTdKFxOkO3c26rt:APA91bEoaBQn0TnxH7gqJJtyzD9cwUQBGJOtVhQ8kJv6v52Opqb2CTUlfFnPxSPM1PSSG9Ctlb1ASuVfPvKCTchaz_LzZH03TuigP4TsYKYZ76FEKh_GZoA");
-            customer.setMacdmgPushToken("bRdkk1jSTdKFxOkO3c26rt:APA91bEoaBQn0TnxH7gqJJtyzD9cwUQBGJOtVhQ8kJv6v52Opqb2CTUlfFnPxSPM1PSSG9Ctlb1ASuVfPvKCTchaz_LzZH03TuigP4TsYKYZ76FEKh_GZoA");
+            customer.setMacDmgPushToken("bRdkk1jSTdKFxOkO3c26rt:APA91bEoaBQn0TnxH7gqJJtyzD9cwUQBGJOtVhQ8kJv6v52Opqb2CTUlfFnPxSPM1PSSG9Ctlb1ASuVfPvKCTchaz_LzZH03TuigP4TsYKYZ76FEKh_GZoA");
 
             // Validate customer data
             ValidationResult valid = customer.validate();

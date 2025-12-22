@@ -476,6 +476,6 @@ public class CustomerProfile {
     public String getWindowsPushToken() { return windowsPushToken; }
     public void setWindowsPushToken(String windowsPushToken) { this.windowsPushToken = windowsPushToken; }
 
-    public String getMacdmgPushToken() { return macdmgPushToken; }
-    public void setMacdmgPushToken(String macdmgPushToken) { this.macdmgPushToken = macdmgPushToken; }
+    public String getMacDmgPushToken() { return macdmgPushToken; }
+    public void setMacDmgPushToken(String macdmgPushToken) { this.macdmgPushToken = macdmgPushToken; }
 }
