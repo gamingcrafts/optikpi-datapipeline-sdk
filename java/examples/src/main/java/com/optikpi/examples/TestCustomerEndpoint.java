@@ -133,6 +133,10 @@ public class TestCustomerEndpoint {
 
             customer.setRealMoneyEnabled("true");
             customer.setPushToken("push_token_abc123");
+            customer.setAndroidPushToken("android_push_token_xyz456");
+            customer.setIosPushToken("ios_push_token_def789");
+            customer.setWindowsPushToken("windows_push_token_ghi012");
+            customer.setMacDmgPushToken("mac_push_token_jkl345");  
 
             // Validate customer data
             ValidationResult valid = customer.validate();

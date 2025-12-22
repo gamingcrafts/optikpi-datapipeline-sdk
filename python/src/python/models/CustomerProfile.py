@@ -59,6 +59,10 @@ class CustomerProfile:
     closed_time: Optional[str] = None
     real_money_enabled: Optional[str] = None
     push_token: Optional[str] = None
+    android_push_token: Optional[str] = None
+    ios_push_token: Optional[str] = None    
+    windows_push_token: Optional[str] = None
+    mac_dmg_push_token: Optional[str] = None
 
     # -------------------------------
     # Validation methods

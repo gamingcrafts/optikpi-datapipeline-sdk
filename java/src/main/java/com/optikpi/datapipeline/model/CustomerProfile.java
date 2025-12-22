@@ -207,6 +207,18 @@ public class CustomerProfile {
     
     @JsonProperty("push_token")
     private String pushToken;
+
+    @JsonProperty("android_push_token")
+    private String androidPushToken;    
+
+    @JsonProperty("ios_push_token")
+    private String iosPushToken;
+
+    @JsonProperty("windows_push_token")
+    private String windowsPushToken;
+
+    @JsonProperty("mac_dmg_push_token")
+    private String macDmgPushToken;
     
     public CustomerProfile() {}
     
@@ -454,4 +466,16 @@ public class CustomerProfile {
     
     public String getPushToken() { return pushToken; }
     public void setPushToken(String pushToken) { this.pushToken = pushToken; }
+
+    public String getAndroidPushToken() { return androidPushToken; }
+    public void setAndroidPushToken(String androidPushToken) { this.androidPushToken = androidPushToken; }  
+
+    public String getIosPushToken() { return iosPushToken; }
+    public void setIosPushToken(String iosPushToken) { this.iosPushToken = iosPushToken; }
+
+    public String getWindowsPushToken() { return windowsPushToken; }
+    public void setWindowsPushToken(String windowsPushToken) { this.windowsPushToken = windowsPushToken; }
+
+    public String getMacDmgPushToken() { return macDmgPushToken; }
+    public void setMacDmgPushToken(String macDmgPushToken) { this.macDmgPushToken = macDmgPushToken; }
 }
