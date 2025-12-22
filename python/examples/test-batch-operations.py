@@ -107,7 +107,7 @@ def create_sample_customer(account_id, workspace_id):
         android_push_token="android_push_token_xyz456",
         ios_push_token="ios_push_token_def789",
         windows_push_token="windows_push_token_ghi012",
-        mac_push_token="mac_push_token_jkl345"
+        mac_dmg_push_token="mac_push_token_jkl345"
     )
 
 

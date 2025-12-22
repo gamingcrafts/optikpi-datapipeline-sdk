@@ -45,7 +45,7 @@ sdk = OptikpiDataPipelineSDK({
 customer = CustomerProfile(
     account_id=ACCOUNT_ID,
     workspace_id=WORKSPACE_ID,
-    user_id="1cust_py_5",
+    user_id="1cust_py_t_01",
     username="john_doe",
     full_name="John Doe",
     first_name="John",
@@ -102,7 +102,7 @@ customer = CustomerProfile(
     android_push_token="android_push_token_xyz456",
     ios_push_token="ios_push_token_def789",
     windows_push_token="windows_push_token_ghi012",
-    mac_push_token="mac_push_token_jkl345"
+    mac_dmg_push_token="mac_push_token_jkl345"
 )
 validation = customer.validate()
 

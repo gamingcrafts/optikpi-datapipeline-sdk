@@ -66,7 +66,7 @@ public class TestCustomerEndpoint {
             CustomerProfile customer = new CustomerProfile();
             customer.setAccountId(accountId);
             customer.setWorkspaceId(workspaceId);
-            customer.setUserId("java_01");
+            customer.setUserId("java_t_03");
             customer.setUsername("john_doe");
             customer.setFullName("John Doe");
             customer.setFirstName("John");
@@ -133,10 +133,10 @@ public class TestCustomerEndpoint {
 
             customer.setRealMoneyEnabled("true");
             customer.setPushToken("push_token_abc123");
-            customer.setAndroidPushToken("android_push_token_xyz456");
-            customer.setIosPushToken("ios_push_token_def789");
-            customer.setWindowsPushToken("windows_push_token_ghi012");
-            customer.setMacPushToken("mac_push_token_jkl345");
+            customer.setAndroidPushToken("bRdkk1jSTdKFxOkO3c26rt:APA91bEoaBQn0TnxH7gqJJtyzD9cwUQBGJOtVhQ8kJv6v52Opqb2CTUlfFnPxSPM1PSSG9Ctlb1ASuVfPvKCTchaz_LzZH03TuigP4TsYKYZ76FEKh_GZoA");
+            customer.setIosPushToken("bRdkk1jSTdKFxOkO3c26rt:APA91bEoaBQn0TnxH7gqJJtyzD9cwUQBGJOtVhQ8kJv6v52Opqb2CTUlfFnPxSPM1PSSG9Ctlb1ASuVfPvKCTchaz_LzZH03TuigP4TsYKYZ76FEKh_GZoA");
+            customer.setWindowsPushToken("bRdkk1jSTdKFxOkO3c26rt:APA91bEoaBQn0TnxH7gqJJtyzD9cwUQBGJOtVhQ8kJv6v52Opqb2CTUlfFnPxSPM1PSSG9Ctlb1ASuVfPvKCTchaz_LzZH03TuigP4TsYKYZ76FEKh_GZoA");
+            customer.setMacdmgPushToken("bRdkk1jSTdKFxOkO3c26rt:APA91bEoaBQn0TnxH7gqJJtyzD9cwUQBGJOtVhQ8kJv6v52Opqb2CTUlfFnPxSPM1PSSG9Ctlb1ASuVfPvKCTchaz_LzZH03TuigP4TsYKYZ76FEKh_GZoA");
 
             // Validate customer data
             ValidationResult valid = customer.validate();

@@ -60,7 +60,7 @@ class CustomerProfile {
     this.android_push_token = data.android_push_token;
     this.ios_push_token = data.ios_push_token;
     this.windows_push_token = data.windows_push_token;
-    this.mac_push_token = data.mac_push_token;
+    this.mac_dmg_push_token = data.mac_dmg_push_token;
   }
 
   /**

@@ -217,8 +217,8 @@ public class CustomerProfile {
     @JsonProperty("windows_push_token")
     private String windowsPushToken;
 
-    @JsonProperty("mac_push_token")
-    private String macPushToken;
+    @JsonProperty("mac_dmg_push_token")
+    private String macdmgPushToken;
     
     public CustomerProfile() {}
     
@@ -476,6 +476,6 @@ public class CustomerProfile {
     public String getWindowsPushToken() { return windowsPushToken; }
     public void setWindowsPushToken(String windowsPushToken) { this.windowsPushToken = windowsPushToken; }
 
-    public String getMacPushToken() { return macPushToken; }
-    public void setMacPushToken(String macPushToken) { this.macPushToken = macPushToken; }
+    public String getMacdmgPushToken() { return macdmgPushToken; }
+    public void setMacdmgPushToken(String macdmgPushToken) { this.macdmgPushToken = macdmgPushToken; }
 }

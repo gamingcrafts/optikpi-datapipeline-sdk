@@ -142,7 +142,7 @@ https://your-api-gateway-url/apigw/ingest
 | closed_time | String | No | Account closed time (date-time format). Example: `"2024-01-15T10:30:00Z"`
 | real_money_enabled | String | No | Real money enabled status |
 | push_token | String | No | Push notification token |
-| andriod_push_token | String | No | Android Push notification token |
+| android_push_token | String | No | Android Push notification token |
 | ios_push_token | String | No | IOS Push notification token |
 | windows_push_token | String | No | Windows Push notification token |
 | mac_dmg_push_token | String | No | MAC Push notification token |

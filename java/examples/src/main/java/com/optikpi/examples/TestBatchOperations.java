@@ -197,7 +197,7 @@ public class TestBatchOperations {
             customer.setAndroidPushToken("android_push_token_xyz456");
             customer.setIosPushToken("ios_push_token_def789");
             customer.setWindowsPushToken("windows_push_token_ghi012");  
-            customer.setMacPushToken("mac_push_token_jkl345");
+            customer.setMacdmgPushToken("mac_push_token_jkl345");
 
              
         return customer;
