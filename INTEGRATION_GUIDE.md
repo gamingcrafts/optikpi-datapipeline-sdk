@@ -70,7 +70,7 @@ https://your-api-gateway-url/apigw/ingest
 | `/events/wallet-balance` | POST | Push wallet balance events | 250 req/sec |
 | `/events/refer-friend` | POST | Push refer friend events | 250 req/sec |
 | `/extattributes` | POST | Push extended attributes data | 50 req/sec |
-| 
+| `/datapipeline/health` | GET | Health check endpoint | No limit |
 
 ### Required Headers
 | Header | Type | Description | Example |
@@ -119,8 +119,8 @@ https://your-api-gateway-url/apigw/ingest
 | loss_limits | Number | No | Loss limits |
 | wagering_limits | Number | No | Wagering limits |
 | session_time_limits | Number | No | Session time limits |
-| cooling_off_period | Number | No | cooling_off_period |
-| self_exclusion_period   | Number | No | self_exclusion_period |
+| cooling_off_expiry_date | String | No | Cooling off expiry date (date-time format). Example: `"2024-01-15T10:30:00Z"`
+| self_exclusion_expiry_date | String | No | Self exclusion expiry date (date-time format). Example: `"2024-01-15T10:30:00Z"`
 | reality_checks_notification | String | No | Reality checks notification frequency |
 | vip_status | String | No | VIP status |
 | loyalty_program_tiers | String | No | Loyalty program tier |
@@ -129,12 +129,9 @@ https://your-api-gateway-url/apigw/ingest
 | financial_risk_level | Number | No | Financial risk level |
 | acquisition_source | String | No | Acquisition source |
 | partner_id | String | No | Partner identifier |
-| affiliate_id | String | No | Affiliate identifier |
 | referral_link_code | String | No | Referral link code |
 | referral_limit_reached | String | No | Referral limit status |
-| creation_timestamp | String | Yes | Account creation UTC timestamp (date-time format). Example: `"2024-01-15T10:30:00Z"`
-| cooling_off_expiry_date | String | No | Cooling off expiry date (date-time format). Example: `"2024-01-15T10:30:00Z"`
-| self_exclusion_expiry_date | String | No | Self exclusion expiry date (date-time format). Example: `"2024-01-15T10:30:00Z"`
+| creation_timestamp | String | Yes | Account creation timestamp (date-time format). Example: `"2024-01-15T10:30:00Z"`
 | risk_score_level | String | No | Risk score level |
 | marketing_sms_preference | String | No | Marketing SMS preference |
 | custom_data | Object/String | No | Custom data in JSON format. Examples: `{"email":true,"sms":false}` or `"{\"email\":true,\"sms\":true}"`
@@ -145,6 +142,10 @@ https://your-api-gateway-url/apigw/ingest
 | closed_time | String | No | Account closed time (date-time format). Example: `"2024-01-15T10:30:00Z"`
 | real_money_enabled | String | No | Real money enabled status |
 | push_token | String | No | Push notification token |
+| andriod_push_token | String | No | Android Push notification token |
+| ios_push_token | String | No | IOS Push notification token |
+| windows_push_token | String | No | Windows Push notification token |
+| mac_dmg_push_token | String | No | MAC Push notification token |
 
 ### Account Event
 | Field | Type | Required | Description |
@@ -155,7 +156,7 @@ https://your-api-gateway-url/apigw/ingest
 | event_category | String | Yes | Category of the event (Account) |
 | event_name | String | Yes | Name of the account event |
 | event_id | String | Yes | Unique event identifier |
-| event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" UTC Time|
+| event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" |
 | affiliate_id | String | No | Affiliate identifier |
 | partner_id | String | No | Partner identifier |
 | device | String | No | Device type used |
@@ -179,11 +180,6 @@ https://your-api-gateway-url/apigw/ingest
 | payment_provider_id | String | No | Payment provider identifier |
 | payment_provider_name | String | No | Payment provider name |
 | failure_reason | String | No | Reason for deposit failure |
-| currency | String | No | Currency used |
-| status | String | No | Verification status |
-| fees | Number | No | Deposit fees |
-| net_amount | Number | No | Deposit net_amount | 
-| metadata | Object | yes | metadata |
 
 ### Withdraw Event
 | Field | Type | Required | Description |
@@ -194,22 +190,11 @@ https://your-api-gateway-url/apigw/ingest
 | event_category | String | Yes | Category of the event (Withdraw) |
 | event_name | String | Yes | Name of the withdrawal event (Successful Withdrawal\|Failed Withdrawal\|Pending Withdrawal\|Withdrawal Reversal) |
 | event_id | String | Yes | Unique event identifier |
-| event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" UTC Time|
+| event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" |
 | amount | Number | Yes | Withdrawal amount |
 | payment_method | String | No | Payment method used |
 | transaction_id | String | No | Transaction identifier |
-| status | String | No | Verification status |
-| currency | String | No | Currency used |
-| device | String | No | Device type used |
-| affiliate_id | String | No | Affiliate identifier |
-| partner_id | String | No | Partner identifier |
-| campaign_code | String | No | Campaign code |
-| reason | String | No | Reason for failure or additional information |
-| fees | Number | No | Deposit fees |
-| net_amount | Number | No | Deposit net_amount |
-| withdrawal_reason | String | No | Reason for withdrawal_reason |
 | failure_reason | String | No | Reason for withdrawal failure |
-| processing_time | String | Yes | Timestamp when the processing_time occurred (date-time format). Example: "2024-01-15T10:30:00Z" |
 
 ### Gaming Activity Event
 | Field | Type | Required | Description |
@@ -220,7 +205,7 @@ https://your-api-gateway-url/apigw/ingest
 | event_category | String | Yes | Category of the event (Gaming Activity) |
 | event_name | String | Yes | Name of the gaming activity event |
 | event_id | String | Yes | Unique event identifier |
-| event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" UTC Time|
+| event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" |
 | wager_amount | Number | No | Amount wagered |
 | win_amount | Number | No | Amount won |
 | loss_amount | Number | No | Amount lost |
@@ -295,7 +280,7 @@ https://your-api-gateway-url/apigw/ingest
 | event_category | String | Yes | Category of the event (Wallet Balance) |
 | event_name | String | Yes | Name of the wallet balance event |
 | event_id | String | Yes | Unique event identifier |
-| event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" UTC Time|
+| event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" |
 | wallet_type | String | No | Type of wallet |
 | currency | String | No | Currency of the wallet balance |
 | current_cash_balance | Number | No | Current cash balance in the wallet |
@@ -312,7 +297,7 @@ https://your-api-gateway-url/apigw/ingest
 | event_category | String | Yes | Category of the event (Refer Friend) |
 | event_name | String | Yes | Name of the refer friend event |
 | event_id | String | Yes | Unique event identifier |
-| event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z"  UTC Time |
+| event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" |
 | referral_code_used | String | No | Referral code that was used |
 | successful_referral_confirmation | Boolean | No | Whether the referral was successfully confirmed |
 | reward_type | String | No | Type of reward (e.g., bonus, cash, points) |
@@ -324,14 +309,13 @@ https://your-api-gateway-url/apigw/ingest
 ### Extended Attributes
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| account_id | String | Yes | Account identifier - one account can have multiple workspaces |
 | workspace_id | String | Yes | Workspace identifier - belongs to an account |
 | user_id | String | Yes | Unique user identifier |
 | list_name | String | Yes | Name of the list or category for the extended attributes |
 | ext_data | Object/String | Yes | Extended attributes data in JSON format. Examples: `{"email":true,"sms":false}` or `"{\"email\":true,\"sms\":true}"`
 
 
-> **📅 Timestamp Format**: All date-time fields use ISO 8601 format with UTC time (e.g., `"2024-01-15T10:30:00Z"`). The `Z` suffix indicates UTC time.
+> **📅 Timestamp Format**: All date-time fields use ISO 8601 format with UTC timezone (e.g., `"2024-01-15T10:30:00Z"`). The `Z` suffix indicates UTC timezone.
 
 ## 🚀 Quick Start
 
@@ -344,17 +328,29 @@ Before you begin, you'll need:
 1. Your authentication token
 2. Account ID and Workspace ID
 3. API Gateway URL
-4. Node.js/Python/Java programming langauage or any utility to acesss Rest API
+4. Node.js environment
 
 ## 📚 SDK Integration Guide
-The official Optikpi Data Pipeline SDK makes integration simple and secure. All authentication, validation, and error handling is handled automatically. 
+The official Optikpi Data Pipeline SDK makes integration simple and secure. All authentication, validation, and error handling is handled automatically.
 
-The Python, Java and Node JS SDK configuration can be found at the GitHub repository:
-https://github.com/gamingcrafts/optikpi-datapipeline-sdk
+### Installation
+```bash
+npm install @optikpi/datapipeline-sdk
+```
 
-Below are samples Node.js code for SDK Integration
+### 1. Initialize the SDK
+```javascript
+const { OptikpiDataPipelineSDK } = require('@optikpi/datapipeline-sdk');
 
-### 1. Send Customer Profile
+const sdk = new OptikpiDataPipelineSDK({
+  authToken: 'your-auth-token',
+  accountId: 'your-account-id',
+  workspaceId: 'your-workspace-id',
+  baseURL: 'https://your-api-gateway-url/apigw/ingest'
+});
+```
+
+### 2. Send Customer Profile
 ```javascript
 const customerData = {
   account_id: 'your-account-id',
@@ -397,7 +393,7 @@ try {
 }
 ```
 
-### 2. Send Events
+### 3. Send Events
 ```javascript
 // Account Event
 const accountEvent = {
@@ -486,7 +482,7 @@ const referFriendEvent = {
 const referFriendResult = await sdk.sendReferFriendEvent(referFriendEvent);
 ```
 
-### 3. Customer Extension Attributes
+### 4. Customer Extension Attributes
 ```javascript
 // Format 1: Object (auto-converted to JSON string)
 const extAttributesEvent = {
@@ -512,8 +508,13 @@ const extAttributesEventString = {
 const extAttributesResult = await sdk.sendExtendedAttributes(extAttributesEvent);
 ```
 
+### 5. Health Check
+```javascript
+const health = await sdk.healthCheck();
+console.log('API Status:', health.success ? 'Healthy' : 'Unhealthy');
+```
 
-### 4. Batch Operations
+### 6. Batch Operations
 ```javascript
 const batchData = {
   customers: [customer1, customer2],
@@ -640,6 +641,7 @@ class RetryHandler {
 - Monitor API response times
 - Track success/failure rates
 - Set up alerts for high error rates
+- Implement health checks
 
 ### 6. Performance
 - Use connection pooling for HTTP clients
@@ -655,25 +657,52 @@ class RetryHandler {
 - **Rate limit window**: 1 minute
 - **Rate limit response**: 429 Too Many Requests
 
+### Rate Limit Handling
+```javascript
+class RateLimitHandler {
+  constructor(endpointType = 'events') {
+    this.requests = [];
+    this.maxRequests = endpointType === 'customers' ? 50 : 250;
+    this.windowMs = 60000; // 1 minute
+  }
 
+  async waitIfNeeded() {
+    const now = Date.now();
+    // Remove requests outside the window
+    this.requests = this.requests.filter(time => now - time < this.windowMs);
+    
+    if (this.requests.length >= this.maxRequests) {
+      const oldestRequest = Math.min(...this.requests);
+      const waitTime = this.windowMs - (now - oldestRequest);
+      if (waitTime > 0) {
+        console.log(`Rate limit reached, waiting ${waitTime}ms...`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+      }
+    }
+    this.requests.push(now);
+  }
+}
+```
 
 ## 📞 Support
 
 For technical support and questions:
 
-- **Documentation**: [Docs](https://www.optikpi.com/user-guide/)
-- **GitHub Issues**: [Issues](https://github.com/gamingcrafts/optikpi-datapipeline-sdk/issues)
+- **Email**: api-support@optikpi.com
+- **Documentation**: https://docs.optikpi.com/api
+- **GitHub Issues**: https://github.com/optikpi/datapipeline-sdk/issues
 
 ## 🚀 Next Steps
 1. **Choose Integration Method**: Decide between manual integration or SDK
 2. **Get Credentials**: Contact your account manager for API credentials
 3. **Start Development**: Use the examples in this guide as templates
-4. **Go Live**: Deploy your integration to production
+4. **Test Integration**: Use the health check endpoint to verify connectivity
+5. **Go Live**: Deploy your integration to production
 
 ## 📚 Additional Resources
-- **JavaScript SDK Guide**: [README.md](https://github.com/gamingcrafts/optikpi-datapipeline-sdk/tree/main/js/)
-- **Java SDK Guide**: [README.md](https://github.com/gamingcrafts/optikpi-datapipeline-sdk/tree/main/java/)
-- **Python SDK Guide**: [README.md](https://github.com/gamingcrafts/optikpi-datapipeline-sdk/tree/main/python)
-
+- **SDK Documentation**: README.md
+- **Java SDK Guide**: ../java/README.md
+- **Integration Examples**: ../examples/
+- **Changelog**: CHANGELOG.md
 
 This integration guide provides everything you need to successfully integrate with the Optikpi Data Pipeline API. Choose the approach that best fits your technology stack and requirements.

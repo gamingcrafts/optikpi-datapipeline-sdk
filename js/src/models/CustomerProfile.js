@@ -57,6 +57,10 @@ class CustomerProfile {
     this.closed_time = data.closed_time;
     this.real_money_enabled = data.real_money_enabled;
     this.push_token = data.push_token;
+    this.android_push_token = data.android_push_token;
+    this.ios_push_token = data.ios_push_token;
+    this.windows_push_token = data.windows_push_token;
+    this.mac_push_token = data.mac_push_token;
   }
 
   /**

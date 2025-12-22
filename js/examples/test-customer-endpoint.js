@@ -81,7 +81,11 @@ const customer = new CustomerProfile({
   "self_exclusion_created_time": "2024-01-01T00:00:00Z",
   "closed_time": null,
   "real_money_enabled": "true",
-  "push_token": "push_token_abc123"
+  "push_token": "push_token_abc123",
+  "android_push_token": "android_push_token_xyz456",
+  "ios_push_token": "ios_push_token_def789",
+  "windows_push_token": "windows_push_token_ghi012",
+  "mac_push_token": "mac_push_token_jkl345"
 });
 
 const validation = customer.validate();
