@@ -62,7 +62,7 @@ class CustomerProfile:
     android_push_token: Optional[str] = None
     ios_push_token: Optional[str] = None    
     windows_push_token: Optional[str] = None
-    mac_push_token: Optional[str] = None
+    mac_dmg_push_token: Optional[str] = None
 
     # -------------------------------
     # Validation methods
