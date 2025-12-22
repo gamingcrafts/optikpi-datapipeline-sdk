@@ -119,8 +119,8 @@ https://your-api-gateway-url/apigw/ingest
 | loss_limits | Number | No | Loss limits |
 | wagering_limits | Number | No | Wagering limits |
 | session_time_limits | Number | No | Session time limits |
-| cooling_off_period | Number | No | cooling_off_period |
-| self_exclusion_period   | Number | No | self_exclusion_period |
+| cooling_off_expiry_date | String | No | Cooling off expiry date UTC timestamp(date-time format). Example: `"2024-01-15T10:30:00Z"`
+| self_exclusion_expiry_date | String | No | Self exclusion expiry date UTC timestamp(date-time format). Example: `"2024-01-15T10:30:00Z"`
 | reality_checks_notification | String | No | Reality checks notification frequency |
 | vip_status | String | No | VIP status |
 | loyalty_program_tiers | String | No | Loyalty program tier |
@@ -133,18 +133,20 @@ https://your-api-gateway-url/apigw/ingest
 | referral_link_code | String | No | Referral link code |
 | referral_limit_reached | String | No | Referral limit status |
 | creation_timestamp | String | Yes | Account creation UTC timestamp (date-time format). Example: `"2024-01-15T10:30:00Z"`
-| cooling_off_expiry_date | String | No | Cooling off expiry date (date-time format). Example: `"2024-01-15T10:30:00Z"`
-| self_exclusion_expiry_date | String | No | Self exclusion expiry date (date-time format). Example: `"2024-01-15T10:30:00Z"`
 | risk_score_level | String | No | Risk score level |
 | marketing_sms_preference | String | No | Marketing SMS preference |
 | custom_data | Object/String | No | Custom data in JSON format. Examples: `{"email":true,"sms":false}` or `"{\"email\":true,\"sms\":true}"`
 | self_exclusion_by | String | No | Self exclusion initiated by |
 | self_exclusion_by_type | String | No | Self exclusion by type |
-| self_exclusion_check_time | String | No | Self exclusion check time (date-time format). Example: `"2024-01-15T10:30:00Z"`
-| self_exclusion_created_time | String | No | Self exclusion created time (date-time format). Example: `"2024-01-15T10:30:00Z"`
-| closed_time | String | No | Account closed time (date-time format). Example: `"2024-01-15T10:30:00Z"`
+| self_exclusion_check_time | String | No | Self exclusion check time  UTC timestamp(date-time format). Example: `"2024-01-15T10:30:00Z"`
+| self_exclusion_created_time | String | No | Self exclusion created time  UTC timestamp(date-time format). Example: `"2024-01-15T10:30:00Z"`
+| closed_time | String | No | Account closed time  UTC timestamp(date-time format). Example: `"2024-01-15T10:30:00Z"`
 | real_money_enabled | String | No | Real money enabled status |
 | push_token | String | No | Push notification token |
+| android_push_token | String | No | Android Push notification token |
+| ios_push_token | String | No | IOS Push notification token |
+| windows_push_token | String | No | Windows Push notification token |
+| mac_dmg_push_token | String | No | MAC Push notification token |
 
 ### Account Event
 | Field | Type | Required | Description |
@@ -172,7 +174,7 @@ https://your-api-gateway-url/apigw/ingest
 | event_category | String | Yes | Category of the event (Deposit) |
 | event_name | String | Yes | Name of the deposit event (Successful Deposit\|First-Time Deposit\|Second-Time Deposit\|Third-Time Deposit\|Failed Deposit) |
 | event_id | String | Yes | Unique event identifier |
-| event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" |
+| event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" UTC Time|
 | payment_method | String | No | Payment method used |
 | transaction_id | String | No | Transaction identifier |
 | amount | Number | Yes | Deposit amount |
@@ -209,7 +211,7 @@ https://your-api-gateway-url/apigw/ingest
 | net_amount | Number | No | Deposit net_amount |
 | withdrawal_reason | String | No | Reason for withdrawal_reason |
 | failure_reason | String | No | Reason for withdrawal failure |
-| processing_time | String | Yes | Timestamp when the processing_time occurred (date-time format). Example: "2024-01-15T10:30:00Z" |
+| processing_time | String | Yes | Timestamp when the processing_time occurred (date-time format). Example: "2024-01-15T10:30:00Z" UTC Time |
 
 ### Gaming Activity Event
 | Field | Type | Required | Description |
@@ -235,7 +237,7 @@ https://your-api-gateway-url/apigw/ingest
 | remaining_spins | Integer | No | Number of remaining spins |
 | bet_value_per_spin | Number | No | Bet value per spin |
 | wagering_requirements_met | Boolean | No | Whether wagering requirements are met |
-| free_spin_expiry_date | String | No | Free spin expiry date (date-time format). Example: `"2024-01-15T10:30:00Z"`
+| free_spin_expiry_date | String | No | Free spin expiry date (date-time format). Example: `"2024-01-15T10:30:00Z" UTC Time`
 | campaign_id | String | No | Campaign identifier |
 | campaign_name | String | No | Campaign name |
 | rtp | Number | No | Return to Player percentage |
@@ -248,7 +250,7 @@ https://your-api-gateway-url/apigw/ingest
 | number_of_reels | Integer | No | Number of reels in the game |
 | number_of_paylines | Integer | No | Number of paylines in the game |
 | feature_types | String | No | Types of features available in the game |
-| game_release_date | String | No | Game release date (date-time format). Example: `"2024-01-15T10:30:00Z"`
+| game_release_date | String | No | Game release date (date-time format). Example: `"2024-01-15T10:30:00Z" UTC Time`
 | live_dealer_availability | Boolean | No | Whether live dealer is available |
 | side_bets_availability | Boolean | No | Whether side bets are available |
 | multiplayer_option | Boolean | No | Whether multiplayer option is available |
@@ -278,7 +280,7 @@ https://your-api-gateway-url/apigw/ingest
 | betting_channel | String | No | Channel used for betting |
 | bonus_type | String | No | Type of bonus |
 | bonus_amount | Number | No | Amount of bonus |
-| free_spin_start_date | String | No | Free spin start date (date-time format). Example: `"2024-01-15T10:30:00Z"`
+| free_spin_start_date | String | No | Free spin start date (date-time format). Example: `"2024-01-15T10:30:00Z" UTC Time`
 | num_spins_awarded | Integer | No | Number of spins awarded |
 | bonus_code | String | No | Bonus code used |
 | parent_game_category | String | No | Parent game category |
@@ -318,7 +320,7 @@ https://your-api-gateway-url/apigw/ingest
 | reward_type | String | No | Type of reward (e.g., bonus, cash, points) |
 | reward_claimed_status | String | No | Status of reward claim (e.g., pending, claimed, expired) |
 | referee_user_id | String | No | User ID of the person who was referred |
-| referee_registration_date | String | No | Date when the referee registered (date-time format). Example: "2024-01-15T10:30:00Z" |
+| referee_registration_date | String | No | Date when the referee registered (date-time format). Example: "2024-01-15T10:30:00Z" UTC Time |
 | referee_first_deposit | Number | No | First deposit amount made by the referee |
 
 ### Extended Attributes
