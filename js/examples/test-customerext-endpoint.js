@@ -26,6 +26,7 @@ const sdk = new OptikpiDataPipelineSDK({
 
 // Create Customer Extension Event - Format 1: Object (will be auto-converted to JSON string)
 const customerExtObject = new CustomerExtEvent({
+  account_id: ACCOUNT_ID,
   workspace_id: WORKSPACE_ID,
   user_id: "opti789",
   list_name: "BINGO_PREFERENCES",
@@ -38,6 +39,7 @@ const customerExtObject = new CustomerExtEvent({
 
 // Create Customer Extension Event - Format 2: JSON string (legacy format)
 const customerExtString = new CustomerExtEvent({
+  account_id: ACCOUNT_ID,
   workspace_id: WORKSPACE_ID,
   user_id: "opti456",
   list_name: "GAMING_PREFERENCES",

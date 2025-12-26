@@ -5,6 +5,7 @@ Represents customer extended attributes event data for the Data Pipeline API
 
 class CustomerExtEvent:
     def __init__(self, **data):
+        self.account_id = data.get("account_id")
         self.workspace_id = data.get("workspace_id")
         self.user_id = data.get("user_id")
         self.list_name = data.get("list_name")
@@ -16,7 +17,7 @@ class CustomerExtEvent:
     def validate(self):
         errors = []
 
-        required = ["workspace_id", "user_id", "list_name", "ext_data"]
+        required = ["account_id","workspace_id", "user_id", "list_name", "ext_data"]
 
         for field in required:
             if not getattr(self, field, None):
@@ -50,6 +51,7 @@ class CustomerExtEvent:
     # ----------------------------------------------------------
     def to_dict(self):
         result = {
+            "account_id": self.account_id,
             "workspace_id": self.workspace_id,
             "user_id": self.user_id,
             "list_name": self.list_name,

@@ -111,6 +111,7 @@ def create_sample_customer(account_id, workspace_id):
 def create_sample_extended_attributes_map_format(account_id, workspace_id):
     """Create sample extended attributes event - Map format"""
     return CustomerExtEvent(
+        account_id=account_id,
         workspace_id=workspace_id,
         user_id="user1112",
         list_name="BINGO_PREFERENCES",
@@ -125,6 +126,7 @@ def create_sample_extended_attributes_map_format(account_id, workspace_id):
 def create_sample_extended_attributes_string_format(account_id, workspace_id):
     """Create sample extended attributes event - String format"""
     return CustomerExtEvent(
+        account_id=account_id,
         workspace_id=workspace_id,
         user_id="user1113",
         list_name="GAMING_PREFERENCES",

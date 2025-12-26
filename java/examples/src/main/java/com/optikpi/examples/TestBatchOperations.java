@@ -190,6 +190,7 @@ public class TestBatchOperations {
 
     private static ExtendedAttributesEvent createSampleExtendedAttributesMapFormat(String accountId, String workspaceId) {
         ExtendedAttributesEvent event = new ExtendedAttributesEvent();
+        event.setAccountId(accountId);
         event.setWorkspaceId(workspaceId);
         event.setUserId("batch_ext_001");
         event.setListName("BINGO_PREFERENCES");
@@ -205,6 +206,7 @@ public class TestBatchOperations {
 
     private static ExtendedAttributesEvent createSampleExtendedAttributesStringFormat(String accountId, String workspaceId) {
         ExtendedAttributesEvent event = new ExtendedAttributesEvent();
+        event.setAccountId(accountId);
         event.setWorkspaceId(workspaceId);
         event.setUserId("batch_ext_002");
         event.setListName("GAMING_PREFERENCES");

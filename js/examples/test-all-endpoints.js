@@ -202,6 +202,7 @@ const TEST_DATA = {
     "transaction_type": "bet"
   }),
   customerExt: new CustomerExtEvent({
+    "account_id": ACCOUNT_ID,
     "workspace_id": WORKSPACE_ID,
     "user_id": "opti789",
     "list_name": "BINGO_PREFERENCES",

@@ -104,6 +104,7 @@ function createSampleCustomer(accountId, workspaceId) {
  */
 function createSampleExtendedAttributesMapFormat(accountId, workspaceId) {
   return new CustomerExtEvent({
+    account_id: accountId,
     workspace_id: workspaceId,
     user_id: "user0112",
     list_name: "BINGO_PREFERENCES",
@@ -120,6 +121,7 @@ function createSampleExtendedAttributesMapFormat(accountId, workspaceId) {
  */
 function createSampleExtendedAttributesStringFormat(accountId, workspaceId) {
   return new CustomerExtEvent({
+    account_id: accountId,
     workspace_id: workspaceId,
     user_id: "user0113",
     list_name: "GAMING_PREFERENCES",

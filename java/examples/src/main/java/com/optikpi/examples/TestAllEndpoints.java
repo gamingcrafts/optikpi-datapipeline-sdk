@@ -274,6 +274,7 @@ public class TestAllEndpoints {
 
     private static ExtendedAttributesEvent createSampleExtendedAttributesMapFormat(String accountId, String workspaceId) {
         ExtendedAttributesEvent event = new ExtendedAttributesEvent();
+        event.setAccountId(accountId);
         event.setWorkspaceId(workspaceId);
         event.setUserId("sdk_ext_001");
         event.setListName("BINGO_PREFERENCES");
@@ -289,6 +290,7 @@ public class TestAllEndpoints {
 
     private static ExtendedAttributesEvent createSampleExtendedAttributesStringFormat(String accountId, String workspaceId) {
         ExtendedAttributesEvent event = new ExtendedAttributesEvent();
+        event.setAccountId(accountId);
         event.setWorkspaceId(workspaceId);
         event.setUserId("sdk_ext_002");
         event.setListName("GAMING_PREFERENCES");
@@ -301,7 +303,7 @@ public class TestAllEndpoints {
 
     private static AccountEvent createSampleAccountEvent(String accountId, String workspaceId) {
         AccountEvent event = new AccountEvent();
-             event.setAccountId(accountId);
+            event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
             event.setUserId("javasdk_01");
             event.setEventCategory("Account");

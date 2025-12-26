@@ -110,6 +110,7 @@ TEST_DATA = {
         mac_dmg_push_token="mac_push_token_jkl345"
     ),
     "customerext": CustomerExtEvent(
+        account_id=ACCOUNT_ID,
         workspace_id=WORKSPACE_ID,
         user_id="optuser0008",
         list_name="BINGO_PREFERENCES",
