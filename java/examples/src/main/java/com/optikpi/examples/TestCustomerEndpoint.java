@@ -1,18 +1,16 @@
 package com.optikpi.examples;
 
-import java.time.Instant;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.optikpi.datapipeline.ClientConfig;
 import com.optikpi.datapipeline.OptikpiDataPipelineSDK;
 import com.optikpi.datapipeline.model.CustomerProfile;
 import com.optikpi.datapipeline.model.ValidationResult;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 /**
  * Example: Test Customer Profile Endpoint Demonstrates how to send customer
@@ -62,11 +60,10 @@ public class TestCustomerEndpoint {
 
     private static void testCustomerEndpoint(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
         try {
-            // Create customer data matching JavaScript example
             CustomerProfile customer = new CustomerProfile();
             customer.setAccountId(accountId);
             customer.setWorkspaceId(workspaceId);
-            customer.setUserId("java_01");
+            customer.setUserId("java_field01");
             customer.setUsername("john_doe");
             customer.setFullName("John Doe");
             customer.setFirstName("John");
@@ -79,58 +76,43 @@ public class TestCustomerEndpoint {
             customer.setCity("New York");
             customer.setLanguage("en");
             customer.setCurrency("USD");
-
             customer.setPhoneVerification("Verified");
             customer.setEmailVerification("Verified");
             customer.setBankVerification("NotVerified");
             customer.setIddocVerification("Verified");
-        
             customer.setMarketingEmailPreference("Opt-in");
             customer.setNotificationsPreference("Opt-in");
             customer.setSubscription("Subscribed");
-    
             customer.setPrivacySettings("private");
-            
             customer.setDepositLimits(1000.00);
             customer.setLossLimits(500.00);
             customer.setWageringLimits(2000.00);
             customer.setSessionTimeLimits(120);
-
             customer.setCoolingOffExpiryDate("2024-12-31T23:59:59Z");
             customer.setSelfExclusionExpiryDate("2025-01-31T23:59:59Z");
-            customer.setAffliateId("affiliate456");
-            
-            customer.setCoolingOffPeriod(7);
-            customer.setSelfExclusionPeriod(30);
-
             customer.setRealityChecksNotification("daily");
             customer.setVipStatus("Regular");
             customer.setLoyaltyProgramTiers("Bronze");
             customer.setAccountStatus("Active");
             customer.setBonusAbuser("Not flagged");
             customer.setFinancialRiskLevel(0.3);
-            
             customer.setAcquisitionSource("Google Ads");
             customer.setPartnerId("partner123");
             customer.setReferralLinkCode("REF789");
             customer.setReferralLimitReached("Not Reached");
             customer.setCreationTimestamp("2024-01-15T10:30:00Z");
-        
             customer.setRiskScoreLevel("low");
             customer.setMarketingSmsPreference("Opt-in");
-            
             // Custom data as Map (same in both)
             Map<String, Object> customData = new HashMap<>();
             customData.put("favorite_game", "slots");
             customData.put("newsletter_signup", true);
             customer.setCustomData(customData);
-            
             customer.setSelfExclusionBy("player");
             customer.setSelfExclusionByType("voluntary");
             customer.setSelfExclusionCheckTime("2024-01-15T10:30:00Z");
             customer.setSelfExclusionCreatedTime("2024-01-01T00:00:00Z");
             customer.setClosedTime(null);
-
             customer.setRealMoneyEnabled("true");
             customer.setPushToken("push_token_abc123");
             customer.setAndroidPushToken("android_push_token_xyz456");

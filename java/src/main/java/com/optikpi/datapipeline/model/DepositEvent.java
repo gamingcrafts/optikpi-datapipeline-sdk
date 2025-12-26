@@ -4,12 +4,10 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 
 /**
@@ -45,58 +43,21 @@ public class DepositEvent {
     @JsonProperty("event_time")
     private String eventTime;
     
-    @Positive(message = "amount must be positive")
-    @JsonProperty("amount")
-    private BigDecimal amount;
-    
-    @JsonProperty("currency")
-    private String currency;
-    
     @JsonProperty("payment_method")
     private String paymentMethod;
     
     @JsonProperty("transaction_id")
     private String transactionId;
-    
-    @Pattern(regexp = "success|pending|failed|cancelled|refunded", message = "status must be one of: success, pending, failed, cancelled, refunded")
-    @JsonProperty("status")
-    private String status;
-    
-    @JsonProperty("device")
-    private String device;
-    
-    @JsonProperty("affiliate_id")
-    private String affiliateId;
-    
-    @JsonProperty("partner_id")
-    private String partnerId;
-    
-    @JsonProperty("campaign_code")
-    private String campaignCode;
-    
-    @JsonProperty("reason")
-    private String reason;
-    
-    @JsonProperty("bonus_amount")
-    private BigDecimal bonusAmount;
-    
-    @JsonProperty("fee_amount")
-    private BigDecimal feeAmount;
+
+    @Positive(message = "amount must be positive")
+    @JsonProperty("amount")
+    private BigDecimal amount;
     
     @JsonProperty("payment_provider_id")
     private String paymentProviderId;
     
     @JsonProperty("payment_provider_name")
     private String paymentProviderName;
-    
-    @JsonProperty("fees")
-    private BigDecimal fees;
-    
-    @JsonProperty("net_amount")
-    private BigDecimal netAmount;
-
-    @JsonProperty("metadata")
-    private Map<String, Object> metadata;
     
     @JsonProperty("failure_reason")
     private String failureReason;
@@ -165,16 +126,6 @@ public class DepositEvent {
         
         if (eventName != null && !isValidEventName(eventName, validEventNames)) {
             errors.add("event_name must be one of: " + String.join(", ", validEventNames));
-        }
-        
-        // Status validation - CORRECTED to match JavaScript
-        if (status != null && !isValidStatus(status)) {
-            errors.add("status must be one of: success, pending, failed, cancelled, refunded");
-        }
-        
-        // Device validation
-        if (device != null && !isValidDevice(device)) {
-            errors.add("device must be one of: desktop, mobile, tablet, app");
         }
         
         // Payment method validation
@@ -255,53 +206,17 @@ public class DepositEvent {
     public BigDecimal getAmount() { return amount; }
     public void setAmount(BigDecimal amount) { this.amount = amount; }
     
-    public String getCurrency() { return currency; }
-    public void setCurrency(String currency) { this.currency = currency; }
-    
     public String getPaymentMethod() { return paymentMethod; }
     public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
     
     public String getTransactionId() { return transactionId; }
     public void setTransactionId(String transactionId) { this.transactionId = transactionId; }
     
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-    
-    public String getDevice() { return device; }
-    public void setDevice(String device) { this.device = device; }
-    
-    public String getAffiliateId() { return affiliateId; }
-    public void setAffiliateId(String affiliateId) { this.affiliateId = affiliateId; }
-    
-    public String getPartnerId() { return partnerId; }
-    public void setPartnerId(String partnerId) { this.partnerId = partnerId; }
-    
-    public String getCampaignCode() { return campaignCode; }
-    public void setCampaignCode(String campaignCode) { this.campaignCode = campaignCode; }
-    
-    public String getReason() { return reason; }
-    public void setReason(String reason) { this.reason = reason; }
-    
-    public BigDecimal getBonusAmount() { return bonusAmount; }
-    public void setBonusAmount(BigDecimal bonusAmount) { this.bonusAmount = bonusAmount; }
-    
-    public BigDecimal getFeeAmount() { return feeAmount; }
-    public void setFeeAmount(BigDecimal feeAmount) { this.feeAmount = feeAmount; }
-    
     public String getPaymentProviderId() { return paymentProviderId; }
     public void setPaymentProviderId(String paymentProviderId) { this.paymentProviderId = paymentProviderId; }
     
     public String getPaymentProviderName() { return paymentProviderName; }
     public void setPaymentProviderName(String paymentProviderName) { this.paymentProviderName = paymentProviderName; }
-    
-    public BigDecimal getFees() { return fees; }
-    public void setFees(BigDecimal fees) { this.fees = fees; }
-    
-    public BigDecimal getNetAmount() { return netAmount; }
-    public void setNetAmount(BigDecimal netAmount) { this.netAmount = netAmount; }
-
-    public Map<String, Object> getMetadata() { return metadata; }
-    public void setMetadata(Map<String, Object> metadata) { this.metadata = metadata; }
     
     public String getFailureReason() { return failureReason; }
     public void setFailureReason(String failureReason) { this.failureReason = failureReason; }

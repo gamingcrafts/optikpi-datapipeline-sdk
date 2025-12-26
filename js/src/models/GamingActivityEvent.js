@@ -16,17 +16,11 @@ class GamingActivityEvent {
     this.game_id = data.game_id;
     this.game_title = data.game_title;
     this.provider = data.provider;
-    this.game_type = data.game_type;
-    this.session_id = data.session_id;
-    this.round_id = data.round_id;
-    this.device = data.device;
-    this.platform = data.platform;
     this.currency = data.currency;
-    this.bet_type = data.bet_type;
-    this.payout_multiplier = data.payout_multiplier;
     this.loss_amount = data.loss_amount;
     this.bonus_id = data.bonus_id;
     this.free_spin_id = data.free_spin_id;
+    this.tournament_name = data.tournament_name;
     this.num_spins_played = data.num_spins_played;
     this.game_theme = data.game_theme;
     this.remaining_spins = data.remaining_spins;
@@ -51,6 +45,7 @@ class GamingActivityEvent {
     this.multiplayer_option = data.multiplayer_option;
     this.auto_play = data.auto_play;
     this.poker_variant = data.poker_variant;
+    this.tournament_name = data.tournament_name;
     this.buy_in_amount = data.buy_in_amount;
     this.table_type = data.table_type;
     this.stakes_level = data.stakes_level;

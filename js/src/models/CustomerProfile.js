@@ -27,8 +27,6 @@ class CustomerProfile {
     this.loss_limits = data.loss_limits;
     this.wagering_limits = data.wagering_limits;
     this.session_time_limits = data.session_time_limits;
-    this.cooling_off_period = data.cooling_off_period;
-    this.self_exclusion_period = data.self_exclusion_period;
     this.reality_checks_notification = data.reality_checks_notification;
     this.account_status = data.account_status;
     this.vip_status = data.vip_status;
@@ -37,7 +35,6 @@ class CustomerProfile {
     this.financial_risk_level = data.financial_risk_level;
     this.acquisition_source = data.acquisition_source;
     this.partner_id = data.partner_id;
-    this.affliate_id = data.affliate_id;
     this.referral_link_code = data.referral_link_code;
     this.referral_limit_reached = data.referral_limit_reached;
     this.creation_timestamp = data.creation_timestamp;

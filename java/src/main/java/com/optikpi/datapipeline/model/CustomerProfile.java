@@ -103,14 +103,6 @@ public class CustomerProfile {
     @JsonProperty("session_time_limits")
     private Integer sessionTimeLimits;
     
-    // Changed to Integer to match JS model (was String)
-    @JsonProperty("cooling_off_period")
-    private Integer coolingOffPeriod;
-    
-    // Changed to Integer to match JS model (was String)
-    @JsonProperty("self_exclusion_period")
-    private Integer selfExclusionPeriod;
-    
     // Changed to String to match JS model (was Boolean)
     @JsonProperty("reality_checks_notification")
     private String realityChecksNotification;
@@ -140,10 +132,6 @@ public class CustomerProfile {
     
     @JsonProperty("partner_id")
     private String partnerId;
-    
-    // Fixed typo: affiliate_id (was affiliateId in Java, but affliate_id in JS)
-    @JsonProperty("affliate_id")
-    private String affliateId;
     
     @JsonProperty("referral_link_code")
     private String referralLinkCode;
@@ -378,12 +366,6 @@ public class CustomerProfile {
     public Integer getSessionTimeLimits() { return sessionTimeLimits; }
     public void setSessionTimeLimits(Integer sessionTimeLimits) { this.sessionTimeLimits = sessionTimeLimits; }
     
-    public Integer getCoolingOffPeriod() { return coolingOffPeriod; }
-    public void setCoolingOffPeriod(Integer coolingOffPeriod) { this.coolingOffPeriod = coolingOffPeriod; }
-    
-    public Integer getSelfExclusionPeriod() { return selfExclusionPeriod; }
-    public void setSelfExclusionPeriod(Integer selfExclusionPeriod) { this.selfExclusionPeriod = selfExclusionPeriod; }
-    
     public String getRealityChecksNotification() { return realityChecksNotification; }
     public void setRealityChecksNotification(String realityChecksNotification) { this.realityChecksNotification = realityChecksNotification; }
     
@@ -407,9 +389,6 @@ public class CustomerProfile {
     
     public String getPartnerId() { return partnerId; }
     public void setPartnerId(String partnerId) { this.partnerId = partnerId; }
-    
-    public String getAffliateId() { return affliateId; }
-    public void setAffliateId(String affliateId) { this.affliateId = affliateId; }
     
     public String getReferralLinkCode() { return referralLinkCode; }
     public void setReferralLinkCode(String referralLinkCode) { this.referralLinkCode = referralLinkCode; }

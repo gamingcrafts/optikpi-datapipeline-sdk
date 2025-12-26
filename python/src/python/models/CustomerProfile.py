@@ -29,8 +29,6 @@ class CustomerProfile:
     loss_limits: Optional[float] = None
     wagering_limits: Optional[float] = None
     session_time_limits: Optional[int] = None
-    cooling_off_period: Optional[int] = None
-    self_exclusion_period: Optional[int] = None
     reality_checks_notification: Optional[str] = None
     account_status: Optional[str] = None
     vip_status: Optional[str] = None
@@ -39,7 +37,6 @@ class CustomerProfile:
     financial_risk_level: Optional[float] = None
     acquisition_source: Optional[str] = None
     partner_id: Optional[str] = None
-    affliate_id: Optional[str] = None
     referral_link_code: Optional[str] = None
     referral_limit_reached: Optional[str] = None
     creation_timestamp: Optional[str] = None

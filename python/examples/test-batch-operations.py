@@ -48,9 +48,9 @@ sdk = OptikpiDataPipelineSDK({
 def create_sample_customer(account_id, workspace_id):
     """Create sample customer profile"""
     return CustomerProfile(
-        account_id=account_id,
-        workspace_id=workspace_id,
-        user_id="user1111",
+        account_id=ACCOUNT_ID,
+        workspace_id=WORKSPACE_ID,
+        user_id="py_field01",
         username="john_doe",
         full_name="John Doe",
         first_name="John",
@@ -71,8 +71,6 @@ def create_sample_customer(account_id, workspace_id):
         loss_limits=500.00,
         wagering_limits=2000.00,
         session_time_limits=120,
-        cooling_off_period=7,
-        self_exclusion_period=30,
         reality_checks_notification="daily",
         account_status="Active",
         vip_status="Regular",
@@ -81,7 +79,6 @@ def create_sample_customer(account_id, workspace_id):
         financial_risk_level=0.3,
         acquisition_source="Google Ads",
         partner_id="partner123",
-        affliate_id="affiliate456",
         referral_link_code="REF789",
         referral_limit_reached="Not Reached",
         creation_timestamp="2024-01-15T10:30:00Z",
@@ -91,7 +88,7 @@ def create_sample_customer(account_id, workspace_id):
         iddoc_verification="Verified",
         cooling_off_expiry_date="2024-12-31T23:59:59Z",
         self_exclusion_expiry_date="2025-01-31T23:59:59Z",
-        risk_score_level="low",
+        risk_score_level="0.2",
         marketing_sms_preference="Opt-in",
         custom_data={
             "favorite_game": "slots",
@@ -102,7 +99,7 @@ def create_sample_customer(account_id, workspace_id):
         self_exclusion_check_time="2024-01-15T10:30:00Z",
         self_exclusion_created_time="2024-01-01T00:00:00Z",
         closed_time=None,
-        real_money_enabled="true",  # String as in JS
+        real_money_enabled="True",
         push_token="push_token_abc123",
         android_push_token="android_push_token_xyz456",
         ios_push_token="ios_push_token_def789",
@@ -114,7 +111,6 @@ def create_sample_customer(account_id, workspace_id):
 def create_sample_extended_attributes_map_format(account_id, workspace_id):
     """Create sample extended attributes event - Map format"""
     return CustomerExtEvent(
-        account_id=account_id,
         workspace_id=workspace_id,
         user_id="user1112",
         list_name="BINGO_PREFERENCES",
@@ -129,7 +125,6 @@ def create_sample_extended_attributes_map_format(account_id, workspace_id):
 def create_sample_extended_attributes_string_format(account_id, workspace_id):
     """Create sample extended attributes event - String format"""
     return CustomerExtEvent(
-        account_id=account_id,
         workspace_id=workspace_id,
         user_id="user1113",
         list_name="GAMING_PREFERENCES",
@@ -163,54 +158,35 @@ def create_sample_account_event(account_id, workspace_id):
 def create_sample_deposit_event(account_id, workspace_id):
     """Create sample deposit event"""
     return DepositEvent(
-        account_id=account_id,
-        workspace_id=workspace_id,
-        user_id="user1115",
+        account_id=ACCOUNT_ID,
+        workspace_id=WORKSPACE_ID,
+        user_id="1dep_py_1",
         event_category="Deposit",
         event_name="Successful Deposit",
         event_id="evt_dep_987654321",
         event_time="2024-01-15T14:45:00Z",
         amount=500.00,
-        currency="USD",
         payment_method="bank",
         transaction_id="txn_123456789",
         payment_provider_id="provider123",
         payment_provider_name="Chase Bank",
-        status="success",
-        fees=2.50,
-        net_amount=497.50,
         failure_reason=None,
-        metadata={
-            "bank_name": "Chase Bank",
-            "account_last4": "1234"
-        }
     )
 
 
 def create_sample_withdraw_event(account_id, workspace_id):
     """Create sample withdraw event"""
     return WithdrawEvent(
-        account_id=account_id,
-        workspace_id=workspace_id,
-        user_id="user1116",
+        account_id=ACCOUNT_ID,
+        workspace_id=WORKSPACE_ID,
+        user_id="2wd_py_1",
         event_category="Withdraw",
         event_name="Successful Withdrawal",
         event_id="evt_wd_987654321",
         event_time="2024-01-15T14:45:00Z",
         amount=250.00,
-        currency="USD",
         payment_method="bank",
         transaction_id="txn_wd_123456789",
-        status="success",
-        device="desktop",
-        affiliate_id="aff_123456",
-        partner_id="partner_789",
-        campaign_code="SUMMER2024",
-        reason="User requested withdrawal",
-        fees=1.50,
-        net_amount=248.50,
-        withdrawal_reason="Cash out winnings",
-        processing_time="2024-01-15T10:30:00Z",
         failure_reason=None
     )
 
@@ -218,13 +194,13 @@ def create_sample_withdraw_event(account_id, workspace_id):
 def create_sample_gaming_activity_event(account_id, workspace_id):
     """Create sample gaming activity event"""
     return GamingActivityEvent(
-        account_id=account_id,
-        workspace_id=workspace_id,
-        user_id="user1117",
+        account_id=ACCOUNT_ID,
+        workspace_id=WORKSPACE_ID,
+        user_id="1game_py_1",
         event_category="Gaming Activity",
         event_name="Play Casino Game",
-        event_id="evt_" + str(int(time.time() * 1000)),
-        event_time=datetime.now().isoformat() + "Z",
+        event_id="evt_" + str(int(time.time())),
+        event_time="2024-01-15T10:30:00Z",
         wager_amount=10.00,
         win_amount=25.00,
         loss_amount=0.00,

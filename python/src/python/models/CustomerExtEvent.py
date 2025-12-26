@@ -5,17 +5,10 @@ Represents customer extended attributes event data for the Data Pipeline API
 
 class CustomerExtEvent:
     def __init__(self, **data):
-        self.account_id = data.get("account_id")
         self.workspace_id = data.get("workspace_id")
         self.user_id = data.get("user_id")
         self.list_name = data.get("list_name")
         self.ext_data = data.get("ext_data")
-
-        # Optional fields for parity with other events
-        self.event_category = data.get("event_category", "Customer Extension")
-        self.event_name = data.get("event_name", "Extended Attributes Updated")
-        self.event_id = data.get("event_id")
-        self.event_time = data.get("event_time")
 
     # ----------------------------------------------------------
     # Validation
@@ -23,7 +16,7 @@ class CustomerExtEvent:
     def validate(self):
         errors = []
 
-        required = ["account_id", "workspace_id", "user_id", "list_name", "ext_data"]
+        required = ["workspace_id", "user_id", "list_name", "ext_data"]
 
         for field in required:
             if not getattr(self, field, None):
@@ -57,14 +50,9 @@ class CustomerExtEvent:
     # ----------------------------------------------------------
     def to_dict(self):
         result = {
-            "account_id": self.account_id,
             "workspace_id": self.workspace_id,
             "user_id": self.user_id,
             "list_name": self.list_name,
-            "event_category": self.event_category,
-            "event_name": self.event_name,
-            "event_id": self.event_id,
-            "event_time": self.event_time,
         }
 
         # Convert ext_data object → JSON string

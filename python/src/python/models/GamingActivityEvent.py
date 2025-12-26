@@ -18,14 +18,7 @@ class GamingActivityEvent:
     game_id: Optional[str] = None
     game_title: Optional[str] = None
     provider: Optional[str] = None
-    game_type: Optional[str] = None
-    session_id: Optional[str] = None
-    round_id: Optional[str] = None
-    device: Optional[str] = None
-    platform: Optional[str] = None
     currency: Optional[str] = None
-    bet_type: Optional[str] = None
-    payout_multiplier: Optional[float] = None
     loss_amount: Optional[float] = None
     bonus_id: Optional[str] = None
     free_spin_id: Optional[str] = None
@@ -134,24 +127,6 @@ class GamingActivityEvent:
             errors.append("wager_amount must be a non-negative number")
         if self.win_amount is not None and (self.win_amount < 0):
             errors.append("win_amount must be a non-negative number")
-
-        # Game type validation
-        valid_game_types = [
-            "slots", "table_games", "card_games", "live_casino",
-            "bingo", "scratch_cards", "lottery", "sports_betting",
-            "virtual_sports"
-        ]
-        if self.game_type and self.game_type not in valid_game_types:
-            errors.append(f"game_type must be one of: {', '.join(valid_game_types)}")
-
-        # Device validation
-        if self.device and self.device not in ["desktop", "mobile", "tablet", "app"]:
-            errors.append("device must be one of: desktop, mobile, tablet, app")
-
-        # Platform validation
-        valid_platforms = ["web", "ios", "android", "windows", "mac", "linux"]
-        if self.platform and self.platform not in valid_platforms:
-            errors.append(f"platform must be one of: {', '.join(valid_platforms)}")
 
         # Currency validation
         if self.currency and not self.is_valid_currency(self.currency):

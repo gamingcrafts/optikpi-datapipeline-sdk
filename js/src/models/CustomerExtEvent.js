@@ -4,7 +4,6 @@
  */
 class CustomerExtEvent {
   constructor(data = {}) {
-    this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
     this.list_name = data.list_name;
@@ -19,7 +18,6 @@ class CustomerExtEvent {
     const errors = [];
 
     // Required fields
-    if (!this.account_id) errors.push('account_id is required');
     if (!this.workspace_id) errors.push('workspace_id is required');
     if (!this.user_id) errors.push('user_id is required');
     if (!this.list_name) errors.push('list_name is required');
@@ -97,7 +95,6 @@ class CustomerExtEvent {
   /**
    * Helper method to create a customer extension event with object ext_data
    * @param {Object} params - Event parameters
-   * @param {string} params.account_id - Account ID
    * @param {string} params.workspace_id - Workspace ID
    * @param {string} params.user_id - User ID
    * @param {string} params.list_name - List name for extended attributes
@@ -106,7 +103,6 @@ class CustomerExtEvent {
    */
   static createWithObject(params) {
     return new CustomerExtEvent({
-      account_id: params.account_id,
       workspace_id: params.workspace_id,
       user_id: params.user_id,
       list_name: params.list_name,
@@ -117,7 +113,6 @@ class CustomerExtEvent {
   /**
    * Helper method to create a customer extension event with JSON string ext_data
    * @param {Object} params - Event parameters
-   * @param {string} params.account_id - Account ID
    * @param {string} params.workspace_id - Workspace ID
    * @param {string} params.user_id - User ID
    * @param {string} params.list_name - List name for extended attributes
@@ -126,7 +121,6 @@ class CustomerExtEvent {
    */
   static createWithString(params) {
     return new CustomerExtEvent({
-      account_id: params.account_id,
       workspace_id: params.workspace_id,
       user_id: params.user_id,
       list_name: params.list_name,

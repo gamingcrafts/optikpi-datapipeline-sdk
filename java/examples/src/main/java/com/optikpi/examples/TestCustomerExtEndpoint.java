@@ -69,7 +69,6 @@ public class TestCustomerExtEndpoint {
 
             // Create extended attributes event with Map for ext_data
             ExtendedAttributesEvent event = new ExtendedAttributesEvent();
-            event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
             event.setUserId("vinKLT71234");
             event.setListName("BINGO_PREFERENCES");
@@ -134,7 +133,6 @@ public class TestCustomerExtEndpoint {
 
             // Create extended attributes event with JSON string for ext_data
             ExtendedAttributesEvent event = new ExtendedAttributesEvent();
-            event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
             event.setUserId("vinKLT81234");
             event.setListName("GAMING_PREFERENCES");

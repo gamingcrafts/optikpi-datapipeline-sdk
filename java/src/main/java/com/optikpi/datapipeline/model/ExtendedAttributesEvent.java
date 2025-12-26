@@ -10,10 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ExtendedAttributesEvent {
-    
-    @JsonProperty("account_id")
-    private String accountId;
-    
+
     @JsonProperty("workspace_id")
     private String workspaceId;
     
@@ -35,10 +32,6 @@ public class ExtendedAttributesEvent {
     public ValidationResult validate() {
         List<String> errors = new ArrayList<>();
         
-        if (accountId == null || accountId.trim().isEmpty()) {
-            errors.add("account_id is required");
-        }
-        
         if (workspaceId == null || workspaceId.trim().isEmpty()) {
             errors.add("workspace_id is required");
         }
@@ -56,15 +49,6 @@ public class ExtendedAttributesEvent {
         }
         
         return new ValidationResult(errors.isEmpty(), errors);
-    }
-    
-    // Getters and Setters
-    public String getAccountId() {
-        return accountId;
-    }
-    
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
     }
     
     public String getWorkspaceId() {
@@ -126,8 +110,7 @@ public class ExtendedAttributesEvent {
     @Override
     public String toString() {
         return "ExtendedAttributesEvent{" +
-                "accountId='" + accountId + '\'' +
-                ", workspaceId='" + workspaceId + '\'' +
+                "workspaceId='" + workspaceId + '\'' +
                 ", userId='" + userId + '\'' +
                 ", listName='" + listName + '\'' +
                 ", extData='" + extData + '\'' +

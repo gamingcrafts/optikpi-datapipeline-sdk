@@ -34,19 +34,8 @@ const withdraw = new WithdrawEvent({
   "event_id": "evt_wd_987654321",
   "event_time": "2024-01-15T14:45:00Z",
   "amount": 250.00,
-  "currency": "USD",
   "payment_method": "bank",
   "transaction_id": "txn_wd_123456789",
-  "status": "success",
-  "device": "desktop",
-  "affiliate_id": "aff_123456",
-  "partner_id": "partner_789",
-  "campaign_code": "SUMMER2024",
-  "reason": "User requested withdrawal",
-  "fees": 1.50,
-  "net_amount": 248.50,
-  "withdrawal_reason": "Cash out winnings",
-  "processing_time": "2024-01-15T10:30:00Z",
   "failure_reason": null
 });
 

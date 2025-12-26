@@ -5,6 +5,8 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.optikpi.datapipeline.ClientConfig;
 import com.optikpi.datapipeline.OptikpiDataPipelineSDK;
 import com.optikpi.datapipeline.model.AccountEvent;
@@ -12,14 +14,12 @@ import com.optikpi.datapipeline.model.CustomerProfile;
 import com.optikpi.datapipeline.model.DepositEvent;
 import com.optikpi.datapipeline.model.ExtendedAttributesEvent;
 import com.optikpi.datapipeline.model.GamingActivityEvent;
+import com.optikpi.datapipeline.model.ReferFriendEvent;
 import com.optikpi.datapipeline.model.ValidationResult;
 import com.optikpi.datapipeline.model.WalletBalanceEvent;
-import com.optikpi.datapipeline.model.ReferFriendEvent;
 import com.optikpi.datapipeline.model.WithdrawEvent;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 /**
  * Example: Test All Endpoints
@@ -210,9 +210,9 @@ public class TestAllEndpoints {
 
     private static CustomerProfile createSampleCustomer(String accountId, String workspaceId) {
         CustomerProfile customer = new CustomerProfile();
-        customer.setAccountId(accountId);
+            customer.setAccountId(accountId);
             customer.setWorkspaceId(workspaceId);
-            customer.setUserId("javasdk_01");
+            customer.setUserId("java_field01");
             customer.setUsername("john_doe");
             customer.setFullName("John Doe");
             customer.setFirstName("John");
@@ -225,63 +225,48 @@ public class TestAllEndpoints {
             customer.setCity("New York");
             customer.setLanguage("en");
             customer.setCurrency("USD");
-
             customer.setPhoneVerification("Verified");
             customer.setEmailVerification("Verified");
             customer.setBankVerification("NotVerified");
             customer.setIddocVerification("Verified");
-        
             customer.setMarketingEmailPreference("Opt-in");
             customer.setNotificationsPreference("Opt-in");
             customer.setSubscription("Subscribed");
-    
             customer.setPrivacySettings("private");
-            
             customer.setDepositLimits(1000.00);
             customer.setLossLimits(500.00);
             customer.setWageringLimits(2000.00);
             customer.setSessionTimeLimits(120);
-
             customer.setCoolingOffExpiryDate("2024-12-31T23:59:59Z");
             customer.setSelfExclusionExpiryDate("2025-01-31T23:59:59Z");
-            customer.setAffliateId("affiliate456");
-            
-            customer.setCoolingOffPeriod(7);
-            customer.setSelfExclusionPeriod(30);
-
             customer.setRealityChecksNotification("daily");
             customer.setVipStatus("Regular");
             customer.setLoyaltyProgramTiers("Bronze");
             customer.setAccountStatus("Active");
             customer.setBonusAbuser("Not flagged");
             customer.setFinancialRiskLevel(0.3);
-            
             customer.setAcquisitionSource("Google Ads");
             customer.setPartnerId("partner123");
             customer.setReferralLinkCode("REF789");
             customer.setReferralLimitReached("Not Reached");
             customer.setCreationTimestamp("2024-01-15T10:30:00Z");
-        
             customer.setRiskScoreLevel("low");
             customer.setMarketingSmsPreference("Opt-in");
-            
             // Custom data as Map (same in both)
             Map<String, Object> customData = new HashMap<>();
             customData.put("favorite_game", "slots");
             customData.put("newsletter_signup", true);
             customer.setCustomData(customData);
-            
             customer.setSelfExclusionBy("player");
             customer.setSelfExclusionByType("voluntary");
             customer.setSelfExclusionCheckTime("2024-01-15T10:30:00Z");
             customer.setSelfExclusionCreatedTime("2024-01-01T00:00:00Z");
             customer.setClosedTime(null);
-
             customer.setRealMoneyEnabled("true");
             customer.setPushToken("push_token_abc123");
             customer.setAndroidPushToken("android_push_token_xyz456");
             customer.setIosPushToken("ios_push_token_def789");
-            customer.setWindowsPushToken("windows_push_token_ghi012");
+            customer.setWindowsPushToken("windows_push_token_ghi012");  
             customer.setMacDmgPushToken("mac_push_token_jkl345");
 
         return customer;
@@ -289,7 +274,6 @@ public class TestAllEndpoints {
 
     private static ExtendedAttributesEvent createSampleExtendedAttributesMapFormat(String accountId, String workspaceId) {
         ExtendedAttributesEvent event = new ExtendedAttributesEvent();
-        event.setAccountId(accountId);
         event.setWorkspaceId(workspaceId);
         event.setUserId("sdk_ext_001");
         event.setListName("BINGO_PREFERENCES");
@@ -305,7 +289,6 @@ public class TestAllEndpoints {
 
     private static ExtendedAttributesEvent createSampleExtendedAttributesStringFormat(String accountId, String workspaceId) {
         ExtendedAttributesEvent event = new ExtendedAttributesEvent();
-        event.setAccountId(accountId);
         event.setWorkspaceId(workspaceId);
         event.setUserId("sdk_ext_002");
         event.setListName("GAMING_PREFERENCES");
@@ -349,14 +332,6 @@ public class TestAllEndpoints {
             event.setPaymentProviderId("provider123");
             event.setPaymentProviderName("Chase Bank");
             event.setFailureReason(null);
-            event.setCurrency("USD");
-            event.setFees(new BigDecimal("2.50"));
-            event.setNetAmount(new BigDecimal("97.50"));
-            event.setStatus("success");
-            Map<String, Object> metadata = new HashMap<>();
-            metadata.put("bank_name", "Chase Bank");
-            metadata.put("account_last4", "1234");
-            event.setMetadata(metadata);
         return event;
     }
 
@@ -364,26 +339,15 @@ public class TestAllEndpoints {
         WithdrawEvent event = new WithdrawEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("javasdk_01");
+            event.setUserId("java_01");
+            event.setEventCategory("Withdraw");
             event.setEventName("Successful Withdrawal");
             event.setEventId("evt_" + System.currentTimeMillis());
             event.setEventTime(Instant.now().toString());
             event.setAmount(new BigDecimal("50.00"));
-            event.setCurrency("USD");
             event.setPaymentMethod("bank");
             event.setTransactionId("txn_" + System.currentTimeMillis());
-            event.setStatus("success");
-            event.setDevice("desktop");
-            event.setAffiliateId("aff_123456");
-            event.setPartnerId("partner_789");
-            event.setCampaignCode("SUMMER2024");
-            event.setReason("User requested withdrawal");
-            event.setFees(new BigDecimal("1.50"));
-            event.setNetAmount(new BigDecimal("48.50"));
-            event.setWithdrawalReason("Cash out winnings");
-            event.setProcessingTime("2024-01-15T10:30:00Z");
             event.setFailureReason(null);
-            event.setEventCategory("Withdraw");
         return event;
     }
 
@@ -391,7 +355,7 @@ public class TestAllEndpoints {
         GamingActivityEvent event = new GamingActivityEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("javasdk_01");
+            event.setUserId("java_012");
             event.setEventCategory("Gaming Activity");
             event.setEventName("Play Casino Game");
             event.setEventId("evt_" + System.currentTimeMillis());
@@ -401,7 +365,7 @@ public class TestAllEndpoints {
             event.setLossAmount(new BigDecimal("0.00"));
             event.setGameId("game_001");
             event.setGameTitle("Mega Fortune Slots");
-            event.setGameProvider("ProviderXYZ");
+            event.setProvider("ProviderXYZ");
             event.setBonusId("bonus_12345");
             event.setFreeSpinId("freespin_67890");
             event.setJackpotAmount(new BigDecimal("1000.00"));

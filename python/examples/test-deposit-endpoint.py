@@ -51,19 +51,11 @@ deposit = DepositEvent(
     event_id="evt_dep_987654321",
     event_time="2024-01-15T14:45:00Z",
     amount=500.00,
-    currency="USD",
     payment_method="bank",
     transaction_id="txn_123456789",
     payment_provider_id="provider123",
     payment_provider_name="Chase Bank",
-    status="success",
-    fees=2.50,
-    net_amount=497.50,
     failure_reason=None,
-    metadata={
-        "bank_name": "Chase Bank",
-        "account_last4": "1234"
-    }
 )
 
 validation = deposit.validate()

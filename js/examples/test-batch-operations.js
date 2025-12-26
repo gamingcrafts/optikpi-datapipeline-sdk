@@ -38,9 +38,9 @@ const sdk = new OptikpiDataPipelineSDK({
  */
 function createSampleCustomer(accountId, workspaceId) {
   return new CustomerProfile({
-    account_id: accountId,
-    workspace_id: workspaceId,
-    user_id: "user0111",
+    account_id: ACCOUNT_ID,
+    workspace_id: WORKSPACE_ID,
+    user_id: "js_field04prod",
     username: "john_doe",
     full_name: "John Doe",
     first_name: "John",
@@ -61,8 +61,6 @@ function createSampleCustomer(accountId, workspaceId) {
     loss_limits: 500.00,
     wagering_limits: 2000.00,
     session_time_limits: 120,
-    cooling_off_period: 7,
-    self_exclusion_period: 30,
     reality_checks_notification: "daily",
     account_status: "Active",
     vip_status: "Regular",
@@ -71,7 +69,6 @@ function createSampleCustomer(accountId, workspaceId) {
     financial_risk_level: 0.3,
     acquisition_source: "Google Ads",
     partner_id: "partner123",
-    affliate_id: "affiliate456",
     referral_link_code: "REF789",
     referral_limit_reached: "Not Reached",
     creation_timestamp: "2024-01-15T10:30:00Z",
@@ -92,12 +89,13 @@ function createSampleCustomer(accountId, workspaceId) {
     self_exclusion_check_time: "2024-01-15T10:30:00Z",
     self_exclusion_created_time: "2024-01-01T00:00:00Z",
     closed_time: null,
-    real_money_enabled: "true",  // Changed from boolean to string
+    real_money_enabled: "true",
     push_token: "push_token_abc123",
     android_push_token: "android_push_token_xyz456",
     ios_push_token: "ios_push_token_def789",
     windows_push_token: "windows_push_token_ghi012",
     mac_dmg_push_token: "mac_push_token_jkl345"
+
   });
 }
 
@@ -106,7 +104,6 @@ function createSampleCustomer(accountId, workspaceId) {
  */
 function createSampleExtendedAttributesMapFormat(accountId, workspaceId) {
   return new CustomerExtEvent({
-    account_id: accountId,
     workspace_id: workspaceId,
     user_id: "user0112",
     list_name: "BINGO_PREFERENCES",
@@ -123,7 +120,6 @@ function createSampleExtendedAttributesMapFormat(accountId, workspaceId) {
  */
 function createSampleExtendedAttributesStringFormat(accountId, workspaceId) {
   return new CustomerExtEvent({
-    account_id: accountId,
     workspace_id: workspaceId,
     user_id: "user0113",
     list_name: "GAMING_PREFERENCES",
@@ -161,27 +157,19 @@ function createSampleAccountEvent(accountId, workspaceId) {
  */
 function createSampleDepositEvent(accountId, workspaceId) {
   return new DepositEvent({
-    account_id: accountId,
-    workspace_id: workspaceId,
-    user_id: "user0115",
+    account_id: ACCOUNT_ID,
+    workspace_id: WORKSPACE_ID,
+    user_id: "user123456",
     event_category: "Deposit",
     event_name: "Successful Deposit",
     event_id: "evt_dep_987654321",
     event_time: "2024-01-15T14:45:00Z",
     amount: 500.00,
-    currency: "USD",
     payment_method: "bank",
     transaction_id: "txn_123456789",
     payment_provider_id: "provider123",
     payment_provider_name: "Chase Bank",
-    status: "success",
-    fees: 2.50,
-    net_amount: 497.50,
-    failure_reason: null,
-    metadata: {
-      bank_name: "Chase Bank",
-      account_last4: "1234"
-    }
+    failure_reason: null
   });
 }
 
@@ -190,27 +178,16 @@ function createSampleDepositEvent(accountId, workspaceId) {
  */
 function createSampleWithdrawEvent(accountId, workspaceId) {
   return new WithdrawEvent({
-    account_id: accountId,
-    workspace_id: workspaceId,
-    user_id: "user0116",
+    account_id: ACCOUNT_ID,
+    workspace_id: WORKSPACE_ID,
+    user_id: "user123456",
     event_category: "Withdraw",
     event_name: "Successful Withdrawal",
     event_id: "evt_wd_987654321",
     event_time: "2024-01-15T14:45:00Z",
     amount: 250.00,
-    currency: "USD",
     payment_method: "bank",
     transaction_id: "txn_wd_123456789",
-    status: "success",
-    device: "desktop",
-    affiliate_id: "aff_123456",
-    partner_id: "partner_789",
-    campaign_code: "SUMMER2024",
-    reason: "User requested withdrawal",
-    fees: 1.50,
-    net_amount: 248.50,
-    withdrawal_reason: "Cash out winnings",
-    processing_time: "2024-01-15T10:30:00Z",
     failure_reason: null
   });
 }
@@ -220,9 +197,9 @@ function createSampleWithdrawEvent(accountId, workspaceId) {
  */
 function createSampleGamingActivityEvent(accountId, workspaceId) {
   return new GamingActivityEvent({
-    account_id: accountId,
-    workspace_id: workspaceId,
-    user_id: "user0117",
+    account_id: ACCOUNT_ID,
+    workspace_id: WORKSPACE_ID,
+    user_id: "user123411",
     event_category: "Gaming Activity",
     event_name: "Play Casino Game",
     event_id: "evt_" + Date.now(),

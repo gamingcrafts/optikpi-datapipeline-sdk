@@ -34,7 +34,6 @@ sdk = OptikpiDataPipelineSDK({
 })
 
 extattr = CustomerExtEvent(
-    account_id=ACCOUNT_ID,
     workspace_id=WORKSPACE_ID,
     user_id="1custext_py_1",
     list_name="BINGO_PREFERENCES",

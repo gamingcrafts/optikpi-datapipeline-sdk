@@ -14,12 +14,6 @@ class WithdrawEvent {
     this.amount = data.amount;
     this.payment_method = data.payment_method;
     this.transaction_id = data.transaction_id;
-    this.status = data.status;
-    this.currency = data.currency;
-    this.fees = data.fees;
-    this.net_amount = data.net_amount;
-    this.withdrawal_reason = data.withdrawal_reason;
-    this.processing_time = data.processing_time;
     this.failure_reason = data.failure_reason;
   }
 
@@ -80,16 +74,6 @@ class WithdrawEvent {
       errors.push(`payment_method must be one of: ${validPaymentMethods.join(', ')}`);
     }
 
-    // Status validation
-    if (this.status && !['success', 'pending', 'failed', 'cancelled', 'rejected'].includes(this.status)) {
-      errors.push('status must be one of: success, pending, failed, cancelled, rejected');
-    }
-
-    // Currency validation
-    if (this.currency && !this.isValidCurrency(this.currency)) {
-      errors.push('currency must be a valid 3-letter ISO currency code');
-    }
-
     // Date format validation
     if (this.event_time && !this.isValidDateTime(this.event_time)) {
       errors.push('event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)');
@@ -109,16 +93,6 @@ class WithdrawEvent {
   isValidDateTime(dateTime) {
     const date = new Date(dateTime);
     return date instanceof Date && !isNaN(date);
-  }
-
-  /**
-   * Validates currency code format
-   * @param {string} currency - Currency code to validate
-   * @returns {boolean} True if currency code is valid
-   */
-  isValidCurrency(currency) {
-    const currencyRegex = /^[A-Z]{3}$/;
-    return currencyRegex.test(currency);
   }
 
   /**

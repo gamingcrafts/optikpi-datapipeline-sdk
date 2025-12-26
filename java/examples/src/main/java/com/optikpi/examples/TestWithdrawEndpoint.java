@@ -2,17 +2,15 @@ package com.optikpi.examples;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.optikpi.datapipeline.ClientConfig;
 import com.optikpi.datapipeline.OptikpiDataPipelineSDK;
 import com.optikpi.datapipeline.model.ValidationResult;
 import com.optikpi.datapipeline.model.WithdrawEvent;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 
 public class TestWithdrawEndpoint {
@@ -62,19 +60,8 @@ public class TestWithdrawEndpoint {
             event.setEventId("evt_" + System.currentTimeMillis());
             event.setEventTime(Instant.now().toString());
             event.setAmount(new BigDecimal("50.00"));
-            event.setCurrency("USD");
             event.setPaymentMethod("bank");
             event.setTransactionId("txn_" + System.currentTimeMillis());
-            event.setStatus("success");
-            event.setDevice("desktop");
-            event.setAffiliateId("aff_123456");
-            event.setPartnerId("partner_789");
-            event.setCampaignCode("SUMMER2024");
-            event.setReason("User requested withdrawal");
-            event.setFees(new BigDecimal("1.50"));
-            event.setNetAmount(new BigDecimal("48.50"));
-            event.setWithdrawalReason("Cash out winnings");
-            event.setProcessingTime("2024-01-15T10:30:00Z");
             event.setFailureReason(null);
     
             ValidationResult valid = event.validate();

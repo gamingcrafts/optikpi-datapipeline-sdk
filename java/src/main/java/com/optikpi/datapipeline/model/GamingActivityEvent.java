@@ -45,20 +45,14 @@ public class GamingActivityEvent {
     @JsonProperty("game_id")
     private String gameId;
     
-    @JsonProperty("game_name")
-    private String gameName;
-    
     @JsonProperty("game_title")
     private String gameTitle;
     
-    @JsonProperty("game_provider")
-    private String gameProvider;
+    @JsonProperty("provider")
+    private String provider;
     
     @JsonProperty("game_category")
     private String gameCategory;
-    
-    @JsonProperty("bet_amount")
-    private BigDecimal betAmount;
     
     @JsonProperty("wager_amount")
     private BigDecimal wagerAmount;
@@ -69,35 +63,8 @@ public class GamingActivityEvent {
     @JsonProperty("currency")
     private String currency;
     
-    @JsonProperty("device")
-    private String device;
-    
-    @JsonProperty("session_id")
-    private String sessionId;
-    
-    @JsonProperty("round_id")
-    private String roundId;
-    
-    @JsonProperty("affiliate_id")
-    private String affiliateId;
-    
-    @JsonProperty("partner_id")
-    private String partnerId;
-    
-    @JsonProperty("campaign_code")
-    private String campaignCode;
-    
-    @JsonProperty("bonus_used")
-    private BigDecimal bonusUsed;
-    
-    @JsonProperty("free_spins_used")
-    private Integer freeSpinsUsed;
-    
     @JsonProperty("jackpot_amount")
     private BigDecimal jackpotAmount;
-    
-    @JsonProperty("tournament_id")
-    private String tournamentId;
     
     @JsonProperty("tournament_name")
     private String tournamentName;
@@ -330,11 +297,6 @@ public class GamingActivityEvent {
             errors.add("event_name must be one of: " + String.join(", ", validEventNames));
         }
         
-        // Device validation
-        if (device != null && !isValidDevice(device)) {
-            errors.add("device must be one of: desktop, mobile, tablet, app");
-        }
-        
         // Date format validation
         if (eventTime != null && !isValidDateTime(eventTime)) {
             errors.add("event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)");
@@ -391,20 +353,14 @@ public class GamingActivityEvent {
     public String getGameId() { return gameId; }
     public void setGameId(String gameId) { this.gameId = gameId; }
     
-    public String getGameName() { return gameName; }
-    public void setGameName(String gameName) { this.gameName = gameName; }
-    
     public String getGameTitle() { return gameTitle; }
     public void setGameTitle(String gameTitle) { this.gameTitle = gameTitle; }
     
-    public String getGameProvider() { return gameProvider; }
-    public void setGameProvider(String gameProvider) { this.gameProvider = gameProvider; }
+    public String getProvider() { return provider; }
+    public void setProvider(String provider) { this.provider = provider; }
     
     public String getGameCategory() { return gameCategory; }
     public void setGameCategory(String gameCategory) { this.gameCategory = gameCategory; }
-    
-    public BigDecimal getBetAmount() { return betAmount; }
-    public void setBetAmount(BigDecimal betAmount) { this.betAmount = betAmount; }
 
     public BigDecimal getWagerAmount() { return wagerAmount; }
     public void setWagerAmount(BigDecimal wagerAmount) { this.wagerAmount = wagerAmount; }
@@ -415,35 +371,8 @@ public class GamingActivityEvent {
     public String getCurrency() { return currency; }
     public void setCurrency(String currency) { this.currency = currency; }
     
-    public String getDevice() { return device; }
-    public void setDevice(String device) { this.device = device; }
-    
-    public String getSessionId() { return sessionId; }
-    public void setSessionId(String sessionId) { this.sessionId = sessionId; }
-    
-    public String getRoundId() { return roundId; }
-    public void setRoundId(String roundId) { this.roundId = roundId; }
-    
-    public String getAffiliateId() { return affiliateId; }
-    public void setAffiliateId(String affiliateId) { this.affiliateId = affiliateId; }
-    
-    public String getPartnerId() { return partnerId; }
-    public void setPartnerId(String partnerId) { this.partnerId = partnerId; }
-    
-    public String getCampaignCode() { return campaignCode; }
-    public void setCampaignCode(String campaignCode) { this.campaignCode = campaignCode; }
-    
-    public BigDecimal getBonusUsed() { return bonusUsed; }
-    public void setBonusUsed(BigDecimal bonusUsed) { this.bonusUsed = bonusUsed; }
-    
-    public Integer getFreeSpinsUsed() { return freeSpinsUsed; }
-    public void setFreeSpinsUsed(Integer freeSpinsUsed) { this.freeSpinsUsed = freeSpinsUsed; }
-    
     public BigDecimal getJackpotAmount() { return jackpotAmount; }
     public void setJackpotAmount(BigDecimal jackpotAmount) { this.jackpotAmount = jackpotAmount; }
-    
-    public String getTournamentId() { return tournamentId; }
-    public void setTournamentId(String tournamentId) { this.tournamentId = tournamentId; }
     
     public String getTournamentName() { return tournamentName; }
     public void setTournamentName(String tournamentName) { this.tournamentName = tournamentName; }
