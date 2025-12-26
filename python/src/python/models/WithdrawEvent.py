@@ -16,17 +16,6 @@ class WithdrawEvent:
     amount: Optional[float] = None
     payment_method: Optional[str] = None
     transaction_id: Optional[str] = None
-    status: Optional[str] = None
-    currency: Optional[str] = None
-    fees: Optional[float] = None
-    device: Optional[str] = None
-    affiliate_id: Optional[str] = None
-    partner_id: Optional[str] = None
-    campaign_code: Optional[str] = None
-    reason: Optional[str] = None
-    net_amount: Optional[float] = None
-    withdrawal_reason: Optional[str] = None
-    processing_time: Optional[str] = None
     failure_reason: Optional[str] = None
 
     # -------------------------------
@@ -82,14 +71,6 @@ class WithdrawEvent:
         if self.payment_method and self.payment_method not in valid_payment_methods:
             errors.append(f"payment_method must be one of: {', '.join(valid_payment_methods)}")
 
-        # Status validation
-        valid_statuses = ["success", "pending", "failed", "cancelled", "rejected"]
-        if self.status and self.status not in valid_statuses:
-            errors.append(f"status must be one of: {', '.join(valid_statuses)}")
-
-        # Currency validation
-        if self.currency and not self.is_valid_currency(self.currency):
-            errors.append("currency must be a valid 3-letter ISO currency code")
 
         # Date format validation
         if self.event_time and not self.is_valid_datetime(self.event_time):
@@ -104,10 +85,6 @@ class WithdrawEvent:
             return True
         except ValueError:
             return False
-
-    @staticmethod
-    def is_valid_currency(currency: str) -> bool:
-        return re.match(r"^[A-Z]{3}$", currency) is not None
 
     # -------------------------------
     # Utility methods

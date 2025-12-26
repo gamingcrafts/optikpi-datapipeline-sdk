@@ -117,7 +117,7 @@ class CustomerExtEvent {
   /**
    * Helper method to create a customer extension event with JSON string ext_data
    * @param {Object} params - Event parameters
-   * @param {string} params.account_id - Account ID
+   *  @param {string} params.account_id - Account ID
    * @param {string} params.workspace_id - Workspace ID
    * @param {string} params.user_id - User ID
    * @param {string} params.list_name - List name for extended attributes

@@ -11,19 +11,13 @@ class CustomerExtEvent:
         self.list_name = data.get("list_name")
         self.ext_data = data.get("ext_data")
 
-        # Optional fields for parity with other events
-        self.event_category = data.get("event_category", "Customer Extension")
-        self.event_name = data.get("event_name", "Extended Attributes Updated")
-        self.event_id = data.get("event_id")
-        self.event_time = data.get("event_time")
-
     # ----------------------------------------------------------
     # Validation
     # ----------------------------------------------------------
     def validate(self):
         errors = []
 
-        required = ["account_id", "workspace_id", "user_id", "list_name", "ext_data"]
+        required = ["account_id","workspace_id", "user_id", "list_name", "ext_data"]
 
         for field in required:
             if not getattr(self, field, None):
@@ -61,10 +55,6 @@ class CustomerExtEvent:
             "workspace_id": self.workspace_id,
             "user_id": self.user_id,
             "list_name": self.list_name,
-            "event_category": self.event_category,
-            "event_name": self.event_name,
-            "event_id": self.event_id,
-            "event_time": self.event_time,
         }
 
         # Convert ext_data object → JSON string

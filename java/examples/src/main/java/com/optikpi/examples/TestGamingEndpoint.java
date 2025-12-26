@@ -2,17 +2,15 @@ package com.optikpi.examples;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.optikpi.datapipeline.ClientConfig;
 import com.optikpi.datapipeline.OptikpiDataPipelineSDK;
 import com.optikpi.datapipeline.model.GamingActivityEvent;
 import com.optikpi.datapipeline.model.ValidationResult;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class TestGamingEndpoint {
 
@@ -65,7 +63,7 @@ public class TestGamingEndpoint {
             event.setLossAmount(new BigDecimal("0.00"));
             event.setGameId("game_001");
             event.setGameTitle("Mega Fortune Slots");
-            event.setGameProvider("ProviderXYZ");
+            event.setProvider("ProviderXYZ");
             event.setBonusId("bonus_12345");
             event.setFreeSpinId("freespin_67890");
             event.setJackpotAmount(new BigDecimal("1000.00"));

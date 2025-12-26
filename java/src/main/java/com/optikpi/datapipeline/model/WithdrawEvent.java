@@ -8,7 +8,6 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 
 /**
@@ -48,9 +47,6 @@ public class WithdrawEvent {
     @JsonProperty("amount")
     private BigDecimal amount;
     
-    @JsonProperty("currency")
-    private String currency;
-    
     @NotBlank(message = "payment_method is required")
     @JsonProperty("payment_method")
     private String paymentMethod;
@@ -58,37 +54,6 @@ public class WithdrawEvent {
     @NotBlank(message = "transaction_id is required")
     @JsonProperty("transaction_id")
     private String transactionId;
-    
-    @Pattern(regexp = "success|pending|failed|cancelled|rejected", message = "status must be one of: success, pending, failed, cancelled, rejected")
-    @JsonProperty("status")
-    private String status;
-    
-    @JsonProperty("device")
-    private String device;
-    
-    @JsonProperty("affiliate_id")
-    private String affiliateId;
-    
-    @JsonProperty("partner_id")
-    private String partnerId;
-    
-    @JsonProperty("campaign_code")
-    private String campaignCode;
-    
-    @JsonProperty("reason")
-    private String reason;
-    
-    @JsonProperty("fees")
-    private BigDecimal fees;
-    
-    @JsonProperty("net_amount")
-    private BigDecimal netAmount;
-    
-    @JsonProperty("withdrawal_reason")
-    private String withdrawalReason;
-    
-    @JsonProperty("processing_time")
-    private String processingTime;
     
     @JsonProperty("failure_reason")
     private String failureReason;
@@ -157,16 +122,6 @@ public class WithdrawEvent {
         
         if (eventName != null && !isValidEventName(eventName, validEventNames)) {
             errors.add("event_name must be one of: " + String.join(", ", validEventNames));
-        }
-        
-        // Status validation - CORRECTED to match JavaScript
-        if (status != null && !isValidStatus(status)) {
-            errors.add("status must be one of: success, pending, failed, cancelled, rejected");
-        }
-        
-        // Device validation
-        if (device != null && !isValidDevice(device)) {
-            errors.add("device must be one of: desktop, mobile, tablet, app");
         }
         
         // Payment method validation - ADDED to match JavaScript
@@ -246,45 +201,12 @@ public class WithdrawEvent {
     
     public BigDecimal getAmount() { return amount; }
     public void setAmount(BigDecimal amount) { this.amount = amount; }
-    
-    public String getCurrency() { return currency; }
-    public void setCurrency(String currency) { this.currency = currency; }
-    
+
     public String getPaymentMethod() { return paymentMethod; }
     public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
     
     public String getTransactionId() { return transactionId; }
     public void setTransactionId(String transactionId) { this.transactionId = transactionId; }
-    
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-    
-    public String getDevice() { return device; }
-    public void setDevice(String device) { this.device = device; }
-    
-    public String getAffiliateId() { return affiliateId; }
-    public void setAffiliateId(String affiliateId) { this.affiliateId = affiliateId; }
-    
-    public String getPartnerId() { return partnerId; }
-    public void setPartnerId(String partnerId) { this.partnerId = partnerId; }
-    
-    public String getCampaignCode() { return campaignCode; }
-    public void setCampaignCode(String campaignCode) { this.campaignCode = campaignCode; }
-    
-    public String getReason() { return reason; }
-    public void setReason(String reason) { this.reason = reason; }
-    
-    public BigDecimal getFees() { return fees; }
-    public void setFees(BigDecimal fees) { this.fees = fees; }
-    
-    public BigDecimal getNetAmount() { return netAmount; }
-    public void setNetAmount(BigDecimal netAmount) { this.netAmount = netAmount; }
-    
-    public String getWithdrawalReason() { return withdrawalReason; }
-    public void setWithdrawalReason(String withdrawalReason) { this.withdrawalReason = withdrawalReason; }
-    
-    public String getProcessingTime() { return processingTime; }
-    public void setProcessingTime(String processingTime) { this.processingTime = processingTime; }
     
     public String getFailureReason() { return failureReason; }
     public void setFailureReason(String failureReason) { this.failureReason = failureReason; }

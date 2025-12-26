@@ -16,10 +16,6 @@ class DepositEvent {
     this.transaction_id = data.transaction_id;
     this.payment_provider_id = data.payment_provider_id;
     this.payment_provider_name = data.payment_provider_name;
-    this.status = data.status;
-    this.currency = data.currency;
-    this.fees = data.fees;
-    this.net_amount = data.net_amount;
     this.failure_reason = data.failure_reason;
   }
 
@@ -80,15 +76,6 @@ class DepositEvent {
       errors.push(`payment_method must be one of: ${validPaymentMethods.join(', ')}`);
     }
 
-    // Status validation
-    if (this.status && !['success', 'pending', 'failed', 'cancelled', 'refunded'].includes(this.status)) {
-      errors.push('status must be one of: success, pending, failed, cancelled, refunded');
-    }
-
-    // Currency validation
-    if (this.currency && !this.isValidCurrency(this.currency)) {
-      errors.push('currency must be a valid 3-letter ISO currency code');
-    }
 
     // Date format validation
     if (this.event_time && !this.isValidDateTime(this.event_time)) {
@@ -109,16 +96,6 @@ class DepositEvent {
   isValidDateTime(dateTime) {
     const date = new Date(dateTime);
     return date instanceof Date && !isNaN(date);
-  }
-
-  /**
-   * Validates currency code format
-   * @param {string} currency - Currency code to validate
-   * @returns {boolean} True if currency code is valid
-   */
-  isValidCurrency(currency) {
-    const currencyRegex = /^[A-Z]{3}$/;
-    return currencyRegex.test(currency);
   }
 
   /**

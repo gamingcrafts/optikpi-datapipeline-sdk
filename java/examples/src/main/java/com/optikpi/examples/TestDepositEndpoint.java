@@ -2,17 +2,15 @@ package com.optikpi.examples;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.optikpi.datapipeline.ClientConfig;
 import com.optikpi.datapipeline.OptikpiDataPipelineSDK;
 import com.optikpi.datapipeline.model.DepositEvent;
 import com.optikpi.datapipeline.model.ValidationResult;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class TestDepositEndpoint {
 
@@ -65,14 +63,6 @@ public class TestDepositEndpoint {
             event.setPaymentProviderId("provider123");
             event.setPaymentProviderName("Chase Bank");
             event.setFailureReason(null);
-            event.setCurrency("USD");
-            event.setFees(new BigDecimal("2.50"));
-            event.setNetAmount(new BigDecimal("97.50"));
-            event.setStatus("success");
-            Map<String, Object> metadata = new HashMap<>();
-            metadata.put("bank_name", "Chase Bank");
-            metadata.put("account_last4", "1234");
-            event.setMetadata(metadata);
 
             ValidationResult valid = event.validate();
             if (!valid.isValid()) {

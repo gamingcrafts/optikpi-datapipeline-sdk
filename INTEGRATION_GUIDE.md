@@ -129,7 +129,6 @@ https://your-api-gateway-url/apigw/ingest
 | financial_risk_level | Number | No | Financial risk level |
 | acquisition_source | String | No | Acquisition source |
 | partner_id | String | No | Partner identifier |
-| affiliate_id | String | No | Affiliate identifier |
 | referral_link_code | String | No | Referral link code |
 | referral_limit_reached | String | No | Referral limit status |
 | creation_timestamp | String | Yes | Account creation UTC timestamp (date-time format). Example: `"2024-01-15T10:30:00Z"`
@@ -181,11 +180,6 @@ https://your-api-gateway-url/apigw/ingest
 | payment_provider_id | String | No | Payment provider identifier |
 | payment_provider_name | String | No | Payment provider name |
 | failure_reason | String | No | Reason for deposit failure |
-| currency | String | No | Currency used |
-| status | String | No | Verification status |
-| fees | Number | No | Deposit fees |
-| net_amount | Number | No | Deposit net_amount | 
-| metadata | Object | yes | metadata |
 
 ### Withdraw Event
 | Field | Type | Required | Description |
@@ -200,18 +194,7 @@ https://your-api-gateway-url/apigw/ingest
 | amount | Number | Yes | Withdrawal amount |
 | payment_method | String | No | Payment method used |
 | transaction_id | String | No | Transaction identifier |
-| status | String | No | Verification status |
-| currency | String | No | Currency used |
-| device | String | No | Device type used |
-| affiliate_id | String | No | Affiliate identifier |
-| partner_id | String | No | Partner identifier |
-| campaign_code | String | No | Campaign code |
-| reason | String | No | Reason for failure or additional information |
-| fees | Number | No | Deposit fees |
-| net_amount | Number | No | Deposit net_amount |
-| withdrawal_reason | String | No | Reason for withdrawal_reason |
 | failure_reason | String | No | Reason for withdrawal failure |
-| processing_time | String | Yes | Timestamp when the processing_time occurred (date-time format). Example: "2024-01-15T10:30:00Z" UTC Time |
 
 ### Gaming Activity Event
 | Field | Type | Required | Description |
@@ -326,7 +309,6 @@ https://your-api-gateway-url/apigw/ingest
 ### Extended Attributes
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| account_id | String | Yes | Account identifier - one account can have multiple workspaces |
 | workspace_id | String | Yes | Workspace identifier - belongs to an account |
 | user_id | String | Yes | Unique user identifier |
 | list_name | String | Yes | Name of the list or category for the extended attributes |

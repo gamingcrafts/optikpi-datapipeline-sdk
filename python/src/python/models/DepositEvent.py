@@ -17,11 +17,6 @@ class DepositEvent:
     transaction_id: Optional[str] = None
     payment_provider_id: Optional[str] = None
     payment_provider_name: Optional[str] = None
-    status: Optional[str] = None
-    currency: Optional[str] = None
-    fees: Optional[float] = None
-    net_amount: Optional[float] = None
-    metadata: Optional[Dict[str, Any]] = field(default_factory=dict)
     failure_reason: Optional[str] = None
 
     def validate(self) -> Dict[str, Any]:
@@ -67,13 +62,6 @@ class DepositEvent:
         if self.payment_method and self.payment_method not in valid_payment_methods:
             errors.append(f"payment_method must be one of: {', '.join(valid_payment_methods)}")
 
-        valid_statuses = ["success", "pending", "failed", "cancelled", "refunded"]
-        if self.status and self.status not in valid_statuses:
-            errors.append(f"status must be one of: {', '.join(valid_statuses)}")
-
-        if self.currency and not self.is_valid_currency(self.currency):
-            errors.append("currency must be a valid 3-letter ISO currency code")
-
         if self.event_time and not self.is_valid_datetime(self.event_time):
             errors.append("event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)")
 
@@ -86,10 +74,6 @@ class DepositEvent:
             return True
         except ValueError:
             return False
-
-    @staticmethod
-    def is_valid_currency(currency: str) -> bool:
-        return re.match(r"^[A-Z]{3}$", currency) is not None
 
     def to_dict(self) -> Dict[str, Any]:
         return {k: v for k, v in asdict(self).items() if v is not None}
