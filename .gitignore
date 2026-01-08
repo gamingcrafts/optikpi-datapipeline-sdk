@@ -4,6 +4,7 @@ node_modules/**
 package-lock.json
 java/target/**
 java/examples/target/**
+js/dist/**
 js/examples/dist/**
 js/examples/node_modules/**
 js/examples/package-lock.json
