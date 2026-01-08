@@ -20006,7 +20006,7 @@ const {
 let DataPipelineClient$1 = class DataPipelineClient {
   constructor(config = {}) {
     this.config = _objectSpread2({
-      baseURL: config.baseURL || 'https://demo.optikpi.com/apigw/ingest',
+      baseURL: config.baseURL ,
       authToken: config.authToken,
       accountId: config.accountId,
       workspaceId: config.workspaceId,

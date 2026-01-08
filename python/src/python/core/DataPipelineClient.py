@@ -39,7 +39,7 @@ class DataPipelineClient:
             config = {}
             
         self.config = {
-            'baseURL': config.get('baseURL', 'https://demo.optikpi.com/apigw/ingest'),
+            'baseURL': config.get('baseURL'),
             'authToken': config.get('authToken'),
             'accountId': config.get('accountId'),
             'workspaceId': config.get('workspaceId'),
