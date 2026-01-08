@@ -161,6 +161,42 @@ class GamingActivityEvent
             $errors[] = 'win_amount must be a non-negative number';
         }
 
+        // Game type validation
+        $validGameTypes = [
+            'slots',
+            'table_games',
+            'card_games',
+            'live_casino',
+            'bingo',
+            'scratch_cards',
+            'lottery',
+            'sports_betting',
+            'virtual_sports'
+        ];
+
+        if (!empty($this->game_type) && !in_array($this->game_type, $validGameTypes)) {
+            $errors[] = 'game_type must be one of: ' . implode(', ', $validGameTypes);
+        }
+
+        // Device validation
+        if (!empty($this->device) && !in_array($this->device, ['desktop', 'mobile', 'tablet', 'app'])) {
+            $errors[] = 'device must be one of: desktop, mobile, tablet, app';
+        }
+
+        // Platform validation
+        $validPlatforms = [
+            'web',
+            'ios',
+            'android',
+            'windows',
+            'mac',
+            'linux'
+        ];
+
+        if (!empty($this->platform) && !in_array($this->platform, $validPlatforms)) {
+            $errors[] = 'platform must be one of: ' . implode(', ', $validPlatforms);
+        }
+
         // Currency validation
         if (!empty($this->currency) && !$this->isValidCurrency($this->currency)) {
             $errors[] = 'currency must be a valid 3-letter ISO currency code';
@@ -213,6 +249,9 @@ class GamingActivityEvent
     {
         $arr = [];
         foreach (get_object_vars($this) as $key => $value) {
+            // Match JavaScript toJSON() behavior: exclude undefined properties
+            // In PHP, unset properties are null, so excluding null approximates JavaScript's undefined exclusion
+            // Note: This means explicitly null values are also excluded, which differs slightly from JavaScript
             if ($value !== null) {
                 $arr[$key] = $value;
             }

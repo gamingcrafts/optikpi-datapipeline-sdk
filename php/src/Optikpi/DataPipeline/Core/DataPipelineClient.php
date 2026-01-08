@@ -108,70 +108,67 @@ class DataPipelineClient
             curl_setopt($ch, CURLOPT_POST, true);
         }
 
-        $retryCount = 0;
-        $lastError = null;
+        $response = $this->retryRequest($ch);
+        curl_close($ch);
 
-        while ($retryCount <= $this->retries) {
-            $response = curl_exec($ch);
-            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            $error = curl_error($ch);
+        return $response;
+    }
 
-            if ($error) {
-                $lastError = $error;
-                if ($retryCount < $this->retries) {
-                    usleep($this->retryDelay * 1000 * ($retryCount + 1));
-                    $retryCount++;
-                    continue;
-                }
-                curl_close($ch);
-                return [
-                    'success' => false,
-                    'error' => $error,
-                    'status' => null,
-                    'data' => null,
-                    'timestamp' => date('c')
-                ];
-            }
+    /**
+     * Retries a failed request
+     *
+     * @param resource $ch cURL handle
+     * @param int $retryCount Current retry count
+     * @return array Response array
+     */
+    private function retryRequest($ch, int $retryCount = 0): array
+    {
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
 
-            if ($httpCode >= 500 && $retryCount < $this->retries) {
+        if ($error) {
+            if ($retryCount < $this->retries) {
                 usleep($this->retryDelay * 1000 * ($retryCount + 1));
-                $retryCount++;
-                continue;
+                return $this->retryRequest($ch, $retryCount + 1);
             }
-
-            curl_close($ch);
-
-            $responseData = json_decode($response, true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                $responseData = $response;
-            }
-
-            if ($httpCode >= 200 && $httpCode < 300) {
-                return [
-                    'success' => true,
-                    'status' => $httpCode,
-                    'data' => $responseData,
-                    'timestamp' => date('c')
-                ];
-            } else {
-                return [
-                    'success' => false,
-                    'error' => 'HTTP Error ' . $httpCode,
-                    'status' => $httpCode,
-                    'data' => $responseData,
-                    'timestamp' => date('c')
-                ];
-            }
+            // Return error structure matching JavaScript
+            return [
+                'success' => false,
+                'error' => $error,
+                'status' => null,
+                'data' => null,
+                'timestamp' => date('c')
+            ];
         }
 
-        curl_close($ch);
-        return [
-            'success' => false,
-            'error' => 'Request failed after ' . $this->retries . ' retries',
-            'status' => null,
-            'data' => null,
-            'timestamp' => date('c')
-        ];
+        if ($httpCode >= 500 && $retryCount < $this->retries) {
+            usleep($this->retryDelay * 1000 * ($retryCount + 1));
+            return $this->retryRequest($ch, $retryCount + 1);
+        }
+
+        $responseData = json_decode($response, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $responseData = $response;
+        }
+
+        if ($httpCode >= 200 && $httpCode < 300) {
+            return [
+                'success' => true,
+                'status' => $httpCode,
+                'data' => $responseData,
+                'timestamp' => date('c')
+            ];
+        } else {
+            // Match JavaScript error structure: error.response?.status and error.response?.data
+            return [
+                'success' => false,
+                'error' => 'HTTP Error ' . $httpCode,
+                'status' => $httpCode,
+                'data' => $responseData,
+                'timestamp' => date('c')
+            ];
+        }
     }
 
     /**
@@ -182,7 +179,17 @@ class DataPipelineClient
      */
     public function sendCustomerProfile($data): array
     {
-        return $this->makeRequest('POST', '/customers', $data);
+        try {
+            return $this->makeRequest('POST', '/customers', $data);
+        } catch (\Exception $error) {
+            return [
+                'success' => false,
+                'error' => $error->getMessage(),
+                'status' => null,
+                'data' => null,
+                'timestamp' => date('c')
+            ];
+        }
     }
 
     /**
@@ -193,7 +200,17 @@ class DataPipelineClient
      */
     public function sendAccountEvent($data): array
     {
-        return $this->makeRequest('POST', '/events/account', $data);
+        try {
+            return $this->makeRequest('POST', '/events/account', $data);
+        } catch (\Exception $error) {
+            return [
+                'success' => false,
+                'error' => $error->getMessage(),
+                'status' => null,
+                'data' => null,
+                'timestamp' => date('c')
+            ];
+        }
     }
 
     /**
@@ -204,7 +221,17 @@ class DataPipelineClient
      */
     public function sendDepositEvent($data): array
     {
-        return $this->makeRequest('POST', '/events/deposit', $data);
+        try {
+            return $this->makeRequest('POST', '/events/deposit', $data);
+        } catch (\Exception $error) {
+            return [
+                'success' => false,
+                'error' => $error->getMessage(),
+                'status' => null,
+                'data' => null,
+                'timestamp' => date('c')
+            ];
+        }
     }
 
     /**
@@ -215,7 +242,17 @@ class DataPipelineClient
      */
     public function sendWithdrawEvent($data): array
     {
-        return $this->makeRequest('POST', '/events/withdraw', $data);
+        try {
+            return $this->makeRequest('POST', '/events/withdraw', $data);
+        } catch (\Exception $error) {
+            return [
+                'success' => false,
+                'error' => $error->getMessage(),
+                'status' => null,
+                'data' => null,
+                'timestamp' => date('c')
+            ];
+        }
     }
 
     /**
@@ -226,7 +263,17 @@ class DataPipelineClient
      */
     public function sendGamingActivityEvent($data): array
     {
-        return $this->makeRequest('POST', '/events/gaming-activity', $data);
+        try {
+            return $this->makeRequest('POST', '/events/gaming-activity', $data);
+        } catch (\Exception $error) {
+            return [
+                'success' => false,
+                'error' => $error->getMessage(),
+                'status' => null,
+                'data' => null,
+                'timestamp' => date('c')
+            ];
+        }
     }
 
     /**
@@ -237,7 +284,17 @@ class DataPipelineClient
      */
     public function sendExtendedAttributes($data): array
     {
-        return $this->makeRequest('POST', '/extattributes', $data);
+        try {
+            return $this->makeRequest('POST', '/extattributes', $data);
+        } catch (\Exception $error) {
+            return [
+                'success' => false,
+                'error' => $error->getMessage(),
+                'status' => null,
+                'data' => null,
+                'timestamp' => date('c')
+            ];
+        }
     }
 
     /**
@@ -248,7 +305,17 @@ class DataPipelineClient
      */
     public function sendWalletBalanceEvent($data): array
     {
-        return $this->makeRequest('POST', '/events/wallet-balance', $data);
+        try {
+            return $this->makeRequest('POST', '/events/wallet-balance', $data);
+        } catch (\Exception $error) {
+            return [
+                'success' => false,
+                'error' => $error->getMessage(),
+                'status' => null,
+                'data' => null,
+                'timestamp' => date('c')
+            ];
+        }
     }
 
     /**
@@ -259,7 +326,17 @@ class DataPipelineClient
      */
     public function sendReferFriendEvent($data): array
     {
-        return $this->makeRequest('POST', '/events/refer-friend', $data);
+        try {
+            return $this->makeRequest('POST', '/events/refer-friend', $data);
+        } catch (\Exception $error) {
+            return [
+                'success' => false,
+                'error' => $error->getMessage(),
+                'status' => null,
+                'data' => null,
+                'timestamp' => date('c')
+            ];
+        }
     }
 
     /**

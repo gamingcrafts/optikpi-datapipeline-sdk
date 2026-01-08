@@ -328,15 +328,15 @@ Before you begin, you'll need:
 1. Your authentication token
 2. Account ID and Workspace ID
 3. API Gateway URL
-4. Node.js/Python/Java programming langauage or any utility to acesss Rest API
+4. Node.js/Python/Java/PHP programming language or any utility to access Rest API
 
 ## 📚 SDK Integration Guide
 The official Optikpi Data Pipeline SDK makes integration simple and secure. All authentication, validation, and error handling is handled automatically. 
 
-The Python, Java and Node JS SDK configuration can be found at the GitHub repository:
+The Python, Java, Node.js, and PHP SDK configuration can be found at the GitHub repository:
 https://github.com/gamingcrafts/optikpi-datapipeline-sdk
 
-Below are samples Node.js code for SDK Integration
+Below are sample code examples for SDK Integration in different languages:
 
 ### 1. Send Customer Profile
 ```javascript
@@ -510,6 +510,197 @@ const batchData = {
 const batchResult = await sdk.sendBatch(batchData);
 ```
 
+### PHP SDK Examples
+
+#### 1. Send Customer Profile
+```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+use Optikpi\DataPipeline\OptikpiDataPipelineSDK;
+use Optikpi\DataPipeline\Models\CustomerProfile;
+
+$sdk = new OptikpiDataPipelineSDK([
+    'authToken' => 'your-auth-token',
+    'accountId' => 'your-account-id',
+    'workspaceId' => 'your-workspace-id',
+    'baseURL' => 'https://your-api-gateway-url/apigw/ingest'
+]);
+
+$customer = new CustomerProfile([
+    'account_id' => 'your-account-id',
+    'workspace_id' => 'your-workspace-id',
+    'user_id' => 'user123',
+    'username' => 'john_doe',
+    'full_name' => 'John Doe',
+    'email' => 'john.doe@example.com',
+    'phone_number' => '+1234567890',
+    'currency' => 'USD',
+    'subscription' => 'Subscribed',
+    'deposit_limits' => 1000.00,
+    'loss_limits' => 500.00,
+    'wagering_limits' => 2000.00,
+    'session_time_limits' => 120,
+    'account_status' => 'Active',
+    'vip_status' => 'Regular',
+    'loyalty_program_tiers' => 'Bronze',
+    'financial_risk_level' => 0.3,
+    'referral_link_code' => 'REF789',
+    'creation_timestamp' => date('c'),
+    'phone_verification' => 'Verified',
+    'email_verification' => 'Verified',
+    'bank_verification' => 'NotVerified',
+    'iddoc_verification' => 'Verified'
+]);
+
+try {
+    $result = $sdk->sendCustomerProfile($customer);
+    if ($result['success']) {
+        echo "✅ Customer profile sent successfully!\n";
+        echo "Response: " . json_encode($result['data'], JSON_PRETTY_PRINT) . "\n";
+    } else {
+        echo "❌ Failed to send customer profile: " . ($result['error'] ?? 'Unknown error') . "\n";
+    }
+} catch (Exception $error) {
+    echo "❌ Error: " . $error->getMessage() . "\n";
+}
+```
+
+#### 2. Send Events
+```php
+<?php
+use Optikpi\DataPipeline\Models\AccountEvent;
+use Optikpi\DataPipeline\Models\DepositEvent;
+use Optikpi\DataPipeline\Models\GamingActivityEvent;
+use Optikpi\DataPipeline\Models\WalletBalanceEvent;
+use Optikpi\DataPipeline\Models\ReferFriendEvent;
+
+// Account Event
+$accountEvent = new AccountEvent([
+    'account_id' => 'your-account-id',
+    'workspace_id' => 'your-workspace-id',
+    'user_id' => 'user123',
+    'event_category' => 'Account',
+    'event_name' => 'Player Registration',
+    'event_id' => 'evt_123456789',
+    'event_time' => date('c'),
+    'device' => 'desktop',
+    'status' => 'verified'
+]);
+$accountResult = $sdk->sendAccountEvent($accountEvent);
+
+// Deposit Event
+$depositEvent = new DepositEvent([
+    'account_id' => 'your-account-id',
+    'workspace_id' => 'your-workspace-id',
+    'user_id' => 'user123',
+    'event_category' => 'Deposit',
+    'event_name' => 'Successful Deposit',
+    'event_id' => 'evt_dep_987654321',
+    'event_time' => date('c'),
+    'amount' => 500.00,
+    'payment_method' => 'bank',
+    'transaction_id' => 'txn_123456789'
+]);
+$depositResult = $sdk->sendDepositEvent($depositEvent);
+
+// Gaming Activity Event
+$gamingEvent = new GamingActivityEvent([
+    'account_id' => 'your-account-id',
+    'workspace_id' => 'your-workspace-id',
+    'user_id' => 'user123',
+    'event_category' => 'Gaming Activity',
+    'event_name' => 'Play Casino Game',
+    'event_id' => 'evt_game_789123456',
+    'event_time' => date('c'),
+    'wager_amount' => 10.00,
+    'win_amount' => 25.00,
+    'game_title' => 'Mega Fortune Slots',
+    'game_category' => 'slots'
+]);
+$gamingResult = $sdk->sendGamingActivityEvent($gamingEvent);
+
+// Wallet Balance Event
+$walletBalanceEvent = new WalletBalanceEvent([
+    'account_id' => 'your-account-id',
+    'workspace_id' => 'your-workspace-id',
+    'user_id' => 'user123',
+    'event_category' => 'Wallet Balance',
+    'event_name' => 'Balance Update',
+    'event_id' => 'evt_wallet_123456789',
+    'event_time' => date('c'),
+    'wallet_type' => 'main',
+    'currency' => 'USD',
+    'current_cash_balance' => 1000.00,
+    'current_bonus_balance' => 50.00,
+    'current_total_balance' => 1050.00,
+    'blocked_amount' => 0.00
+]);
+$walletBalanceResult = $sdk->sendWalletBalanceEvent($walletBalanceEvent);
+
+// Refer Friend Event
+$referFriendEvent = new ReferFriendEvent([
+    'account_id' => 'your-account-id',
+    'workspace_id' => 'your-workspace-id',
+    'user_id' => 'user123',
+    'event_category' => 'Refer Friend',
+    'event_name' => 'Referral Successful',
+    'event_id' => 'evt_refer_987654321',
+    'event_time' => date('c'),
+    'referral_code_used' => 'REF123',
+    'successful_referral_confirmation' => true,
+    'reward_type' => 'bonus',
+    'reward_claimed_status' => 'claimed',
+    'referee_user_id' => 'user456',
+    'referee_registration_date' => date('c'),
+    'referee_first_deposit' => 100.00
+]);
+$referFriendResult = $sdk->sendReferFriendEvent($referFriendEvent);
+```
+
+#### 3. Customer Extension Attributes
+```php
+<?php
+use Optikpi\DataPipeline\Models\CustomerExtEvent;
+
+// Format 1: Object (auto-converted to JSON string)
+$extAttributesEvent = new CustomerExtEvent([
+    'account_id' => 'your-account-id',
+    'workspace_id' => 'your-workspace-id',
+    'user_id' => 't345345',
+    'list_name' => 'BINGO_PREFERENCES',
+    'ext_data' => [
+        'Email' => 'True',
+        'SMS' => 'True'
+    ]
+]);
+
+// Format 2: JSON string (also supported)
+$extAttributesEventString = new CustomerExtEvent([
+    'account_id' => 'your-account-id',
+    'workspace_id' => 'your-workspace-id',
+    'user_id' => 't345345',
+    'list_name' => 'BINGO_PREFERENCES',
+    'ext_data' => '{"Email":"True","SMS":"True"}'
+]);
+
+$extAttributesResult = $sdk->sendExtendedAttributes($extAttributesEvent->toAPIFormat());
+```
+
+#### 4. Batch Operations
+```php
+<?php
+$batchData = [
+    'customers' => [$customer1, $customer2],
+    'depositEvents' => [$deposit1, $deposit2],
+    'gamingEvents' => [$gaming1, $gaming2],
+    'walletBalanceEvents' => [$walletBalance1, $walletBalance2],
+    'referFriendEvents' => [$referFriend1, $referFriend2],
+    'extendedAttributes' => [$extAttr1, $extAttr2]
+];
+$batchResult = $sdk->sendBatch($batchData);
+```
+
 ### SDK Benefits
 - 🔐 **Automatic Authentication**: Handles HMAC signature generation
 - ✅ **Built-in Validation**: Validates data before sending
@@ -658,6 +849,7 @@ For technical support and questions:
 - **JavaScript SDK Guide**: [README.md](https://github.com/gamingcrafts/optikpi-datapipeline-sdk/tree/main/js/)
 - **Java SDK Guide**: [README.md](https://github.com/gamingcrafts/optikpi-datapipeline-sdk/tree/main/java/)
 - **Python SDK Guide**: [README.md](https://github.com/gamingcrafts/optikpi-datapipeline-sdk/tree/main/python)
+- **PHP SDK Guide**: [README.md](https://github.com/gamingcrafts/optikpi-datapipeline-sdk/tree/main/php)
 
 
 This integration guide provides everything you need to successfully integrate with the Optikpi Data Pipeline API. Choose the approach that best fits your technology stack and requirements.

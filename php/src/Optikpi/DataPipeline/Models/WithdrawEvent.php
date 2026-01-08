@@ -148,6 +148,9 @@ class WithdrawEvent
     {
         $arr = [];
         foreach (get_object_vars($this) as $key => $value) {
+            // Match JavaScript toJSON() behavior: exclude undefined properties
+            // In PHP, unset properties are null, so excluding null approximates JavaScript's undefined exclusion
+            // Note: This means explicitly null values are also excluded, which differs slightly from JavaScript
             if ($value !== null) {
                 $arr[$key] = $value;
             }
