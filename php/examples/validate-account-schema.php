@@ -13,7 +13,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Optikpi\DataPipeline\Models\AccountEvent;
 
 // Load environment variables
-$dotenv = parse_ini_file(__DIR__ . '/../.env');
+$dotenv = parse_ini_file(__DIR__ . '/.env');
 
 $ACCOUNT_ID = $dotenv['ACCOUNT_ID'] ?? getenv('ACCOUNT_ID');
 $WORKSPACE_ID = $dotenv['WORKSPACE_ID'] ?? getenv('WORKSPACE_ID');

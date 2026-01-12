@@ -24,6 +24,7 @@ class GamingActivityEvent
     public $loss_amount;
     public $bonus_id;
     public $free_spin_id;
+    public $jackpot_amount;
     public $tournament_name;
     public $num_spins_played;
     public $game_theme;

@@ -118,7 +118,7 @@ sdk = OptikpiDataPipelineSDK({
 customer = CustomerProfile(
     account_id=ACCOUNT_ID,
     workspace_id=WORKSPACE_ID,
-    user_id="user123456",
+    user_id="py_field01",
     username="john_doe",
     full_name="John Doe",
     first_name="John",
@@ -139,8 +139,6 @@ customer = CustomerProfile(
     loss_limits=500.00,
     wagering_limits=2000.00,
     session_time_limits=120,
-    cooling_off_period=7,
-    self_exclusion_period=30,
     reality_checks_notification="daily",
     account_status="Active",
     vip_status="Regular",
@@ -149,14 +147,32 @@ customer = CustomerProfile(
     financial_risk_level=0.3,
     acquisition_source="Google Ads",
     partner_id="partner123",
-    affliate_id="affiliate456",
     referral_link_code="REF789",
     referral_limit_reached="Not Reached",
     creation_timestamp="2024-01-15T10:30:00Z",
     phone_verification="Verified",
     email_verification="Verified",
     bank_verification="NotVerified",
-    iddoc_verification="Verified"
+    iddoc_verification="Verified",
+    cooling_off_expiry_date="2024-12-31T23:59:59Z",
+    self_exclusion_expiry_date="2025-01-31T23:59:59Z",
+    risk_score_level="0.2",
+    marketing_sms_preference="Opt-in",
+    custom_data={
+        "favorite_game": "slots",
+        "newsletter_signup": True
+    },
+    self_exclusion_by="player",
+    self_exclusion_by_type="voluntary",
+    self_exclusion_check_time="2024-01-15T10:30:00Z",
+    self_exclusion_created_time="2024-01-01T00:00:00Z",
+    closed_time=None,
+    real_money_enabled="True",
+    push_token="push_token_abc123",
+    android_push_token="android_push_token_xyz456",
+    ios_push_token="ios_push_token_def789",
+    windows_push_token="windows_push_token_ghi012",
+    mac_dmg_push_token="mac_push_token_jkl345"
 )
 validation = customer.validate()
 

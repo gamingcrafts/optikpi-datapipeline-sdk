@@ -19,26 +19,38 @@ Official SDKs for the Optikpi Data Pipeline API. This repository contains JavaSc
 - **Comprehensive Logging**: Detailed logging for debugging and monitoring
 - **Well Tested**: Extensive test coverage and examples
 
+## 🚀 Getting Started
+### Clone the Repository
+```bash
+   git clone https://github.com/gamingcrafts/optikpi-datapipeline-sdk.git
+   cd optikpi-datapipeline-sdk
+```
+
 ## 📦 Available SDKs
+Choose the SDK based on your preferred programming language and navigate to the corresponding directory.
 
 ### JavaScript SDK
 - **Platform**: Node.js and Browser
 - **Directory**: [`js/`](js/)
+- **Navigate** :Run `cd js` to navigate to the JavaScript SDK.
 - **Documentation**: [JavaScript SDK README](js/README.md)
 
 ### Java SDK
 - **Platform**: Java 11+
 - **Directory**: [`java/`](java/)
+- **Navigate** :Run `cd java` to navigate to the Java SDK.
 - **Documentation**: [Java SDK README](java/README.md)
 
 ### Python SDK
 - **Platform**: Python 3.8+
 - **Directory**: [`python/`](python/)
+- **Navigate** :Run `cd python` to navigate to the Python SDK.
 - **Documentation**: [Python SDK README](python/README.md)
 
 ### PHP SDK
 - **Platform**: PHP 7.4+
 - **Directory**: [`php/`](php/)
+- **Navigate** :Run `cd php` to navigate to the PHP SDK.
 - **Documentation**: [PHP SDK README](php/README.md)
 
 

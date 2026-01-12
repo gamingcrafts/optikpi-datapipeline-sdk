@@ -13,7 +13,7 @@ use Optikpi\DataPipeline\Models\WalletBalanceEvent;
 use Optikpi\DataPipeline\Models\CustomerExtEvent;
 
 // Load environment variables
-$dotenv = parse_ini_file(__DIR__ . '/../.env');
+$dotenv = parse_ini_file(__DIR__ . '/.env');
 
 $API_BASE_URL = $dotenv['API_BASE_URL'] ?? getenv('API_BASE_URL');
 $AUTH_TOKEN = $dotenv['AUTH_TOKEN'] ?? getenv('AUTH_TOKEN');
@@ -24,7 +24,7 @@ $WORKSPACE_ID = $dotenv['WORKSPACE_ID'] ?? getenv('WORKSPACE_ID');
 if (empty($AUTH_TOKEN) || empty($ACCOUNT_ID) || empty($WORKSPACE_ID)) {
     echo "❌ Error: Missing required environment variables!\n";
     echo "   Please set: AUTH_TOKEN, ACCOUNT_ID, WORKSPACE_ID\n";
-    echo "   Copy env.example to .env and fill in your values\n";
+    echo "   fill your credentials in .env file\n";
     exit(1);
 }
 
@@ -216,6 +216,7 @@ function createSampleGamingActivityEvent($accountId, $workspaceId) {
         'provider' => 'ProviderXYZ',
         'bonus_id' => 'bonus_12345',
         'free_spin_id' => 'freespin_67890',
+        'jackpot_amount'=> 1000.00,
         'num_spins_played' => 50,
         'game_theme' => 'Egyptian',
         'remaining_spins' => 10,

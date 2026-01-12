@@ -109,20 +109,71 @@ OptikpiDataPipelineSDK sdk = new OptikpiDataPipelineSDK(config);
 
 // Create customer profile
 CustomerProfile customer = new CustomerProfile();
-customer.setAccountId("acc_12345");
-customer.setWorkspaceId("ws_67890");
-customer.setUserId("user_001");
+customer.setAccountId(accountId);
+customer.setWorkspaceId(workspaceId);
+customer.setUserId("java_field01");
 customer.setUsername("john_doe");
-customer.setEmail("john.doe@example.com");
 customer.setFullName("John Doe");
+customer.setFirstName("John");
+customer.setLastName("Doe");
+customer.setDateOfBirth("1990-01-15");
+customer.setEmail("john.doe@example.com");
+customer.setPhoneNumber("+1234567890");
+customer.setGender("Male");
+customer.setCountry("United States");
+customer.setCity("New York");
+customer.setLanguage("en");
+customer.setCurrency("USD");
+customer.setPhoneVerification("Verified");
+customer.setEmailVerification("Verified");
+customer.setBankVerification("NotVerified");
+customer.setIddocVerification("Verified");
+customer.setMarketingEmailPreference("Opt-in");
+customer.setNotificationsPreference("Opt-in");
+customer.setSubscription("Subscribed");
+customer.setPrivacySettings("private");
+customer.setDepositLimits(1000.00);
+customer.setLossLimits(500.00);
+customer.setWageringLimits(2000.00);
+customer.setSessionTimeLimits(120);
+customer.setCoolingOffExpiryDate("2024-12-31T23:59:59Z");
+customer.setSelfExclusionExpiryDate("2025-01-31T23:59:59Z");
+customer.setRealityChecksNotification("daily");
+customer.setVipStatus("Regular");
+customer.setLoyaltyProgramTiers("Bronze");
 customer.setAccountStatus("Active");
+customer.setBonusAbuser("Not flagged");
+customer.setFinancialRiskLevel(0.3);
+customer.setAcquisitionSource("Google Ads");
+customer.setPartnerId("partner123");
+customer.setReferralLinkCode("REF789");
+customer.setReferralLimitReached("Not Reached");
+customer.setCreationTimestamp("2024-01-15T10:30:00Z");
+customer.setRiskScoreLevel("low");
+customer.setMarketingSmsPreference("Opt-in");
+// Custom data as Map (same in both)
+Map<String, Object> customData = new HashMap<>();
+customData.put("favorite_game", "slots");
+customData.put("newsletter_signup", true);
+customer.setCustomData(customData);
+customer.setSelfExclusionBy("player");
+customer.setSelfExclusionByType("voluntary");
+customer.setSelfExclusionCheckTime("2024-01-15T10:30:00Z");
+customer.setSelfExclusionCreatedTime("2024-01-01T00:00:00Z");
+customer.setClosedTime(null);
+customer.setRealMoneyEnabled("true");
+customer.setPushToken("push_token_abc123");
+customer.setAndroidPushToken("android_push_token_xyz456");
+customer.setIosPushToken("ios_push_token_def789");
+customer.setWindowsPushToken("windows_push_token_ghi012");  
+customer.setMacDmgPushToken("mac_push_token_jkl345");
 
 //validation
 ValidationResult result = customer.validate();
 if (!result.isValid()) {
     System.out.println("Validation errors: " + result.getErrors());
 }
-
+System.out.println("✅ Customer event validated successfully!");
 // Send customer profile
 var response = sdk.sendCustomerProfile(customer);
 if (response.isSuccess()) {

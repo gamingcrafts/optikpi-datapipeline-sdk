@@ -80,14 +80,18 @@ class DataPipelineClient
         ];
 
         if ($data !== null && $method !== 'GET') {
-            $dataString = is_string($data) ? $data : json_encode($data, JSON_UNESCAPED_SLASHES);
-            
+            // CRITICAL: Generate HMAC signature from data object first (before JSON encoding)
+            // This matches the JavaScript/Python/Java implementations
             $hmacSignature = Crypto::generateHmacSignature(
                 $data,
                 $this->config['authToken'],
                 $this->config['accountId'],
                 $this->config['workspaceId']
             );
+            
+            // Then convert to JSON string for request body - must match signature encoding
+            // Use same format as signature: compact, no key sorting
+            $dataString = is_string($data) ? $data : json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
             $headers[] = 'x-optikpi-token: ' . $this->config['authToken'];
             $headers[] = 'x-optikpi-account-id: ' . $this->config['accountId'];

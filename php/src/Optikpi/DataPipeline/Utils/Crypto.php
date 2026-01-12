@@ -36,15 +36,10 @@ class Crypto
         $infoBuffer = $info;
 
         try {
-            // PHP 7.2+ has hash_hkdf function
-            if (function_exists('hash_hkdf')) {
-                // hash_hkdf returns hex string, convert to binary for consistency
-                $derivedKeyHex = hash_hkdf($algorithm, $ikm, $length, $infoBuffer, $salt);
-                return hex2bin($derivedKeyHex);
-            } else {
-                // Fallback implementation for older PHP versions
-                return self::hkdfFallback($algorithm, $ikm, $salt, $infoBuffer, $length);
-            }
+            // CRITICAL: PHP's hash_hkdf follows RFC 5869, but Node.js crypto.hkdfSync
+            // uses a different parameter order (ikm as key, salt as message).
+            // We must use the fallback implementation to match Node.js behavior.
+            return self::hkdfFallback($algorithm, $ikm, $salt, $infoBuffer, $length);
         } catch (\Exception $e) {
             throw new \Exception("HKDF key derivation failed: " . $e->getMessage());
         }
@@ -69,16 +64,19 @@ class Crypto
     ): string {
         $hashLen = strlen(hash($algo, '', true));
         
-        // Extract
+        // Extract step - CRITICAL: Node.js uses ikm as HMAC key and salt as message
+        // This is backwards from RFC 5869, but matches Node.js crypto.hkdfSync behavior
         if (empty($salt)) {
             $salt = str_repeat("\0", $hashLen);
         }
-        $prk = hash_hmac($algo, $ikm, $salt, true);
+        // PRK = HMAC-Hash(ikm, salt) - ikm is key, salt is message
+        $prk = hash_hmac($algo, $salt, $ikm, true);
         
-        // Expand
+        // Expand step
         $okm = '';
         $t = '';
-        for ($i = 1; strlen($okm) < $length; $i++) {
+        $n = (int)ceil($length / $hashLen);
+        for ($i = 1; $i <= $n; $i++) {
             $t = hash_hmac($algo, $t . $info . chr($i), $prk, true);
             $okm .= $t;
         }
@@ -112,8 +110,12 @@ class Crypto
             $info = 'hmac-signing';
             $derivedKey = self::deriveKey($authToken, $accountId, $workspaceId, $info, $algorithm);
             
-            $dataString = is_string($data) ? $data : json_encode($data, JSON_UNESCAPED_SLASHES);
-            $signature = hash_hmac($algorithm, $dataString, $derivedKey);
+            // CRITICAL: Match JavaScript JSON.stringify behavior exactly
+            // - Compact format (no spaces): use JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+            // - No key sorting (preserve insertion order)
+            // - Same as Python: json.dumps(data, separators=(',', ':'))
+            $dataString = is_string($data) ? $data : json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            $signature = hash_hmac($algorithm, $dataString, $derivedKey, false); // false = return hex string
             
             return $signature;
         } catch (\Exception $e) {
@@ -148,4 +150,3 @@ class Crypto
         }
     }
 }
-

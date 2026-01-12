@@ -6,7 +6,7 @@ use Optikpi\DataPipeline\OptikpiDataPipelineSDK;
 use Optikpi\DataPipeline\Models\ReferFriendEvent;
 
 // Load environment variables
-$dotenv = parse_ini_file(__DIR__ . '/../.env');
+$dotenv = parse_ini_file(__DIR__ . '/.env');
 
 $API_BASE_URL = $dotenv['API_BASE_URL'] ?? getenv('API_BASE_URL');
 $AUTH_TOKEN = $dotenv['AUTH_TOKEN'] ?? getenv('AUTH_TOKEN');
@@ -17,7 +17,7 @@ $WORKSPACE_ID = $dotenv['WORKSPACE_ID'] ?? getenv('WORKSPACE_ID');
 if (empty($AUTH_TOKEN) || empty($ACCOUNT_ID) || empty($WORKSPACE_ID)) {
     echo "❌ Error: Missing required environment variables!\n";
     echo "   Please set: AUTH_TOKEN, ACCOUNT_ID, WORKSPACE_ID\n";
-    echo "   Copy env.example to .env and fill in your values\n";
+    echo "   fill your credentials in .env file\n";
     exit(1);
 }
 

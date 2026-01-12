@@ -9,6 +9,15 @@ js/examples/dist/**
 js/examples/node_modules/**
 js/examples/package-lock.json
 
+#php
+php/vendor/
+php/composer.lock
+php/.idea/
+php/.vscode/
+php/*.log
+
+
+
 # Python - Root level files/folders
 python/__pycache__/
 python/.pytest_cache/
