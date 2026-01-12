@@ -336,7 +336,7 @@ The official Optikpi Data Pipeline SDK makes integration simple and secure. All 
 The Python, Java, Node.js, and PHP SDK configuration can be found at the GitHub repository:
 https://github.com/gamingcrafts/optikpi-datapipeline-sdk
 
-Below are sample code examples for SDK Integration in different languages:
+Below are samples Node.js code for SDK Integration
 
 ### 1. Send Customer Profile
 ```javascript
