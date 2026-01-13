@@ -328,12 +328,12 @@ Before you begin, you'll need:
 1. Your authentication token
 2. Account ID and Workspace ID
 3. API Gateway URL
-4. Node.js/Python/Java programming langauage or any utility to acesss Rest API
+4. Node.js/Python/Java/PHP programming language or any utility to access Rest API
 
 ## 📚 SDK Integration Guide
 The official Optikpi Data Pipeline SDK makes integration simple and secure. All authentication, validation, and error handling is handled automatically. 
 
-The Python, Java and Node JS SDK configuration can be found at the GitHub repository:
+The Python, Java, Node.js, and PHP SDK configuration can be found at the GitHub repository:
 https://github.com/gamingcrafts/optikpi-datapipeline-sdk
 
 Below are samples Node.js code for SDK Integration
@@ -658,6 +658,7 @@ For technical support and questions:
 - **JavaScript SDK Guide**: [README.md](https://github.com/gamingcrafts/optikpi-datapipeline-sdk/tree/main/js/)
 - **Java SDK Guide**: [README.md](https://github.com/gamingcrafts/optikpi-datapipeline-sdk/tree/main/java/)
 - **Python SDK Guide**: [README.md](https://github.com/gamingcrafts/optikpi-datapipeline-sdk/tree/main/python)
+- **PHP SDK Guide**: [README.md](https://github.com/gamingcrafts/optikpi-datapipeline-sdk/tree/main/php)
 
 
 This integration guide provides everything you need to successfully integrate with the Optikpi Data Pipeline API. Choose the approach that best fits your technology stack and requirements.

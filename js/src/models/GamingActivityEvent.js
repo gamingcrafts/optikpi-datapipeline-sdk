@@ -20,6 +20,7 @@ class GamingActivityEvent {
     this.loss_amount = data.loss_amount;
     this.bonus_id = data.bonus_id;
     this.free_spin_id = data.free_spin_id;
+    this.jackpot_amount = data.jackpot_amount;
     this.tournament_name = data.tournament_name;
     this.num_spins_played = data.num_spins_played;
     this.game_theme = data.game_theme;
@@ -45,7 +46,6 @@ class GamingActivityEvent {
     this.multiplayer_option = data.multiplayer_option;
     this.auto_play = data.auto_play;
     this.poker_variant = data.poker_variant;
-    this.tournament_name = data.tournament_name;
     this.buy_in_amount = data.buy_in_amount;
     this.table_type = data.table_type;
     this.stakes_level = data.stakes_level;
