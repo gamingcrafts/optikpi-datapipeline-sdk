@@ -18,6 +18,7 @@
     "test:customerExt":"node test-customerext-endpoint.js"
   },
   "dependencies": {
+      "@optikpi/datapipeline-sdk": "github:gamingcrafts/optikpi-datapipeline-sdk#main"
   },
   "devDependencies": {
     "dotenv": "^16.3.1"

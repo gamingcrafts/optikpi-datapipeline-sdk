@@ -1,6 +1,6 @@
 require('dotenv').config();
-const OptikpiDataPipelineSDK = require('../src/index');
-const { AccountEvent } = require('../src/models');
+const OptikpiDataPipelineSDK = require('@optikpi/datapipeline-sdk').default;
+const { AccountEvent } = require('@optikpi/datapipeline-sdk')
 
 // Configuration - Read from environment variables
 const API_BASE_URL = process.env.API_BASE_URL;
