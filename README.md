@@ -20,6 +20,7 @@ Official SDKs for the Optikpi Data Pipeline API. This repository contains JavaSc
 - **Well Tested**: Extensive test coverage and examples
 
 ## 🚀 Getting Started
+First, install Git on your system. Then clone the repository and navigate into the project directory.
 ### Clone the Repository
 ```bash
    git clone https://github.com/gamingcrafts/optikpi-datapipeline-sdk.git
