@@ -14413,7 +14413,7 @@ var debug = debug_1;
 (function detectUnsupportedEnvironment() {
   var looksLikeNode = typeof process !== "undefined";
   var looksLikeBrowser = typeof window !== "undefined" && typeof document !== "undefined";
-  var looksLikeV8 = isFunction$1(Error.captureStackTrace);
+  var looksLikeV8 = isFunction$2(Error.captureStackTrace);
   if (!looksLikeNode && (looksLikeBrowser || !looksLikeV8)) {
     console.warn("The follow-redirects package should be excluded from browser builds.");
   }
@@ -14537,7 +14537,7 @@ RedirectableRequest.prototype.write = function (data, encoding, callback) {
   if (!isString$1(data) && !isBuffer$1(data)) {
     throw new TypeError("data should be a string, Buffer or Uint8Array");
   }
-  if (isFunction$1(encoding)) {
+  if (isFunction$2(encoding)) {
     callback = encoding;
     encoding = null;
   }
@@ -14566,11 +14566,11 @@ RedirectableRequest.prototype.write = function (data, encoding, callback) {
 // Ends the current native request
 RedirectableRequest.prototype.end = function (data, encoding, callback) {
   // Shift parameters if necessary
-  if (isFunction$1(data)) {
+  if (isFunction$2(data)) {
     callback = data;
     data = encoding = null;
   }
-  else if (isFunction$1(encoding)) {
+  else if (isFunction$2(encoding)) {
     callback = encoding;
     encoding = null;
   }
@@ -14878,7 +14878,7 @@ RedirectableRequest.prototype._processResponse = function (response) {
   }
 
   // Evaluate the beforeRedirect callback
-  if (isFunction$1(beforeRedirect)) {
+  if (isFunction$2(beforeRedirect)) {
     var responseDetails = {
       headers: response.headers,
       statusCode: statusCode,
@@ -14925,7 +14925,7 @@ function wrap(protocols) {
         options = validateUrl(input);
         input = { protocol: protocol };
       }
-      if (isFunction$1(options)) {
+      if (isFunction$2(options)) {
         callback = options;
         options = null;
       }
@@ -15030,7 +15030,7 @@ function createErrorType(code, message, baseClass) {
   // Create constructor
   function CustomError(properties) {
     // istanbul ignore else
-    if (isFunction$1(Error.captureStackTrace)) {
+    if (isFunction$2(Error.captureStackTrace)) {
       Error.captureStackTrace(this, this.constructor);
     }
     Object.assign(this, properties || {});
@@ -15071,7 +15071,7 @@ function isString$1(value) {
   return typeof value === "string" || value instanceof String;
 }
 
-function isFunction$1(value) {
+function isFunction$2(value) {
   return typeof value === "function";
 }
 
@@ -15089,7 +15089,7 @@ followRedirects$1.exports.wrap = wrap;
 
 var followRedirectsExports = followRedirects$1.exports;
 
-/*! Axios v1.11.0 Copyright (c) 2025 Matt Zabriskie and contributors */
+/*! Axios v1.12.2 Copyright (c) 2025 Matt Zabriskie and contributors */
 
 const FormData$1 = form_data;
 const crypto$2 = require$$8;
@@ -15167,7 +15167,7 @@ const isUndefined = typeOfTest('undefined');
  */
 function isBuffer(val) {
   return val !== null && !isUndefined(val) && val.constructor !== null && !isUndefined(val.constructor)
-    && isFunction(val.constructor.isBuffer) && val.constructor.isBuffer(val);
+    && isFunction$1(val.constructor.isBuffer) && val.constructor.isBuffer(val);
 }
 
 /**
@@ -15212,7 +15212,7 @@ const isString = typeOfTest('string');
  * @param {*} val The value to test
  * @returns {boolean} True if value is a Function, otherwise false
  */
-const isFunction = typeOfTest('function');
+const isFunction$1 = typeOfTest('function');
 
 /**
  * Determine if a value is a Number
@@ -15268,7 +15268,7 @@ const isEmptyObject = (val) => {
   if (!isObject(val) || isBuffer(val)) {
     return false;
   }
-  
+
   try {
     return Object.keys(val).length === 0 && Object.getPrototypeOf(val) === Object.prototype;
   } catch (e) {
@@ -15320,7 +15320,7 @@ const isFileList = kindOfTest('FileList');
  *
  * @returns {boolean} True if value is a Stream, otherwise false
  */
-const isStream = (val) => isObject(val) && isFunction(val.pipe);
+const isStream = (val) => isObject(val) && isFunction$1(val.pipe);
 
 /**
  * Determine if a value is a FormData
@@ -15333,10 +15333,10 @@ const isFormData = (thing) => {
   let kind;
   return thing && (
     (typeof FormData === 'function' && thing instanceof FormData) || (
-      isFunction(thing.append) && (
+      isFunction$1(thing.append) && (
         (kind = kindOf(thing)) === 'formdata' ||
         // detect form-data instance
-        (kind === 'object' && isFunction(thing.toString) && thing.toString() === '[object FormData]')
+        (kind === 'object' && isFunction$1(thing.toString) && thing.toString() === '[object FormData]')
       )
     )
   )
@@ -15461,7 +15461,7 @@ const isContextDefined = (context) => !isUndefined(context) && context !== _glob
  * @returns {Object} Result of all merge properties
  */
 function merge(/* obj1, obj2, obj3, ... */) {
-  const {caseless} = isContextDefined(this) && this || {};
+  const {caseless, skipUndefined} = isContextDefined(this) && this || {};
   const result = {};
   const assignValue = (val, key) => {
     const targetKey = caseless && findKey(result, key) || key;
@@ -15471,7 +15471,7 @@ function merge(/* obj1, obj2, obj3, ... */) {
       result[targetKey] = merge({}, val);
     } else if (isArray(val)) {
       result[targetKey] = val.slice();
-    } else {
+    } else if (!skipUndefined || !isUndefined(val)) {
       result[targetKey] = val;
     }
   };
@@ -15494,7 +15494,7 @@ function merge(/* obj1, obj2, obj3, ... */) {
  */
 const extend = (a, b, thisArg, {allOwnKeys}= {}) => {
   forEach(b, (val, key) => {
-    if (thisArg && isFunction(val)) {
+    if (thisArg && isFunction$1(val)) {
       a[key] = bind(val, thisArg);
     } else {
       a[key] = val;
@@ -15710,13 +15710,13 @@ const reduceDescriptors = (obj, reducer) => {
 const freezeMethods = (obj) => {
   reduceDescriptors(obj, (descriptor, name) => {
     // skip restricted props in strict mode
-    if (isFunction(obj) && ['arguments', 'caller', 'callee'].indexOf(name) !== -1) {
+    if (isFunction$1(obj) && ['arguments', 'caller', 'callee'].indexOf(name) !== -1) {
       return false;
     }
 
     const value = obj[name];
 
-    if (!isFunction(value)) return;
+    if (!isFunction$1(value)) return;
 
     descriptor.enumerable = false;
 
@@ -15753,6 +15753,8 @@ const toFiniteNumber = (value, defaultValue) => {
   return value != null && Number.isFinite(value = +value) ? value : defaultValue;
 };
 
+
+
 /**
  * If the thing is a FormData object, return true, otherwise return false.
  *
@@ -15761,7 +15763,7 @@ const toFiniteNumber = (value, defaultValue) => {
  * @returns {boolean}
  */
 function isSpecCompliantForm(thing) {
-  return !!(thing && isFunction(thing.append) && thing[toStringTag] === 'FormData' && thing[iterator]);
+  return !!(thing && isFunction$1(thing.append) && thing[toStringTag] === 'FormData' && thing[iterator]);
 }
 
 const toJSONObject = (obj) => {
@@ -15803,7 +15805,7 @@ const toJSONObject = (obj) => {
 const isAsyncFn = kindOfTest('AsyncFunction');
 
 const isThenable = (thing) =>
-  thing && (isObject(thing) || isFunction(thing)) && isFunction(thing.then) && isFunction(thing.catch);
+  thing && (isObject(thing) || isFunction$1(thing)) && isFunction$1(thing.then) && isFunction$1(thing.catch);
 
 // original code
 // https://github.com/DigitalBrainJS/AxiosPromise/blob/16deab13710ec09779922131f3fa5954320f83ab/lib/utils.js#L11-L34
@@ -15827,7 +15829,7 @@ const _setImmediate = ((setImmediateSupported, postMessageSupported) => {
   })(`axios@${Math.random()}`, []) : (cb) => setTimeout(cb);
 })(
   typeof setImmediate === 'function',
-  isFunction(_global.postMessage)
+  isFunction$1(_global.postMessage)
 );
 
 const asap = typeof queueMicrotask !== 'undefined' ?
@@ -15836,7 +15838,7 @@ const asap = typeof queueMicrotask !== 'undefined' ?
 // *********************
 
 
-const isIterable = (thing) => thing != null && isFunction(thing[iterator]);
+const isIterable = (thing) => thing != null && isFunction$1(thing[iterator]);
 
 
 const utils$1 = {
@@ -15860,7 +15862,7 @@ const utils$1 = {
   isFile,
   isBlob,
   isRegExp,
-  isFunction,
+  isFunction: isFunction$1,
   isStream,
   isURLSearchParams,
   isTypedArray,
@@ -15986,11 +15988,18 @@ AxiosError.from = (error, code, config, request, response, customProps) => {
     return prop !== 'isAxiosError';
   });
 
-  AxiosError.call(axiosError, error.message, code, config, request, response);
+  const msg = error && error.message ? error.message : 'Error';
 
-  axiosError.cause = error;
+  // Prefer explicit code; otherwise copy the low-level error's code (e.g. ECONNREFUSED)
+  const errCode = code == null && error ? error.code : code;
+  AxiosError.call(axiosError, msg, errCode, config, request, response);
 
-  axiosError.name = error.name;
+  // Chain the original error on the standard field; non-enumerable to avoid JSON noise
+  if (error && axiosError.cause == null) {
+    Object.defineProperty(axiosError, 'cause', { value: error, configurable: true });
+  }
+
+  axiosError.name = (error && error.name) || 'Error';
 
   customProps && Object.assign(axiosError, customProps);
 
@@ -16278,9 +16287,7 @@ function encode(val) {
     replace(/%3A/gi, ':').
     replace(/%24/g, '$').
     replace(/%2C/gi, ',').
-    replace(/%20/g, '+').
-    replace(/%5B/gi, '[').
-    replace(/%5D/gi, ']');
+    replace(/%20/g, '+');
 }
 
 /**
@@ -16706,7 +16713,7 @@ const defaults = {
       const strictJSONParsing = !silentJSONParsing && JSONRequested;
 
       try {
-        return JSON.parse(data);
+        return JSON.parse(data, this.parseReviver);
       } catch (e) {
         if (strictJSONParsing) {
           if (e.name === 'SyntaxError') {
@@ -17233,7 +17240,7 @@ function buildFullPath(baseURL, requestedURL, allowAbsoluteUrls) {
   return requestedURL;
 }
 
-const VERSION = "1.11.0";
+const VERSION = "1.12.2";
 
 function parseProtocol(url) {
   const match = /^([-+\w]{1,25})(:?\/\/|:)/.exec(url);
@@ -17726,6 +17733,80 @@ const progressEventDecorator = (total, throttled) => {
 
 const asyncDecorator = (fn) => (...args) => utils$1.asap(() => fn(...args));
 
+/**
+ * Estimate decoded byte length of a data:// URL *without* allocating large buffers.
+ * - For base64: compute exact decoded size using length and padding;
+ *               handle %XX at the character-count level (no string allocation).
+ * - For non-base64: use UTF-8 byteLength of the encoded body as a safe upper bound.
+ *
+ * @param {string} url
+ * @returns {number}
+ */
+function estimateDataURLDecodedBytes(url) {
+  if (!url || typeof url !== 'string') return 0;
+  if (!url.startsWith('data:')) return 0;
+
+  const comma = url.indexOf(',');
+  if (comma < 0) return 0;
+
+  const meta = url.slice(5, comma);
+  const body = url.slice(comma + 1);
+  const isBase64 = /;base64/i.test(meta);
+
+  if (isBase64) {
+    let effectiveLen = body.length;
+    const len = body.length; // cache length
+
+    for (let i = 0; i < len; i++) {
+      if (body.charCodeAt(i) === 37 /* '%' */ && i + 2 < len) {
+        const a = body.charCodeAt(i + 1);
+        const b = body.charCodeAt(i + 2);
+        const isHex =
+          ((a >= 48 && a <= 57) || (a >= 65 && a <= 70) || (a >= 97 && a <= 102)) &&
+          ((b >= 48 && b <= 57) || (b >= 65 && b <= 70) || (b >= 97 && b <= 102));
+
+        if (isHex) {
+          effectiveLen -= 2;
+          i += 2;
+        }
+      }
+    }
+
+    let pad = 0;
+    let idx = len - 1;
+
+    const tailIsPct3D = (j) =>
+      j >= 2 &&
+      body.charCodeAt(j - 2) === 37 && // '%'
+      body.charCodeAt(j - 1) === 51 && // '3'
+      (body.charCodeAt(j) === 68 || body.charCodeAt(j) === 100); // 'D' or 'd'
+
+    if (idx >= 0) {
+      if (body.charCodeAt(idx) === 61 /* '=' */) {
+        pad++;
+        idx--;
+      } else if (tailIsPct3D(idx)) {
+        pad++;
+        idx -= 3;
+      }
+    }
+
+    if (pad === 1 && idx >= 0) {
+      if (body.charCodeAt(idx) === 61 /* '=' */) {
+        pad++;
+      } else if (tailIsPct3D(idx)) {
+        pad++;
+      }
+    }
+
+    const groups = Math.floor(effectiveLen / 4);
+    const bytes = groups * 3 - (pad || 0);
+    return bytes > 0 ? bytes : 0;
+  }
+
+  return Buffer.byteLength(body, 'utf8');
+}
+
 const zlibOptions = {
   flush: zlib__default["default"].constants.Z_SYNC_FLUSH,
   finishFlush: zlib__default["default"].constants.Z_SYNC_FLUSH
@@ -17746,6 +17827,7 @@ const supportedProtocols = platform.protocols.map(protocol => {
   return protocol + ':';
 });
 
+
 const flushOnFinish = (stream, [throttled, flush]) => {
   stream
     .on('end', flush)
@@ -17753,6 +17835,7 @@ const flushOnFinish = (stream, [throttled, flush]) => {
 
   return throttled;
 };
+
 
 /**
  * If the proxy or config beforeRedirects functions are defined, call them with the options
@@ -17933,6 +18016,21 @@ const httpAdapter = isHttpAdapterSupported && function httpAdapter(config) {
     const protocol = parsed.protocol || supportedProtocols[0];
 
     if (protocol === 'data:') {
+      // Apply the same semantics as HTTP: only enforce if a finite, non-negative cap is set.
+      if (config.maxContentLength > -1) {
+        // Use the exact string passed to fromDataURI (config.url); fall back to fullPath if needed.
+        const dataUrl = String(config.url || fullPath || '');
+        const estimated = estimateDataURLDecodedBytes(dataUrl);
+
+        if (estimated > config.maxContentLength) {
+          return reject(new AxiosError(
+            'maxContentLength size of ' + config.maxContentLength + ' exceeded',
+            AxiosError.ERR_BAD_RESPONSE,
+            config
+          ));
+        }
+      }
+
       let convertedData;
 
       if (method !== 'GET') {
@@ -18547,7 +18645,7 @@ function mergeConfig(config1, config2) {
 const resolveConfig = (config) => {
   const newConfig = mergeConfig({}, config);
 
-  let {data, withXSRFToken, xsrfHeaderName, xsrfCookieName, headers, auth} = newConfig;
+  let { data, withXSRFToken, xsrfHeaderName, xsrfCookieName, headers, auth } = newConfig;
 
   newConfig.headers = headers = AxiosHeaders$1.from(headers);
 
@@ -18560,17 +18658,21 @@ const resolveConfig = (config) => {
     );
   }
 
-  let contentType;
-
   if (utils$1.isFormData(data)) {
     if (platform.hasStandardBrowserEnv || platform.hasStandardBrowserWebWorkerEnv) {
-      headers.setContentType(undefined); // Let the browser set it
-    } else if ((contentType = headers.getContentType()) !== false) {
-      // fix semicolon duplication issue for ReactNative FormData implementation
-      const [type, ...tokens] = contentType ? contentType.split(';').map(token => token.trim()).filter(Boolean) : [];
-      headers.setContentType([type || 'multipart/form-data', ...tokens].join('; '));
+      headers.setContentType(undefined); // browser handles it
+    } else if (utils$1.isFunction(data.getHeaders)) {
+      // Node.js FormData (like form-data package)
+      const formHeaders = data.getHeaders();
+      // Only set safe headers to avoid overwriting security headers
+      const allowedHeaders = ['content-type', 'content-length'];
+      Object.entries(formHeaders).forEach(([key, val]) => {
+        if (allowedHeaders.includes(key.toLowerCase())) {
+          headers.set(key, val);
+        }
+      });
     }
-  }
+  }  
 
   // Add xsrf header
   // This is only done if running in a standard browser environment.
@@ -18687,15 +18789,18 @@ const xhrAdapter = isXHRAdapterSupported && function (config) {
     };
 
     // Handle low level network errors
-    request.onerror = function handleError() {
-      // Real errors are hidden from us by the browser
-      // onerror should only fire if it's a network error
-      reject(new AxiosError('Network Error', AxiosError.ERR_NETWORK, config, request));
-
-      // Clean up request
-      request = null;
+  request.onerror = function handleError(event) {
+       // Browsers deliver a ProgressEvent in XHR onerror
+       // (message may be empty; when present, surface it)
+       // See https://developer.mozilla.org/docs/Web/API/XMLHttpRequest/error_event
+       const msg = event && event.message ? event.message : 'Network Error';
+       const err = new AxiosError(msg, AxiosError.ERR_NETWORK, config, request);
+       // attach the underlying event for consumers who want details
+       err.event = event || null;
+       reject(err);
+       request = null;
     };
-
+    
     // Handle timeout
     request.ontimeout = function handleTimeout() {
       let timeoutErrorMessage = _config.timeout ? 'timeout of ' + _config.timeout + 'ms exceeded' : 'timeout exceeded';
@@ -18911,14 +19016,18 @@ const trackStream = (stream, chunkSize, onProgress, onFinish) => {
   })
 };
 
-const isFetchSupported = typeof fetch === 'function' && typeof Request === 'function' && typeof Response === 'function';
-const isReadableStreamSupported = isFetchSupported && typeof ReadableStream === 'function';
+const DEFAULT_CHUNK_SIZE = 64 * 1024;
 
-// used only inside the fetch adapter
-const encodeText = isFetchSupported && (typeof TextEncoder === 'function' ?
-    ((encoder) => (str) => encoder.encode(str))(new TextEncoder()) :
-    async (str) => new Uint8Array(await new Response(str).arrayBuffer())
-);
+const {isFunction} = utils$1;
+
+const globalFetchAPI = (({Request, Response}) => ({
+  Request, Response
+}))(utils$1.global);
+
+const {
+  ReadableStream: ReadableStream$1, TextEncoder: TextEncoder$1
+} = utils$1.global;
+
 
 const test = (fn, ...args) => {
   try {
@@ -18928,211 +19037,268 @@ const test = (fn, ...args) => {
   }
 };
 
-const supportsRequestStream = isReadableStreamSupported && test(() => {
-  let duplexAccessed = false;
+const factory = (env) => {
+  env = utils$1.merge.call({
+    skipUndefined: true
+  }, globalFetchAPI, env);
 
-  const hasContentType = new Request(platform.origin, {
-    body: new ReadableStream(),
-    method: 'POST',
-    get duplex() {
-      duplexAccessed = true;
-      return 'half';
-    },
-  }).headers.has('Content-Type');
+  const {fetch: envFetch, Request, Response} = env;
+  const isFetchSupported = envFetch ? isFunction(envFetch) : typeof fetch === 'function';
+  const isRequestSupported = isFunction(Request);
+  const isResponseSupported = isFunction(Response);
 
-  return duplexAccessed && !hasContentType;
-});
+  if (!isFetchSupported) {
+    return false;
+  }
 
-const DEFAULT_CHUNK_SIZE = 64 * 1024;
+  const isReadableStreamSupported = isFetchSupported && isFunction(ReadableStream$1);
 
-const supportsResponseStream = isReadableStreamSupported &&
-  test(() => utils$1.isReadableStream(new Response('').body));
+  const encodeText = isFetchSupported && (typeof TextEncoder$1 === 'function' ?
+      ((encoder) => (str) => encoder.encode(str))(new TextEncoder$1()) :
+      async (str) => new Uint8Array(await new Request(str).arrayBuffer())
+  );
 
+  const supportsRequestStream = isRequestSupported && isReadableStreamSupported && test(() => {
+    let duplexAccessed = false;
 
-const resolvers = {
-  stream: supportsResponseStream && ((res) => res.body)
-};
+    const hasContentType = new Request(platform.origin, {
+      body: new ReadableStream$1(),
+      method: 'POST',
+      get duplex() {
+        duplexAccessed = true;
+        return 'half';
+      },
+    }).headers.has('Content-Type');
 
-isFetchSupported && (((res) => {
-  ['text', 'arrayBuffer', 'blob', 'formData', 'stream'].forEach(type => {
-    !resolvers[type] && (resolvers[type] = utils$1.isFunction(res[type]) ? (res) => res[type]() :
-      (_, config) => {
+    return duplexAccessed && !hasContentType;
+  });
+
+  const supportsResponseStream = isResponseSupported && isReadableStreamSupported &&
+    test(() => utils$1.isReadableStream(new Response('').body));
+
+  const resolvers = {
+    stream: supportsResponseStream && ((res) => res.body)
+  };
+
+  isFetchSupported && ((() => {
+    ['text', 'arrayBuffer', 'blob', 'formData', 'stream'].forEach(type => {
+      !resolvers[type] && (resolvers[type] = (res, config) => {
+        let method = res && res[type];
+
+        if (method) {
+          return method.call(res);
+        }
+
         throw new AxiosError(`Response type '${type}' is not supported`, AxiosError.ERR_NOT_SUPPORT, config);
       });
-  });
-})(new Response));
-
-const getBodyLength = async (body) => {
-  if (body == null) {
-    return 0;
-  }
-
-  if(utils$1.isBlob(body)) {
-    return body.size;
-  }
-
-  if(utils$1.isSpecCompliantForm(body)) {
-    const _request = new Request(platform.origin, {
-      method: 'POST',
-      body,
     });
-    return (await _request.arrayBuffer()).byteLength;
-  }
+  })());
 
-  if(utils$1.isArrayBufferView(body) || utils$1.isArrayBuffer(body)) {
-    return body.byteLength;
-  }
+  const getBodyLength = async (body) => {
+    if (body == null) {
+      return 0;
+    }
 
-  if(utils$1.isURLSearchParams(body)) {
-    body = body + '';
-  }
+    if (utils$1.isBlob(body)) {
+      return body.size;
+    }
 
-  if(utils$1.isString(body)) {
-    return (await encodeText(body)).byteLength;
-  }
-};
-
-const resolveBodyLength = async (headers, body) => {
-  const length = utils$1.toFiniteNumber(headers.getContentLength());
-
-  return length == null ? getBodyLength(body) : length;
-};
-
-const fetchAdapter = isFetchSupported && (async (config) => {
-  let {
-    url,
-    method,
-    data,
-    signal,
-    cancelToken,
-    timeout,
-    onDownloadProgress,
-    onUploadProgress,
-    responseType,
-    headers,
-    withCredentials = 'same-origin',
-    fetchOptions
-  } = resolveConfig(config);
-
-  responseType = responseType ? (responseType + '').toLowerCase() : 'text';
-
-  let composedSignal = composeSignals$1([signal, cancelToken && cancelToken.toAbortSignal()], timeout);
-
-  let request;
-
-  const unsubscribe = composedSignal && composedSignal.unsubscribe && (() => {
-      composedSignal.unsubscribe();
-  });
-
-  let requestContentLength;
-
-  try {
-    if (
-      onUploadProgress && supportsRequestStream && method !== 'get' && method !== 'head' &&
-      (requestContentLength = await resolveBodyLength(headers, data)) !== 0
-    ) {
-      let _request = new Request(url, {
+    if (utils$1.isSpecCompliantForm(body)) {
+      const _request = new Request(platform.origin, {
         method: 'POST',
-        body: data,
-        duplex: "half"
+        body,
       });
-
-      let contentTypeHeader;
-
-      if (utils$1.isFormData(data) && (contentTypeHeader = _request.headers.get('content-type'))) {
-        headers.setContentType(contentTypeHeader);
-      }
-
-      if (_request.body) {
-        const [onProgress, flush] = progressEventDecorator(
-          requestContentLength,
-          progressEventReducer(asyncDecorator(onUploadProgress))
-        );
-
-        data = trackStream(_request.body, DEFAULT_CHUNK_SIZE, onProgress, flush);
-      }
+      return (await _request.arrayBuffer()).byteLength;
     }
 
-    if (!utils$1.isString(withCredentials)) {
-      withCredentials = withCredentials ? 'include' : 'omit';
+    if (utils$1.isArrayBufferView(body) || utils$1.isArrayBuffer(body)) {
+      return body.byteLength;
     }
 
-    // Cloudflare Workers throws when credentials are defined
-    // see https://github.com/cloudflare/workerd/issues/902
-    const isCredentialsSupported = "credentials" in Request.prototype;
-    request = new Request(url, {
-      ...fetchOptions,
-      signal: composedSignal,
-      method: method.toUpperCase(),
-      headers: headers.normalize().toJSON(),
-      body: data,
-      duplex: "half",
-      credentials: isCredentialsSupported ? withCredentials : undefined
+    if (utils$1.isURLSearchParams(body)) {
+      body = body + '';
+    }
+
+    if (utils$1.isString(body)) {
+      return (await encodeText(body)).byteLength;
+    }
+  };
+
+  const resolveBodyLength = async (headers, body) => {
+    const length = utils$1.toFiniteNumber(headers.getContentLength());
+
+    return length == null ? getBodyLength(body) : length;
+  };
+
+  return async (config) => {
+    let {
+      url,
+      method,
+      data,
+      signal,
+      cancelToken,
+      timeout,
+      onDownloadProgress,
+      onUploadProgress,
+      responseType,
+      headers,
+      withCredentials = 'same-origin',
+      fetchOptions
+    } = resolveConfig(config);
+
+    let _fetch = envFetch || fetch;
+
+    responseType = responseType ? (responseType + '').toLowerCase() : 'text';
+
+    let composedSignal = composeSignals$1([signal, cancelToken && cancelToken.toAbortSignal()], timeout);
+
+    let request = null;
+
+    const unsubscribe = composedSignal && composedSignal.unsubscribe && (() => {
+      composedSignal.unsubscribe();
     });
 
-    let response = await fetch(request, fetchOptions);
+    let requestContentLength;
 
-    const isStreamResponse = supportsResponseStream && (responseType === 'stream' || responseType === 'response');
+    try {
+      if (
+        onUploadProgress && supportsRequestStream && method !== 'get' && method !== 'head' &&
+        (requestContentLength = await resolveBodyLength(headers, data)) !== 0
+      ) {
+        let _request = new Request(url, {
+          method: 'POST',
+          body: data,
+          duplex: "half"
+        });
 
-    if (supportsResponseStream && (onDownloadProgress || (isStreamResponse && unsubscribe))) {
-      const options = {};
+        let contentTypeHeader;
 
-      ['status', 'statusText', 'headers'].forEach(prop => {
-        options[prop] = response[prop];
-      });
-
-      const responseContentLength = utils$1.toFiniteNumber(response.headers.get('content-length'));
-
-      const [onProgress, flush] = onDownloadProgress && progressEventDecorator(
-        responseContentLength,
-        progressEventReducer(asyncDecorator(onDownloadProgress), true)
-      ) || [];
-
-      response = new Response(
-        trackStream(response.body, DEFAULT_CHUNK_SIZE, onProgress, () => {
-          flush && flush();
-          unsubscribe && unsubscribe();
-        }),
-        options
-      );
-    }
-
-    responseType = responseType || 'text';
-
-    let responseData = await resolvers[utils$1.findKey(resolvers, responseType) || 'text'](response, config);
-
-    !isStreamResponse && unsubscribe && unsubscribe();
-
-    return await new Promise((resolve, reject) => {
-      settle(resolve, reject, {
-        data: responseData,
-        headers: AxiosHeaders$1.from(response.headers),
-        status: response.status,
-        statusText: response.statusText,
-        config,
-        request
-      });
-    })
-  } catch (err) {
-    unsubscribe && unsubscribe();
-
-    if (err && err.name === 'TypeError' && /Load failed|fetch/i.test(err.message)) {
-      throw Object.assign(
-        new AxiosError('Network Error', AxiosError.ERR_NETWORK, config, request),
-        {
-          cause: err.cause || err
+        if (utils$1.isFormData(data) && (contentTypeHeader = _request.headers.get('content-type'))) {
+          headers.setContentType(contentTypeHeader);
         }
-      )
-    }
 
-    throw AxiosError.from(err, err && err.code, config, request);
+        if (_request.body) {
+          const [onProgress, flush] = progressEventDecorator(
+            requestContentLength,
+            progressEventReducer(asyncDecorator(onUploadProgress))
+          );
+
+          data = trackStream(_request.body, DEFAULT_CHUNK_SIZE, onProgress, flush);
+        }
+      }
+
+      if (!utils$1.isString(withCredentials)) {
+        withCredentials = withCredentials ? 'include' : 'omit';
+      }
+
+      // Cloudflare Workers throws when credentials are defined
+      // see https://github.com/cloudflare/workerd/issues/902
+      const isCredentialsSupported = isRequestSupported && "credentials" in Request.prototype;
+
+      const resolvedOptions = {
+        ...fetchOptions,
+        signal: composedSignal,
+        method: method.toUpperCase(),
+        headers: headers.normalize().toJSON(),
+        body: data,
+        duplex: "half",
+        credentials: isCredentialsSupported ? withCredentials : undefined
+      };
+
+      request = isRequestSupported && new Request(url, resolvedOptions);
+
+      let response = await (isRequestSupported ? _fetch(request, fetchOptions) : _fetch(url, resolvedOptions));
+
+      const isStreamResponse = supportsResponseStream && (responseType === 'stream' || responseType === 'response');
+
+      if (supportsResponseStream && (onDownloadProgress || (isStreamResponse && unsubscribe))) {
+        const options = {};
+
+        ['status', 'statusText', 'headers'].forEach(prop => {
+          options[prop] = response[prop];
+        });
+
+        const responseContentLength = utils$1.toFiniteNumber(response.headers.get('content-length'));
+
+        const [onProgress, flush] = onDownloadProgress && progressEventDecorator(
+          responseContentLength,
+          progressEventReducer(asyncDecorator(onDownloadProgress), true)
+        ) || [];
+
+        response = new Response(
+          trackStream(response.body, DEFAULT_CHUNK_SIZE, onProgress, () => {
+            flush && flush();
+            unsubscribe && unsubscribe();
+          }),
+          options
+        );
+      }
+
+      responseType = responseType || 'text';
+
+      let responseData = await resolvers[utils$1.findKey(resolvers, responseType) || 'text'](response, config);
+
+      !isStreamResponse && unsubscribe && unsubscribe();
+
+      return await new Promise((resolve, reject) => {
+        settle(resolve, reject, {
+          data: responseData,
+          headers: AxiosHeaders$1.from(response.headers),
+          status: response.status,
+          statusText: response.statusText,
+          config,
+          request
+        });
+      })
+    } catch (err) {
+      unsubscribe && unsubscribe();
+
+      if (err && err.name === 'TypeError' && /Load failed|fetch/i.test(err.message)) {
+        throw Object.assign(
+          new AxiosError('Network Error', AxiosError.ERR_NETWORK, config, request),
+          {
+            cause: err.cause || err
+          }
+        )
+      }
+
+      throw AxiosError.from(err, err && err.code, config, request);
+    }
   }
-});
+};
+
+const seedCache = new Map();
+
+const getFetch = (config) => {
+  let env = config ? config.env : {};
+  const {fetch, Request, Response} = env;
+  const seeds = [
+    Request, Response, fetch
+  ];
+
+  let len = seeds.length, i = len,
+    seed, target, map = seedCache;
+
+  while (i--) {
+    seed = seeds[i];
+    target = map.get(seed);
+
+    target === undefined && map.set(seed, target = (i ? new Map() : factory(env)));
+
+    map = target;
+  }
+
+  return target;
+};
+
+getFetch();
 
 const knownAdapters = {
   http: httpAdapter,
   xhr: xhrAdapter,
-  fetch: fetchAdapter
+  fetch: {
+    get: getFetch,
+  }
 };
 
 utils$1.forEach(knownAdapters, (fn, value) => {
@@ -19151,7 +19317,7 @@ const renderReason = (reason) => `- ${reason}`;
 const isResolvedHandle = (adapter) => utils$1.isFunction(adapter) || adapter === null || adapter === false;
 
 const adapters = {
-  getAdapter: (adapters) => {
+  getAdapter: (adapters, config) => {
     adapters = utils$1.isArray(adapters) ? adapters : [adapters];
 
     const {length} = adapters;
@@ -19174,7 +19340,7 @@ const adapters = {
         }
       }
 
-      if (adapter) {
+      if (adapter && (utils$1.isFunction(adapter) || (adapter = adapter.get(config)))) {
         break;
       }
 
@@ -19242,7 +19408,7 @@ function dispatchRequest(config) {
     config.headers.setContentType('application/x-www-form-urlencoded', false);
   }
 
-  const adapter = adapters.getAdapter(config.adapter || defaults$1.adapter);
+  const adapter = adapters.getAdapter(config.adapter || defaults$1.adapter, config);
 
   return adapter(config).then(function onAdapterResolution(response) {
     throwIfCancellationRequested(config);
@@ -19529,8 +19695,6 @@ class Axios {
     len = requestInterceptorChain.length;
 
     let newConfig = config;
-
-    i = 0;
 
     while (i < len) {
       const onFulfilled = requestInterceptorChain[i++];
@@ -20093,30 +20257,6 @@ let DataPipelineClient$1 = class DataPipelineClient {
   }
 
   /**
-   * Performs a health check on the API
-   * @returns {Promise<Object>} Health check response
-   */
-  async healthCheck() {
-    try {
-      const response = await this.axios.get('/datapipeline/health');
-      return {
-        success: true,
-        status: response.status,
-        data: response.data,
-        timestamp: new Date().toISOString()
-      };
-    } catch (error) {
-      var _error$response;
-      return {
-        success: false,
-        error: error.message,
-        status: (_error$response = error.response) === null || _error$response === void 0 ? void 0 : _error$response.status,
-        timestamp: new Date().toISOString()
-      };
-    }
-  }
-
-  /**
    * Sends customer profile data
    * @param {Object|Array} data - Customer profile data or array of profiles
    * @returns {Promise<Object>} API response
@@ -20131,12 +20271,12 @@ let DataPipelineClient$1 = class DataPipelineClient {
         timestamp: new Date().toISOString()
       };
     } catch (error) {
-      var _error$response2, _error$response3;
+      var _error$response, _error$response2;
       return {
         success: false,
         error: error.message,
-        status: (_error$response2 = error.response) === null || _error$response2 === void 0 ? void 0 : _error$response2.status,
-        data: (_error$response3 = error.response) === null || _error$response3 === void 0 ? void 0 : _error$response3.data,
+        status: (_error$response = error.response) === null || _error$response === void 0 ? void 0 : _error$response.status,
+        data: (_error$response2 = error.response) === null || _error$response2 === void 0 ? void 0 : _error$response2.data,
         timestamp: new Date().toISOString()
       };
     }
@@ -20157,12 +20297,12 @@ let DataPipelineClient$1 = class DataPipelineClient {
         timestamp: new Date().toISOString()
       };
     } catch (error) {
-      var _error$response4, _error$response5;
+      var _error$response3, _error$response4;
       return {
         success: false,
         error: error.message,
-        status: (_error$response4 = error.response) === null || _error$response4 === void 0 ? void 0 : _error$response4.status,
-        data: (_error$response5 = error.response) === null || _error$response5 === void 0 ? void 0 : _error$response5.data,
+        status: (_error$response3 = error.response) === null || _error$response3 === void 0 ? void 0 : _error$response3.status,
+        data: (_error$response4 = error.response) === null || _error$response4 === void 0 ? void 0 : _error$response4.data,
         timestamp: new Date().toISOString()
       };
     }
@@ -20183,12 +20323,12 @@ let DataPipelineClient$1 = class DataPipelineClient {
         timestamp: new Date().toISOString()
       };
     } catch (error) {
-      var _error$response6, _error$response7;
+      var _error$response5, _error$response6;
       return {
         success: false,
         error: error.message,
-        status: (_error$response6 = error.response) === null || _error$response6 === void 0 ? void 0 : _error$response6.status,
-        data: (_error$response7 = error.response) === null || _error$response7 === void 0 ? void 0 : _error$response7.data,
+        status: (_error$response5 = error.response) === null || _error$response5 === void 0 ? void 0 : _error$response5.status,
+        data: (_error$response6 = error.response) === null || _error$response6 === void 0 ? void 0 : _error$response6.data,
         timestamp: new Date().toISOString()
       };
     }
@@ -20209,12 +20349,12 @@ let DataPipelineClient$1 = class DataPipelineClient {
         timestamp: new Date().toISOString()
       };
     } catch (error) {
-      var _error$response8, _error$response9;
+      var _error$response7, _error$response8;
       return {
         success: false,
         error: error.message,
-        status: (_error$response8 = error.response) === null || _error$response8 === void 0 ? void 0 : _error$response8.status,
-        data: (_error$response9 = error.response) === null || _error$response9 === void 0 ? void 0 : _error$response9.data,
+        status: (_error$response7 = error.response) === null || _error$response7 === void 0 ? void 0 : _error$response7.status,
+        data: (_error$response8 = error.response) === null || _error$response8 === void 0 ? void 0 : _error$response8.data,
         timestamp: new Date().toISOString()
       };
     }
@@ -20235,12 +20375,90 @@ let DataPipelineClient$1 = class DataPipelineClient {
         timestamp: new Date().toISOString()
       };
     } catch (error) {
-      var _error$response0, _error$response1;
+      var _error$response9, _error$response0;
       return {
         success: false,
         error: error.message,
-        status: (_error$response0 = error.response) === null || _error$response0 === void 0 ? void 0 : _error$response0.status,
-        data: (_error$response1 = error.response) === null || _error$response1 === void 0 ? void 0 : _error$response1.data,
+        status: (_error$response9 = error.response) === null || _error$response9 === void 0 ? void 0 : _error$response9.status,
+        data: (_error$response0 = error.response) === null || _error$response0 === void 0 ? void 0 : _error$response0.data,
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
+
+  /**
+   * Sends extended attributes data
+   * @param {Object|Array} data - Extended attributes data or array of attributes
+   * @returns {Promise<Object>} API response
+   */
+  async sendExtendedAttributes(data) {
+    try {
+      const response = await this.axios.post('/extattributes', data);
+      return {
+        success: true,
+        status: response.status,
+        data: response.data,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      var _error$response1, _error$response10;
+      return {
+        success: false,
+        error: error.message,
+        status: (_error$response1 = error.response) === null || _error$response1 === void 0 ? void 0 : _error$response1.status,
+        data: (_error$response10 = error.response) === null || _error$response10 === void 0 ? void 0 : _error$response10.data,
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
+
+  /**
+   * Sends wallet balance event data
+   * @param {Object|Array} data - Wallet balance event data or array of events
+   * @returns {Promise<Object>} API response
+   */
+  async sendWalletBalanceEvent(data) {
+    try {
+      const response = await this.axios.post('/events/wallet-balance', data);
+      return {
+        success: true,
+        status: response.status,
+        data: response.data,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      var _error$response11, _error$response12;
+      return {
+        success: false,
+        error: error.message,
+        status: (_error$response11 = error.response) === null || _error$response11 === void 0 ? void 0 : _error$response11.status,
+        data: (_error$response12 = error.response) === null || _error$response12 === void 0 ? void 0 : _error$response12.data,
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
+
+  /**
+   * Sends refer friend event data
+   * @param {Object|Array} data - Refer friend event data or array of events
+   * @returns {Promise<Object>} API response
+   */
+  async sendReferFriendEvent(data) {
+    try {
+      const response = await this.axios.post('/events/refer-friend', data);
+      return {
+        success: true,
+        status: response.status,
+        data: response.data,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      var _error$response13, _error$response14;
+      return {
+        success: false,
+        error: error.message,
+        status: (_error$response13 = error.response) === null || _error$response13 === void 0 ? void 0 : _error$response13.status,
+        data: (_error$response14 = error.response) === null || _error$response14 === void 0 ? void 0 : _error$response14.data,
         timestamp: new Date().toISOString()
       };
     }
@@ -20277,6 +20495,21 @@ let DataPipelineClient$1 = class DataPipelineClient {
     if (batchData.gamingEvents) {
       promises.push(this.sendGamingActivityEvent(batchData.gamingEvents).then(result => {
         results.gamingEvents = result;
+      }));
+    }
+    if (batchData.extendedAttributes) {
+      promises.push(this.sendExtendedAttributes(batchData.extendedAttributes).then(result => {
+        results.extendedAttributes = result;
+      }));
+    }
+    if (batchData.walletBalanceEvents) {
+      promises.push(this.sendWalletBalanceEvent(batchData.walletBalanceEvents).then(result => {
+        results.walletBalanceEvents = result;
+      }));
+    }
+    if (batchData.referFriendEvents) {
+      promises.push(this.sendReferFriendEvent(batchData.referFriendEvents).then(result => {
+        results.referFriendEvents = result;
       }));
     }
     await Promise.all(promises);
@@ -20343,8 +20576,6 @@ let CustomerProfile$2 = class CustomerProfile {
     this.loss_limits = data.loss_limits;
     this.wagering_limits = data.wagering_limits;
     this.session_time_limits = data.session_time_limits;
-    this.cooling_off_period = data.cooling_off_period;
-    this.self_exclusion_period = data.self_exclusion_period;
     this.reality_checks_notification = data.reality_checks_notification;
     this.account_status = data.account_status;
     this.vip_status = data.vip_status;
@@ -20353,7 +20584,6 @@ let CustomerProfile$2 = class CustomerProfile {
     this.financial_risk_level = data.financial_risk_level;
     this.acquisition_source = data.acquisition_source;
     this.partner_id = data.partner_id;
-    this.affliate_id = data.affliate_id;
     this.referral_link_code = data.referral_link_code;
     this.referral_limit_reached = data.referral_limit_reached;
     this.creation_timestamp = data.creation_timestamp;
@@ -20373,6 +20603,10 @@ let CustomerProfile$2 = class CustomerProfile {
     this.closed_time = data.closed_time;
     this.real_money_enabled = data.real_money_enabled;
     this.push_token = data.push_token;
+    this.android_push_token = data.android_push_token;
+    this.ios_push_token = data.ios_push_token;
+    this.windows_push_token = data.windows_push_token;
+    this.mac_dmg_push_token = data.mac_dmg_push_token;
   }
 
   /**
@@ -20582,10 +20816,7 @@ let DepositEvent$2 = class DepositEvent {
     this.transaction_id = data.transaction_id;
     this.payment_provider_id = data.payment_provider_id;
     this.payment_provider_name = data.payment_provider_name;
-    this.status = data.status;
-    this.currency = data.currency;
-    this.fees = data.fees;
-    this.net_amount = data.net_amount;
+    this.failure_reason = data.failure_reason;
   }
 
   /**
@@ -20628,16 +20859,6 @@ let DepositEvent$2 = class DepositEvent {
       errors.push(`payment_method must be one of: ${validPaymentMethods.join(', ')}`);
     }
 
-    // Status validation
-    if (this.status && !['success', 'pending', 'failed', 'cancelled', 'refunded'].includes(this.status)) {
-      errors.push('status must be one of: success, pending, failed, cancelled, refunded');
-    }
-
-    // Currency validation
-    if (this.currency && !this.isValidCurrency(this.currency)) {
-      errors.push('currency must be a valid 3-letter ISO currency code');
-    }
-
     // Date format validation
     if (this.event_time && !this.isValidDateTime(this.event_time)) {
       errors.push('event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)');
@@ -20656,16 +20877,6 @@ let DepositEvent$2 = class DepositEvent {
   isValidDateTime(dateTime) {
     const date = new Date(dateTime);
     return date instanceof Date && !isNaN(date);
-  }
-
-  /**
-   * Validates currency code format
-   * @param {string} currency - Currency code to validate
-   * @returns {boolean} True if currency code is valid
-   */
-  isValidCurrency(currency) {
-    const currencyRegex = /^[A-Z]{3}$/;
-    return currencyRegex.test(currency);
   }
 
   /**
@@ -20709,12 +20920,7 @@ let WithdrawEvent$2 = class WithdrawEvent {
     this.amount = data.amount;
     this.payment_method = data.payment_method;
     this.transaction_id = data.transaction_id;
-    this.status = data.status;
-    this.currency = data.currency;
-    this.fees = data.fees;
-    this.net_amount = data.net_amount;
-    this.withdrawal_reason = data.withdrawal_reason;
-    this.processing_time = data.processing_time;
+    this.failure_reason = data.failure_reason;
   }
 
   /**
@@ -20757,16 +20963,6 @@ let WithdrawEvent$2 = class WithdrawEvent {
       errors.push(`payment_method must be one of: ${validPaymentMethods.join(', ')}`);
     }
 
-    // Status validation
-    if (this.status && !['success', 'pending', 'failed', 'cancelled', 'rejected'].includes(this.status)) {
-      errors.push('status must be one of: success, pending, failed, cancelled, rejected');
-    }
-
-    // Currency validation
-    if (this.currency && !this.isValidCurrency(this.currency)) {
-      errors.push('currency must be a valid 3-letter ISO currency code');
-    }
-
     // Date format validation
     if (this.event_time && !this.isValidDateTime(this.event_time)) {
       errors.push('event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)');
@@ -20785,16 +20981,6 @@ let WithdrawEvent$2 = class WithdrawEvent {
   isValidDateTime(dateTime) {
     const date = new Date(dateTime);
     return date instanceof Date && !isNaN(date);
-  }
-
-  /**
-   * Validates currency code format
-   * @param {string} currency - Currency code to validate
-   * @returns {boolean} True if currency code is valid
-   */
-  isValidCurrency(currency) {
-    const currencyRegex = /^[A-Z]{3}$/;
-    return currencyRegex.test(currency);
   }
 
   /**
@@ -20840,14 +21026,65 @@ let GamingActivityEvent$2 = class GamingActivityEvent {
     this.game_id = data.game_id;
     this.game_title = data.game_title;
     this.provider = data.provider;
-    this.game_type = data.game_type;
-    this.session_id = data.session_id;
-    this.round_id = data.round_id;
-    this.device = data.device;
-    this.platform = data.platform;
     this.currency = data.currency;
-    this.bet_type = data.bet_type;
-    this.payout_multiplier = data.payout_multiplier;
+    this.loss_amount = data.loss_amount;
+    this.bonus_id = data.bonus_id;
+    this.free_spin_id = data.free_spin_id;
+    this.jackpot_amount = data.jackpot_amount;
+    this.tournament_name = data.tournament_name;
+    this.num_spins_played = data.num_spins_played;
+    this.game_theme = data.game_theme;
+    this.remaining_spins = data.remaining_spins;
+    this.bet_value_per_spin = data.bet_value_per_spin;
+    this.wagering_requirements_met = data.wagering_requirements_met;
+    this.free_spin_expiry_date = data.free_spin_expiry_date;
+    this.campaign_id = data.campaign_id;
+    this.campaign_name = data.campaign_name;
+    this.rtp = data.rtp;
+    this.game_category = data.game_category;
+    this.winning_bet_amount = data.winning_bet_amount;
+    this.jackpot_type = data.jackpot_type;
+    this.volatility = data.volatility;
+    this.min_bet = data.min_bet;
+    this.max_bet = data.max_bet;
+    this.number_of_reels = data.number_of_reels;
+    this.number_of_paylines = data.number_of_paylines;
+    this.feature_types = data.feature_types;
+    this.game_release_date = data.game_release_date;
+    this.live_dealer_availability = data.live_dealer_availability;
+    this.side_bets_availability = data.side_bets_availability;
+    this.multiplayer_option = data.multiplayer_option;
+    this.auto_play = data.auto_play;
+    this.poker_variant = data.poker_variant;
+    this.buy_in_amount = data.buy_in_amount;
+    this.table_type = data.table_type;
+    this.stakes_level = data.stakes_level;
+    this.number_of_players = data.number_of_players;
+    this.game_duration = data.game_duration;
+    this.hand_volume = data.hand_volume;
+    this.player_position = data.player_position;
+    this.final_hand = data.final_hand;
+    this.rake_contribution = data.rake_contribution;
+    this.multi_tabling_indicator = data.multi_tabling_indicator;
+    this.session_result = data.session_result;
+    this.vip_status = data.vip_status;
+    this.blind_level = data.blind_level;
+    this.rebuy_and_addon_info = data.rebuy_and_addon_info;
+    this.sport_type = data.sport_type;
+    this.betting_market = data.betting_market;
+    this.odds = data.odds;
+    this.live_betting_availability = data.live_betting_availability;
+    this.result = data.result;
+    this.bet_status = data.bet_status;
+    this.betting_channel = data.betting_channel;
+    this.bonus_type = data.bonus_type;
+    this.bonus_amount = data.bonus_amount;
+    this.free_spin_start_date = data.free_spin_start_date;
+    this.num_spins_awarded = data.num_spins_awarded;
+    this.bonus_code = data.bonus_code;
+    this.parent_game_category = data.parent_game_category;
+    this.money_type = data.money_type;
+    this.transaction_type = data.transaction_type;
   }
 
   /**
@@ -20963,17 +21200,394 @@ let GamingActivityEvent$2 = class GamingActivityEvent {
 };
 var GamingActivityEvent_1$1 = GamingActivityEvent$2;
 
+/**
+ * Wallet Balance Event Model
+ * Represents wallet balance events for the Data Pipeline API
+ */
+let WalletBalanceEvent$2 = class WalletBalanceEvent {
+  constructor(data = {}) {
+    this.account_id = data.account_id;
+    this.workspace_id = data.workspace_id;
+    this.user_id = data.user_id;
+    this.event_category = data.event_category || 'Wallet Balance';
+    this.event_name = data.event_name;
+    this.event_id = data.event_id;
+    this.event_time = data.event_time;
+    this.wallet_type = data.wallet_type;
+    this.currency = data.currency;
+    this.current_cash_balance = data.current_cash_balance;
+    this.current_bonus_balance = data.current_bonus_balance;
+    this.current_total_balance = data.current_total_balance;
+    this.blocked_amount = data.blocked_amount;
+  }
+
+  /**
+   * Validates the wallet balance event data
+   * @returns {Object} Validation result with isValid boolean and errors array
+   */
+  validate() {
+    const errors = [];
+
+    // Required fields
+    if (!this.account_id) errors.push('account_id is required');
+    if (!this.workspace_id) errors.push('workspace_id is required');
+    if (!this.user_id) errors.push('user_id is required');
+    if (!this.event_name) errors.push('event_name is required');
+    if (!this.event_id) errors.push('event_id is required');
+    if (!this.event_time) errors.push('event_time is required');
+
+    // Event category validation
+    if (this.event_category && this.event_category !== 'Wallet Balance') {
+      errors.push('event_category must be "Wallet Balance" for wallet balance events');
+    }
+
+    // Date format validation
+    if (this.event_time && !this.isValidDateTime(this.event_time)) {
+      errors.push('event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)');
+    }
+
+    // Currency validation
+    if (this.currency && !this.isValidCurrency(this.currency)) {
+      errors.push('currency must be a valid 3-letter ISO currency code');
+    }
+
+    // Balance validation (must be non-negative if provided)
+    if (this.current_cash_balance !== null && this.current_cash_balance !== undefined) {
+      if (typeof this.current_cash_balance !== 'number' || this.current_cash_balance < 0) {
+        errors.push('current_cash_balance must be a non-negative number');
+      }
+    }
+    if (this.current_bonus_balance !== null && this.current_bonus_balance !== undefined) {
+      if (typeof this.current_bonus_balance !== 'number' || this.current_bonus_balance < 0) {
+        errors.push('current_bonus_balance must be a non-negative number');
+      }
+    }
+    if (this.current_total_balance !== null && this.current_total_balance !== undefined) {
+      if (typeof this.current_total_balance !== 'number' || this.current_total_balance < 0) {
+        errors.push('current_total_balance must be a non-negative number');
+      }
+    }
+    if (this.blocked_amount !== null && this.blocked_amount !== undefined) {
+      if (typeof this.blocked_amount !== 'number' || this.blocked_amount < 0) {
+        errors.push('blocked_amount must be a non-negative number');
+      }
+    }
+    return {
+      isValid: errors.length === 0,
+      errors
+    };
+  }
+
+  /**
+   * Validates ISO 8601 datetime format
+   * @param {string} dateTime - DateTime string to validate
+   * @returns {boolean} True if datetime is valid
+   */
+  isValidDateTime(dateTime) {
+    const date = new Date(dateTime);
+    return date instanceof Date && !isNaN(date);
+  }
+
+  /**
+   * Validates currency code format
+   * @param {string} currency - Currency code to validate
+   * @returns {boolean} True if currency code is valid
+   */
+  isValidCurrency(currency) {
+    const currencyRegex = /^[A-Z]{3}$/;
+    return currencyRegex.test(currency);
+  }
+
+  /**
+   * Converts the model to a plain object
+   * @returns {Object} Plain object representation
+   */
+  toJSON() {
+    const obj = {};
+    Object.keys(this).forEach(key => {
+      if (this[key] !== undefined) {
+        obj[key] = this[key];
+      }
+    });
+    return obj;
+  }
+
+  /**
+   * Creates a WalletBalanceEvent instance from plain object
+   * @param {Object} data - Plain object data
+   * @returns {WalletBalanceEvent} New WalletBalanceEvent instance
+   */
+  static fromObject(data) {
+    return new WalletBalanceEvent(data);
+  }
+};
+var WalletBalanceEvent_1$1 = WalletBalanceEvent$2;
+
+/**
+ * Refer Friend Event Model
+ * Represents refer friend events for the Data Pipeline API
+ */
+let ReferFriendEvent$2 = class ReferFriendEvent {
+  constructor(data = {}) {
+    this.account_id = data.account_id;
+    this.workspace_id = data.workspace_id;
+    this.user_id = data.user_id;
+    this.event_category = data.event_category || 'Refer Friend';
+    this.event_name = data.event_name;
+    this.event_id = data.event_id;
+    this.event_time = data.event_time;
+    this.referral_code_used = data.referral_code_used;
+    this.successful_referral_confirmation = data.successful_referral_confirmation;
+    this.reward_type = data.reward_type;
+    this.reward_claimed_status = data.reward_claimed_status;
+    this.referee_user_id = data.referee_user_id;
+    this.referee_registration_date = data.referee_registration_date;
+    this.referee_first_deposit = data.referee_first_deposit;
+  }
+
+  /**
+   * Validates the refer friend event data
+   * @returns {Object} Validation result with isValid boolean and errors array
+   */
+  validate() {
+    const errors = [];
+
+    // Required fields
+    if (!this.account_id) errors.push('account_id is required');
+    if (!this.workspace_id) errors.push('workspace_id is required');
+    if (!this.user_id) errors.push('user_id is required');
+    if (!this.event_name) errors.push('event_name is required');
+    if (!this.event_id) errors.push('event_id is required');
+    if (!this.event_time) errors.push('event_time is required');
+
+    // Event category validation
+    if (this.event_category && this.event_category !== 'Refer Friend') {
+      errors.push('event_category must be "Refer Friend" for refer friend events');
+    }
+
+    // Date format validation
+    if (this.event_time && !this.isValidDateTime(this.event_time)) {
+      errors.push('event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)');
+    }
+    if (this.referee_registration_date && !this.isValidDateTime(this.referee_registration_date)) {
+      errors.push('referee_registration_date must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)');
+    }
+
+    // Boolean validation
+    if (this.successful_referral_confirmation !== null && this.successful_referral_confirmation !== undefined) {
+      if (typeof this.successful_referral_confirmation !== 'boolean') {
+        errors.push('successful_referral_confirmation must be a boolean');
+      }
+    }
+
+    // Reward type validation
+    const validRewardTypes = ['bonus', 'cash', 'points', 'free_spins', 'other'];
+    if (this.reward_type && !validRewardTypes.includes(this.reward_type)) {
+      errors.push(`reward_type must be one of: ${validRewardTypes.join(', ')}`);
+    }
+
+    // Reward claimed status validation
+    const validClaimedStatuses = ['pending', 'claimed', 'expired', 'cancelled'];
+    if (this.reward_claimed_status && !validClaimedStatuses.includes(this.reward_claimed_status)) {
+      errors.push(`reward_claimed_status must be one of: ${validClaimedStatuses.join(', ')}`);
+    }
+
+    // First deposit validation (must be non-negative if provided)
+    if (this.referee_first_deposit !== null && this.referee_first_deposit !== undefined) {
+      if (typeof this.referee_first_deposit !== 'number' || this.referee_first_deposit < 0) {
+        errors.push('referee_first_deposit must be a non-negative number');
+      }
+    }
+    return {
+      isValid: errors.length === 0,
+      errors
+    };
+  }
+
+  /**
+   * Validates ISO 8601 datetime format
+   * @param {string} dateTime - DateTime string to validate
+   * @returns {boolean} True if datetime is valid
+   */
+  isValidDateTime(dateTime) {
+    const date = new Date(dateTime);
+    return date instanceof Date && !isNaN(date);
+  }
+
+  /**
+   * Converts the model to a plain object
+   * @returns {Object} Plain object representation
+   */
+  toJSON() {
+    const obj = {};
+    Object.keys(this).forEach(key => {
+      if (this[key] !== undefined) {
+        obj[key] = this[key];
+      }
+    });
+    return obj;
+  }
+
+  /**
+   * Creates a ReferFriendEvent instance from plain object
+   * @param {Object} data - Plain object data
+   * @returns {ReferFriendEvent} New ReferFriendEvent instance
+   */
+  static fromObject(data) {
+    return new ReferFriendEvent(data);
+  }
+};
+var ReferFriendEvent_1$1 = ReferFriendEvent$2;
+
+let CustomerExtEvent$1 = class CustomerExtEvent {
+  constructor(data = {}) {
+    this.account_id = data.account_id;
+    this.workspace_id = data.workspace_id;
+    this.user_id = data.user_id;
+    this.list_name = data.list_name;
+    this.ext_data = data.ext_data;
+  }
+
+  /**
+   * Validates the customer extension event data
+   * @returns {Object} Validation result with isValid boolean and errors array
+   */
+  validate() {
+    const errors = [];
+
+    // Required fields
+    if (!this.account_id) errors.push('account_id is required');
+    if (!this.workspace_id) errors.push('workspace_id is required');
+    if (!this.user_id) errors.push('user_id is required');
+    if (!this.list_name) errors.push('list_name is required');
+    if (!this.ext_data) errors.push('ext_data is required');
+
+    // Validate ext_data format
+    if (this.ext_data) {
+      // Check if ext_data is an object or a valid JSON string
+      if (typeof this.ext_data === 'string') {
+        try {
+          JSON.parse(this.ext_data);
+        } catch (e) {
+          errors.push('ext_data must be a valid JSON string or object');
+        }
+      } else if (typeof this.ext_data !== 'object' || Array.isArray(this.ext_data)) {
+        errors.push('ext_data must be an object or JSON string');
+      }
+    }
+
+    // Validate list_name format (alphanumeric, underscores, hyphens)
+    if (this.list_name && !/^[A-Za-z0-9_-]+$/.test(this.list_name)) {
+      errors.push('list_name must contain only alphanumeric characters, underscores, and hyphens');
+    }
+
+    // Validate user_id format
+    if (this.user_id && typeof this.user_id !== 'string') {
+      errors.push('user_id must be a string');
+    }
+    return {
+      isValid: errors.length === 0,
+      errors
+    };
+  }
+
+  /**
+   * Ensures ext_data is in the correct format for API submission
+   * Converts object to JSON string if needed
+   * @returns {Object} Event object with properly formatted ext_data
+   */
+  toAPIFormat() {
+    const formatted = _objectSpread2({}, this.toJSON());
+
+    // Convert ext_data to JSON string if it's an object
+    if (typeof formatted.ext_data === 'object' && !Array.isArray(formatted.ext_data)) {
+      formatted.ext_data = JSON.stringify(formatted.ext_data);
+    }
+    return formatted;
+  }
+
+  /**
+   * Converts the model to a plain object
+   * @returns {Object} Plain object representation
+   */
+  toJSON() {
+    const obj = {};
+    Object.keys(this).forEach(key => {
+      if (this[key] !== undefined) {
+        obj[key] = this[key];
+      }
+    });
+    return obj;
+  }
+
+  /**
+   * Creates a CustomerExtEvent instance from plain object
+   * @param {Object} data - Plain object data
+   * @returns {CustomerExtEvent} New CustomerExtEvent instance
+   */
+  static fromObject(data) {
+    return new CustomerExtEvent(data);
+  }
+
+  /**
+   * Helper method to create a customer extension event with object ext_data
+   * @param {Object} params - Event parameters
+   * @param {string} params.account_id - Account ID
+   * @param {string} params.workspace_id - Workspace ID
+   * @param {string} params.user_id - User ID
+   * @param {string} params.list_name - List name for extended attributes
+   * @param {Object} params.ext_data - Extended attributes as object
+   * @returns {CustomerExtEvent} New CustomerExtEvent instance
+   */
+  static createWithObject(params) {
+    return new CustomerExtEvent({
+      account_id: params.account_id,
+      workspace_id: params.workspace_id,
+      user_id: params.user_id,
+      list_name: params.list_name,
+      ext_data: params.ext_data // Object format
+    });
+  }
+
+  /**
+   * Helper method to create a customer extension event with JSON string ext_data
+   * @param {Object} params - Event parameters
+   *  @param {string} params.account_id - Account ID
+   * @param {string} params.workspace_id - Workspace ID
+   * @param {string} params.user_id - User ID
+   * @param {string} params.list_name - List name for extended attributes
+   * @param {string} params.ext_data - Extended attributes as JSON string
+   * @returns {CustomerExtEvent} New CustomerExtEvent instance
+   */
+  static createWithString(params) {
+    return new CustomerExtEvent({
+      account_id: params.account_id,
+      workspace_id: params.workspace_id,
+      user_id: params.user_id,
+      list_name: params.list_name,
+      ext_data: params.ext_data // JSON string format
+    });
+  }
+};
+var CustomerExtEvent_1 = CustomerExtEvent$1;
+
 const CustomerProfile$1 = CustomerProfile_1$1;
 const AccountEvent$1 = AccountEvent_1$1;
 const DepositEvent$1 = DepositEvent_1$1;
 const WithdrawEvent$1 = WithdrawEvent_1$1;
 const GamingActivityEvent$1 = GamingActivityEvent_1$1;
+const WalletBalanceEvent$1 = WalletBalanceEvent_1$1;
+const ReferFriendEvent$1 = ReferFriendEvent_1$1;
+const CustomerExtEvent = CustomerExtEvent_1;
 var models = {
   CustomerProfile: CustomerProfile$1,
   AccountEvent: AccountEvent$1,
   DepositEvent: DepositEvent$1,
   WithdrawEvent: WithdrawEvent$1,
-  GamingActivityEvent: GamingActivityEvent$1
+  GamingActivityEvent: GamingActivityEvent$1,
+  WalletBalanceEvent: WalletBalanceEvent$1,
+  ReferFriendEvent: ReferFriendEvent$1,
+  CustomerExtEvent
 };
 
 /**
@@ -20993,7 +21607,9 @@ const {
   AccountEvent,
   DepositEvent,
   WithdrawEvent,
-  GamingActivityEvent
+  GamingActivityEvent,
+  WalletBalanceEvent,
+  ReferFriendEvent
 } = models;
 const {
   deriveKey,
@@ -21008,9 +21624,7 @@ class OptikpiDataPipelineSDK {
   }
 
   // Delegate all client methods
-  async healthCheck() {
-    return this.client.healthCheck();
-  }
+
   async sendCustomerProfile(data) {
     return this.client.sendCustomerProfile(data);
   }
@@ -21025,6 +21639,15 @@ class OptikpiDataPipelineSDK {
   }
   async sendGamingActivityEvent(data) {
     return this.client.sendGamingActivityEvent(data);
+  }
+  async sendExtendedAttributes(data) {
+    return this.client.sendExtendedAttributes(data);
+  }
+  async sendWalletBalanceEvent(data) {
+    return this.client.sendWalletBalanceEvent(data);
+  }
+  async sendReferFriendEvent(data) {
+    return this.client.sendReferFriendEvent(data);
   }
   async sendBatch(batchData) {
     return this.client.sendBatch(batchData);
@@ -21047,6 +21670,8 @@ var AccountEvent_1 = src$1.exports.AccountEvent = AccountEvent;
 var DepositEvent_1 = src$1.exports.DepositEvent = DepositEvent;
 var WithdrawEvent_1 = src$1.exports.WithdrawEvent = WithdrawEvent;
 var GamingActivityEvent_1 = src$1.exports.GamingActivityEvent = GamingActivityEvent;
+var WalletBalanceEvent_1 = src$1.exports.WalletBalanceEvent = WalletBalanceEvent;
+var ReferFriendEvent_1 = src$1.exports.ReferFriendEvent = ReferFriendEvent;
 var crypto = src$1.exports.crypto = {
   deriveKey,
   generateHmacSignature,
@@ -21058,5 +21683,5 @@ var createClient = src$1.exports.createClient = config => new OptikpiDataPipelin
 var srcExports = src$1.exports;
 var index = /*@__PURE__*/getDefaultExportFromCjs(srcExports);
 
-export { AccountEvent_1 as AccountEvent, CustomerProfile_1 as CustomerProfile, DataPipelineClient_1 as DataPipelineClient, DepositEvent_1 as DepositEvent, GamingActivityEvent_1 as GamingActivityEvent, WithdrawEvent_1 as WithdrawEvent, createClient, crypto, index as default };
+export { AccountEvent_1 as AccountEvent, CustomerProfile_1 as CustomerProfile, DataPipelineClient_1 as DataPipelineClient, DepositEvent_1 as DepositEvent, GamingActivityEvent_1 as GamingActivityEvent, ReferFriendEvent_1 as ReferFriendEvent, WalletBalanceEvent_1 as WalletBalanceEvent, WithdrawEvent_1 as WithdrawEvent, createClient, crypto, index as default };
 //# sourceMappingURL=index.esm.js.map
