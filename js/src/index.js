@@ -17,8 +17,10 @@ const {
   DepositEvent,
   WithdrawEvent,
   GamingActivityEvent,
+  CustomerExtEvent,
   WalletBalanceEvent,
-  ReferFriendEvent
+  ReferFriendEvent,
+  OperationEvent
 } = require('./models');
 const {
   deriveKey,
@@ -66,6 +68,10 @@ class OptikpiDataPipelineSDK {
     return this.client.sendReferFriendEvent(data);
   }
 
+  async sendOperationsEvent(data) {
+    return this.client.sendOperationsEvent(data);
+  }
+
   async sendBatch(batchData) {
     return this.client.sendBatch(batchData);
   }
@@ -89,8 +95,10 @@ module.exports.AccountEvent = AccountEvent;
 module.exports.DepositEvent = DepositEvent;
 module.exports.WithdrawEvent = WithdrawEvent;
 module.exports.GamingActivityEvent = GamingActivityEvent;
+module.exports.CustomerExtEvent = CustomerExtEvent;
 module.exports.WalletBalanceEvent = WalletBalanceEvent;
 module.exports.ReferFriendEvent = ReferFriendEvent;
+module.exports.OperationEvent = OperationEvent;
 module.exports.crypto = {
   deriveKey,
   generateHmacSignature,
