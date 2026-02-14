@@ -20469,6 +20469,32 @@ let DataPipelineClient$1 = class DataPipelineClient {
   }
 
   /**
+   * Sends operation event data
+   * @param {Object|Array} data - Operation event data or array of events
+   * @returns {Promise<Object>} API response
+   */
+  async sendOperationsEvent(data) {
+    try {
+      const response = await this.axios.post('/events/operations', data);
+      return {
+        success: true,
+        status: response.status,
+        data: response.data,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      var _error$response15, _error$response16;
+      return {
+        success: false,
+        error: error.message,
+        status: (_error$response15 = error.response) === null || _error$response15 === void 0 ? void 0 : _error$response15.status,
+        data: (_error$response16 = error.response) === null || _error$response16 === void 0 ? void 0 : _error$response16.data,
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
+
+  /**
    * Sends multiple events in batch
    * @param {Object} batchData - Object containing different event types
    * @returns {Promise<Object>} Batch response results
@@ -20514,6 +20540,11 @@ let DataPipelineClient$1 = class DataPipelineClient {
     if (batchData.referFriendEvents) {
       promises.push(this.sendReferFriendEvent(batchData.referFriendEvents).then(result => {
         results.referFriendEvents = result;
+      }));
+    }
+    if (batchData.operationEvents) {
+      promises.push(this.sendOperationsEvent(batchData.operationEvents).then(result => {
+        results.operationEvents = result;
       }));
     }
     await Promise.all(promises);
@@ -21443,7 +21474,7 @@ let ReferFriendEvent$2 = class ReferFriendEvent {
 };
 var ReferFriendEvent_1$1 = ReferFriendEvent$2;
 
-let CustomerExtEvent$1 = class CustomerExtEvent {
+let CustomerExtEvent$2 = class CustomerExtEvent {
   constructor(data = {}) {
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
@@ -21573,7 +21604,93 @@ let CustomerExtEvent$1 = class CustomerExtEvent {
     });
   }
 };
-var CustomerExtEvent_1 = CustomerExtEvent$1;
+var CustomerExtEvent_1$1 = CustomerExtEvent$2;
+
+/**
+ * Operation Event Model
+ * Represents operation-related events for the Data Pipeline API
+ */
+let OperationEvent$2 = class OperationEvent {
+  constructor(data = {}) {
+    this.account_id = data.account_id;
+    this.workspace_id = data.workspace_id;
+    this.event_category = data.event_category || 'OperatorEvent';
+    this.event_name = data.event_name;
+    this.event_id = data.event_id;
+    this.event_time = data.event_time;
+    this.event_data = data.event_data;
+  }
+
+  /**
+   * Validates the operation event data
+   * @returns {Object} Validation result with isValid boolean and errors array
+   */
+  validate() {
+    const errors = [];
+
+    // Required fields
+    if (!this.account_id) errors.push('account_id is required');
+    if (!this.workspace_id) errors.push('workspace_id is required');
+    if (!this.event_name) errors.push('event_name is required');
+    if (!this.event_id) errors.push('event_id is required');
+    if (!this.event_time) errors.push('event_time is required');
+
+    // event_data validation
+    if (this.event_data === undefined || this.event_data === null) {
+      errors.push('event_data is required');
+    } else if (typeof this.event_data !== 'string' && (typeof this.event_data !== 'object' || Array.isArray(this.event_data))) {
+      errors.push('event_data must be a string or an object');
+    }
+
+    // Event category validation
+    if (this.event_category && this.event_category !== 'OperatorEvent') {
+      errors.push('event_category must be "OperatorEvent" for operation events');
+    }
+
+    // Date format validation
+    if (this.event_time && !this.isValidDateTime(this.event_time)) {
+      errors.push('event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)');
+    }
+    return {
+      isValid: errors.length === 0,
+      errors
+    };
+  }
+
+  /**
+   * Validates ISO 8601 datetime format
+   * @param {string} dateTime - DateTime string to validate
+   * @returns {boolean} True if datetime is valid
+   */
+  isValidDateTime(dateTime) {
+    const date = new Date(dateTime);
+    return date instanceof Date && !isNaN(date);
+  }
+
+  /**
+   * Converts the model to a plain object
+   * @returns {Object} Plain object representation
+   */
+  toJSON() {
+    const obj = {};
+    Object.keys(this).forEach(key => {
+      if (this[key] !== undefined) {
+        obj[key] = this[key];
+      }
+    });
+    return obj;
+  }
+
+  /**
+   * Creates an OperationEvent instance from plain object
+   * @param {Object} data - Plain object data
+   * @returns {OperationEvent} New OperationEvent instance
+   */
+  static fromObject(data) {
+    return new OperationEvent(data);
+  }
+};
+var OperationEvent_1$1 = OperationEvent$2;
 
 const CustomerProfile$1 = CustomerProfile_1$1;
 const AccountEvent$1 = AccountEvent_1$1;
@@ -21582,7 +21699,8 @@ const WithdrawEvent$1 = WithdrawEvent_1$1;
 const GamingActivityEvent$1 = GamingActivityEvent_1$1;
 const WalletBalanceEvent$1 = WalletBalanceEvent_1$1;
 const ReferFriendEvent$1 = ReferFriendEvent_1$1;
-const CustomerExtEvent = CustomerExtEvent_1;
+const CustomerExtEvent$1 = CustomerExtEvent_1$1;
+const OperationEvent$1 = OperationEvent_1$1;
 var models = {
   CustomerProfile: CustomerProfile$1,
   AccountEvent: AccountEvent$1,
@@ -21591,7 +21709,8 @@ var models = {
   GamingActivityEvent: GamingActivityEvent$1,
   WalletBalanceEvent: WalletBalanceEvent$1,
   ReferFriendEvent: ReferFriendEvent$1,
-  CustomerExtEvent
+  CustomerExtEvent: CustomerExtEvent$1,
+  OperationEvent: OperationEvent$1
 };
 
 /**
@@ -21612,8 +21731,10 @@ const {
   DepositEvent,
   WithdrawEvent,
   GamingActivityEvent,
+  CustomerExtEvent,
   WalletBalanceEvent,
-  ReferFriendEvent
+  ReferFriendEvent,
+  OperationEvent
 } = models;
 const {
   deriveKey,
@@ -21653,6 +21774,9 @@ class OptikpiDataPipelineSDK {
   async sendReferFriendEvent(data) {
     return this.client.sendReferFriendEvent(data);
   }
+  async sendOperationsEvent(data) {
+    return this.client.sendOperationsEvent(data);
+  }
   async sendBatch(batchData) {
     return this.client.sendBatch(batchData);
   }
@@ -21674,8 +21798,10 @@ var AccountEvent_1 = src$1.exports.AccountEvent = AccountEvent;
 var DepositEvent_1 = src$1.exports.DepositEvent = DepositEvent;
 var WithdrawEvent_1 = src$1.exports.WithdrawEvent = WithdrawEvent;
 var GamingActivityEvent_1 = src$1.exports.GamingActivityEvent = GamingActivityEvent;
+var CustomerExtEvent_1 = src$1.exports.CustomerExtEvent = CustomerExtEvent;
 var WalletBalanceEvent_1 = src$1.exports.WalletBalanceEvent = WalletBalanceEvent;
 var ReferFriendEvent_1 = src$1.exports.ReferFriendEvent = ReferFriendEvent;
+var OperationEvent_1 = src$1.exports.OperationEvent = OperationEvent;
 var crypto = src$1.exports.crypto = {
   deriveKey,
   generateHmacSignature,
@@ -21688,10 +21814,12 @@ var srcExports = src$1.exports;
 var index = /*@__PURE__*/getDefaultExportFromCjs(srcExports);
 
 exports.AccountEvent = AccountEvent_1;
+exports.CustomerExtEvent = CustomerExtEvent_1;
 exports.CustomerProfile = CustomerProfile_1;
 exports.DataPipelineClient = DataPipelineClient_1;
 exports.DepositEvent = DepositEvent_1;
 exports.GamingActivityEvent = GamingActivityEvent_1;
+exports.OperationEvent = OperationEvent_1;
 exports.ReferFriendEvent = ReferFriendEvent_1;
 exports.WalletBalanceEvent = WalletBalanceEvent_1;
 exports.WithdrawEvent = WithdrawEvent_1;
