@@ -28,7 +28,7 @@ class DataPipelineClient {
    */
   validateConfig() {
     const { authToken, accountId, workspaceId } = this.config;
-    
+
     if (!authToken) {
       throw new Error('authToken is required');
     }
@@ -100,7 +100,7 @@ class DataPipelineClient {
     }
 
     await new Promise(resolve => setTimeout(resolve, this.config.retryDelay * (retryCount + 1)));
-    
+
     try {
       return await this.axios.request(config);
     } catch (error) {
@@ -260,7 +260,7 @@ class DataPipelineClient {
       };
     }
   }
-  
+
   /**
    * Sends wallet balance event data
    * @param {Object|Array} data - Wallet balance event data or array of events
@@ -294,6 +294,31 @@ class DataPipelineClient {
   async sendReferFriendEvent(data) {
     try {
       const response = await this.axios.post('/events/refer-friend', data);
+      return {
+        success: true,
+        status: response.status,
+        data: response.data,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
+
+  /**
+   * Sends operation event data
+   * @param {Object|Array} data - Operation event data or array of events
+   * @returns {Promise<Object>} API response
+   */
+  async sendOperationsEvent(data) {
+    try {
+      const response = await this.axios.post('/events/operations', data);
       return {
         success: true,
         status: response.status,
@@ -362,7 +387,7 @@ class DataPipelineClient {
       );
     }
 
-     if (batchData.walletBalanceEvents) {
+    if (batchData.walletBalanceEvents) {
       promises.push(
         this.sendWalletBalanceEvent(batchData.walletBalanceEvents)
           .then(result => { results.walletBalanceEvents = result; })
@@ -373,6 +398,13 @@ class DataPipelineClient {
       promises.push(
         this.sendReferFriendEvent(batchData.referFriendEvents)
           .then(result => { results.referFriendEvents = result; })
+      );
+    }
+
+    if (batchData.operationEvents) {
+      promises.push(
+        this.sendOperationsEvent(batchData.operationEvents)
+          .then(result => { results.operationEvents = result; })
       );
     }
 
