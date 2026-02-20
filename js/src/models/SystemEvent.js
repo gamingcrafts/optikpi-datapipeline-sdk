@@ -1,12 +1,12 @@
 /**
- * Operation Event Model
- * Represents operation-related events for the Data Pipeline API
+ * System Event Model
+ * Represents system-related events for the Data Pipeline API
  */
-class OperationEvent {
+class SystemEvent {
     constructor(data = {}) {
         this.account_id = data.account_id;
         this.workspace_id = data.workspace_id;
-        this.event_category = data.event_category || 'OperatorEvent';
+        this.event_category = data.event_category || 'SystemEvent';
         this.event_name = data.event_name;
         this.event_id = data.event_id;
         this.event_time = data.event_time;
@@ -14,7 +14,7 @@ class OperationEvent {
     }
 
     /**
-     * Validates the operation event data
+     * Validates the system event data
      * @returns {Object} Validation result with isValid boolean and errors array
      */
     validate() {
@@ -35,8 +35,8 @@ class OperationEvent {
         }
 
         // Event category validation
-        if (this.event_category && this.event_category !== 'OperatorEvent') {
-            errors.push('event_category must be "OperatorEvent" for operation events');
+        if (this.event_category && this.event_category !== 'SystemEvent') {
+            errors.push('event_category must be "SystemEvent" for system events');
         }
 
         // Date format validation
@@ -75,13 +75,13 @@ class OperationEvent {
     }
 
     /**
-     * Creates an OperationEvent instance from plain object
+     * Creates a SystemEvent instance from plain object
      * @param {Object} data - Plain object data
-     * @returns {OperationEvent} New OperationEvent instance
+     * @returns {SystemEvent} New SystemEvent instance
      */
     static fromObject(data) {
-        return new OperationEvent(data);
+        return new SystemEvent(data);
     }
 }
 
-module.exports = OperationEvent;
+module.exports = SystemEvent;

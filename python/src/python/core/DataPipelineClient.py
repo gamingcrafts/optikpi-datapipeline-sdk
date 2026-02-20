@@ -283,6 +283,7 @@ class DataPipelineClient:
         return self._make_request('POST', '/events/wallet-balance', data)
 
 
+    
     def send_refer_friend_event(self, data: Union[Dict[str, Any], List[Dict[str, Any]]]) -> Dict[str, Any]:
         """
         Sends refer friend event data
@@ -294,6 +295,18 @@ class DataPipelineClient:
             API response dictionary
         """
         return self._make_request('POST', '/events/refer-friend', data)
+
+    def send_system_event(self, data: Union[Dict[str, Any], List[Dict[str, Any]]]) -> Dict[str, Any]:
+        """
+        Sends system event data
+        
+        Args:
+            data: System event data or list of events
+            
+        Returns:
+            API response dictionary
+        """
+        return self._make_request('POST', '/events/system-events', data)
 
     
     def send_batch(self, batch_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -309,7 +322,8 @@ class DataPipelineClient:
                 - gamingEvents: List of gaming activity events
                 - walletBalanceEvents: List of wallet balance events
                 - referFriendEvents: List of refer friend events
-                - customerExtEvents: List of customer extended attributes events
+                - extendedAttributes: List of customer extended attributes events
+                - systemEvents: List of system events
             
         Returns:
             Batch response results dictionary
@@ -340,6 +354,9 @@ class DataPipelineClient:
 
         if 'extendedAttributes' in batch_data:
             results['extendedAttributes'] = self.send_extended_attributes(batch_data['extendedAttributes'])
+
+        if 'systemEvents' in batch_data:
+            results['systemEvents'] = self.send_system_event(batch_data['systemEvents'])
     
         
 

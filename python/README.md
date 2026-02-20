@@ -81,6 +81,13 @@ poetry run python test-refer-friend-endpoint.py
 ```bash
 poetry run python test-wallet-balance-endpoint.py
 ```
+
+### Test System Events
+
+```bash
+poetry run python test-system-endpoint.py
+```
+
 ### Test BatchData Operations
 
 ```bash
@@ -229,6 +236,9 @@ batch_data = {
     ],
     'walletBalanceEvents': [
         create_sample_wallet_balance_event(account_id, workspace_id).to_dict()
+    ],
+    'systemEvents': [
+        create_sample_system_event(account_id, workspace_id).to_dict()
     ]
     }
 batchResult = sdk.send_batch(batch_data)

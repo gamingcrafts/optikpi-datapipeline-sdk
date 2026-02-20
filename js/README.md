@@ -24,6 +24,11 @@ This directory contains example applications demonstrating how to use the Optikp
 - Before executing the file, please change your current path to:
 cd ../js/examples
 
+### Install the dependencies:
+```bash
+ npm install
+ ```
+
 ### Test Customer Profile Endpoint
 
 ```bash
@@ -69,6 +74,10 @@ npm run test:referFriend (or) node test-refer-friend-endpoint.js
 ```bash
 npm run test:walletBalance (or) node test-wallet-balance-endpoint.js
 ```
+### Test System Events
+```bash
+npm run test:system (or) node test-system-endpoint.js
+```
 ### Test BatchData Operations
 ```bash
 npm run test:batchData (or) node test-batch-operations.js
@@ -80,8 +89,8 @@ npm run test:batchData (or) node test-batch-operations.js
 
 ```js
 require('dotenv').config();
-const OptikpiDataPipelineSDK = require('../src/index');
-const { CustomerProfile } = require('../src/models');
+const OptikpiDataPipelineSDK = require('@optikpi/datapipeline-sdk').default;
+const { CustomerProfile } = require('@optikpi/datapipeline-sdk')
 
 
 // Initialize SDK
@@ -190,7 +199,8 @@ const batchData = {
   withdrawEvents: [createSampleWithdrawEvent(accountId, workspaceId)],
   gamingEvents: [createSampleGamingActivityEvent(accountId, workspaceId)],
   referFriendEvents: [createSampleReferFriendEvent(accountId, workspaceId)],
-  walletBalanceEvents: [createSampleWalletBalanceEvent(accountId, workspaceId)]
+  walletBalanceEvents: [createSampleWalletBalanceEvent(accountId, workspaceId)],
+  systemEvents: [createSampleSystemEvent(accountId, workspaceId)]
 };
 const batchResult = await sdk.sendBatch(batchData);
 ```

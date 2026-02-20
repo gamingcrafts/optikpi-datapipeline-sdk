@@ -14,6 +14,7 @@ import com.optikpi.datapipeline.model.CustomerProfile;
 import com.optikpi.datapipeline.model.DepositEvent;
 import com.optikpi.datapipeline.model.ExtendedAttributesEvent;
 import com.optikpi.datapipeline.model.GamingActivityEvent;
+import com.optikpi.datapipeline.model.SystemEvent;
 import com.optikpi.datapipeline.model.ReferFriendEvent;
 import com.optikpi.datapipeline.model.ValidationResult;
 import com.optikpi.datapipeline.model.WalletBalanceEvent;
@@ -73,6 +74,7 @@ public class TestAllEndpoints {
         testGamingActivityEvent(sdk, accountId, workspaceId);
         testReferFriendEvent(sdk, accountId, workspaceId);      
         testWalletBalanceEvent(sdk, accountId, workspaceId);
+        testSystemEvent(sdk, accountId, workspaceId);
     }
 
     private static void testCustomerProfile(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
@@ -205,6 +207,34 @@ public class TestAllEndpoints {
         } catch (Exception e) {
             System.err.println("❌ Wallet Balance event failed: " + e.getMessage());
         }
+        System.out.println();
+    }
+
+    private static void testSystemEvent(OptikpiDataPipelineSDK sdk, String accountId, String workspaceId) {
+        System.out.println("=== System Event ===");
+        
+        // Test Format 1: Object Format
+        try {
+            System.out.println("Testing Format 1: Object Format");
+            SystemEvent event1 = createSampleSystemEventObject(accountId, workspaceId);
+            validateEvent(event1, "System Event (Object)");
+            var response1 = sdk.sendSystemEvent(event1);
+            printResponse("System Event (Object)", response1);
+        } catch (Exception e) {
+            System.err.println("❌ System event (Object) failed: " + e.getMessage());
+        }
+
+        // Test Format 2: JSON String Format
+        try {
+            System.out.println("Testing Format 2: JSON String Format");
+            SystemEvent event2 = createSampleSystemEventString(accountId, workspaceId);
+            validateEvent(event2, "System Event (String)");
+            var response2 = sdk.sendSystemEvent(event2);
+            printResponse("System Event (String)", response2);
+        } catch (Exception e) {
+            System.err.println("❌ System event (String) failed: " + e.getMessage());
+        }
+        
         System.out.println();
     }
 
@@ -467,6 +497,39 @@ public class TestAllEndpoints {
         return event;
     }
 
+    private static SystemEvent createSampleSystemEventObject(String accountId, String workspaceId) {
+        SystemEvent event = new SystemEvent();
+        event.setAccountId(accountId);
+        event.setWorkspaceId(workspaceId);
+        event.setEventCategory("SystemEvent");
+        event.setEventName("CampaignTrigger");
+        event.setEventId("evt_sys_obj_" + System.currentTimeMillis());
+        event.setEventTime(Instant.now().toString());
+        
+        Map<String, Object> eventData = new HashMap<>();
+        eventData.put("campaign_id", "camp_001");
+        eventData.put("action", "start");
+        eventData.put("segment", "vip");
+        event.setEventData(eventData);
+        
+        return event;
+    }
+
+    private static SystemEvent createSampleSystemEventString(String accountId, String workspaceId) {
+        SystemEvent event = new SystemEvent();
+        event.setAccountId(accountId);
+        event.setWorkspaceId(workspaceId);
+        event.setEventCategory("SystemEvent");
+        event.setEventName("CampaignTrigger");
+        event.setEventId("evt_sys_str_" + System.currentTimeMillis());
+        event.setEventTime(Instant.now().toString());
+        
+        String eventDataJson = "{\"campaign_id\":\"camp_001\",\"action\":\"start\",\"segment\":\"vip\"}";
+        event.setEventData(eventDataJson);
+        
+        return event;
+    }
+
     private static void printResponse(String operation, com.optikpi.datapipeline.ApiResponse<Object> response) {
         if (response.isSuccess()) {
             System.out.println("✅ " + operation + " successful!");
@@ -504,6 +567,9 @@ public class TestAllEndpoints {
         } else if (event instanceof WalletBalanceEvent) {
             ValidationResult result = ((WalletBalanceEvent) event).validate();
             printValidationResult(result, eventName);   
+        } else if (event instanceof SystemEvent) {
+            ValidationResult result = ((SystemEvent) event).validate();
+            printValidationResult(result, eventName);
         } else {
             System.out.println("⚠️ Unknown event type: " + eventName);
         }

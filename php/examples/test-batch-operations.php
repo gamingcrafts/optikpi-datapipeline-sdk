@@ -11,6 +11,7 @@ use Optikpi\DataPipeline\Models\GamingActivityEvent;
 use Optikpi\DataPipeline\Models\ReferFriendEvent;
 use Optikpi\DataPipeline\Models\WalletBalanceEvent;
 use Optikpi\DataPipeline\Models\CustomerExtEvent;
+use Optikpi\DataPipeline\Models\SystemEvent;
 
 // Load environment variables
 $dotenv = parse_ini_file(__DIR__ . '/.env');
@@ -319,6 +320,44 @@ function createSampleWalletBalanceEvent($accountId, $workspaceId) {
 }
 
 /**
+ * Create sample system event - Object format
+ */
+function createSampleSystemEventObject($accountId, $workspaceId) {
+    return new SystemEvent([
+        'account_id' => $accountId,
+        'workspace_id' => $workspaceId,
+        'event_category' => 'SystemEvent',
+        'event_name' => 'CampaignTrigger',
+        'event_id' => 'evt_sys_obj_' . time(),
+        'event_time' => date('c'),
+        'event_data' => [
+            'campaign_id' => 'camp_001',
+            'action' => 'start',
+            'segment' => 'vip'
+        ]
+    ]);
+}
+
+/**
+ * Create sample system event - String format
+ */
+function createSampleSystemEventString($accountId, $workspaceId) {
+    return new SystemEvent([
+        'account_id' => $accountId,
+        'workspace_id' => $workspaceId,
+        'event_category' => 'SystemEvent',
+        'event_name' => 'CampaignTrigger',
+        'event_id' => 'evt_sys_str_' . time(),
+        'event_time' => date('c'),
+        'event_data' => json_encode([
+            'campaign_id' => 'camp_001',
+            'action' => 'start',
+            'segment' => 'vip'
+        ])
+    ]);
+}
+
+/**
  * Print validation result
  */
 function printValidationResult($result, $eventName) {
@@ -422,6 +461,16 @@ function validateBatchData($batch) {
             }
         }
     }
+
+    if (isset($batch['systemEvents']) && $batch['systemEvents'] !== null) {
+        foreach ($batch['systemEvents'] as $op) {
+            if ($op instanceof SystemEvent) {
+                $result = $op->validate();
+                printValidationResult($result, 'SystemEvent (Batch)');
+                printData($op);
+            }
+        }
+    }
 }
 
 /**
@@ -443,7 +492,11 @@ function testBatchOperations($sdk, $accountId, $workspaceId) {
             'withdrawEvents' => [createSampleWithdrawEvent($accountId, $workspaceId)],
             'gamingEvents' => [createSampleGamingActivityEvent($accountId, $workspaceId)],
             'referFriendEvents' => [createSampleReferFriendEvent($accountId, $workspaceId)],
-            'walletBalanceEvents' => [createSampleWalletBalanceEvent($accountId, $workspaceId)]
+            'walletBalanceEvents' => [createSampleWalletBalanceEvent($accountId, $workspaceId)],
+            'systemEvents' => [
+                createSampleSystemEventObject($accountId, $workspaceId),
+                createSampleSystemEventString($accountId, $workspaceId)
+            ]
         ];
 
         // Validate batch data
@@ -458,6 +511,7 @@ function testBatchOperations($sdk, $accountId, $workspaceId) {
         echo "   Gaming Events: " . (isset($batchData['gamingEvents']) ? count($batchData['gamingEvents']) : 0) . "\n";
         echo "   Refer Friend Events: " . (isset($batchData['referFriendEvents']) ? count($batchData['referFriendEvents']) : 0) . "\n";
         echo "   Wallet Balance Events: " . (isset($batchData['walletBalanceEvents']) ? count($batchData['walletBalanceEvents']) : 0) . "\n";
+        echo "   System Events: " . (isset($batchData['systemEvents']) ? count($batchData['systemEvents']) : 0) . "\n";
 
         echo "\n📤 Sending batch request to API...\n\n";
         
@@ -471,7 +525,8 @@ function testBatchOperations($sdk, $accountId, $workspaceId) {
             'withdrawEvents' => isset($batchData['withdrawEvents']) ? count($batchData['withdrawEvents']) : 0,
             'gamingEvents' => isset($batchData['gamingEvents']) ? count($batchData['gamingEvents']) : 0,
             'referFriendEvents' => isset($batchData['referFriendEvents']) ? count($batchData['referFriendEvents']) : 0,
-            'walletBalanceEvents' => isset($batchData['walletBalanceEvents']) ? count($batchData['walletBalanceEvents']) : 0
+            'walletBalanceEvents' => isset($batchData['walletBalanceEvents']) ? count($batchData['walletBalanceEvents']) : 0,
+            'systemEvents' => isset($batchData['systemEvents']) ? count($batchData['systemEvents']) : 0
         ];
         echo json_encode($payloadPreview, JSON_PRETTY_PRINT) . "\n\n";
         
@@ -547,6 +602,7 @@ function testBatchOperations($sdk, $accountId, $workspaceId) {
                 $checkResult('gamingEvents', '🎮 Gaming Events');
                 $checkResult('referFriendEvents', '👥 Refer Friend Events');
                 $checkResult('walletBalanceEvents', '💳 Wallet Balance Events');
+                $checkResult('systemEvents', '⚙️ System Events');
 
                 // Check for missing results
                 $expectedKeys = [
@@ -557,7 +613,8 @@ function testBatchOperations($sdk, $accountId, $workspaceId) {
                     'withdrawEvents', 
                     'gamingEvents', 
                     'referFriendEvents', 
-                    'walletBalanceEvents'
+                    'walletBalanceEvents',
+                    'systemEvents'
                 ];
                 
                 $receivedKeys = array_keys($response['results']);

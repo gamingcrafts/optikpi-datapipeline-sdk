@@ -15,10 +15,11 @@
     "test:referFriend": "node test-refer-friend-endpoint",
     "test:walletBalance": "node test-wallet-balance-endpoint",
     "test:batchData": "node test-batch-operations",
-    "test:customerExt":"node test-customerext-endpoint.js"
+    "test:customerExt": "node test-customerext-endpoint.js",
+    "test:system": "node test-system-endpoint.js"
   },
   "dependencies": {
-      "@optikpi/datapipeline-sdk": "github:gamingcrafts/optikpi-datapipeline-sdk#main"
+    "@optikpi/datapipeline-sdk": "github:gamingcrafts/optikpi-datapipeline-sdk#main"
   },
   "devDependencies": {
     "dotenv": "^16.3.1"

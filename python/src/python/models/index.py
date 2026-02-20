@@ -11,6 +11,8 @@ from .WithdrawEvent import WithdrawEvent
 from .GamingActivityEvent import GamingActivityEvent
 from .WalletBalanceEvent import WalletBalanceEvent
 from .ReferFriendEvent import ReferFriendEvent
+from .CustomerExtEvent import CustomerExtEvent
+from .SystemEvent import SystemEvent
 
 # Define public API for the models package
 __all__ = [
@@ -20,5 +22,7 @@ __all__ = [
     "WithdrawEvent",
     "GamingActivityEvent",
     "WalletBalanceEvent",
-    "ReferFriendEvent"
+    "ReferFriendEvent",
+    "CustomerExtEvent",
+    "SystemEvent"
 ]

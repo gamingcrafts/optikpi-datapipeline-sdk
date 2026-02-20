@@ -18,6 +18,7 @@ from models.WithdrawEvent import WithdrawEvent
 from models.GamingActivityEvent import GamingActivityEvent
 from models.WalletBalanceEvent import WalletBalanceEvent
 from models.ReferFriendEvent import ReferFriendEvent
+from models.SystemEvent import SystemEvent
 from utils import crypto
 
 __version__ = "1.0.0"
@@ -147,6 +148,18 @@ class OptikpiDataPipelineSDK:
         """
         return self.client.send_extended_attributes(data)
     
+    def send_system_event(self, data):
+        """
+        Send system event data
+        
+        Args:
+            data: System event data (dict or list of dicts)
+            
+        Returns:
+            Response dictionary with success status and data
+        """
+        return self.client.send_system_event(data)
+    
     def send_batch(self, batch_data):
         """
         Send multiple events in batch
@@ -205,6 +218,7 @@ __all__ = [
     'GamingActivityEvent',
     'WalletBalanceEvent',
     'ReferFriendEvent',
+    'SystemEvent',
     'crypto',
     'create_client',
 ]

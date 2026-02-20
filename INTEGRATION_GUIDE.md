@@ -18,6 +18,7 @@ This guide provides comprehensive instructions for third-party developers to int
 - **Gaming Activity**: Game plays, wins, losses, and session data
 - **Wallet Balance**: Wallet balance updates and tracking
 - **Refer Friend**: Referral program events and rewards
+- **System Events**: System-related activities and campaign triggers
 
 ## Table of Contents
 
@@ -69,6 +70,7 @@ https://your-api-gateway-url/apigw/ingest
 | `/events/gaming-activity` | POST | Push gaming activity events | 250 req/sec |
 | `/events/wallet-balance` | POST | Push wallet balance events | 250 req/sec |
 | `/events/refer-friend` | POST | Push refer friend events | 250 req/sec |
+| `/events/system` | POST | Push system events | 250 req/sec |
 | `/extattributes` | POST | Push extended attributes data | 50 req/sec |
 | 
 
@@ -314,6 +316,17 @@ https://your-api-gateway-url/apigw/ingest
 | list_name | String | Yes | Name of the list or category for the extended attributes |
 | ext_data | Object/String | Yes | Extended attributes data in JSON format. Examples: `{"email":true,"sms":false}` or `"{\"email\":true,\"sms\":true}"`
 
+### System Event
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| account_id | String | Yes | Account identifier |
+| workspace_id | String | Yes | Workspace identifier |
+| event_category | String | Yes | Category of the event (SystemEvent) |
+| event_name | String | Yes | Name of the system event |
+| event_id | String | Yes | Unique event identifier |
+| event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" UTC Time|
+| event_data | Object/String | Yes | System event data in JSON format |
+
 
 > **📅 Timestamp Format**: All date-time fields use ISO 8601 format with UTC time (e.g., `"2024-01-15T10:30:00Z"`). The `Z` suffix indicates UTC time.
 
@@ -505,6 +518,7 @@ const batchData = {
   gamingEvents: [gaming1, gaming2],
   walletBalanceEvents: [walletBalance1, walletBalance2],
   referFriendEvents: [referFriend1, referFriend2],
+  systemEvents: [system1, system2],
   extendedAttributes: [extAttr1, extAttr2]
 };
 const batchResult = await sdk.sendBatch(batchData);
