@@ -31,6 +31,9 @@ public class BatchData {
     @JsonProperty("walletBalanceEvents")  
     private List<Object> walletBalanceEvents;
     
+    @JsonProperty("systemEvents")
+    private List<Object> systemEvents;
+    
     public BatchData() {}
     
     // Getters and Setters
@@ -80,7 +83,6 @@ public class BatchData {
     public void setGamingEvents(List<Object> gamingEvents) {
         this.gamingEvents = gamingEvents;
     }
-
       
     public List<Object> getReferFriendEvents() {
         return referFriendEvents;
@@ -96,5 +98,13 @@ public class BatchData {
     
     public void setWalletBalanceEvents(List<Object> walletBalanceEvents) {
         this.walletBalanceEvents = walletBalanceEvents;
+    }
+
+    public List<Object> getSystemEvents() {
+        return systemEvents;
+    }
+    
+    public void setSystemEvents(List<Object> systemEvents) {
+        this.systemEvents = systemEvents;
     }
 }

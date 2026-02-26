@@ -22,6 +22,7 @@ from models.GamingActivityEvent import GamingActivityEvent
 from models.WithdrawEvent import WithdrawEvent
 from models.WalletBalanceEvent import WalletBalanceEvent
 from models.ReferFriendEvent import ReferFriendEvent
+from models.SystemEvent import SystemEvent
 
 
 # Load environment variables
@@ -266,8 +267,33 @@ TEST_DATA = {
         referee_user_id="user654321",
         referee_registration_date="2024-01-15T16:00:00Z",
         referee_first_deposit=100.00
+    ),
+    "system": SystemEvent(
+        account_id=ACCOUNT_ID,
+        workspace_id=WORKSPACE_ID,
+        event_category="SystemEvent",
+        event_name="CampaignTrigger",
+        event_id=f"evt_sys_obj_{int(time.time())}",
+        event_time=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+        event_data={
+            "campaign_id": "camp_001",
+            "action": "start",
+            "segment": "vip"
+        }
+    ),
+    "system_string": SystemEvent(
+        account_id=ACCOUNT_ID,
+        workspace_id=WORKSPACE_ID,
+        event_category="SystemEvent",
+        event_name="CampaignTrigger",
+        event_id=f"evt_sys_str_{int(time.time())}",
+        event_time=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+        event_data=json.dumps({
+            "campaign_id": "camp_001",
+            "action": "start",
+            "segment": "vip"
+        })
     )
-
 }
 events_to_validate = [
     {"key": "customer", "label": "Customer"},
@@ -277,7 +303,9 @@ events_to_validate = [
     {"key": "gaming", "label": "Gaming"},
     {"key": "customerext", "label": "Customer Extension"},
     {"key": "wallet", "label": "Wallet Balance"},
-    {"key": "referral", "label": "Refer Friend"}
+    {"key": "referral", "label": "Refer Friend"},
+    {"key": "system", "label": "System (Object)"},
+    {"key": "system_string", "label": "System (String)"}
 ]
 
 for event in events_to_validate:
@@ -328,7 +356,9 @@ def make_api_request(endpoint, data, method):
         elif method == 'wallet':
             result = sdk.send_wallet_balance_event(data)
         elif method == 'referral':
-            result = sdk.send_refer_friend_event(data)    
+            result = sdk.send_refer_friend_event(data)
+        elif method == 'system':
+            result = sdk.send_system_event(data)
         else:
             raise ValueError(f"Unknown method: {method}")
         
@@ -376,6 +406,8 @@ def test_all_endpoints():
     extattr_dict = TEST_DATA['customerext'].to_dict()
     wallet_dict = TEST_DATA['wallet'].to_dict()
     referral_dict = TEST_DATA['referral'].to_dict()
+    system_dict = TEST_DATA['system'].to_dict()
+    system_string_dict = TEST_DATA['system_string'].to_dict()
     endpoints = [
         {
             'name': 'Customer Profile',
@@ -424,6 +456,18 @@ def test_all_endpoints():
             'endpoint': '/events/refer-friend',
             'data': referral_dict,
             'method': 'referral'
+        },
+        {
+            'name': 'System Event (Object)',
+            'endpoint': '/events/system',
+            'data': system_dict,
+            'method': 'system'
+        },
+        {
+            'name': 'System Event (String)',
+            'endpoint': '/events/system',
+            'data': system_string_dict,
+            'method': 'system'
         }
     ]
     

@@ -11,6 +11,7 @@ use Optikpi\DataPipeline\Models\WithdrawEvent;
 use Optikpi\DataPipeline\Models\CustomerExtEvent;
 use Optikpi\DataPipeline\Models\WalletBalanceEvent;
 use Optikpi\DataPipeline\Models\ReferFriendEvent;
+use Optikpi\DataPipeline\Models\SystemEvent;
 
 // Load environment variables
 $dotenv = parse_ini_file(__DIR__ . '/.env');
@@ -41,7 +42,7 @@ $TEST_DATA = [
     'customer' => new CustomerProfile([
         'account_id' => $ACCOUNT_ID,
         'workspace_id' => $WORKSPACE_ID,
-        'user_id' => 'js_field04prod',
+        'user_id' => 'Prod_765',
         'username' => 'john_doe',
         'full_name' => 'John Doe',
         'first_name' => 'John',
@@ -100,7 +101,7 @@ $TEST_DATA = [
     'account' => new AccountEvent([
         'account_id' => $ACCOUNT_ID,
         'workspace_id' => $WORKSPACE_ID,
-        'user_id' => 'user123456',
+        'user_id' => 'Prod_765',
         'event_category' => 'Account',
         'event_name' => 'Player Registration',
         'event_id' => 'evt_123456789',
@@ -115,7 +116,7 @@ $TEST_DATA = [
     'deposit' => new DepositEvent([
         'account_id' => $ACCOUNT_ID,
         'workspace_id' => $WORKSPACE_ID,
-        'user_id' => 'user123456',
+        'user_id' => 'Prod_765',
         'event_category' => 'Deposit',
         'event_name' => 'Successful Deposit',
         'event_id' => 'evt_dep_987654321',
@@ -130,7 +131,7 @@ $TEST_DATA = [
     'withdraw' => new WithdrawEvent([
         'account_id' => $ACCOUNT_ID,
         'workspace_id' => $WORKSPACE_ID,
-        'user_id' => 'user123456',
+        'user_id' => 'Prod_765',
         'event_category' => 'Withdraw',
         'event_name' => 'Successful Withdrawal',
         'event_id' => 'evt_wd_987654321',
@@ -143,7 +144,7 @@ $TEST_DATA = [
     'gaming' => new GamingActivityEvent([
         'account_id' => $ACCOUNT_ID,
         'workspace_id' => $WORKSPACE_ID,
-        'user_id' => 'user123411',
+        'user_id' => 'Prod_765',
         'event_category' => 'Gaming Activity',
         'event_name' => 'Play Casino Game',
         'event_id' => 'evt_' . (time() * 1000),
@@ -216,7 +217,7 @@ $TEST_DATA = [
     'customerExt' => new CustomerExtEvent([
         'account_id' => $ACCOUNT_ID,
         'workspace_id' => $WORKSPACE_ID,
-        'user_id' => 'opti789',
+        'user_id' => 'Prod_765',
         'list_name' => 'BINGO_PREFERENCES',
         'ext_data' => [
             'Email' => 'True',
@@ -227,7 +228,7 @@ $TEST_DATA = [
     'walletBalance' => new WalletBalanceEvent([
         'account_id' => $ACCOUNT_ID,
         'workspace_id' => $WORKSPACE_ID,
-        'user_id' => 'user123456',
+        'user_id' => 'Prod_765',
         'event_category' => 'Wallet Balance',
         'event_name' => 'Balance Update',
         'event_id' => 'evt_wb_987654321',
@@ -242,7 +243,7 @@ $TEST_DATA = [
     'referFriend' => new ReferFriendEvent([
         'account_id' => $ACCOUNT_ID,
         'workspace_id' => $WORKSPACE_ID,
-        'user_id' => 'user123456',
+        'user_id' => 'Prod_765',
         'event_category' => 'Refer Friend',
         'event_name' => 'Referral Successful',
         'event_id' => 'evt_rf_987654321',
@@ -254,6 +255,32 @@ $TEST_DATA = [
         'referee_user_id' => 'user789012',
         'referee_registration_date' => '2024-01-15T10:30:00Z',
         'referee_first_deposit' => 100.00
+    ]),
+    'system' => new SystemEvent([
+        'account_id' => $ACCOUNT_ID,
+        'workspace_id' => $WORKSPACE_ID,
+        'event_category' => 'SystemEvent',
+        'event_name' => 'CampaignTrigger',
+        'event_id' => 'evt_sys_obj_' . time(),
+        'event_time' => date('c'),
+        'event_data' => [
+            'campaign_id' => 'camp_001',
+            'action' => 'start',
+            'segment' => 'vip'
+        ]
+    ]),
+    'systemString' => new SystemEvent([
+        'account_id' => $ACCOUNT_ID,
+        'workspace_id' => $WORKSPACE_ID,
+        'event_category' => 'SystemEvent',
+        'event_name' => 'CampaignTrigger',
+        'event_id' => 'evt_sys_str_' . time(),
+        'event_time' => date('c'),
+        'event_data' => json_encode([
+            'campaign_id' => 'camp_001',
+            'action' => 'start',
+            'segment' => 'vip'
+        ])
     ])
 ];
 
@@ -265,7 +292,9 @@ $eventsToValidate = [
     ['key' => 'customerExt', 'label' => 'CustomerExt'],
     ['key' => 'gaming', 'label' => 'Gaming'],
     ['key' => 'walletBalance', 'label' => 'WalletBalance'],
-    ['key' => 'referFriend', 'label' => 'ReferFriend']
+    ['key' => 'referFriend', 'label' => 'ReferFriend'],
+    ['key' => 'system', 'label' => 'System (Object)'],
+    ['key' => 'systemString', 'label' => 'System (String)']
 ];
 
 foreach ($eventsToValidate as $event) {
@@ -314,6 +343,9 @@ function makeApiRequest($sdk, $endpoint, $data, $method) {
             case 'referFriend':
                 $result = $sdk->sendReferFriendEvent($data);
                 break;
+            case 'system':
+                $result = $sdk->sendSystemEvent($data);
+                break;
             default:
                 throw new Exception("Unknown method: $method");
         }
@@ -355,7 +387,9 @@ function testAllEndpoints($sdk, $TEST_DATA, $API_BASE_URL, $ACCOUNT_ID, $WORKSPA
         ['name' => 'Gaming Activity', 'endpoint' => '/events/gaming-activity', 'data' => $TEST_DATA['gaming'], 'method' => 'gaming'],
         ['name' => 'Extended Attributes', 'endpoint' => '/extattributes', 'data' => $TEST_DATA['customerExt'], 'method' => 'extattributes'],
         ['name' => 'Wallet Balance', 'endpoint' => '/events/wallet-balance', 'data' => $TEST_DATA['walletBalance'], 'method' => 'walletBalance'],
-        ['name' => 'Refer Friend', 'endpoint' => '/events/refer-friend', 'data' => $TEST_DATA['referFriend'], 'method' => 'referFriend']
+        ['name' => 'Refer Friend', 'endpoint' => '/events/refer-friend', 'data' => $TEST_DATA['referFriend'], 'method' => 'referFriend'],
+        ['name' => 'System Event (Object)', 'endpoint' => '/events/system', 'data' => $TEST_DATA['system'], 'method' => 'system'],
+        ['name' => 'System Event (String)', 'endpoint' => '/events/system', 'data' => $TEST_DATA['systemString'], 'method' => 'system']
     ];
 
     $results = [];

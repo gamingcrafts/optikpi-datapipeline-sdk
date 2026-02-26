@@ -66,6 +66,7 @@ All SDKs support the following data models:
 - **Gaming Activity Events**: Game sessions, bets, wins, losses
 - **ReferFriend Events**: User referral activities and referral rewards
 - **WalletBalance Events**: Wallet balance snapshots and balance update notifications
+- **System Events**: Operator-related activities and system events
 
 ## 🔒 Security
 

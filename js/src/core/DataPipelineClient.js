@@ -312,13 +312,13 @@ class DataPipelineClient {
   }
 
   /**
-   * Sends operation event data
-   * @param {Object|Array} data - Operation event data or array of events
+   * Sends system event data
+   * @param {Object|Array} data - System event data or array of events
    * @returns {Promise<Object>} API response
    */
-  async sendOperationsEvent(data) {
+  async sendSystemEvent(data) {
     try {
-      const response = await this.axios.post('/events/operations', data);
+      const response = await this.axios.post('/events/system-events', data);
       return {
         success: true,
         status: response.status,
@@ -401,10 +401,10 @@ class DataPipelineClient {
       );
     }
 
-    if (batchData.operationEvents) {
+    if (batchData.systemEvents) {
       promises.push(
-        this.sendOperationsEvent(batchData.operationEvents)
-          .then(result => { results.operationEvents = result; })
+        this.sendSystemEvent(batchData.systemEvents)
+          .then(result => { results.systemEvents = result; })
       );
     }
 

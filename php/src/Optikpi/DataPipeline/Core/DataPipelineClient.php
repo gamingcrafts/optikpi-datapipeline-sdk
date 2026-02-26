@@ -344,6 +344,27 @@ class DataPipelineClient
     }
 
     /**
+     * Sends system event data
+     *
+     * @param array|object $data System event data or array of events
+     * @return array API response
+     */
+    public function sendSystemEvent($data): array
+    {
+        try {
+            return $this->makeRequest('POST', '/events/system-events', $data);
+        } catch (\Exception $error) {
+            return [
+                'success' => false,
+                'error' => $error->getMessage(),
+                'status' => null,
+                'data' => null,
+                'timestamp' => date('c')
+            ];
+        }
+    }
+
+    /**
      * Sends multiple events in batch
      *
      * @param array $batchData Object containing different event types
@@ -384,6 +405,10 @@ class DataPipelineClient
 
         if (isset($batchData['referFriendEvents'])) {
             $results['referFriendEvents'] = $this->sendReferFriendEvent($batchData['referFriendEvents']);
+        }
+
+        if (isset($batchData['systemEvents'])) {
+            $results['systemEvents'] = $this->sendSystemEvent($batchData['systemEvents']);
         }
 
         return [

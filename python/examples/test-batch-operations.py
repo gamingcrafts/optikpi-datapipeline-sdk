@@ -18,6 +18,7 @@ from models.GamingActivityEvent import GamingActivityEvent
 from models.WithdrawEvent import WithdrawEvent
 from models.WalletBalanceEvent import WalletBalanceEvent
 from models.ReferFriendEvent import ReferFriendEvent
+from models.SystemEvent import SystemEvent
 
 
 # Load environment variables
@@ -309,6 +310,40 @@ def create_sample_wallet_balance_event(account_id, workspace_id):
     )
 
 
+def create_sample_system_event_object(account_id, workspace_id):
+    """Create sample system event - Object format"""
+    return SystemEvent(
+        account_id=account_id,
+        workspace_id=workspace_id,
+        event_category="SystemEvent",
+        event_name="CampaignTrigger",
+        event_id=f"evt_sys_obj_{int(time.time())}",
+        event_time=datetime.now().isoformat() + "Z",
+        event_data={
+            "campaign_id": "camp_001",
+            "action": "start",
+            "segment": "vip"
+        }
+    )
+
+
+def create_sample_system_event_string(account_id, workspace_id):
+    """Create sample system event - String format"""
+    return SystemEvent(
+        account_id=account_id,
+        workspace_id=workspace_id,
+        event_category="SystemEvent",
+        event_name="CampaignTrigger",
+        event_id=f"evt_sys_str_{int(time.time())}",
+        event_time=datetime.now().isoformat() + "Z",
+        event_data=json.dumps({
+            "campaign_id": "camp_001",
+            "action": "start",
+            "segment": "vip"
+        })
+    )
+
+
 def print_validation_result(result, event_name):
     """Print validation result"""
     # Handle both dictionary and object responses
@@ -405,6 +440,13 @@ def validate_batch_data(batch):
                 print_validation_result(result, 'WalletBalanceEvent (Batch)')
                 print_data(wb)
 
+    if batch.get('system_events'):
+        for op in batch['system_events']:
+            if isinstance(op, SystemEvent):
+                result = op.validate()
+                print_validation_result(result, 'SystemEvent (Batch)')
+                print_data(op)
+
 
 def test_batch_operations(account_id, workspace_id):
     """Test batch operations"""
@@ -437,20 +479,25 @@ def test_batch_operations(account_id, workspace_id):
     ],
     'walletBalanceEvents': [
         create_sample_wallet_balance_event(account_id, workspace_id).to_dict()
+    ],
+    'systemEvents': [
+        create_sample_system_event_object(account_id, workspace_id).to_dict(),
+        create_sample_system_event_string(account_id, workspace_id).to_dict()
     ]
 }
 
         
         # Validate batch data
         validate_batch_data({
-            'customers': batch_data['customers'],
-            'extended_attributes': batch_data['extendedAttributes'],
-            'account_events': batch_data['accountEvents'],
-            'deposit_events': batch_data['depositEvents'],
-            'withdraw_events': batch_data['withdrawEvents'],
-            'gaming_events': batch_data['gamingEvents'],
-            'refer_friend_events': batch_data['referFriendEvents'],
-            'wallet_balance_events': batch_data['walletBalanceEvents']
+            'customers': [CustomerProfile.from_object(c) for c in batch_data['customers']],
+            'extended_attributes': [CustomerExtEvent.from_object(ea) for ea in batch_data['extendedAttributes']],
+            'account_events': [AccountEvent.from_object(a) for a in batch_data['accountEvents']],
+            'deposit_events': [DepositEvent.from_object(d) for d in batch_data['depositEvents']],
+            'withdraw_events': [WithdrawEvent.from_object(w) for w in batch_data['withdrawEvents']],
+            'gaming_events': [GamingActivityEvent.from_object(g) for g in batch_data['gamingEvents']],
+            'refer_friend_events': [ReferFriendEvent.from_object(r) for r in batch_data['referFriendEvents']],
+            'wallet_balance_events': [WalletBalanceEvent.from_object(wb) for wb in batch_data['walletBalanceEvents']],
+            'system_events': [SystemEvent.from_object(op) for op in batch_data['systemEvents']]
         })
         
         print('\n📦 Batch Data Summary:')
@@ -462,6 +509,7 @@ def test_batch_operations(account_id, workspace_id):
         print(f"   Gaming Events: {len(batch_data.get('gamingEvents', []))}")
         print(f"   Refer Friend Events: {len(batch_data.get('referFriendEvents', []))}")
         print(f"   Wallet Balance Events: {len(batch_data.get('walletBalanceEvents', []))}")
+        print(f"   System Events: {len(batch_data.get('systemEvents', []))}")
         
         print('\n📤 Sending batch request to API...\n')
         
@@ -475,7 +523,8 @@ def test_batch_operations(account_id, workspace_id):
             'withdrawEvents': len(batch_data.get('withdrawEvents', [])),
             'gamingEvents': len(batch_data.get('gamingEvents', [])),
             'referFriendEvents': len(batch_data.get('referFriendEvents', [])),
-            'walletBalanceEvents': len(batch_data.get('walletBalanceEvents', []))
+            'walletBalanceEvents': len(batch_data.get('walletBalanceEvents', [])),
+            'systemEvents': len(batch_data.get('systemEvents', []))
         }
         print(json.dumps(payload_preview, indent=2))
         print()
@@ -542,6 +591,7 @@ def test_batch_operations(account_id, workspace_id):
                 check_result('gamingEvents', '🎮 Gaming Events')
                 check_result('referFriendEvents', '👥 Refer Friend Events')
                 check_result('walletBalanceEvents', '💳 Wallet Balance Events')
+                check_result('systemEvents', '⚙️ System Events')
                 
                 # Check for missing results
                 expected_keys = [
@@ -552,7 +602,8 @@ def test_batch_operations(account_id, workspace_id):
                     'withdrawEvents', 
                     'gamingEvents', 
                     'referFriendEvents', 
-                    'walletBalanceEvents'
+                    'walletBalanceEvents',
+                    'systemEvents'
                 ]
                 
                 received_keys = list(response['results'].keys())

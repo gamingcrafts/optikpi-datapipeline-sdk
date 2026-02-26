@@ -8,7 +8,8 @@ const {
   GamingActivityEvent,
   ReferFriendEvent,
   WalletBalanceEvent,
-  CustomerExtEvent
+  CustomerExtEvent,
+  SystemEvent
 } = require('@optikpi/datapipeline-sdk')
 
 // Configuration - Read from environment variables
@@ -317,6 +318,44 @@ function createSampleWalletBalanceEvent(accountId, workspaceId) {
 }
 
 /**
+ * Create sample system event - Object format
+ */
+function createSampleSystemEventObject(accountId, workspaceId) {
+  return new SystemEvent({
+    account_id: accountId,
+    workspace_id: workspaceId,
+    event_category: "SystemEvent",
+    event_name: "CampaignTrigger",
+    event_id: `evt_sys_obj_${Date.now()}`,
+    event_time: new Date().toISOString(),
+    event_data: {
+      campaign_id: "camp_001",
+      action: "start",
+      segment: "vip"
+    }
+  });
+}
+
+/**
+ * Create sample system event - String format
+ */
+function createSampleSystemEventString(accountId, workspaceId) {
+  return new SystemEvent({
+    account_id: accountId,
+    workspace_id: workspaceId,
+    event_category: "SystemEvent",
+    event_name: "CampaignTrigger",
+    event_id: `evt_sys_str_${Date.now()}`,
+    event_time: new Date().toISOString(),
+    event_data: JSON.stringify({
+      campaign_id: "camp_001",
+      action: "start",
+      segment: "vip"
+    })
+  });
+}
+
+/**
  * Print validation result
  */
 function printValidationResult(result, eventName) {
@@ -420,6 +459,16 @@ function validateBatchData(batch) {
       }
     }
   }
+
+  if (batch.systemEvents != null) {
+    for (const op of batch.systemEvents) {
+      if (op instanceof SystemEvent) {
+        const result = op.validate();
+        printValidationResult(result, 'SystemEvent (Batch)');
+        PrintData(op);
+      }
+    }
+  }
 }
 
 /**
@@ -441,7 +490,11 @@ async function testBatchOperations(accountId, workspaceId) {
       withdrawEvents: [createSampleWithdrawEvent(accountId, workspaceId)],
       gamingEvents: [createSampleGamingActivityEvent(accountId, workspaceId)],
       referFriendEvents: [createSampleReferFriendEvent(accountId, workspaceId)],
-      walletBalanceEvents: [createSampleWalletBalanceEvent(accountId, workspaceId)]
+      walletBalanceEvents: [createSampleWalletBalanceEvent(accountId, workspaceId)],
+      systemEvents: [
+        createSampleSystemEventObject(accountId, workspaceId),
+        createSampleSystemEventString(accountId, workspaceId)
+      ]
     };
 
     // Validate batch data
@@ -456,9 +509,10 @@ async function testBatchOperations(accountId, workspaceId) {
     console.log(`   Gaming Events: ${batchData.gamingEvents?.length || 0}`);
     console.log(`   Refer Friend Events: ${batchData.referFriendEvents?.length || 0}`);
     console.log(`   Wallet Balance Events: ${batchData.walletBalanceEvents?.length || 0}`);
+    console.log(`   System Events: ${batchData.systemEvents?.length || 0}`);
 
     console.log('\n📤 Sending batch request to API...\n');
-    
+
     // Debug: Log what we're actually sending
     console.log('🔍 Request Payload Preview:');
     const payloadPreview = {
@@ -469,11 +523,12 @@ async function testBatchOperations(accountId, workspaceId) {
       withdrawEvents: batchData.withdrawEvents?.length || 0,
       gamingEvents: batchData.gamingEvents?.length || 0,
       referFriendEvents: batchData.referFriendEvents?.length || 0,
-      walletBalanceEvents: batchData.walletBalanceEvents?.length || 0
+      walletBalanceEvents: batchData.walletBalanceEvents?.length || 0,
+      systemEvents: batchData.systemEvents?.length || 0
     };
     console.log(JSON.stringify(payloadPreview, null, 2));
     console.log('\n');
-    
+
     // Send batch request
     const response = await sdk.sendBatch(batchData);
 
@@ -496,7 +551,7 @@ async function testBatchOperations(accountId, workspaceId) {
           if (response.results[key] !== undefined && response.results[key] !== null) {
             const result = response.results[key];
             console.log(`\n${displayName}:`);
-            
+
             // Try different possible response formats
             if (typeof result === 'object') {
               if (result.success !== undefined) {
@@ -547,29 +602,31 @@ async function testBatchOperations(accountId, workspaceId) {
         checkResult('gamingEvents', '🎮 Gaming Events');
         checkResult('referFriendEvents', '👥 Refer Friend Events');
         checkResult('walletBalanceEvents', '💳 Wallet Balance Events');
+        checkResult('systemEvents', '⚙️ System Events');
 
         // Check for missing results
         const expectedKeys = [
-          'customers', 
-          'extendedAttributes', 
-          'accountEvents', 
-          'depositEvents', 
-          'withdrawEvents', 
-          'gamingEvents', 
-          'referFriendEvents', 
-          'walletBalanceEvents'
+          'customers',
+          'extendedAttributes',
+          'accountEvents',
+          'depositEvents',
+          'withdrawEvents',
+          'gamingEvents',
+          'referFriendEvents',
+          'walletBalanceEvents',
+          'systemEvents'
         ];
-        
+
         const receivedKeys = Object.keys(response.results);
         const missingKeys = expectedKeys.filter(key => !receivedKeys.includes(key));
-        
+
         if (missingKeys.length > 0) {
           console.log('\n⚠️  Missing Results:');
           missingKeys.forEach(key => {
             console.log(`   - ${key}: No response received`);
           });
         }
-        
+
         console.log(`\n📊 Summary: ${receivedKeys.length}/${expectedKeys.length} event types processed`);
 
       } else if (response.data) {
@@ -582,12 +639,12 @@ async function testBatchOperations(accountId, workspaceId) {
     } else {
       console.log('\n❌ Batch operation failed');
       console.log(`📈 HTTP Status: ${response.status}`);
-      
+
       if (response.error) {
         console.log('\n🔴 Error Details:');
         console.log(JSON.stringify(response.error, null, 2));
       }
-      
+
       if (response.data) {
         console.log('\n📦 Response Data:');
         console.log(JSON.stringify(response.data, null, 2));
@@ -598,7 +655,7 @@ async function testBatchOperations(accountId, workspaceId) {
     console.error('\n❌ Batch operation failed with exception:');
     console.error('Error Message:', error.message);
     console.error('Error Stack:', error.stack);
-    
+
     if (error.response) {
       console.error('\n📡 HTTP Response Details:');
       console.error('Status:', error.response.status);
@@ -619,7 +676,7 @@ if (require.main === module) {
   console.log(`   Account ID: ${ACCOUNT_ID}`);
   console.log(`   Workspace ID: ${WORKSPACE_ID}`);
   console.log(`   Auth Token: ${AUTH_TOKEN ? AUTH_TOKEN.substring(0, 8) + '...' : 'Not set'}`);
-  
+
   testBatchOperations(ACCOUNT_ID, WORKSPACE_ID);
 }
 
@@ -634,6 +691,8 @@ module.exports = {
   createSampleGamingActivityEvent,
   createSampleReferFriendEvent,
   createSampleWalletBalanceEvent,
+  createSampleSystemEventObject,
+  createSampleSystemEventString,
   validateBatchData,
   printValidationResult,
   sdk

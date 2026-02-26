@@ -20,7 +20,7 @@ const {
   CustomerExtEvent,
   WalletBalanceEvent,
   ReferFriendEvent,
-  OperationEvent
+  SystemEvent
 } = require('./models');
 const {
   deriveKey,
@@ -68,8 +68,8 @@ class OptikpiDataPipelineSDK {
     return this.client.sendReferFriendEvent(data);
   }
 
-  async sendOperationsEvent(data) {
-    return this.client.sendOperationsEvent(data);
+  async sendSystemEvent(data) {
+    return this.client.sendSystemEvent(data);
   }
 
   async sendBatch(batchData) {
@@ -98,7 +98,7 @@ module.exports.GamingActivityEvent = GamingActivityEvent;
 module.exports.CustomerExtEvent = CustomerExtEvent;
 module.exports.WalletBalanceEvent = WalletBalanceEvent;
 module.exports.ReferFriendEvent = ReferFriendEvent;
-module.exports.OperationEvent = OperationEvent;
+module.exports.SystemEvent = SystemEvent;
 module.exports.crypto = {
   deriveKey,
   generateHmacSignature,
@@ -107,4 +107,3 @@ module.exports.crypto = {
 
 // Export default instance creator for convenience
 module.exports.createClient = (config) => new OptikpiDataPipelineSDK(config);
-

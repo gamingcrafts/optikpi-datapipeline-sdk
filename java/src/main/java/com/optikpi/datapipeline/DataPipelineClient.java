@@ -206,6 +206,10 @@ public class DataPipelineClient {
         return sendData("/events/wallet-balance", data);
     }
 
+    public ApiResponse<Object> sendSystemEvent(Object data) {
+        return sendData("/events/system-events", data);
+    }
+
     public BatchResponse sendBatch(BatchData batchData) {
         BatchResponse results = new BatchResponse();
         results.setSuccess(true);
@@ -240,13 +244,17 @@ public class DataPipelineClient {
         if (batchData.getWalletBalanceEvents() != null) {
             results.setWalletBalanceEvents(sendWalletBalanceEvent(batchData.getWalletBalanceEvents()));
         }
+
+        if (batchData.getSystemEvents() != null) {
+            results.setSystemEvents(sendSystemEvent(batchData.getSystemEvents()));
+        }
         
         return results;
     }
     
     private ApiResponse<Object> sendData(String endpoint, Object data) {
         try {
-            String jsonData = objectMapper.writeValueAsString(data);
+            String jsonData = (data instanceof String) ? (String) data : objectMapper.writeValueAsString(data);
             
             RequestBody body = RequestBody.create(
                 jsonData,

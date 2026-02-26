@@ -92,6 +92,15 @@ public class OptikpiDataPipelineSDK {
     }
 
     /**
+     * Sends system event data
+     * @param data System event data or array of events
+     * @return API response
+     */
+    public ApiResponse<Object> sendSystemEvent(Object data) {
+        return client.sendSystemEvent(data);
+    }
+
+    /**
      * Sends multiple events in batch
      * @param batchData Object containing different event types
      * @return Batch response results

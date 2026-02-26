@@ -20469,13 +20469,13 @@ let DataPipelineClient$1 = class DataPipelineClient {
   }
 
   /**
-   * Sends operation event data
-   * @param {Object|Array} data - Operation event data or array of events
+   * Sends system event data
+   * @param {Object|Array} data - System event data or array of events
    * @returns {Promise<Object>} API response
    */
-  async sendOperationsEvent(data) {
+  async sendSystemEvent(data) {
     try {
-      const response = await this.axios.post('/events/operations', data);
+      const response = await this.axios.post('/events/system-events', data);
       return {
         success: true,
         status: response.status,
@@ -20542,9 +20542,9 @@ let DataPipelineClient$1 = class DataPipelineClient {
         results.referFriendEvents = result;
       }));
     }
-    if (batchData.operationEvents) {
-      promises.push(this.sendOperationsEvent(batchData.operationEvents).then(result => {
-        results.operationEvents = result;
+    if (batchData.systemEvents) {
+      promises.push(this.sendSystemEvent(batchData.systemEvents).then(result => {
+        results.systemEvents = result;
       }));
     }
     await Promise.all(promises);
@@ -21607,14 +21607,14 @@ let CustomerExtEvent$2 = class CustomerExtEvent {
 var CustomerExtEvent_1$1 = CustomerExtEvent$2;
 
 /**
- * Operation Event Model
- * Represents operation-related events for the Data Pipeline API
+ * System Event Model
+ * Represents system-related events for the Data Pipeline API
  */
-let OperationEvent$2 = class OperationEvent {
+let SystemEvent$2 = class SystemEvent {
   constructor(data = {}) {
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
-    this.event_category = data.event_category || 'OperatorEvent';
+    this.event_category = data.event_category || 'SystemEvent';
     this.event_name = data.event_name;
     this.event_id = data.event_id;
     this.event_time = data.event_time;
@@ -21622,7 +21622,7 @@ let OperationEvent$2 = class OperationEvent {
   }
 
   /**
-   * Validates the operation event data
+   * Validates the system event data
    * @returns {Object} Validation result with isValid boolean and errors array
    */
   validate() {
@@ -21643,8 +21643,8 @@ let OperationEvent$2 = class OperationEvent {
     }
 
     // Event category validation
-    if (this.event_category && this.event_category !== 'OperatorEvent') {
-      errors.push('event_category must be "OperatorEvent" for operation events');
+    if (this.event_category && this.event_category !== 'SystemEvent') {
+      errors.push('event_category must be "SystemEvent" for system events');
     }
 
     // Date format validation
@@ -21682,15 +21682,15 @@ let OperationEvent$2 = class OperationEvent {
   }
 
   /**
-   * Creates an OperationEvent instance from plain object
+   * Creates a SystemEvent instance from plain object
    * @param {Object} data - Plain object data
-   * @returns {OperationEvent} New OperationEvent instance
+   * @returns {SystemEvent} New SystemEvent instance
    */
   static fromObject(data) {
-    return new OperationEvent(data);
+    return new SystemEvent(data);
   }
 };
-var OperationEvent_1$1 = OperationEvent$2;
+var SystemEvent_1$1 = SystemEvent$2;
 
 const CustomerProfile$1 = CustomerProfile_1$1;
 const AccountEvent$1 = AccountEvent_1$1;
@@ -21700,7 +21700,7 @@ const GamingActivityEvent$1 = GamingActivityEvent_1$1;
 const WalletBalanceEvent$1 = WalletBalanceEvent_1$1;
 const ReferFriendEvent$1 = ReferFriendEvent_1$1;
 const CustomerExtEvent$1 = CustomerExtEvent_1$1;
-const OperationEvent$1 = OperationEvent_1$1;
+const SystemEvent$1 = SystemEvent_1$1;
 var models = {
   CustomerProfile: CustomerProfile$1,
   AccountEvent: AccountEvent$1,
@@ -21710,7 +21710,7 @@ var models = {
   WalletBalanceEvent: WalletBalanceEvent$1,
   ReferFriendEvent: ReferFriendEvent$1,
   CustomerExtEvent: CustomerExtEvent$1,
-  OperationEvent: OperationEvent$1
+  SystemEvent: SystemEvent$1
 };
 
 /**
@@ -21734,7 +21734,7 @@ const {
   CustomerExtEvent,
   WalletBalanceEvent,
   ReferFriendEvent,
-  OperationEvent
+  SystemEvent
 } = models;
 const {
   deriveKey,
@@ -21774,8 +21774,8 @@ class OptikpiDataPipelineSDK {
   async sendReferFriendEvent(data) {
     return this.client.sendReferFriendEvent(data);
   }
-  async sendOperationsEvent(data) {
-    return this.client.sendOperationsEvent(data);
+  async sendSystemEvent(data) {
+    return this.client.sendSystemEvent(data);
   }
   async sendBatch(batchData) {
     return this.client.sendBatch(batchData);
@@ -21801,7 +21801,7 @@ var GamingActivityEvent_1 = src$1.exports.GamingActivityEvent = GamingActivityEv
 var CustomerExtEvent_1 = src$1.exports.CustomerExtEvent = CustomerExtEvent;
 var WalletBalanceEvent_1 = src$1.exports.WalletBalanceEvent = WalletBalanceEvent;
 var ReferFriendEvent_1 = src$1.exports.ReferFriendEvent = ReferFriendEvent;
-var OperationEvent_1 = src$1.exports.OperationEvent = OperationEvent;
+var SystemEvent_1 = src$1.exports.SystemEvent = SystemEvent;
 var crypto = src$1.exports.crypto = {
   deriveKey,
   generateHmacSignature,
@@ -21819,8 +21819,8 @@ exports.CustomerProfile = CustomerProfile_1;
 exports.DataPipelineClient = DataPipelineClient_1;
 exports.DepositEvent = DepositEvent_1;
 exports.GamingActivityEvent = GamingActivityEvent_1;
-exports.OperationEvent = OperationEvent_1;
 exports.ReferFriendEvent = ReferFriendEvent_1;
+exports.SystemEvent = SystemEvent_1;
 exports.WalletBalanceEvent = WalletBalanceEvent_1;
 exports.WithdrawEvent = WithdrawEvent_1;
 exports.createClient = createClient;

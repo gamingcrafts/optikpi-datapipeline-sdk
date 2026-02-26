@@ -11,6 +11,7 @@ use Optikpi\DataPipeline\Models\GamingActivityEvent;
 use Optikpi\DataPipeline\Models\WalletBalanceEvent;
 use Optikpi\DataPipeline\Models\ReferFriendEvent;
 use Optikpi\DataPipeline\Models\CustomerExtEvent;
+use Optikpi\DataPipeline\Models\SystemEvent;
 use Optikpi\DataPipeline\Utils\Crypto;
 
 /**
@@ -143,6 +144,20 @@ class OptikpiDataPipelineSDK
             $data = $data->toArray();
         }
         return $this->client->sendReferFriendEvent($data);
+    }
+
+    /**
+     * Sends system event data
+     *
+     * @param array|SystemEvent $data System event data
+     * @return array API response
+     */
+    public function sendSystemEvent($data): array
+    {
+        if ($data instanceof SystemEvent) {
+            $data = $data->toArray();
+        }
+        return $this->client->sendSystemEvent($data);
     }
 
     /**

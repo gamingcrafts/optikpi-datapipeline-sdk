@@ -78,6 +78,11 @@ php test-wallet-balance-endpoint.php
 php test-batch-operations.php
 ```
 
+### Test System Events
+```bash
+php test-system-endpoint.php
+```
+
 ## Example Code
 
 ### Basic Usage
@@ -202,7 +207,8 @@ $batchData = [
             'withdrawEvents' => [createSampleWithdrawEvent($accountId, $workspaceId)],
             'gamingEvents' => [createSampleGamingActivityEvent($accountId, $workspaceId)],
             'referFriendEvents' => [createSampleReferFriendEvent($accountId, $workspaceId)],
-            'walletBalanceEvents' => [createSampleWalletBalanceEvent($accountId, $workspaceId)]
+            'walletBalanceEvents' => [createSampleWalletBalanceEvent($accountId, $workspaceId)],
+            'systemEvents' => [createSampleSystemEvent($accountId, $workspaceId)]
         ];
 $response = $sdk->sendBatch($batchData);
 ```

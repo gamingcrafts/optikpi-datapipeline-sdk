@@ -1,6 +1,10 @@
 require('dotenv').config();
-const OptikpiDataPipelineSDK = require('../src/index');
-const { OperationEvent } = require('../src/models');
+const OptikpiDataPipelineSDK = require('@optikpi/datapipeline-sdk').default;
+const { SystemEvent } = require('@optikpi/datapipeline-sdk')
+
+/**
+ * Example of how to send system events using the SDK
+ */
 
 // Configuration - Read from environment variables
 const API_BASE_URL = process.env.API_BASE_URL;
@@ -12,7 +16,6 @@ const WORKSPACE_ID = process.env.WORKSPACE_ID;
 if (!AUTH_TOKEN || !ACCOUNT_ID || !WORKSPACE_ID) {
   console.error('❌ Error: Missing required environment variables!');
   console.error('   Please set: AUTH_TOKEN, ACCOUNT_ID, WORKSPACE_ID');
-  console.error('   Copy env.example to .env and fill in your values');
   process.exit(1);
 }
 
@@ -24,29 +27,28 @@ const sdk = new OptikpiDataPipelineSDK({
   baseURL: API_BASE_URL
 });
 
-// Operator event data - event_data as object
-const OPERATIONS_EVENT_OBJECT = new OperationEvent({
+// System event data - event_data as object
+const SYSTEM_EVENT_OBJECT = new SystemEvent({
   account_id: ACCOUNT_ID,
   workspace_id: WORKSPACE_ID,
-  event_category: 'OperatorEvent',
+  event_category: 'SystemEvent',
   event_name: 'CampaignTrigger',
-  event_id: `evt_op_${Date.now()}`,
+  event_id: `evt_sys_${Date.now()}`,
   event_time: new Date().toISOString(),
   event_data: {
     campaign_id: 'camp_001',
     action: 'start',
-    segment: 'vip',
-    metadata: { source: 'back_office' }
+    segment: 'vip'
   }
 });
 
-// Operator event data - event_data as JSON string
-const OPERATIONS_EVENT_STRING = new OperationEvent({
+// System event data - event_data as JSON string
+const SYSTEM_EVENT_STRING = new SystemEvent({
   account_id: ACCOUNT_ID,
   workspace_id: WORKSPACE_ID,
-  event_category: 'OperatorEvent',
+  event_category: 'SystemEvent',
   event_name: 'ManualAction',
-  event_id: `evt_op_${Date.now() + 1}`,
+  event_id: `evt_sys_${Date.now() + 1}`,
   event_time: new Date().toISOString(),
   event_data: JSON.stringify({
     action: "notify",
@@ -55,31 +57,30 @@ const OPERATIONS_EVENT_STRING = new OperationEvent({
   })
 });
 
-// Test operations endpoint
-async function testOperationsEndpoint() {
+// Test system endpoint
+async function testSystemEndpoint() {
   try {
-    console.log('� Testing Operations (Operator Events) Endpoint');
-    console.log('================================================');
+    console.log('🚀 Testing System (Back Office) Endpoint');
+    console.log('========================================');
     console.log('Configuration:');
     console.log(`API Base URL: ${API_BASE_URL}`);
     console.log(`Account ID: ${ACCOUNT_ID}`);
     console.log(`Workspace ID: ${WORKSPACE_ID}`);
-    console.log(`Auth Token: ${AUTH_TOKEN.substring(0, 8)}...`);
 
     // Test 1: event_data as object
     console.log('\n📋 Test 1: event_data as object');
-    console.log('Payload:', JSON.stringify(OPERATIONS_EVENT_OBJECT, null, 2));
+    console.log('Payload:', JSON.stringify(SYSTEM_EVENT_OBJECT, null, 2));
 
     // Validate
-    const val1 = OPERATIONS_EVENT_OBJECT.validate();
+    const val1 = SYSTEM_EVENT_OBJECT.validate();
     if (!val1.isValid) {
       console.error('❌ Test 1 Validation failed:', val1.errors);
       process.exit(1);
     }
-    console.log('✅ Operation event validated successfully!');
+    console.log('✅ System event validated successfully!');
 
     const startTime1 = Date.now();
-    const result1 = await sdk.sendOperationsEvent(OPERATIONS_EVENT_OBJECT);
+    const result1 = await sdk.sendSystemEvent(SYSTEM_EVENT_OBJECT);
     const endTime1 = Date.now();
 
     if (result1.success) {
@@ -90,30 +91,27 @@ async function testOperationsEndpoint() {
     } else {
       console.log('\n❌ Test 1 Failed!');
       console.log(`HTTP Status: ${result1.status || 'N/A'}`);
-      if (result1.error && result1.error.includes('EAI_AGAIN')) {
-        console.log('Error: Network/DNS Timeout (EAI_AGAIN). Please check your internet connection and try again.');
-      } else {
-        console.log('Error:', result1.error);
-      }
+      console.log('Error:', result1.error);
       console.log('Data:', JSON.stringify(result1.data, null, 2));
     }
 
+    // Wait 1.5s
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     // Test 2: event_data as JSON string
     console.log('\n📋 Test 2: event_data as JSON string');
-    console.log('Payload:', JSON.stringify(OPERATIONS_EVENT_STRING, null, 2));
+    console.log('Payload:', JSON.stringify(SYSTEM_EVENT_STRING, null, 2));
 
     // Validate
-    const val2 = OPERATIONS_EVENT_STRING.validate();
+    const val2 = SYSTEM_EVENT_STRING.validate();
     if (!val2.isValid) {
       console.error('❌ Test 2 Validation failed:', val2.errors);
       process.exit(1);
     }
-    console.log('✅ Operation event validated successfully!');
+    console.log('✅ System event validated successfully!');
 
     const startTime2 = Date.now();
-    const result2 = await sdk.sendOperationsEvent(OPERATIONS_EVENT_STRING);
+    const result2 = await sdk.sendSystemEvent(SYSTEM_EVENT_STRING);
     const endTime2 = Date.now();
 
     if (result2.success) {
@@ -124,11 +122,7 @@ async function testOperationsEndpoint() {
     } else {
       console.log('\n❌ Test 2 Failed!');
       console.log(`HTTP Status: ${result2.status || 'N/A'}`);
-      if (result2.error && result2.error.includes('EAI_AGAIN')) {
-        console.log('Error: Network/DNS Timeout (EAI_AGAIN). Please check your internet connection and try again.');
-      } else {
-        console.log('Error:', result2.error);
-      }
+      console.log('Error:', result2.error);
       console.log('Data:', JSON.stringify(result2.data, null, 2));
     }
 
@@ -139,23 +133,17 @@ async function testOperationsEndpoint() {
   } catch (error) {
     console.error('\n❌ Error occurred!');
     console.error('==================');
-    if (error.response) {
-      console.error(`HTTP Status: ${error.response.status}`);
-      console.error('Response:', JSON.stringify(error.response.data, null, 2));
-    } else {
-      console.error('Error:', error.message);
-      console.error('Stack:', error.stack);
-    }
+    console.error('Error:', error.message);
   }
 }
 
 if (require.main === module) {
-  testOperationsEndpoint();
+  testSystemEndpoint();
 }
 
 module.exports = {
-  testOperationsEndpoint,
-  OPERATIONS_EVENT_OBJECT,
-  OPERATIONS_EVENT_STRING,
+  testSystemEndpoint,
+  SYSTEM_EVENT_OBJECT,
+  SYSTEM_EVENT_STRING,
   sdk
 };

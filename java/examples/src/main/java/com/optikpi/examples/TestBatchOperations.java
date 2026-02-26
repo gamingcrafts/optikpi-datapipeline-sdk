@@ -16,6 +16,7 @@ import com.optikpi.datapipeline.model.CustomerProfile;
 import com.optikpi.datapipeline.model.DepositEvent;
 import com.optikpi.datapipeline.model.ExtendedAttributesEvent;
 import com.optikpi.datapipeline.model.GamingActivityEvent;
+import com.optikpi.datapipeline.model.SystemEvent;
 import com.optikpi.datapipeline.model.ReferFriendEvent;
 import com.optikpi.datapipeline.model.ValidationResult;
 import com.optikpi.datapipeline.model.WalletBalanceEvent;
@@ -80,6 +81,10 @@ public class TestBatchOperations {
             batchData.setGamingEvents(Arrays.asList(createSampleGamingActivityEvent(accountId, workspaceId)));
             batchData.setReferFriendEvents(Arrays.asList(createSampleReferFriendEvent(accountId, workspaceId)));
             batchData.setWalletBalanceEvents(Arrays.asList(createSampleWalletBalanceEvent(accountId, workspaceId)));
+            batchData.setSystemEvents(Arrays.asList(
+                createSampleSystemEventObject(accountId, workspaceId),
+                createSampleSystemEventString(accountId, workspaceId)
+            ));
             
             validateBatchData(batchData);
             
@@ -112,6 +117,9 @@ public class TestBatchOperations {
                 }
                 if (response.getWalletBalanceEvents() != null) {
                     System.out.println("Wallet Balance events: " + (response.getWalletBalanceEvents().isSuccess() ? "Success" : "Failed"));
+                }
+                if (response.getSystemEvents() != null) {
+                    System.out.println("System events: " + (response.getSystemEvents().isSuccess() ? "Success" : "Failed"));
                 }
             } else {
                 System.out.println("❌ Batch operation failed");
@@ -184,7 +192,6 @@ public class TestBatchOperations {
             customer.setWindowsPushToken("windows_push_token_ghi012");  
             customer.setMacDmgPushToken("mac_push_token_jkl345");
 
-             
         return customer;
     }
 
@@ -383,6 +390,39 @@ public class TestBatchOperations {
         return event;
     }
 
+    private static SystemEvent createSampleSystemEventObject(String accountId, String workspaceId) {
+        SystemEvent event = new SystemEvent();
+        event.setAccountId(accountId);
+        event.setWorkspaceId(workspaceId);
+        event.setEventCategory("SystemEvent");
+        event.setEventName("CampaignTrigger");
+        event.setEventId("evt_sys_obj_" + System.currentTimeMillis());
+        event.setEventTime(Instant.now().toString());
+        
+        Map<String, Object> eventData = new HashMap<>();
+        eventData.put("campaign_id", "camp_001");
+        eventData.put("action", "start");
+        eventData.put("segment", "vip");
+        event.setEventData(eventData);
+        
+        return event;
+    }
+
+    private static SystemEvent createSampleSystemEventString(String accountId, String workspaceId) {
+        SystemEvent event = new SystemEvent();
+        event.setAccountId(accountId);
+        event.setWorkspaceId(workspaceId);
+        event.setEventCategory("SystemEvent");
+        event.setEventName("CampaignTrigger");
+        event.setEventId("evt_sys_str_" + System.currentTimeMillis());
+        event.setEventTime(Instant.now().toString());
+        
+        String eventDataJson = "{\"campaign_id\":\"camp_001\",\"action\":\"start\",\"segment\":\"vip\"}";
+        event.setEventData(eventDataJson);
+        
+        return event;
+    }
+
     private static void validateBatchData(BatchData batch) {
         System.out.println("=== Validating BatchData contents ===");
 
@@ -447,6 +487,14 @@ public class TestBatchOperations {
                 if (wb instanceof WalletBalanceEvent) {
                     ValidationResult result = ((WalletBalanceEvent) wb).validate();
                     printValidationResult(result, "WalletBalanceEvent (Batch)");
+                }
+            }
+        }
+        if (batch.getSystemEvents() != null) {
+            for (Object op : batch.getSystemEvents()) {
+                if (op instanceof SystemEvent) {
+                    ValidationResult result = ((SystemEvent) op).validate();
+                    printValidationResult(result, "SystemEvent (Batch)");
                 }
             }
         }

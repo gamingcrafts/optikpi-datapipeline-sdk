@@ -88,6 +88,11 @@ chmod +x run.sh
 ./run.sh TestBatchOperations
 ```
 
+### Test System Events
+```bash
+./run.sh TestSystemEndpoint
+```
+
 ## Example Code
 
 ### Basic Usage
@@ -194,6 +199,7 @@ BatchData batchData = new BatchData();
 batchData.setCustomers(Arrays.asList(customer1, customer2));
 batchData.setAccountEvents(Arrays.asList(accountEvent1, accountEvent2));
 batchData.setDepositEvents(Arrays.asList(depositEvent1, depositEvent2));
+batchData.setSystemEvents(Arrays.asList(systemEvent1, systemEvent2));
 
 // Send batch
 var response = sdk.sendBatch(batchData);
