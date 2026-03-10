@@ -67,7 +67,7 @@ public class TestSystemEndpoint {
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
             event.setEventCategory("SystemEvent");
-            event.setEventName("CampaignTrigger");
+            event.setEventName("Campaign Trigger");
             event.setEventId("evt_sys_" + System.currentTimeMillis());
             event.setEventTime(Instant.now().toString());
             
@@ -97,7 +97,7 @@ public class TestSystemEndpoint {
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
             event.setEventCategory("SystemEvent");
-            event.setEventName("ManualAction");
+            event.setEventName("Manual Action");
             event.setEventId("evt_sys_" + (System.currentTimeMillis() + 1));
             event.setEventTime(Instant.now().toString());
             

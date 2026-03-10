@@ -118,10 +118,12 @@ public class DepositEvent {
         // Event name validation - CORRECTED to match JavaScript/API
         String[] validEventNames = {
             "Successful Deposit",
+            "First-Time Deposit",
+            "Second-Time Deposit",
+            "Third-Time Deposit",
             "Failed Deposit",
-            "Pending Deposit",
-            "Deposit Cancelled",
-            "Deposit Refunded"
+            "Deposit Reversal",
+            "Init Deposit"
         };
         
         if (eventName != null && !isValidEventName(eventName, validEventNames)) {

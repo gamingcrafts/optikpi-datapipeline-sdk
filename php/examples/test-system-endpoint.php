@@ -40,15 +40,15 @@ echo "📋 Test 2: event_data as JSON string\n";
 testSystemEventWithJsonString($sdk, $ACCOUNT_ID, $WORKSPACE_ID);
 
 function testSystemEventWithObject($sdk, $accountId, $workspaceId) {
-    $event = new SystemEvent([
+    $event = new SystemEvent([  
         'account_id' => $accountId,
         'workspace_id' => $workspaceId,
         'event_category' => 'SystemEvent',
-        'event_name' => 'CampaignTrigger',
+        'event_name' => 'Campaign Trigger',
         'event_id' => 'evt_sys_obj_' . time(),
-        'event_time' => date('c'),
+        'event_time' => "2026-03-02T09:45:00Z",
         'event_data' => [
-            'campaign_id' => 'camp_001',
+            'campaign_id' => 'camp_002',
             'action' => 'start',
             'segment' => 'vip'
         ]
@@ -70,10 +70,10 @@ function testSystemEventWithJsonString($sdk, $accountId, $workspaceId) {
         'account_id' => $accountId,
         'workspace_id' => $workspaceId,
         'event_category' => 'SystemEvent',
-        'event_name' => 'ManualAction',
+        'event_name' => 'Manual Action',
         'event_id' => 'evt_sys_str_' . (time() + 1),
-        'event_time' => date('c'),
-        'event_data' => '{"action":"notify","target":"user_list_1","payload":{}}'
+        'event_time' => "2026-03-02T09:45:00Z",
+        'event_data' => '{"action":"start","target":"user_list_1","payload":{}}'
     ]);
 
     $validation = $event->validate();

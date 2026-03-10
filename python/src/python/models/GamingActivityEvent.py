@@ -108,16 +108,15 @@ class GamingActivityEvent:
 
         # Event name validation
         valid_event_names = [
+            "All Game Play",
             "Play Casino Game",
-            "Game Win",
-            "Game Loss",
-            "Game Draw",
-            "Bonus Game",
-            "Free Spins",
-            "Tournament Entry",
-            "Tournament Win",
-            "Progressive Jackpot",
-            "Side Bet"
+            "Sports Betting",
+            "Play Poker",
+            "Play Esports",
+            "Bonus Received",
+            "Free Spin Play",
+            "Limit",
+            "Intervention"
         ]
         if self.event_name and self.event_name not in valid_event_names:
             errors.append(f"event_name must be one of: {', '.join(valid_event_names)}")

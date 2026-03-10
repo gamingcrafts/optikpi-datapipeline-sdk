@@ -45,10 +45,12 @@ class DepositEvent {
     // Event name validation
     const validEventNames = [
       'Successful Deposit',
+      'First-Time Deposit',
+      'Second-Time Deposit',
+      'Third-Time Deposit',
       'Failed Deposit',
-      'Pending Deposit',
-      'Deposit Cancelled',
-      'Deposit Refunded'
+      'Deposit Reversal',
+      'Init Deposit'
     ];
 
     if (this.event_name && !validEventNames.includes(this.event_name)) {

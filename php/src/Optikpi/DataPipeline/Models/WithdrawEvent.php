@@ -83,8 +83,8 @@ class WithdrawEvent
             'Successful Withdrawal',
             'Failed Withdrawal',
             'Pending Withdrawal',
-            'Withdrawal Cancelled',
-            'Withdrawal Rejected'
+            'Withdrawal Reversal',
+            'Init Withdrawal'
         ];
 
         if (!empty($this->event_name) && !in_array($this->event_name, $validEventNames)) {
