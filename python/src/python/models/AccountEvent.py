@@ -48,13 +48,15 @@ class AccountEvent:
         'Player Registration',
         'Account Verification',
         'Password Change',
-        'Email Update',
-        'Phone Update',
+        'Email Verification',
+        'Phone Verification',
         'Account Suspension',
         'Account Reactivation',
         'Profile Update',
         'Login',
-        'Logout'
+        'Logout',
+        'insert',
+        'update'
     ]
     
     VALID_STATUSES = ['verified', 'pending', 'failed', 'completed']

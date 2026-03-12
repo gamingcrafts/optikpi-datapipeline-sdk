@@ -1,6 +1,8 @@
 require('dotenv').config();
-const OptikpiDataPipelineSDK = require('@optikpi/datapipeline-sdk').default;
-const { SystemEvent } = require('@optikpi/datapipeline-sdk')
+
+
+const OptikpiDataPipelineSDK = require('../src/index');
+const { SystemEvent } = require('../src/models');
 
 /**
  * Example of how to send system events using the SDK
@@ -32,7 +34,7 @@ const SYSTEM_EVENT_OBJECT = new SystemEvent({
   account_id: ACCOUNT_ID,
   workspace_id: WORKSPACE_ID,
   event_category: 'SystemEvent',
-  event_name: 'CampaignTrigger',
+  event_name: 'Campaign Trigger',
   event_id: `evt_sys_${Date.now()}`,
   event_time: new Date().toISOString(),
   event_data: {
@@ -47,7 +49,7 @@ const SYSTEM_EVENT_STRING = new SystemEvent({
   account_id: ACCOUNT_ID,
   workspace_id: WORKSPACE_ID,
   event_category: 'SystemEvent',
-  event_name: 'ManualAction',
+  event_name: 'Manual Action',
   event_id: `evt_sys_${Date.now() + 1}`,
   event_time: new Date().toISOString(),
   event_data: JSON.stringify({

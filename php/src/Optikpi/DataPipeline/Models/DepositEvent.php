@@ -83,10 +83,12 @@ class DepositEvent
         // Event name validation
         $validEventNames = [
             'Successful Deposit',
+            'First-Time Deposit',
+            'Second-Time Deposit',
+            'Third-Time Deposit',
             'Failed Deposit',
-            'Pending Deposit',
-            'Deposit Cancelled',
-            'Deposit Refunded'
+            'Deposit Reversal',
+            'Init Deposit'
         ];
 
         if (!empty($this->event_name) && !in_array($this->event_name, $validEventNames)) {

@@ -46,8 +46,8 @@ class DepositEvent:
             errors.append('event_category must be "Deposit" for deposit events')
 
         valid_event_names = [
-            "Successful Deposit", "Failed Deposit", "Pending Deposit",
-            "Deposit Cancelled", "Deposit Refunded"
+            "Successful Deposit", "First-Time Deposit", "Second-Time Deposit",
+            "Third-Time Deposit", "Failed Deposit", "Deposit Reversal", "Init Deposit"
         ]
         if self.event_name and self.event_name not in valid_event_names:
             errors.append(f"event_name must be one of: {', '.join(valid_event_names)}")

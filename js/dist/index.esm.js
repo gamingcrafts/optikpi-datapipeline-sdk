@@ -20769,7 +20769,7 @@ let AccountEvent$2 = class AccountEvent {
     }
 
     // Event name validation
-    const validEventNames = ['Player Registration', 'Account Verification', 'Password Change', 'Email Update', 'Phone Update', 'Account Suspension', 'Account Reactivation', 'Profile Update', 'Login', 'Logout'];
+    const validEventNames = ['Player Registration', 'Account Verification', 'Password Change', 'Email Verification', 'Phone Verification', 'Account Suspension', 'Account Reactivation', 'Profile Update', 'Login', 'Logout', 'insert', 'update'];
     if (this.event_name && !validEventNames.includes(this.event_name)) {
       errors.push(`event_name must be one of: ${validEventNames.join(', ')}`);
     }
@@ -20874,7 +20874,7 @@ let DepositEvent$2 = class DepositEvent {
     }
 
     // Event name validation
-    const validEventNames = ['Successful Deposit', 'Failed Deposit', 'Pending Deposit', 'Deposit Cancelled', 'Deposit Refunded'];
+    const validEventNames = ['Successful Deposit', 'First-Time Deposit', 'Second-Time Deposit', 'Third-Time Deposit', 'Failed Deposit', 'Deposit Reversal', 'Init Deposit'];
     if (this.event_name && !validEventNames.includes(this.event_name)) {
       errors.push(`event_name must be one of: ${validEventNames.join(', ')}`);
     }
@@ -20978,7 +20978,7 @@ let WithdrawEvent$2 = class WithdrawEvent {
     }
 
     // Event name validation
-    const validEventNames = ['Successful Withdrawal', 'Failed Withdrawal', 'Pending Withdrawal', 'Withdrawal Cancelled', 'Withdrawal Rejected'];
+    const validEventNames = ['Successful Withdrawal', 'Failed Withdrawal', 'Pending Withdrawal', 'Withdrawal Reversal', 'Init Withdrawal'];
     if (this.event_name && !validEventNames.includes(this.event_name)) {
       errors.push(`event_name must be one of: ${validEventNames.join(', ')}`);
     }
@@ -21141,7 +21141,7 @@ let GamingActivityEvent$2 = class GamingActivityEvent {
     }
 
     // Event name validation
-    const validEventNames = ['Play Casino Game', 'Game Win', 'Game Loss', 'Game Draw', 'Bonus Game', 'Free Spins', 'Tournament Entry', 'Tournament Win', 'Progressive Jackpot', 'Side Bet'];
+    const validEventNames = ['All Game Play', 'Play Casino Game', 'Sports Betting', 'Play Poker', 'Play Esports', 'Bonus Received', 'Free Spin Play', 'Limit', 'Intervention'];
     if (this.event_name && !validEventNames.includes(this.event_name)) {
       errors.push(`event_name must be one of: ${validEventNames.join(', ')}`);
     }
@@ -21272,6 +21272,12 @@ let WalletBalanceEvent$2 = class WalletBalanceEvent {
       errors.push('event_category must be "Wallet Balance" for wallet balance events');
     }
 
+    // Event name validation
+    const validEventNames = ['Current Balance'];
+    if (this.event_name && !validEventNames.includes(this.event_name)) {
+      errors.push(`event_name must be one of: ${validEventNames.join(', ')}`);
+    }
+
     // Date format validation
     if (this.event_time && !this.isValidDateTime(this.event_time)) {
       errors.push('event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)');
@@ -21394,6 +21400,12 @@ let ReferFriendEvent$2 = class ReferFriendEvent {
     // Event category validation
     if (this.event_category && this.event_category !== 'Refer Friend') {
       errors.push('event_category must be "Refer Friend" for refer friend events');
+    }
+
+    // Event name validation
+    const validEventNames = ['Referral Successful'];
+    if (this.event_name && !validEventNames.includes(this.event_name)) {
+      errors.push(`event_name must be one of: ${validEventNames.join(', ')}`);
     }
 
     // Date format validation
@@ -21641,6 +21653,12 @@ let SystemEvent$2 = class SystemEvent {
     // Event category validation
     if (this.event_category && this.event_category !== 'SystemEvent') {
       errors.push('event_category must be "SystemEvent" for system events');
+    }
+
+    // Event name validation
+    const validEventNames = ['Campaign Trigger', 'Manual Action'];
+    if (this.event_name && !validEventNames.includes(this.event_name)) {
+      errors.push(`event_name must be one of: ${validEventNames.join(', ')}`);
     }
 
     // Date format validation

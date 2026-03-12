@@ -137,16 +137,15 @@ class GamingActivityEvent
 
         // Event name validation
         $validEventNames = [
+            'All Game Play',
             'Play Casino Game',
-            'Game Win',
-            'Game Loss',
-            'Game Draw',
-            'Bonus Game',
-            'Free Spins',
-            'Tournament Entry',
-            'Tournament Win',
-            'Progressive Jackpot',
-            'Side Bet'
+            'Sports Betting',
+            'Play Poker',
+            'Play Esports',
+            'Bonus Received',
+            'Free Spin Play',
+            'Limit',
+            'Intervention'
         ];
 
         if (!empty($this->event_name) && !in_array($this->event_name, $validEventNames)) {

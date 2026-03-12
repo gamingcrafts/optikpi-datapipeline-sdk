@@ -71,6 +71,16 @@ class SystemEvent
             $errors[] = 'event_category must be "SystemEvent" for system events';
         }
 
+        // Event name validation
+        $validEventNames = [
+            'Campaign Trigger',
+            'Manual Action'
+        ];
+
+        if (!empty($this->event_name) && !in_array($this->event_name, $validEventNames)) {
+            $errors[] = 'event_name must be one of: ' . implode(', ', $validEventNames);
+        }
+
         // Date format validation
         if (!empty($this->event_time) && !$this->isValidDateTime($this->event_time)) {
             $errors[] = 'event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)';

@@ -53,8 +53,8 @@ class WithdrawEvent:
             "Successful Withdrawal",
             "Failed Withdrawal",
             "Pending Withdrawal",
-            "Withdrawal Cancelled",
-            "Withdrawal Rejected"
+            "Withdrawal Reversal",
+            "Init Withdrawal"
         ]
         if self.event_name and self.event_name not in valid_event_names:
             errors.append(f"event_name must be one of: {', '.join(valid_event_names)}")

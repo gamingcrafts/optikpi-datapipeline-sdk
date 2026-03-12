@@ -107,8 +107,8 @@ public class AccountEvent {
         // Event name validation
         String[] validEventNames = {
             "Player Registration", "Account Verification", "Password Change",
-            "Email Update", "Phone Update", "Account Suspension", "Account Reactivation",
-            "Profile Update", "Login", "Logout"
+            "Email Verification", "Phone Verification", "Account Suspension", "Account Reactivation",
+            "Profile Update", "Login", "Logout", "insert", "update"
         };
         
         if (eventName != null && !isValidEventName(eventName, validEventNames)) {

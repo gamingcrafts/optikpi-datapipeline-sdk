@@ -45,8 +45,8 @@ class WithdrawEvent {
       'Successful Withdrawal',
       'Failed Withdrawal',
       'Pending Withdrawal',
-      'Withdrawal Cancelled',
-      'Withdrawal Rejected'
+      'Withdrawal Reversal',
+      'Init Withdrawal'
     ];
 
     if (this.event_name && !validEventNames.includes(this.event_name)) {

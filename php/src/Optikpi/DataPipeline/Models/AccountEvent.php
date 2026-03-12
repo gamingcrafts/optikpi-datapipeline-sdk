@@ -76,13 +76,15 @@ class AccountEvent
             'Player Registration',
             'Account Verification',
             'Password Change',
-            'Email Update',
-            'Phone Update',
+            'Email Verification',
+            'Phone Verification',
             'Account Suspension',
             'Account Reactivation',
             'Profile Update',
             'Login',
-            'Logout'
+            'Logout',
+            'insert',
+            'update'
         ];
 
         if (!empty($this->event_name) && !in_array($this->event_name, $validEventNames)) {

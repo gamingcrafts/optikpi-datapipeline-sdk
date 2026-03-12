@@ -18,7 +18,7 @@ This guide provides comprehensive instructions for third-party developers to int
 - **Gaming Activity**: Game plays, wins, losses, and session data
 - **Wallet Balance**: Wallet balance updates and tracking
 - **Refer Friend**: Referral program events and rewards
-- **System Events**: System-related activities and campaign triggers
+- **System Events**: Back-office, operator, and system-level events (e.g. campaign triggers)
 
 ## Table of Contents
 
@@ -70,7 +70,7 @@ https://your-api-gateway-url/apigw/ingest
 | `/events/gaming-activity` | POST | Push gaming activity events | 250 req/sec |
 | `/events/wallet-balance` | POST | Push wallet balance events | 250 req/sec |
 | `/events/refer-friend` | POST | Push refer friend events | 250 req/sec |
-| `/events/system` | POST | Push system events | 250 req/sec |
+| `/events/system-events` | POST | Push system event data | 250 req/sec |
 | `/extattributes` | POST | Push extended attributes data | 50 req/sec |
 | 
 
@@ -156,7 +156,7 @@ https://your-api-gateway-url/apigw/ingest
 | workspace_id | String | Yes | Workspace identifier - belongs to an account |
 | user_id | String | Yes | Unique user identifier |
 | event_category | String | Yes | Category of the event (Account) |
-| event_name | String | Yes | Name of the account event |
+| event_name | String | Yes | Name of the account event. **Note:** Kindly ensure that the event_name field follows the required case-sensitive naming standard. These are a few sample event names for the Account category (e.g., Player Registration, Account Verification, Password Change, Email Verification, Phone Verification, Account Suspension, Account Reactivation, Profile Update, Login, Logout, insert, update, etc.). |
 | event_id | String | Yes | Unique event identifier |
 | event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" UTC Time|
 | affiliate_id | String | No | Affiliate identifier |
@@ -173,7 +173,7 @@ https://your-api-gateway-url/apigw/ingest
 | workspace_id | String | Yes | Workspace identifier - belongs to an account |
 | user_id | String | Yes | Unique user identifier |
 | event_category | String | Yes | Category of the event (Deposit) |
-| event_name | String | Yes | Name of the deposit event (Successful Deposit\|First-Time Deposit\|Second-Time Deposit\|Third-Time Deposit\|Failed Deposit) |
+| event_name | String | Yes | Name of the deposit event. **Note:** Kindly ensure that the event_name field follows the required case-sensitive naming standard. These are a few sample event names for the Deposit category (e.g., Successful Deposit, First-Time Deposit, Second-Time Deposit, Third-Time Deposit, Failed Deposit, Deposit Reversal, Init Deposit, etc.). |
 | event_id | String | Yes | Unique event identifier |
 | event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" UTC Time|
 | payment_method | String | No | Payment method used |
@@ -190,7 +190,7 @@ https://your-api-gateway-url/apigw/ingest
 | workspace_id | String | Yes | Workspace identifier - belongs to an account |
 | user_id | String | Yes | Unique user identifier |
 | event_category | String | Yes | Category of the event (Withdraw) |
-| event_name | String | Yes | Name of the withdrawal event (Successful Withdrawal\|Failed Withdrawal\|Pending Withdrawal\|Withdrawal Reversal) |
+| event_name | String | Yes | Name of the withdrawal event. **Note:** Kindly ensure that the event_name field follows the required case-sensitive naming standard. These are a few sample event names for the Withdraw category (e.g., Successful Withdrawal, Failed Withdrawal, Pending Withdrawal, Withdrawal Reversal, Init Withdrawal, etc.). |
 | event_id | String | Yes | Unique event identifier |
 | event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" UTC Time|
 | amount | Number | Yes | Withdrawal amount |
@@ -205,7 +205,7 @@ https://your-api-gateway-url/apigw/ingest
 | workspace_id | String | Yes | Workspace identifier - belongs to an account |
 | user_id | String | Yes | Unique user identifier |
 | event_category | String | Yes | Category of the event (Gaming Activity) |
-| event_name | String | Yes | Name of the gaming activity event |
+| event_name | String | Yes | Name of the gaming activity event. **Note:** Kindly ensure that the event_name field follows the required case-sensitive naming standard. These are a few sample event names for the Gaming Activity category (e.g., All Game Play, Play Casino Game, Sports Betting, Play Poker, Play Esports, Bonus Received, Free Spin Play, Limit, Intervention, etc.). |
 | event_id | String | Yes | Unique event identifier |
 | event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" UTC Time|
 | wager_amount | Number | No | Amount wagered |
@@ -280,7 +280,7 @@ https://your-api-gateway-url/apigw/ingest
 | workspace_id | String | Yes | Workspace identifier - belongs to an account |
 | user_id | String | Yes | Unique user identifier |
 | event_category | String | Yes | Category of the event (Wallet Balance) |
-| event_name | String | Yes | Name of the wallet balance event |
+| event_name | String | Yes | Name of the wallet balance event. **Note:** Kindly ensure that the event_name field follows the required case-sensitive naming standard. These are a few sample event names for the Wallet Balance category (e.g., Current Balance, etc.). |
 | event_id | String | Yes | Unique event identifier |
 | event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" UTC Time|
 | wallet_type | String | No | Type of wallet |
@@ -297,7 +297,7 @@ https://your-api-gateway-url/apigw/ingest
 | workspace_id | String | Yes | Workspace identifier - belongs to an account |
 | user_id | String | Yes | Unique user identifier |
 | event_category | String | Yes | Category of the event (Refer Friend) |
-| event_name | String | Yes | Name of the refer friend event |
+| event_name | String | Yes | Name of the refer friend event. **Note:** Kindly ensure that the event_name field follows the required case-sensitive naming standard. These are a few sample event names for the Refer Friend category (e.g., Referral Successful, etc.). |
 | event_id | String | Yes | Unique event identifier |
 | event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z"  UTC Time |
 | referral_code_used | String | No | Referral code that was used |
@@ -308,6 +308,41 @@ https://your-api-gateway-url/apigw/ingest
 | referee_registration_date | String | No | Date when the referee registered (date-time format). Example: "2024-01-15T10:30:00Z" UTC Time |
 | referee_first_deposit | Number | No | First deposit amount made by the referee |
 
+### System Event
+
+System events capture back-office, operator, and system-level actions such as campaign triggers, manual operator actions, and automated system processes. Unlike other event types, system events use a flexible `event_data` field that accepts arbitrary caller-defined payloads, making them suitable for any custom system-level event.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| account_id | String | Yes | Account identifier - one account can have multiple workspaces |
+| workspace_id | String | Yes | Workspace identifier - belongs to an account |
+| event_category | String | Yes | Category of the event - dynamic, caller-defined (e.g. SystemEvent, BackOffice, Notification) |
+| event_name | String | Yes | Name of the system event. **Note:** Kindly ensure that the event_name field follows the required case-sensitive naming standard. These are a few sample event names for the System Event category (e.g., Campaign Trigger, Manual Action, etc.). |
+| event_id | String | Yes | Unique event identifier |
+| event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" UTC Time |
+| event_data | Object/String | Yes | Event payload with arbitrary caller-defined fields. Accepts either a JSON object or a JSON string. Examples: `{"campaign_id":"camp_001","action":"start"}` or `"{\"action\":\"notify\",\"target\":\"user_list_1\"}"` |
+
+> **Note**: The `event_data` field is flexible by design. You can include any key-value pairs relevant to your system event. There is no fixed schema for this field -- it adapts to your specific use case.
+
+#### event_data Format Options
+
+**Format 1: JSON Object** (recommended)
+```json
+{
+  "campaign_id": "camp_001",
+  "action": "start",
+  "segment": "vip",
+  "metadata": {
+    "source": "back_office"
+  }
+}
+```
+
+**Format 2: JSON String**
+```json
+"{\"action\":\"notify\",\"target\":\"user_list_1\",\"payload\":{}}"
+```
+
 ### Extended Attributes
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
@@ -315,17 +350,6 @@ https://your-api-gateway-url/apigw/ingest
 | user_id | String | Yes | Unique user identifier |
 | list_name | String | Yes | Name of the list or category for the extended attributes |
 | ext_data | Object/String | Yes | Extended attributes data in JSON format. Examples: `{"email":true,"sms":false}` or `"{\"email\":true,\"sms\":true}"`
-
-### System Event
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| account_id | String | Yes | Account identifier |
-| workspace_id | String | Yes | Workspace identifier |
-| event_category | String | Yes | Category of the event (SystemEvent) |
-| event_name | String | Yes | Name of the system event |
-| event_id | String | Yes | Unique event identifier |
-| event_time | String | Yes | Timestamp when the event occurred (date-time format). Example: "2024-01-15T10:30:00Z" UTC Time|
-| event_data | Object/String | Yes | System event data in JSON format |
 
 
 > **📅 Timestamp Format**: All date-time fields use ISO 8601 format with UTC time (e.g., `"2024-01-15T10:30:00Z"`). The `Z` suffix indicates UTC time.
@@ -481,6 +505,35 @@ const referFriendEvent = {
   referee_first_deposit: 100.00
 };
 const referFriendResult = await sdk.sendReferFriendEvent(referFriendEvent);
+
+// System Event - event_data as object (recommended)
+const systemEvent = {
+  account_id: 'your-account-id',
+  workspace_id: 'your-workspace-id',
+  event_category: 'SystemEvent',
+  event_name: 'Campaign Trigger',
+  event_id: 'evt_sys_123456789',
+  event_time: new Date().toISOString(),
+  event_data: {
+    campaign_id: 'camp_001',
+    action: 'start',
+    segment: 'vip',
+    metadata: { source: 'back_office' }
+  }
+};
+const systemResult = await sdk.sendSystemEvent(systemEvent);
+
+// System Event - event_data as JSON string (alternative)
+const systemEventString = {
+  account_id: 'your-account-id',
+  workspace_id: 'your-workspace-id',
+  event_category: 'SystemEvent',
+  event_name: 'Manual Action',
+  event_id: 'evt_sys_987654321',
+  event_time: new Date().toISOString(),
+  event_data: '{"action":"notify","target":"user_list_1","payload":{}}'
+};
+const systemStringResult = await sdk.sendSystemEvent(systemEventString);
 ```
 
 ### 3. Customer Extension Attributes
@@ -518,7 +571,7 @@ const batchData = {
   gamingEvents: [gaming1, gaming2],
   walletBalanceEvents: [walletBalance1, walletBalance2],
   referFriendEvents: [referFriend1, referFriend2],
-  systemEvents: [system1, system2],
+  systemEvents: [systemEvent1, systemEvent2],
   extendedAttributes: [extAttr1, extAttr2]
 };
 const batchResult = await sdk.sendBatch(batchData);

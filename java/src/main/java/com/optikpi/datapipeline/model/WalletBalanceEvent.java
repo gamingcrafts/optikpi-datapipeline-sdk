@@ -103,6 +103,15 @@ public class WalletBalanceEvent {
             errors.add("event_category must be \"Wallet Balance\" for wallet balance events");
         }
         
+        // Event name validation
+        String[] validEventNames = {
+            "Current Balance"
+        };
+        
+        if (eventName != null && !isValidEventName(eventName, validEventNames)) {
+            errors.add("event_name must be one of: " + String.join(", ", validEventNames));
+        }
+        
         // Date format validation
         if (eventTime != null && !isValidDateTime(eventTime)) {
             errors.add("event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)");
@@ -131,6 +140,15 @@ public class WalletBalanceEvent {
         }
         
         return new ValidationResult(errors.isEmpty(), errors);
+    }
+    
+    private boolean isValidEventName(String eventName, String[] validNames) {
+        for (String validName : validNames) {
+            if (validName.equals(eventName)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     private boolean isValidDateTime(String dateTime) {

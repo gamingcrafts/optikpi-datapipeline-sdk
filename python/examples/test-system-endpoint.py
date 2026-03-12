@@ -49,7 +49,7 @@ def test_system_event_with_object(sdk, account_id, workspace_id):
         account_id=account_id,
         workspace_id=workspace_id,
         event_category="SystemEvent",
-        event_name="CampaignTrigger",
+        event_name="Campaign Trigger",
         event_id=f"evt_sys_obj_{int(time.time())}",
         event_time=datetime.now().isoformat() + "Z",
         event_data={
@@ -74,7 +74,7 @@ def test_system_event_with_json_string(sdk, account_id, workspace_id):
         account_id=account_id,
         workspace_id=workspace_id,
         event_category="SystemEvent",
-        event_name="ManualAction",
+        event_name="Manual Action",
         event_id=f"evt_sys_str_{int(time.time()) + 1}",
         event_time=datetime.now().isoformat() + "Z",
         event_data='{"action":"notify","target":"user_list_1","payload":{}}'

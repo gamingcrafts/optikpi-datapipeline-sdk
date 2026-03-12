@@ -44,13 +44,15 @@ class AccountEvent {
       'Player Registration',
       'Account Verification',
       'Password Change',
-      'Email Update',
-      'Phone Update',
+      'Email Verification',
+      'Phone Verification',
       'Account Suspension',
       'Account Reactivation',
       'Profile Update',
       'Login',
-      'Logout'
+      'Logout',
+      'insert',
+      'update'
     ];
 
     if (this.event_name && !validEventNames.includes(this.event_name)) {

@@ -39,6 +39,16 @@ class SystemEvent {
             errors.push('event_category must be "SystemEvent" for system events');
         }
 
+        // Event name validation
+        const validEventNames = [
+            'Campaign Trigger',
+            'Manual Action'
+        ];
+
+        if (this.event_name && !validEventNames.includes(this.event_name)) {
+            errors.push(`event_name must be one of: ${validEventNames.join(', ')}`);
+        }
+
         // Date format validation
         if (this.event_time && !this.isValidDateTime(this.event_time)) {
             errors.push('event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)');

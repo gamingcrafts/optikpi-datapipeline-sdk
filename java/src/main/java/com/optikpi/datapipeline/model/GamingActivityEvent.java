@@ -279,18 +279,15 @@ public class GamingActivityEvent {
         
         // Event name validation - CORRECTED to match API
         String[] validEventNames = {
+            "All Game Play",
             "Play Casino Game",
-            "Play Slot Game", 
-            "Play Table Game",
-            "Play Live Casino Game",
-            "Bet Placed",
-            "Bet Won",
-            "Bet Lost",
-            "Game Session Started",
-            "Game Session Ended",
-            "Bonus Game Triggered",
-            "Free Spins Triggered",
-            "Jackpot Won"
+            "Sports Betting",
+            "Play Poker",
+            "Play Esports",
+            "Bonus Received",
+            "Free Spin Play",
+            "Limit",
+            "Intervention"
         };
         
         if (eventName != null && !isValidEventName(eventName, validEventNames)) {
