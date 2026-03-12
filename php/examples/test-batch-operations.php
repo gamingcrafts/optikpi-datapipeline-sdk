@@ -307,7 +307,7 @@ function createSampleWalletBalanceEvent($accountId, $workspaceId) {
         'workspace_id' => $workspaceId,
         'user_id' => 'user0119',
         'event_category' => 'Wallet Balance',
-        'event_name' => 'Balance Update',
+        'event_name' => 'Current Balance',
         'event_id' => 'evt_wb_987654321',
         'event_time' => '2024-01-15T14:45:00Z',
         'wallet_type' => 'main',
@@ -327,7 +327,7 @@ function createSampleSystemEventObject($accountId, $workspaceId) {
         'account_id' => $accountId,
         'workspace_id' => $workspaceId,
         'event_category' => 'SystemEvent',
-        'event_name' => 'CampaignTrigger',
+        'event_name' => 'Campaign Trigger',
         'event_id' => 'evt_sys_obj_' . time(),
         'event_time' => date('c'),
         'event_data' => [
@@ -346,7 +346,7 @@ function createSampleSystemEventString($accountId, $workspaceId) {
         'account_id' => $accountId,
         'workspace_id' => $workspaceId,
         'event_category' => 'SystemEvent',
-        'event_name' => 'CampaignTrigger',
+        'event_name' => 'Campaign Trigger',
         'event_id' => 'evt_sys_str_' . time(),
         'event_time' => date('c'),
         'event_data' => json_encode([
@@ -364,6 +364,7 @@ function printValidationResult($result, $eventName) {
     if (!$result['isValid']) {
         echo "❌ Invalid $eventName:\n";
         echo "Errors: " . json_encode($result['errors']) . "\n";
+        throw new Exception("Validation failed for $eventName: " . json_encode($result['errors']));
     } else {
         echo "✅ Valid $eventName\n";
     }

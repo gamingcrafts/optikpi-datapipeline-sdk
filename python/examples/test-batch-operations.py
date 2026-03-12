@@ -298,7 +298,7 @@ def create_sample_wallet_balance_event(account_id, workspace_id):
         workspace_id=workspace_id,
         user_id="user1119",
         event_category="Wallet Balance",
-        event_name="Balance Update",
+        event_name="Current Balance",
         event_id="evt_wb_987654321",
         event_time="2024-01-15T14:45:00Z",
         wallet_type="main",
@@ -316,7 +316,7 @@ def create_sample_system_event_object(account_id, workspace_id):
         account_id=account_id,
         workspace_id=workspace_id,
         event_category="SystemEvent",
-        event_name="CampaignTrigger",
+        event_name="Campaign Trigger",
         event_id=f"evt_sys_obj_{int(time.time())}",
         event_time=datetime.now().isoformat() + "Z",
         event_data={
@@ -333,7 +333,7 @@ def create_sample_system_event_string(account_id, workspace_id):
         account_id=account_id,
         workspace_id=workspace_id,
         event_category="SystemEvent",
-        event_name="CampaignTrigger",
+        event_name="Campaign Trigger",
         event_id=f"evt_sys_str_{int(time.time())}",
         event_time=datetime.now().isoformat() + "Z",
         event_data=json.dumps({
@@ -357,6 +357,7 @@ def print_validation_result(result, event_name):
     if not is_valid:
         print(f"❌ Invalid {event_name}:")
         print(f"Errors: {json.dumps(errors)}")
+        raise ValueError(f"Validation failed for {event_name}: {errors}")
     else:
         print(f"✅ Valid {event_name}")
 

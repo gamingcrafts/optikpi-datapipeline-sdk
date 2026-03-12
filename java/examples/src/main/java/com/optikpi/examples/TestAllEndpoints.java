@@ -14,8 +14,8 @@ import com.optikpi.datapipeline.model.CustomerProfile;
 import com.optikpi.datapipeline.model.DepositEvent;
 import com.optikpi.datapipeline.model.ExtendedAttributesEvent;
 import com.optikpi.datapipeline.model.GamingActivityEvent;
-import com.optikpi.datapipeline.model.SystemEvent;
 import com.optikpi.datapipeline.model.ReferFriendEvent;
+import com.optikpi.datapipeline.model.SystemEvent;
 import com.optikpi.datapipeline.model.ValidationResult;
 import com.optikpi.datapipeline.model.WalletBalanceEvent;
 import com.optikpi.datapipeline.model.WithdrawEvent;
@@ -242,7 +242,7 @@ public class TestAllEndpoints {
         CustomerProfile customer = new CustomerProfile();
             customer.setAccountId(accountId);
             customer.setWorkspaceId(workspaceId);
-            customer.setUserId("java_field01");
+            customer.setUserId("Systemj02");
             customer.setUsername("john_doe");
             customer.setFullName("John Doe");
             customer.setFirstName("John");
@@ -306,7 +306,7 @@ public class TestAllEndpoints {
         ExtendedAttributesEvent event = new ExtendedAttributesEvent();
         event.setAccountId(accountId);
         event.setWorkspaceId(workspaceId);
-        event.setUserId("sdk_ext_001");
+        event.setUserId("Systemj02");
         event.setListName("BINGO_PREFERENCES");
         
         Map<String, String> extDataMap = new HashMap<>();
@@ -322,7 +322,7 @@ public class TestAllEndpoints {
         ExtendedAttributesEvent event = new ExtendedAttributesEvent();
         event.setAccountId(accountId);
         event.setWorkspaceId(workspaceId);
-        event.setUserId("sdk_ext_002");
+        event.setUserId("Systemj02");
         event.setListName("GAMING_PREFERENCES");
         
         String extDataJson = "{\"Email\":\"True\",\"SMS\":\"True\",\"PushNotifications\":\"True\"}";
@@ -335,7 +335,7 @@ public class TestAllEndpoints {
         AccountEvent event = new AccountEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("javasdk_01");
+            event.setUserId("Systemj02");
             event.setEventCategory("Account");
             event.setEventName("Player Registration");
             event.setEventId("evt_login_" + System.currentTimeMillis());
@@ -353,7 +353,7 @@ public class TestAllEndpoints {
         DepositEvent event = new DepositEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("java_01");
+            event.setUserId("Systemj02");
             event.setEventCategory("Deposit");
             event.setEventName("Successful Deposit");
             event.setEventId("evt_" + System.currentTimeMillis());
@@ -371,7 +371,7 @@ public class TestAllEndpoints {
         WithdrawEvent event = new WithdrawEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("java_01");
+            event.setUserId("Systemj02");
             event.setEventCategory("Withdraw");
             event.setEventName("Successful Withdrawal");
             event.setEventId("evt_" + System.currentTimeMillis());
@@ -387,7 +387,7 @@ public class TestAllEndpoints {
         GamingActivityEvent event = new GamingActivityEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("java_012");
+            event.setUserId("Systemj02");
             event.setEventCategory("Gaming Activity");
             event.setEventName("Play Casino Game");
             event.setEventId("evt_" + System.currentTimeMillis());
@@ -464,7 +464,7 @@ public class TestAllEndpoints {
         ReferFriendEvent event = new ReferFriendEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("javasdk_01");
+            event.setUserId("Systemj02");
             event.setEventCategory("Refer Friend");
             event.setEventName("Referral Successful");
             event.setEventId("evt_rf_987654321");
@@ -483,9 +483,9 @@ public class TestAllEndpoints {
         WalletBalanceEvent event = new WalletBalanceEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("javasdk_01");
+            event.setUserId("Systemj02");
             event.setEventCategory("Wallet Balance");
-            event.setEventName("Balance Update");
+            event.setEventName("Current Balance");
             event.setEventId("evt_wb_987654321");
             event.setEventTime(Instant.now().toString());
             event.setWalletType("main");
@@ -502,7 +502,7 @@ public class TestAllEndpoints {
         event.setAccountId(accountId);
         event.setWorkspaceId(workspaceId);
         event.setEventCategory("SystemEvent");
-        event.setEventName("CampaignTrigger");
+        event.setEventName("Campaign Trigger");
         event.setEventId("evt_sys_obj_" + System.currentTimeMillis());
         event.setEventTime(Instant.now().toString());
         
@@ -520,7 +520,7 @@ public class TestAllEndpoints {
         event.setAccountId(accountId);
         event.setWorkspaceId(workspaceId);
         event.setEventCategory("SystemEvent");
-        event.setEventName("CampaignTrigger");
+        event.setEventName("Campaign Trigger");
         event.setEventId("evt_sys_str_" + System.currentTimeMillis());
         event.setEventTime(Instant.now().toString());
         
@@ -579,6 +579,7 @@ public class TestAllEndpoints {
         if (!result.isValid()) {
             System.out.println("❌ Invalid " + eventName + ":");
             System.out.println("Errors: " + result.getErrors());
+            throw new IllegalArgumentException("Validation failed for " + eventName + ": " + result.getErrors());
         } else {
             System.out.println("✅ Valid " + eventName + ": " + result.isValid());
         }

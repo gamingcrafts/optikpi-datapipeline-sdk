@@ -30,7 +30,7 @@ const walletBalance =new WalletBalanceEvent({
   "workspace_id": WORKSPACE_ID,
   "user_id": "user123456",
   "event_category": "Wallet Balance",
-  "event_name": "Balance Update",
+  "event_name": "Current Balance",
   "event_id": "evt_wb_987654321",
   "event_time": "2024-01-15T14:45:00Z",
   "wallet_type": "main",
@@ -40,6 +40,14 @@ const walletBalance =new WalletBalanceEvent({
   "current_total_balance": 1350.50,
   "blocked_amount": 50.00
 });
+
+// Validate the wallet balance event
+const validation = walletBalance.validate();
+if (!validation.isValid) {
+  console.error('❌ Validation errors:', validation.errors);
+  process.exit(1);
+}
+console.log('✅ Wallet Balance event validated successfully!');
 
 // Test wallet balance endpoint
 async function testWalletBalanceEndpoint() {

@@ -305,7 +305,7 @@ function createSampleWalletBalanceEvent(accountId, workspaceId) {
     workspace_id: workspaceId,
     user_id: "user0119",
     event_category: "Wallet Balance",
-    event_name: "Balance Update",
+    event_name: "Current Balance",
     event_id: "evt_wb_987654321",
     event_time: "2024-01-15T14:45:00Z",
     wallet_type: "main",
@@ -325,7 +325,7 @@ function createSampleSystemEventObject(accountId, workspaceId) {
     account_id: accountId,
     workspace_id: workspaceId,
     event_category: "SystemEvent",
-    event_name: "CampaignTrigger",
+    event_name: "Campaign Trigger",
     event_id: `evt_sys_obj_${Date.now()}`,
     event_time: new Date().toISOString(),
     event_data: {
@@ -344,7 +344,7 @@ function createSampleSystemEventString(accountId, workspaceId) {
     account_id: accountId,
     workspace_id: workspaceId,
     event_category: "SystemEvent",
-    event_name: "CampaignTrigger",
+    event_name: "Campaign Trigger",
     event_id: `evt_sys_str_${Date.now()}`,
     event_time: new Date().toISOString(),
     event_data: JSON.stringify({
@@ -362,6 +362,7 @@ function printValidationResult(result, eventName) {
   if (!result.isValid) {
     console.log(`❌ Invalid ${eventName}:`);
     console.log(`Errors: ${JSON.stringify(result.errors)}`);
+    throw new Error(`Validation failed for ${eventName}: ${JSON.stringify(result.errors)}`);
   } else {
     console.log(`✅ Valid ${eventName}`);
   }
