@@ -1,8 +1,8 @@
 require('dotenv').config();
 
 
-const OptikpiDataPipelineSDK = require('../src/index');
-const { SystemEvent } = require('../src/models');
+const OptikpiDataPipelineSDK = require('@optikpi/datapipeline-sdk').default;
+const { SystemEvent } = require('@optikpi/datapipeline-sdk')
 
 /**
  * Example of how to send system events using the SDK
