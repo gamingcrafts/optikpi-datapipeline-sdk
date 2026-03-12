@@ -2,17 +2,15 @@ package com.optikpi.examples;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 
-import com.optikpi.datapipeline.ClientConfig;
-import com.optikpi.datapipeline.OptikpiDataPipelineSDK;
-import com.optikpi.datapipeline.model.WalletBalanceEvent;
-import com.optikpi.datapipeline.model.ValidationResult;
-
-import io.github.cdimascio.dotenv.Dotenv;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.optikpi.datapipeline.ClientConfig;
+import com.optikpi.datapipeline.OptikpiDataPipelineSDK;
+import com.optikpi.datapipeline.model.ValidationResult;
+import com.optikpi.datapipeline.model.WalletBalanceEvent;
+
+import io.github.cdimascio.dotenv.Dotenv;
 
 
 public class TestWalletBalanceEndpoint {
@@ -57,9 +55,9 @@ public class TestWalletBalanceEndpoint {
             WalletBalanceEvent event = new WalletBalanceEvent();
             event.setAccountId(accountId);
             event.setWorkspaceId(workspaceId);
-            event.setUserId("java_01");
+            event.setUserId("Systemj01");
             event.setEventCategory("Wallet Balance");
-            event.setEventName("Balance Update");
+            event.setEventName("Current Balance");
             event.setEventId("evt_wb_987654321");
             event.setEventTime(Instant.now().toString());
             event.setWalletType("main");
