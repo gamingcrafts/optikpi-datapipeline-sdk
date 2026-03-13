@@ -42,21 +42,6 @@ class DepositEvent {
       errors.push('event_category must be "Deposit" for deposit events');
     }
 
-    // Event name validation
-    const validEventNames = [
-      'Successful Deposit',
-      'First-Time Deposit',
-      'Second-Time Deposit',
-      'Third-Time Deposit',
-      'Failed Deposit',
-      'Deposit Reversal',
-      'Init Deposit'
-    ];
-
-    if (this.event_name && !validEventNames.includes(this.event_name)) {
-      errors.push(`event_name must be one of: ${validEventNames.join(', ')}`);
-    }
-
     // Amount validation
     if (this.amount && (typeof this.amount !== 'number' || this.amount <= 0)) {
       errors.push('amount must be a positive number');
