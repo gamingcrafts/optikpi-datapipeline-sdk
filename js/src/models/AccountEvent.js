@@ -39,26 +39,6 @@ class AccountEvent {
       errors.push('event_category must be "Account" for account events');
     }
 
-    // Event name validation
-    const validEventNames = [
-      'Player Registration',
-      'Account Verification',
-      'Password Change',
-      'Email Verification',
-      'Phone Verification',
-      'Account Suspension',
-      'Account Reactivation',
-      'Profile Update',
-      'Login',
-      'Logout',
-      'insert',
-      'update'
-    ];
-
-    if (this.event_name && !validEventNames.includes(this.event_name)) {
-      errors.push(`event_name must be one of: ${validEventNames.join(', ')}`);
-    }
-
     // Status validation
     if (this.status && !['verified', 'pending', 'failed', 'completed'].includes(this.status)) {
       errors.push('status must be one of: verified, pending, failed, completed');

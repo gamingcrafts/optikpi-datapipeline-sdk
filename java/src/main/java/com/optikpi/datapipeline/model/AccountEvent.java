@@ -104,17 +104,6 @@ public class AccountEvent {
             errors.add("event_category must be \"Account\" for account events");
         }
         
-        // Event name validation
-        String[] validEventNames = {
-            "Player Registration", "Account Verification", "Password Change",
-            "Email Verification", "Phone Verification", "Account Suspension", "Account Reactivation",
-            "Profile Update", "Login", "Logout", "insert", "update"
-        };
-        
-        if (eventName != null && !isValidEventName(eventName, validEventNames)) {
-            errors.add("event_name must be one of: " + String.join(", ", validEventNames));
-        }
-        
         // Status validation
         if (status != null && !isValidStatus(status)) {
             errors.add("status must be one of: verified, pending, failed, completed");
@@ -131,15 +120,6 @@ public class AccountEvent {
         }
         
         return new ValidationResult(errors.isEmpty(), errors);
-    }
-    
-    private boolean isValidEventName(String eventName, String[] validNames) {
-        for (String validName : validNames) {
-            if (validName.equals(eventName)) {
-                return true;
-            }
-        }
-        return false;
     }
     
     private boolean isValidStatus(String status) {

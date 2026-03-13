@@ -66,3 +66,7 @@ class CustomerExtEvent:
 
         # Drop nulls
         return {k: v for k, v in result.items() if v is not None}
+
+    @classmethod
+    def from_object(cls, data):
+        return cls(**data)

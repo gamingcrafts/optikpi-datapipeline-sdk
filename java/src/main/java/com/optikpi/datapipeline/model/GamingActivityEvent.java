@@ -277,38 +277,12 @@ public class GamingActivityEvent {
             errors.add("event_category must be \"Gaming Activity\" for gaming activity events");
         }
         
-        // Event name validation - CORRECTED to match API
-        String[] validEventNames = {
-            "All Game Play",
-            "Play Casino Game",
-            "Sports Betting",
-            "Play Poker",
-            "Play Esports",
-            "Bonus Received",
-            "Free Spin Play",
-            "Limit",
-            "Intervention"
-        };
-        
-        if (eventName != null && !isValidEventName(eventName, validEventNames)) {
-            errors.add("event_name must be one of: " + String.join(", ", validEventNames));
-        }
-        
         // Date format validation
         if (eventTime != null && !isValidDateTime(eventTime)) {
             errors.add("event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)");
         }
         
         return new ValidationResult(errors.isEmpty(), errors);
-    }
-    
-    private boolean isValidEventName(String eventName, String[] validNames) {
-        for (String validName : validNames) {
-            if (validName.equals(eventName)) {
-                return true;
-            }
-        }
-        return false;
     }
     
     private boolean isValidDevice(String device) {

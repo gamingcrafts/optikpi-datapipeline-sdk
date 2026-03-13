@@ -45,13 +45,6 @@ class ReferFriendEvent:
         if self.event_category and self.event_category != "Refer Friend":
             errors.append('event_category must be "Refer Friend" for refer friend events')
 
-        # Event name validation
-        valid_event_names = [
-            "Referral Successful"
-        ]
-        if self.event_name and self.event_name not in valid_event_names:
-            errors.append(f"event_name must be one of: {', '.join(valid_event_names)}")
-
         # Date validations
         for field in ["event_time", "referee_registration_date"]:
             dt = getattr(self, field)
