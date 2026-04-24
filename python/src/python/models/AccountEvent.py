@@ -44,21 +44,6 @@ class AccountEvent:
     reason: Optional[str] = None
     
     # Valid values
-    VALID_EVENT_NAMES = [
-        'Player Registration',
-        'Account Verification',
-        'Password Change',
-        'Email Verification',
-        'Phone Verification',
-        'Account Suspension',
-        'Account Reactivation',
-        'Profile Update',
-        'Login',
-        'Logout',
-        'insert',
-        'update'
-    ]
-    
     VALID_STATUSES = ['verified', 'pending', 'failed', 'completed']
     VALID_DEVICES = ['desktop', 'mobile', 'tablet', 'app']
     
@@ -88,10 +73,6 @@ class AccountEvent:
         # Event category validation
         if self.event_category and self.event_category != 'Account':
             errors.append('event_category must be "Account" for account events')
-        
-        # Event name validation
-        if self.event_name and self.event_name not in self.VALID_EVENT_NAMES:
-            errors.append(f'event_name must be one of: {", ".join(self.VALID_EVENT_NAMES)}')
         
         # Status validation
         if self.status and self.status not in self.VALID_STATUSES:

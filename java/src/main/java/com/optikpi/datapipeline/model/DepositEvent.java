@@ -115,21 +115,6 @@ public class DepositEvent {
             errors.add("event_category must be \"Deposit\" for deposit events");
         }
         
-        // Event name validation - CORRECTED to match JavaScript/API
-        String[] validEventNames = {
-            "Successful Deposit",
-            "First-Time Deposit",
-            "Second-Time Deposit",
-            "Third-Time Deposit",
-            "Failed Deposit",
-            "Deposit Reversal",
-            "Init Deposit"
-        };
-        
-        if (eventName != null && !isValidEventName(eventName, validEventNames)) {
-            errors.add("event_name must be one of: " + String.join(", ", validEventNames));
-        }
-        
         // Payment method validation
         if (paymentMethod != null && !isValidPaymentMethod(paymentMethod)) {
             errors.add("payment_method must be one of: bank, credit_card, debit_card, e_wallet, crypto, paypal, skrill, neteller");
@@ -146,15 +131,6 @@ public class DepositEvent {
         }
         
         return new ValidationResult(errors.isEmpty(), errors);
-    }
-    
-    private boolean isValidEventName(String eventName, String[] validNames) {
-        for (String validName : validNames) {
-            if (validName.equals(eventName)) {
-                return true;
-            }
-        }
-        return false;
     }
     
     private boolean isValidStatus(String status) {

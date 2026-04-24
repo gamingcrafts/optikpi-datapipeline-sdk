@@ -106,21 +106,6 @@ class GamingActivityEvent:
         if self.event_category and self.event_category != "Gaming Activity":
             errors.append('event_category must be "Gaming Activity" for gaming events')
 
-        # Event name validation
-        valid_event_names = [
-            "All Game Play",
-            "Play Casino Game",
-            "Sports Betting",
-            "Play Poker",
-            "Play Esports",
-            "Bonus Received",
-            "Free Spin Play",
-            "Limit",
-            "Intervention"
-        ]
-        if self.event_name and self.event_name not in valid_event_names:
-            errors.append(f"event_name must be one of: {', '.join(valid_event_names)}")
-
         # Amount validations
         if self.wager_amount is not None and (self.wager_amount < 0):
             errors.append("wager_amount must be a non-negative number")

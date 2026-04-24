@@ -135,23 +135,6 @@ class GamingActivityEvent
             $errors[] = 'event_category must be "Gaming Activity" for gaming events';
         }
 
-        // Event name validation
-        $validEventNames = [
-            'All Game Play',
-            'Play Casino Game',
-            'Sports Betting',
-            'Play Poker',
-            'Play Esports',
-            'Bonus Received',
-            'Free Spin Play',
-            'Limit',
-            'Intervention'
-        ];
-
-        if (!empty($this->event_name) && !in_array($this->event_name, $validEventNames)) {
-            $errors[] = 'event_name must be one of: ' . implode(', ', $validEventNames);
-        }
-
         // Amount validations
         if ($this->wager_amount !== null && (!is_numeric($this->wager_amount) || $this->wager_amount < 0)) {
             $errors[] = 'wager_amount must be a non-negative number';
