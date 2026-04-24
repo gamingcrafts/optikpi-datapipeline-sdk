@@ -89,14 +89,6 @@ class CustomerProfile {
       errors.push('gender must be one of: Male, Female, Other');
     }
 
-    if (this.account_status && !['Active', 'Inactive', 'Suspended', 'Closed'].includes(this.account_status)) {
-      errors.push('account_status must be one of: Active, Inactive, Suspended, Closed');
-    }
-
-    if (this.vip_status && !['Regular', 'Silver', 'Gold', 'Platinum', 'Diamond'].includes(this.vip_status)) {
-      errors.push('vip_status must be one of: Regular, Silver, Gold, Platinum, Diamond');
-    }
-
     return {
       isValid: errors.length === 0,
       errors

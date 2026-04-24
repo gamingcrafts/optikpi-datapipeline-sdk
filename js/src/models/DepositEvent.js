@@ -42,41 +42,11 @@ class DepositEvent {
       errors.push('event_category must be "Deposit" for deposit events');
     }
 
-    // Event name validation
-    const validEventNames = [
-      'Successful Deposit',
-      'First-Time Deposit',
-      'Second-Time Deposit',
-      'Third-Time Deposit',
-      'Failed Deposit',
-      'Deposit Reversal',
-      'Init Deposit'
-    ];
-
-    if (this.event_name && !validEventNames.includes(this.event_name)) {
-      errors.push(`event_name must be one of: ${validEventNames.join(', ')}`);
-    }
-
     // Amount validation
     if (this.amount && (typeof this.amount !== 'number' || this.amount <= 0)) {
       errors.push('amount must be a positive number');
     }
 
-    // Payment method validation
-    const validPaymentMethods = [
-      'bank',
-      'credit_card',
-      'debit_card',
-      'e_wallet',
-      'crypto',
-      'paypal',
-      'skrill',
-      'neteller'
-    ];
-
-    if (this.payment_method && !validPaymentMethods.includes(this.payment_method)) {
-      errors.push(`payment_method must be one of: ${validPaymentMethods.join(', ')}`);
-    }
 
 
     // Date format validation
