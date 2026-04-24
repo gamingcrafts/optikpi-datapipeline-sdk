@@ -20668,12 +20668,6 @@ let CustomerProfile$2 = class CustomerProfile {
     if (this.gender && !['Male', 'Female', 'Other'].includes(this.gender)) {
       errors.push('gender must be one of: Male, Female, Other');
     }
-    if (this.account_status && !['Active', 'Inactive', 'Suspended', 'Closed'].includes(this.account_status)) {
-      errors.push('account_status must be one of: Active, Inactive, Suspended, Closed');
-    }
-    if (this.vip_status && !['Regular', 'Silver', 'Gold', 'Platinum', 'Diamond'].includes(this.vip_status)) {
-      errors.push('vip_status must be one of: Regular, Silver, Gold, Platinum, Diamond');
-    }
     return {
       isValid: errors.length === 0,
       errors
@@ -20766,17 +20760,6 @@ let AccountEvent$2 = class AccountEvent {
     // Event category validation
     if (this.event_category && this.event_category !== 'Account') {
       errors.push('event_category must be "Account" for account events');
-    }
-
-    // Event name validation
-    const validEventNames = ['Player Registration', 'Account Verification', 'Password Change', 'Email Verification', 'Phone Verification', 'Account Suspension', 'Account Reactivation', 'Profile Update', 'Login', 'Logout', 'insert', 'update'];
-    if (this.event_name && !validEventNames.includes(this.event_name)) {
-      errors.push(`event_name must be one of: ${validEventNames.join(', ')}`);
-    }
-
-    // Status validation
-    if (this.status && !['verified', 'pending', 'failed', 'completed'].includes(this.status)) {
-      errors.push('status must be one of: verified, pending, failed, completed');
     }
 
     // Device validation
@@ -20873,21 +20856,9 @@ let DepositEvent$2 = class DepositEvent {
       errors.push('event_category must be "Deposit" for deposit events');
     }
 
-    // Event name validation
-    const validEventNames = ['Successful Deposit', 'First-Time Deposit', 'Second-Time Deposit', 'Third-Time Deposit', 'Failed Deposit', 'Deposit Reversal', 'Init Deposit'];
-    if (this.event_name && !validEventNames.includes(this.event_name)) {
-      errors.push(`event_name must be one of: ${validEventNames.join(', ')}`);
-    }
-
     // Amount validation
     if (this.amount && (typeof this.amount !== 'number' || this.amount <= 0)) {
       errors.push('amount must be a positive number');
-    }
-
-    // Payment method validation
-    const validPaymentMethods = ['bank', 'credit_card', 'debit_card', 'e_wallet', 'crypto', 'paypal', 'skrill', 'neteller'];
-    if (this.payment_method && !validPaymentMethods.includes(this.payment_method)) {
-      errors.push(`payment_method must be one of: ${validPaymentMethods.join(', ')}`);
     }
 
     // Date format validation
@@ -20977,21 +20948,9 @@ let WithdrawEvent$2 = class WithdrawEvent {
       errors.push('event_category must be "Withdraw" for withdraw events');
     }
 
-    // Event name validation
-    const validEventNames = ['Successful Withdrawal', 'Failed Withdrawal', 'Pending Withdrawal', 'Withdrawal Reversal', 'Init Withdrawal'];
-    if (this.event_name && !validEventNames.includes(this.event_name)) {
-      errors.push(`event_name must be one of: ${validEventNames.join(', ')}`);
-    }
-
     // Amount validation
     if (this.amount && (typeof this.amount !== 'number' || this.amount <= 0)) {
       errors.push('amount must be a positive number');
-    }
-
-    // Payment method validation
-    const validPaymentMethods = ['bank', 'credit_card', 'debit_card', 'e_wallet', 'crypto', 'paypal', 'skrill', 'neteller'];
-    if (this.payment_method && !validPaymentMethods.includes(this.payment_method)) {
-      errors.push(`payment_method must be one of: ${validPaymentMethods.join(', ')}`);
     }
 
     // Date format validation
@@ -21140,12 +21099,6 @@ let GamingActivityEvent$2 = class GamingActivityEvent {
       errors.push('event_category must be "Gaming Activity" for gaming events');
     }
 
-    // Event name validation
-    const validEventNames = ['All Game Play', 'Play Casino Game', 'Sports Betting', 'Play Poker', 'Play Esports', 'Bonus Received', 'Free Spin Play', 'Limit', 'Intervention'];
-    if (this.event_name && !validEventNames.includes(this.event_name)) {
-      errors.push(`event_name must be one of: ${validEventNames.join(', ')}`);
-    }
-
     // Amount validations
     if (this.wager_amount && (typeof this.wager_amount !== 'number' || this.wager_amount < 0)) {
       errors.push('wager_amount must be a non-negative number');
@@ -21272,12 +21225,6 @@ let WalletBalanceEvent$2 = class WalletBalanceEvent {
       errors.push('event_category must be "Wallet Balance" for wallet balance events');
     }
 
-    // Event name validation
-    const validEventNames = ['Current Balance'];
-    if (this.event_name && !validEventNames.includes(this.event_name)) {
-      errors.push(`event_name must be one of: ${validEventNames.join(', ')}`);
-    }
-
     // Date format validation
     if (this.event_time && !this.isValidDateTime(this.event_time)) {
       errors.push('event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)');
@@ -21400,12 +21347,6 @@ let ReferFriendEvent$2 = class ReferFriendEvent {
     // Event category validation
     if (this.event_category && this.event_category !== 'Refer Friend') {
       errors.push('event_category must be "Refer Friend" for refer friend events');
-    }
-
-    // Event name validation
-    const validEventNames = ['Referral Successful'];
-    if (this.event_name && !validEventNames.includes(this.event_name)) {
-      errors.push(`event_name must be one of: ${validEventNames.join(', ')}`);
     }
 
     // Date format validation
@@ -21653,12 +21594,6 @@ let SystemEvent$2 = class SystemEvent {
     // Event category validation
     if (this.event_category && this.event_category !== 'SystemEvent') {
       errors.push('event_category must be "SystemEvent" for system events');
-    }
-
-    // Event name validation
-    const validEventNames = ['Campaign Trigger', 'Manual Action'];
-    if (this.event_name && !validEventNames.includes(this.event_name)) {
-      errors.push(`event_name must be one of: ${validEventNames.join(', ')}`);
     }
 
     // Date format validation
