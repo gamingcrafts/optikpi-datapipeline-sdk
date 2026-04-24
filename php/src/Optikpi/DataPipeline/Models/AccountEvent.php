@@ -71,26 +71,6 @@ class AccountEvent
             $errors[] = 'event_category must be "Account" for account events';
         }
 
-        // Event name validation
-        $validEventNames = [
-            'Player Registration',
-            'Account Verification',
-            'Password Change',
-            'Email Verification',
-            'Phone Verification',
-            'Account Suspension',
-            'Account Reactivation',
-            'Profile Update',
-            'Login',
-            'Logout',
-            'insert',
-            'update'
-        ];
-
-        if (!empty($this->event_name) && !in_array($this->event_name, $validEventNames)) {
-            $errors[] = 'event_name must be one of: ' . implode(', ', $validEventNames);
-        }
-
         // Status validation
         if (!empty($this->status) && !in_array($this->status, ['verified', 'pending', 'failed', 'completed'])) {
             $errors[] = 'status must be one of: verified, pending, failed, completed';
