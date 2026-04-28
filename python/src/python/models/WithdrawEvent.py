@@ -17,6 +17,8 @@ class WithdrawEvent:
     payment_method: Optional[str] = None
     transaction_id: Optional[str] = None
     failure_reason: Optional[str] = None
+    payment_provider_id: Optional[str] = None
+    payment_provider_name: Optional[str] = None
 
     # -------------------------------
     # Validation methods

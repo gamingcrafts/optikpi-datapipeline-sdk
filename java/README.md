@@ -133,6 +133,7 @@ customer.setPhoneVerification("Verified");
 customer.setEmailVerification("Verified");
 customer.setBankVerification("NotVerified");
 customer.setIddocVerification("Verified");
+customer.setKycVerification("Verified");
 customer.setMarketingEmailPreference("Opt-in");
 customer.setNotificationsPreference("Opt-in");
 customer.setSubscription("Subscribed");

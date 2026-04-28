@@ -29,14 +29,6 @@ This guide provides comprehensive instructions for third-party developers to int
 - [📚 SDK Integration Guide](#sdk-integration-guide)
 - [⚠️ Error Handling](#error-handling)
 - [✅ Best Practices](#best-practices)
-- [⚡ Rate Limits](#rate-limits)
-- [📞 Support](#support)
-
----
-
-## 🔐 Authentication
-
-The Data Pipeline API uses a **dual-layer security model** to ensure data integrity and prevent unauthorized access. The official SDK handles all authentication automatically - you don't need to implement any crypto code.
 
 ### How Authentication Works
 
@@ -113,6 +105,7 @@ https://your-api-gateway-url/apigw/ingest
 | email_verification | String | No | Email verification status |
 | bank_verification | String | No | Bank verification status |
 | iddoc_verification | String | No | ID document verification status |
+| kyc_verification | String | No | KYC verification status |
 | marketing_email_preference | String | No | Marketing email preference |
 | notifications_preference | String | No | Notifications preference |
 | subscription | String | No | Subscription status (Subscribed\|Unsubscribed) |
@@ -197,6 +190,8 @@ https://your-api-gateway-url/apigw/ingest
 | payment_method | String | No | Payment method used |
 | transaction_id | String | No | Transaction identifier |
 | failure_reason | String | No | Reason for withdrawal failure |
+| payment_provider_id | String | No | Payment provider identifier |
+| payment_provider_name | String | No | Payment provider name |
 
 ### Gaming Activity Event
 | Field | Type | Required | Description |
@@ -402,7 +397,8 @@ const customerData = {
   phone_verification: 'Verified',
   email_verification: 'Verified',
   bank_verification: 'NotVerified',
-  iddoc_verification: 'Verified'
+  iddoc_verification: 'Verified',
+  kyc_verification: 'Verified'
 };
 
 try {
