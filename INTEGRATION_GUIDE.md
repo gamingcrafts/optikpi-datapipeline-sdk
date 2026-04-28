@@ -29,6 +29,14 @@ This guide provides comprehensive instructions for third-party developers to int
 - [📚 SDK Integration Guide](#sdk-integration-guide)
 - [⚠️ Error Handling](#error-handling)
 - [✅ Best Practices](#best-practices)
+- [⚡ Rate Limits](#rate-limits)
+- [📞 Support](#support)
+
+---
+
+## 🔐 Authentication
+
+The Data Pipeline API uses a **dual-layer security model** to ensure data integrity and prevent unauthorized access. The official SDK handles all authentication automatically - you don't need to implement any crypto code.
 
 ### How Authentication Works
 
