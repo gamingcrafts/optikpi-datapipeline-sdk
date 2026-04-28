@@ -41,7 +41,9 @@ $withdraw = new WithdrawEvent([
     'amount' => 250.00,
     'payment_method' => 'bank',
     'transaction_id' => 'txn_wd_123456789',
-    'failure_reason' => null
+    'failure_reason' => null,
+    'payment_provider_id' => 'provider_001',
+    'payment_provider_name' => 'PayPal'
 ]);
 
 $validation = $withdraw->validate();
