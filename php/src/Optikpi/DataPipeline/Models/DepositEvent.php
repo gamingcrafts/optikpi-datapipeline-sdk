@@ -89,21 +89,6 @@ class DepositEvent
             $errors[] = 'event_category must be "Deposit" for deposit events';
         }
 
-        // Event name validation
-        $validEventNames = [
-            'Successful Deposit',
-            'First-Time Deposit',
-            'Second-Time Deposit',
-            'Third-Time Deposit',
-            'Failed Deposit',
-            'Deposit Reversal',
-            'Init Deposit'
-        ];
-
-        if (!empty($this->event_name) && !in_array($this->event_name, $validEventNames)) {
-            $errors[] = 'event_name must be one of: ' . implode(', ', $validEventNames);
-        }
-
         // Amount validation
         if ($this->amount !== null && (!is_numeric($this->amount) || $this->amount <= 0)) {
             $errors[] = 'amount must be a positive number';

@@ -117,19 +117,6 @@ public class WithdrawEvent {
             errors.add("event_category must be \"Withdraw\" for withdrawal events");
         }
         
-        // Event name validation - CORRECTED to match JavaScript
-        String[] validEventNames = {
-            "Successful Withdrawal",
-            "Failed Withdrawal",
-            "Pending Withdrawal",
-            "Withdrawal Reversal",
-            "Init Withdrawal"
-        };
-        
-        if (eventName != null && !isValidEventName(eventName, validEventNames)) {
-            errors.add("event_name must be one of: " + String.join(", ", validEventNames));
-        }
-        
         // Payment method validation - ADDED to match JavaScript
         if (paymentMethod != null && !isValidPaymentMethod(paymentMethod)) {
             errors.add("payment_method must be one of: bank, credit_card, debit_card, e_wallet, crypto, paypal, skrill, neteller");
@@ -146,15 +133,6 @@ public class WithdrawEvent {
         }
         
         return new ValidationResult(errors.isEmpty(), errors);
-    }
-    
-    private boolean isValidEventName(String eventName, String[] validNames) {
-        for (String validName : validNames) {
-            if (validName.equals(eventName)) {
-                return true;
-            }
-        }
-        return false;
     }
     
     private boolean isValidStatus(String status) {

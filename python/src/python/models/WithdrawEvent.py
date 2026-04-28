@@ -50,17 +50,6 @@ class WithdrawEvent:
         if self.event_category and self.event_category != "Withdraw":
             errors.append('event_category must be "Withdraw" for withdraw events')
 
-        # Event name validation
-        valid_event_names = [
-            "Successful Withdrawal",
-            "Failed Withdrawal",
-            "Pending Withdrawal",
-            "Withdrawal Reversal",
-            "Init Withdrawal"
-        ]
-        if self.event_name and self.event_name not in valid_event_names:
-            errors.append(f"event_name must be one of: {', '.join(valid_event_names)}")
-
         # Amount validation
         if self.amount is not None and self.amount <= 0:
             errors.append("amount must be a positive number")

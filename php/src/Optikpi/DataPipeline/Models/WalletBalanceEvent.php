@@ -80,15 +80,6 @@ class WalletBalanceEvent
             $errors[] = 'event_category must be "Wallet Balance" for wallet balance events';
         }
 
-        // Event name validation
-        $validEventNames = [
-            'Current Balance'
-        ];
-
-        if (!empty($this->event_name) && !in_array($this->event_name, $validEventNames)) {
-            $errors[] = 'event_name must be one of: ' . implode(', ', $validEventNames);
-        }
-
         // Date format validation
         if (!empty($this->event_time) && !$this->isValidDateTime($this->event_time)) {
             $errors[] = 'event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)';

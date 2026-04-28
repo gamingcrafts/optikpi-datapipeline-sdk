@@ -99,23 +99,6 @@ class GamingActivityEvent {
       errors.push('event_category must be "Gaming Activity" for gaming events');
     }
 
-    // Event name validation
-    const validEventNames = [
-      'All Game Play',
-      'Play Casino Game',
-      'Sports Betting',
-      'Play Poker',
-      'Play Esports',
-      'Bonus Received',
-      'Free Spin Play',
-      'Limit',
-      'Intervention'
-    ];
-
-    if (this.event_name && !validEventNames.includes(this.event_name)) {
-      errors.push(`event_name must be one of: ${validEventNames.join(', ')}`);
-    }
-
     // Amount validations
     if (this.wager_amount && (typeof this.wager_amount !== 'number' || this.wager_amount < 0)) {
       errors.push('wager_amount must be a non-negative number');

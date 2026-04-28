@@ -62,14 +62,6 @@ class SystemEvent:
         if self.event_category and self.event_category != 'SystemEvent':
             errors.append('event_category must be "SystemEvent" for system events')
         
-        # Event name validation
-        valid_event_names = [
-            'Campaign Trigger',
-            'Manual Action'
-        ]
-        if self.event_name and self.event_name not in valid_event_names:
-            errors.append(f'event_name must be one of: {", ".join(valid_event_names)}')
-        
         # Date format validation
         if self.event_time and not self.is_valid_datetime(self.event_time):
             errors.append('event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)')
