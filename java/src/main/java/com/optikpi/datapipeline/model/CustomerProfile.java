@@ -159,6 +159,9 @@ public class CustomerProfile {
     @JsonProperty("iddoc_verification")
     private String iddocVerification;
     
+    @JsonProperty("kyc_verification")
+    private String kycVerification;
+    
     @JsonProperty("cooling_off_expiry_date")
     private String coolingOffExpiryDate;
     
@@ -410,6 +413,9 @@ public class CustomerProfile {
     
     public String getIddocVerification() { return iddocVerification; }
     public void setIddocVerification(String iddocVerification) { this.iddocVerification = iddocVerification; }
+    
+    public String getKycVerification() { return kycVerification; }
+    public void setKycVerification(String kycVerification) { this.kycVerification = kycVerification; }
     
     public String getCoolingOffExpiryDate() { return coolingOffExpiryDate; }
     public void setCoolingOffExpiryDate(String coolingOffExpiryDate) { this.coolingOffExpiryDate = coolingOffExpiryDate; }

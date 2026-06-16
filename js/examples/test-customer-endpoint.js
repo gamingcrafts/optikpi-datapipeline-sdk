@@ -64,6 +64,7 @@ const customer = new CustomerProfile({
   "email_verification": "Verified",
   "bank_verification": "NotVerified",
   "iddoc_verification": "Verified",
+  "kyc_verification": "Verified",
   "cooling_off_expiry_date": "2024-12-31T23:59:59Z",
   "self_exclusion_expiry_date": "2025-01-31T23:59:59Z",
   "risk_score_level": "low",

@@ -21,10 +21,19 @@ class CustomerExtEvent
      */
     public function __construct(array $data = [])
     {
+        $unknownFields = [];
         foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
                 $this->$key = $value;
+            } else {
+                $unknownFields[] = $key;
             }
+        }
+        if (!empty($unknownFields)) {
+            throw new \InvalidArgumentException(
+                'Unknown field(s): ' . implode(', ', $unknownFields)
+                . '. Valid fields are: ' . implode(', ', array_keys(get_object_vars($this)))
+            );
         }
     }
 

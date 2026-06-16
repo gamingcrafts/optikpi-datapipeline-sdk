@@ -63,6 +63,8 @@ public class TestWithdrawEndpoint {
             event.setPaymentMethod("bank");
             event.setTransactionId("txn_" + System.currentTimeMillis());
             event.setFailureReason(null);
+            event.setPaymentProviderId("provider_001");
+            event.setPaymentProviderName("PayPal");
     
             ValidationResult valid = event.validate();
             if (!valid.isValid()) {

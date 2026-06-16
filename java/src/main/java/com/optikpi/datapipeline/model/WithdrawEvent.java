@@ -58,6 +58,12 @@ public class WithdrawEvent {
     @JsonProperty("failure_reason")
     private String failureReason;
     
+    @JsonProperty("payment_provider_id")
+    private String paymentProviderId;
+    
+    @JsonProperty("payment_provider_name")
+    private String paymentProviderName;
+    
     public WithdrawEvent() {}
     
     public WithdrawEvent(String accountId, String workspaceId, String userId, String eventName, String eventId, String eventTime, BigDecimal amount) {
@@ -188,4 +194,10 @@ public class WithdrawEvent {
     
     public String getFailureReason() { return failureReason; }
     public void setFailureReason(String failureReason) { this.failureReason = failureReason; }
+    
+    public String getPaymentProviderId() { return paymentProviderId; }
+    public void setPaymentProviderId(String paymentProviderId) { this.paymentProviderId = paymentProviderId; }
+    
+    public String getPaymentProviderName() { return paymentProviderName; }
+    public void setPaymentProviderName(String paymentProviderName) { this.paymentProviderName = paymentProviderName; }
 }

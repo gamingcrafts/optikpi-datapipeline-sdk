@@ -44,6 +44,7 @@ class CustomerProfile:
     email_verification: Optional[str] = None
     bank_verification: Optional[str] = None
     iddoc_verification: Optional[str] = None
+    kyc_verification: Optional[str] = None
     cooling_off_expiry_date: Optional[str] = None
     self_exclusion_expiry_date: Optional[str] = None
     risk_score_level: Optional[str] = None

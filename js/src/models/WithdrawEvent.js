@@ -15,6 +15,8 @@ class WithdrawEvent {
     this.payment_method = data.payment_method;
     this.transaction_id = data.transaction_id;
     this.failure_reason = data.failure_reason;
+    this.payment_provider_id = data.payment_provider_id;
+    this.payment_provider_name = data.payment_provider_name;
   }
 
   /**

@@ -46,6 +46,7 @@ class CustomerProfile
     public $email_verification;
     public $bank_verification;
     public $iddoc_verification;
+    public $kyc_verification;
     public $cooling_off_expiry_date;
     public $self_exclusion_expiry_date;
     public $risk_score_level;
@@ -70,10 +71,19 @@ class CustomerProfile
      */
     public function __construct(array $data = [])
     {
+        $unknownFields = [];
         foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
                 $this->$key = $value;
+            } else {
+                $unknownFields[] = $key;
             }
+        }
+        if (!empty($unknownFields)) {
+            throw new \InvalidArgumentException(
+                'Unknown field(s): ' . implode(', ', $unknownFields)
+                . '. Valid fields are: ' . implode(', ', array_keys(get_object_vars($this)))
+            );
         }
     }
 

@@ -42,6 +42,7 @@ class CustomerProfile {
     this.email_verification = data.email_verification;
     this.bank_verification = data.bank_verification;
     this.iddoc_verification = data.iddoc_verification;
+    this.kyc_verification = data.kyc_verification;
     this.cooling_off_expiry_date = data.cooling_off_expiry_date;
     this.self_exclusion_expiry_date = data.self_exclusion_expiry_date;
     this.risk_score_level = data.risk_score_level;
