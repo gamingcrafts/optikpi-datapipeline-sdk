@@ -458,7 +458,7 @@ const gamingEvent = {
   workspace_id: 'your-workspace-id',
   user_id: 'user123',
   event_category: 'Gaming Activity',
-  event_name: 'Slot Game Play',
+  event_name: 'Play Casino Game',
   event_id: 'evt_game_789123456',
   event_time: new Date().toISOString(),
   wager_amount: 10.00,
