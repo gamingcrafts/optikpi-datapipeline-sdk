@@ -18,6 +18,9 @@ class DepositEvent:
     payment_provider_id: Optional[str] = None
     payment_provider_name: Optional[str] = None
     failure_reason: Optional[str] = None
+    utm_source: Optional[str] = None
+    utm_campaign: Optional[str] = None
+    utm_medium: Optional[str] = None
 
     def validate(self) -> Dict[str, Any]:
         errors = []

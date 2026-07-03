@@ -41,6 +41,9 @@ class AccountEvent:
     affiliate_id: Optional[str] = None
     partner_id: Optional[str] = None
     campaign_code: Optional[str] = None
+    utm_source: Optional[str] = None
+    utm_campaign: Optional[str] = None
+    utm_medium: Optional[str] = None
     reason: Optional[str] = None
     
     # Valid values

@@ -132,7 +132,19 @@ public class CustomerProfile {
     
     @JsonProperty("partner_id")
     private String partnerId;
-    
+
+    @JsonProperty("affiliate_id")
+    private String affiliateId;
+
+    @JsonProperty("utm_source")
+    private String utmSource;
+
+    @JsonProperty("utm_campaign")
+    private String utmCampaign;
+
+    @JsonProperty("utm_medium")
+    private String utmMedium;
+
     @JsonProperty("referral_link_code")
     private String referralLinkCode;
     
@@ -389,7 +401,19 @@ public class CustomerProfile {
     
     public String getPartnerId() { return partnerId; }
     public void setPartnerId(String partnerId) { this.partnerId = partnerId; }
-    
+
+    public String getAffiliateId() { return affiliateId; }
+    public void setAffiliateId(String affiliateId) { this.affiliateId = affiliateId; }
+
+    public String getUtmSource() { return utmSource; }
+    public void setUtmSource(String utmSource) { this.utmSource = utmSource; }
+
+    public String getUtmCampaign() { return utmCampaign; }
+    public void setUtmCampaign(String utmCampaign) { this.utmCampaign = utmCampaign; }
+
+    public String getUtmMedium() { return utmMedium; }
+    public void setUtmMedium(String utmMedium) { this.utmMedium = utmMedium; }
+
     public String getReferralLinkCode() { return referralLinkCode; }
     public void setReferralLinkCode(String referralLinkCode) { this.referralLinkCode = referralLinkCode; }
     

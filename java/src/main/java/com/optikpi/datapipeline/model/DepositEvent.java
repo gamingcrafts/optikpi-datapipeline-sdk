@@ -61,7 +61,16 @@ public class DepositEvent {
     
     @JsonProperty("failure_reason")
     private String failureReason;
-    
+
+    @JsonProperty("utm_source")
+    private String utmSource;
+
+    @JsonProperty("utm_campaign")
+    private String utmCampaign;
+
+    @JsonProperty("utm_medium")
+    private String utmMedium;
+
     public DepositEvent() {}
     
     public DepositEvent(String accountId, String workspaceId, String userId, String eventName, String eventId, String eventTime, BigDecimal amount) {
@@ -198,4 +207,13 @@ public class DepositEvent {
     
     public String getFailureReason() { return failureReason; }
     public void setFailureReason(String failureReason) { this.failureReason = failureReason; }
+
+    public String getUtmSource() { return utmSource; }
+    public void setUtmSource(String utmSource) { this.utmSource = utmSource; }
+
+    public String getUtmCampaign() { return utmCampaign; }
+    public void setUtmCampaign(String utmCampaign) { this.utmCampaign = utmCampaign; }
+
+    public String getUtmMedium() { return utmMedium; }
+    public void setUtmMedium(String utmMedium) { this.utmMedium = utmMedium; }
 }

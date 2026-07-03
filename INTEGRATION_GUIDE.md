@@ -131,6 +131,10 @@ https://your-api-gateway-url/apigw/ingest
 | financial_risk_level | Number | No | Financial risk level |
 | acquisition_source | String | No | Acquisition source |
 | partner_id | String | No | Partner identifier |
+| affiliate_id | String | No | Affiliate identifier for acquisition attribution |
+| utm_source | String | No | UTM source (e.g., google, facebook, newsletter) |
+| utm_campaign | String | No | UTM campaign name |
+| utm_medium | String | No | UTM medium (e.g., cpa, email, display) |
 | referral_link_code | String | No | Referral link code |
 | referral_limit_reached | String | No | Referral limit status |
 | creation_timestamp | String | Yes | Account creation UTC timestamp (date-time format). Example: `"2024-01-15T10:30:00Z"`
@@ -163,6 +167,9 @@ https://your-api-gateway-url/apigw/ingest
 | partner_id | String | No | Partner identifier |
 | device | String | No | Device type used |
 | campaign_code | String | No | Campaign code |
+| utm_source | String | No | UTM source (e.g., google, facebook, newsletter) |
+| utm_campaign | String | No | UTM campaign name |
+| utm_medium | String | No | UTM medium (e.g., cpa, email, display) |
 | status | String | No | Verification status |
 | reason | String | No | Reason for failure or additional information |
 
@@ -182,6 +189,9 @@ https://your-api-gateway-url/apigw/ingest
 | payment_provider_id | String | No | Payment provider identifier |
 | payment_provider_name | String | No | Payment provider name |
 | failure_reason | String | No | Reason for deposit failure |
+| utm_source | String | No | UTM source (e.g., google, facebook, newsletter) |
+| utm_campaign | String | No | UTM campaign name |
+| utm_medium | String | No | UTM medium (e.g., cpa, email, display) |
 
 ### Withdraw Event
 | Field | Type | Required | Description |

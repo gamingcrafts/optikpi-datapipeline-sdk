@@ -57,7 +57,16 @@ public class AccountEvent {
     
     @JsonProperty("campaign_code")
     private String campaignCode;
-    
+
+    @JsonProperty("utm_source")
+    private String utmSource;
+
+    @JsonProperty("utm_campaign")
+    private String utmCampaign;
+
+    @JsonProperty("utm_medium")
+    private String utmMedium;
+
     @JsonProperty("reason")
     private String reason;
     
@@ -177,7 +186,16 @@ public class AccountEvent {
     
     public String getCampaignCode() { return campaignCode; }
     public void setCampaignCode(String campaignCode) { this.campaignCode = campaignCode; }
-    
+
+    public String getUtmSource() { return utmSource; }
+    public void setUtmSource(String utmSource) { this.utmSource = utmSource; }
+
+    public String getUtmCampaign() { return utmCampaign; }
+    public void setUtmCampaign(String utmCampaign) { this.utmCampaign = utmCampaign; }
+
+    public String getUtmMedium() { return utmMedium; }
+    public void setUtmMedium(String utmMedium) { this.utmMedium = utmMedium; }
+
     public String getReason() { return reason; }
     public void setReason(String reason) { this.reason = reason; }
 }

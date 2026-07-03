@@ -17,6 +17,9 @@ class DepositEvent {
     this.payment_provider_id = data.payment_provider_id;
     this.payment_provider_name = data.payment_provider_name;
     this.failure_reason = data.failure_reason;
+    this.utm_source = data.utm_source;
+    this.utm_campaign = data.utm_campaign;
+    this.utm_medium = data.utm_medium;
   }
 
   /**
