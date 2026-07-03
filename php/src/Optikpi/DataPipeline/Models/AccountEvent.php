@@ -20,6 +20,9 @@ class AccountEvent
     public $affiliate_id;
     public $partner_id;
     public $campaign_code;
+    public $utm_source;
+    public $utm_campaign;
+    public $utm_medium;
     public $reason;
 
     /**

@@ -21,6 +21,9 @@ class DepositEvent
     public $payment_provider_id;
     public $payment_provider_name;
     public $failure_reason;
+    public $utm_source;
+    public $utm_campaign;
+    public $utm_medium;
 
     /**
      * Constructor

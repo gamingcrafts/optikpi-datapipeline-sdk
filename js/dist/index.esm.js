@@ -20615,6 +20615,10 @@ let CustomerProfile$2 = class CustomerProfile {
     this.financial_risk_level = data.financial_risk_level;
     this.acquisition_source = data.acquisition_source;
     this.partner_id = data.partner_id;
+    this.affiliate_id = data.affiliate_id;
+    this.utm_source = data.utm_source;
+    this.utm_campaign = data.utm_campaign;
+    this.utm_medium = data.utm_medium;
     this.referral_link_code = data.referral_link_code;
     this.referral_limit_reached = data.referral_limit_reached;
     this.creation_timestamp = data.creation_timestamp;
@@ -20739,6 +20743,9 @@ let AccountEvent$2 = class AccountEvent {
     this.affiliate_id = data.affiliate_id;
     this.partner_id = data.partner_id;
     this.campaign_code = data.campaign_code;
+    this.utm_source = data.utm_source;
+    this.utm_campaign = data.utm_campaign;
+    this.utm_medium = data.utm_medium;
     this.reason = data.reason;
   }
 
@@ -20831,6 +20838,9 @@ let DepositEvent$2 = class DepositEvent {
     this.payment_provider_id = data.payment_provider_id;
     this.payment_provider_name = data.payment_provider_name;
     this.failure_reason = data.failure_reason;
+    this.utm_source = data.utm_source;
+    this.utm_campaign = data.utm_campaign;
+    this.utm_medium = data.utm_medium;
   }
 
   /**

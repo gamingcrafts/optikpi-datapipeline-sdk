@@ -35,6 +35,10 @@ class CustomerProfile {
     this.financial_risk_level = data.financial_risk_level;
     this.acquisition_source = data.acquisition_source;
     this.partner_id = data.partner_id;
+    this.affiliate_id = data.affiliate_id;
+    this.utm_source = data.utm_source;
+    this.utm_campaign = data.utm_campaign;
+    this.utm_medium = data.utm_medium;
     this.referral_link_code = data.referral_link_code;
     this.referral_limit_reached = data.referral_limit_reached;
     this.creation_timestamp = data.creation_timestamp;

@@ -16,6 +16,9 @@ class AccountEvent {
     this.affiliate_id = data.affiliate_id;
     this.partner_id = data.partner_id;
     this.campaign_code = data.campaign_code;
+    this.utm_source = data.utm_source;
+    this.utm_campaign = data.utm_campaign;
+    this.utm_medium = data.utm_medium;
     this.reason = data.reason;
   }
 

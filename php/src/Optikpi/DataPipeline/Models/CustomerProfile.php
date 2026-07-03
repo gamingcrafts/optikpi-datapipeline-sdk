@@ -39,6 +39,10 @@ class CustomerProfile
     public $financial_risk_level;
     public $acquisition_source;
     public $partner_id;
+    public $affiliate_id;
+    public $utm_source;
+    public $utm_campaign;
+    public $utm_medium;
     public $referral_link_code;
     public $referral_limit_reached;
     public $creation_timestamp;

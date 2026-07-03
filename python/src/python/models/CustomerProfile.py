@@ -37,6 +37,10 @@ class CustomerProfile:
     financial_risk_level: Optional[float] = None
     acquisition_source: Optional[str] = None
     partner_id: Optional[str] = None
+    affiliate_id: Optional[str] = None
+    utm_source: Optional[str] = None
+    utm_campaign: Optional[str] = None
+    utm_medium: Optional[str] = None
     referral_link_code: Optional[str] = None
     referral_limit_reached: Optional[str] = None
     creation_timestamp: Optional[str] = None
