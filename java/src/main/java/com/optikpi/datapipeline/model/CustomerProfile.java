@@ -132,7 +132,19 @@ public class CustomerProfile {
     
     @JsonProperty("partner_id")
     private String partnerId;
-    
+
+    @JsonProperty("affiliate_id")
+    private String affiliateId;
+
+    @JsonProperty("utm_source")
+    private String utmSource;
+
+    @JsonProperty("utm_campaign")
+    private String utmCampaign;
+
+    @JsonProperty("utm_medium")
+    private String utmMedium;
+
     @JsonProperty("referral_link_code")
     private String referralLinkCode;
     
