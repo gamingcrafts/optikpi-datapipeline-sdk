@@ -37,10 +37,6 @@ class CustomerProfile:
     financial_risk_level: Optional[float] = None
     acquisition_source: Optional[str] = None
     partner_id: Optional[str] = None
-    affiliate_id: Optional[str] = None
-    utm_source: Optional[str] = None
-    utm_campaign: Optional[str] = None
-    utm_medium: Optional[str] = None
     referral_link_code: Optional[str] = None
     referral_limit_reached: Optional[str] = None
     creation_timestamp: Optional[str] = None
@@ -82,6 +78,8 @@ class CustomerProfile:
             errors.append("username is required")
         if not self.email:
             errors.append("email is required")
+        if not self.creation_timestamp:
+            errors.append("creation_timestamp is required")
 
         # Email validation
         if self.email and not self.is_valid_email(self.email):

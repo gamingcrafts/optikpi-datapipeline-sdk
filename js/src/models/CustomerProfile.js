@@ -35,10 +35,6 @@ class CustomerProfile {
     this.financial_risk_level = data.financial_risk_level;
     this.acquisition_source = data.acquisition_source;
     this.partner_id = data.partner_id;
-    this.affiliate_id = data.affiliate_id;
-    this.utm_source = data.utm_source;
-    this.utm_campaign = data.utm_campaign;
-    this.utm_medium = data.utm_medium;
     this.referral_link_code = data.referral_link_code;
     this.referral_limit_reached = data.referral_limit_reached;
     this.creation_timestamp = data.creation_timestamp;
@@ -77,6 +73,7 @@ class CustomerProfile {
     if (!this.user_id) errors.push('user_id is required');
     if (!this.username) errors.push('username is required');
     if (!this.email) errors.push('email is required');
+    if (!this.creation_timestamp) errors.push('creation_timestamp is required');
 
     // Email format validation
     if (this.email && !this.isValidEmail(this.email)) {
@@ -91,6 +88,14 @@ class CustomerProfile {
     // Enum validations
     if (this.gender && !['Male', 'Female', 'Other'].includes(this.gender)) {
       errors.push('gender must be one of: Male, Female, Other');
+    }
+
+    if (this.account_status && !['Active', 'Inactive', 'Suspended', 'Closed'].includes(this.account_status)) {
+      errors.push('account_status must be one of: Active, Inactive, Suspended, Closed');
+    }
+
+    if (this.vip_status && !['Regular', 'Silver', 'Gold', 'Platinum', 'Diamond'].includes(this.vip_status)) {
+      errors.push('vip_status must be one of: Regular, Silver, Gold, Platinum, Diamond');
     }
 
     return {

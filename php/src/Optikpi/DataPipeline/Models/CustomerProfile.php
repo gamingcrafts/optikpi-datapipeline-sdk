@@ -39,10 +39,6 @@ class CustomerProfile
     public $financial_risk_level;
     public $acquisition_source;
     public $partner_id;
-    public $affiliate_id;
-    public $utm_source;
-    public $utm_campaign;
-    public $utm_medium;
     public $referral_link_code;
     public $referral_limit_reached;
     public $creation_timestamp;
@@ -105,6 +101,9 @@ class CustomerProfile
         }
         if (empty($this->email)) {
             $errors[] = 'email is required';
+        }
+        if (empty($this->creation_timestamp)) {
+            $errors[] = 'creation_timestamp is required';
         }
 
         // Email format validation
