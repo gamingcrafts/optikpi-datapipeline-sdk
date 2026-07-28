@@ -152,6 +152,7 @@ public class CustomerProfile {
     @JsonProperty("referral_limit_reached")
     private String referralLimitReached;
     
+    @NotBlank(message = "creation_timestamp is required")
     @JsonProperty("creation_timestamp")
     private String creationTimestamp;
     
@@ -253,6 +254,9 @@ public class CustomerProfile {
         }
         if (email == null || email.trim().isEmpty()) {
             errors.add("email is required");
+        }
+        if (creationTimestamp == null || creationTimestamp.trim().isEmpty()) {
+            errors.add("creation_timestamp is required");
         }
         
         // Email format validation

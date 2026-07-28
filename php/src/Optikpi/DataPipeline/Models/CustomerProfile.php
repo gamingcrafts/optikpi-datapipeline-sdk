@@ -106,6 +106,9 @@ class CustomerProfile
         if (empty($this->email)) {
             $errors[] = 'email is required';
         }
+        if (empty($this->creation_timestamp)) {
+            $errors[] = 'creation_timestamp is required';
+        }
 
         // Email format validation
         if (!empty($this->email) && !$this->isValidEmail($this->email)) {
