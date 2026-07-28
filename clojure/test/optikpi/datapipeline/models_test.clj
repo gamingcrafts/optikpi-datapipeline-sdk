@@ -17,12 +17,18 @@
 
 ;; CustomerProfile
 (deftest customer-profile-valid
-  (is (:valid? (cp/validate {:account_id "a" :workspace_id "w" :user_id "u"}))))
+  (is (:valid? (cp/validate {:account_id "a" :workspace_id "w" :user_id "u"
+                              :creation_timestamp "2024-01-15T10:30:00Z"}))))
 
 (deftest customer-profile-missing-required
   (let [r (cp/validate {})]
     (is (not (:valid? r)))
     (is (some #{"account_id is required"} (:errors r)))))
+
+(deftest customer-profile-missing-creation-timestamp
+  (let [r (cp/validate {:account_id "a" :workspace_id "w" :user_id "u"})]
+    (is (not (:valid? r)))
+    (is (some #{"creation_timestamp is required"} (:errors r)))))
 
 (deftest customer-profile-invalid-email
   (let [r (cp/validate {:account_id "a" :workspace_id "w" :user_id "u"
