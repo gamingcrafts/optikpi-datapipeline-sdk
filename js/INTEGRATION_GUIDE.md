@@ -134,7 +134,7 @@ All successful responses follow this structure:
   "utm_medium": "string (optional, e.g. cpa, email, display)",
   "referral_link_code": "string (optional)",
   "referral_limit_reached": "string (optional, Reached/Not Reached)",
-  "creation_timestamp": "string (optional, ISO 8601)",
+  "creation_timestamp": "string (required, ISO 8601)",
   "phone_verification": "string (optional, Verified/NotVerified)",
   "email_verification": "string (optional, Verified/NotVerified)",
   "bank_verification": "string (optional, Verified/NotVerified)",

@@ -224,12 +224,13 @@ public class CustomerProfile {
     
     public CustomerProfile() {}
     
-    public CustomerProfile(String accountId, String workspaceId, String userId, String username, String email) {
+    public CustomerProfile(String accountId, String workspaceId, String userId, String username, String email, String creationTimestamp) {
         this.accountId = accountId;
         this.workspaceId = workspaceId;
         this.userId = userId;
         this.username = username;
         this.email = email;
+        this.creationTimestamp = creationTimestamp;
     }
     
     /**
