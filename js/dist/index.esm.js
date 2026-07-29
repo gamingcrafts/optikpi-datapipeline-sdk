@@ -20657,6 +20657,7 @@ let CustomerProfile$2 = class CustomerProfile {
     if (!this.user_id) errors.push('user_id is required');
     if (!this.username) errors.push('username is required');
     if (!this.email) errors.push('email is required');
+    if (!this.creation_timestamp) errors.push('creation_timestamp is required');
 
     // Email format validation
     if (this.email && !this.isValidEmail(this.email)) {

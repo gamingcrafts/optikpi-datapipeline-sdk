@@ -5,9 +5,10 @@
   [m]
   (let [errors
         (cond-> []
-          (empty? (:account_id m))    (conj "account_id is required")
-          (empty? (:workspace_id m))  (conj "workspace_id is required")
-          (empty? (:user_id m))       (conj "user_id is required")
+          (empty? (:account_id m))          (conj "account_id is required")
+          (empty? (:workspace_id m))        (conj "workspace_id is required")
+          (empty? (:user_id m))             (conj "user_id is required")
+          (empty? (:creation_timestamp m))  (conj "creation_timestamp is required")
           (and (some? (:email m))
                (not (re-matches #".+@.+\..+" (:email m))))
           (conj "email format is invalid")

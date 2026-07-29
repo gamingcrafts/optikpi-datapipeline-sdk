@@ -82,6 +82,8 @@ class CustomerProfile:
             errors.append("username is required")
         if not self.email:
             errors.append("email is required")
+        if not self.creation_timestamp:
+            errors.append("creation_timestamp is required")
 
         # Email validation
         if self.email and not self.is_valid_email(self.email):
