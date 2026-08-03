@@ -736,6 +736,7 @@ For technical support and questions:
 - **Java SDK Guide**: [README.md](https://github.com/gamingcrafts/optikpi-datapipeline-sdk/tree/main/java/)
 - **Python SDK Guide**: [README.md](https://github.com/gamingcrafts/optikpi-datapipeline-sdk/tree/main/python)
 - **PHP SDK Guide**: [README.md](https://github.com/gamingcrafts/optikpi-datapipeline-sdk/tree/main/php)
+- **Rust SDK Guide**: [README.md](https://github.com/gamingcrafts/optikpi-datapipeline-sdk/tree/main/rust)
 
 
 This integration guide provides everything you need to successfully integrate with the Optikpi Data Pipeline API. Choose the approach that best fits your technology stack and requirements.
