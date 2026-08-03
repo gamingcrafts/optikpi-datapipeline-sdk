@@ -93,4 +93,22 @@ mod tests {
         let sig2 = generate_signature("body", "token2", "acc", "ws");
         assert_ne!(sig1, sig2);
     }
+
+    /// Cross-checked against the JS (`js/src/utils/crypto.js`) and Python
+    /// (`python/src/python/utils/crypto.py`) implementations, which agree
+    /// byte-for-byte on this input. If this fails, the HKDF extract step's
+    /// key/message order is wrong (see the comment on `hkdf_extract`).
+    #[test]
+    fn known_signature_matches_js_and_python_implementations() {
+        let sig = generate_signature(
+            r#"{"test":true}"#,
+            "my-auth-token",
+            "my-account-id",
+            "my-workspace-id",
+        );
+        assert_eq!(
+            sig,
+            "eaf1b496e481d2c1f5da755ffb4a2f865191acea44856be48a6653c4f528dab1"
+        );
+    }
 }

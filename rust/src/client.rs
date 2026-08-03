@@ -9,7 +9,7 @@ use crate::crypto;
 /// Client configuration. Required fields have no default and must be
 /// supplied to [`ClientConfig::new`]; everything else has a sane default
 /// and can be overridden with the `with_*` builder methods.
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct ClientConfig {
     pub base_url: String,
     pub auth_token: String,
@@ -18,6 +18,22 @@ pub struct ClientConfig {
     pub timeout: Duration,
     pub retries: u32,
     pub retry_delay: Duration,
+}
+
+impl fmt::Debug for ClientConfig {
+    /// Redacts `auth_token` so it can't leak through `{:?}` logging, panic
+    /// messages, or `dbg!()`.
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("ClientConfig")
+            .field("base_url", &self.base_url)
+            .field("auth_token", &"<redacted>")
+            .field("account_id", &self.account_id)
+            .field("workspace_id", &self.workspace_id)
+            .field("timeout", &self.timeout)
+            .field("retries", &self.retries)
+            .field("retry_delay", &self.retry_delay)
+            .finish()
+    }
 }
 
 impl ClientConfig {
@@ -43,8 +59,10 @@ impl ClientConfig {
         self
     }
 
+    /// Clamped to 10 — beyond that, exponential backoff delays become
+    /// impractically long and risk overflow in the backoff calculation.
     pub fn with_retries(mut self, retries: u32) -> Self {
-        self.retries = retries;
+        self.retries = retries.min(10);
         self
     }
 
@@ -89,23 +107,27 @@ pub struct ApiResponse {
 
 /// Batch payload builder. Only populated fields are sent; each accepts
 /// either a single record or a `Vec` of records.
+///
+/// A slot holds `Err` if the record failed to serialize (e.g. a `NaN` or
+/// infinite float amount) — `send_batch` reports that as a failed result
+/// for the slot rather than silently dropping it from the batch.
 #[derive(Debug, Default)]
 pub struct BatchRequest {
-    customers: Option<Value>,
-    account_events: Option<Value>,
-    deposit_events: Option<Value>,
-    withdraw_events: Option<Value>,
-    gaming_events: Option<Value>,
-    wallet_balance_events: Option<Value>,
-    refer_friend_events: Option<Value>,
-    system_events: Option<Value>,
-    extended_attributes: Option<Value>,
+    customers: Option<Result<Value, String>>,
+    account_events: Option<Result<Value, String>>,
+    deposit_events: Option<Result<Value, String>>,
+    withdraw_events: Option<Result<Value, String>>,
+    gaming_events: Option<Result<Value, String>>,
+    wallet_balance_events: Option<Result<Value, String>>,
+    refer_friend_events: Option<Result<Value, String>>,
+    system_events: Option<Result<Value, String>>,
+    extended_attributes: Option<Result<Value, String>>,
 }
 
 macro_rules! batch_setter {
     ($name:ident) => {
         pub fn $name<T: Serialize>(mut self, data: &T) -> Self {
-            self.$name = serde_json::to_value(data).ok();
+            self.$name = Some(serde_json::to_value(data).map_err(|e| e.to_string()));
             self
         }
     };
@@ -280,46 +302,33 @@ impl Client {
         self.send_request("/extattributes", data)
     }
 
+    /// Sends a pre-serialized batch slot, or synthesizes a failed
+    /// [`ApiResponse`] (no network call) if the record failed to serialize.
+    fn send_slot(&self, endpoint: &str, slot: &Option<Result<Value, String>>) -> Option<ApiResponse> {
+        slot.as_ref().map(|result| match result {
+            Ok(value) => self.send_request(endpoint, value),
+            Err(err) => ApiResponse {
+                success: false,
+                status: 0,
+                data: None,
+                error: Some(format!("failed to serialize request body: {err}")),
+            },
+        })
+    }
+
     /// Sends every populated event type in `batch` sequentially and
     /// collects the results.
     pub fn send_batch(&self, batch: &BatchRequest) -> BatchResult {
         BatchResult {
-            customers: batch
-                .customers
-                .as_ref()
-                .map(|v| self.send_request("/customers", v)),
-            account_events: batch
-                .account_events
-                .as_ref()
-                .map(|v| self.send_request("/events/account", v)),
-            deposit_events: batch
-                .deposit_events
-                .as_ref()
-                .map(|v| self.send_request("/events/deposit", v)),
-            withdraw_events: batch
-                .withdraw_events
-                .as_ref()
-                .map(|v| self.send_request("/events/withdraw", v)),
-            gaming_events: batch
-                .gaming_events
-                .as_ref()
-                .map(|v| self.send_request("/events/gaming-activity", v)),
-            wallet_balance_events: batch
-                .wallet_balance_events
-                .as_ref()
-                .map(|v| self.send_request("/events/wallet-balance", v)),
-            refer_friend_events: batch
-                .refer_friend_events
-                .as_ref()
-                .map(|v| self.send_request("/events/refer-friend", v)),
-            system_events: batch
-                .system_events
-                .as_ref()
-                .map(|v| self.send_request("/events/system-events", v)),
-            extended_attributes: batch
-                .extended_attributes
-                .as_ref()
-                .map(|v| self.send_request("/extattributes", v)),
+            customers: self.send_slot("/customers", &batch.customers),
+            account_events: self.send_slot("/events/account", &batch.account_events),
+            deposit_events: self.send_slot("/events/deposit", &batch.deposit_events),
+            withdraw_events: self.send_slot("/events/withdraw", &batch.withdraw_events),
+            gaming_events: self.send_slot("/events/gaming-activity", &batch.gaming_events),
+            wallet_balance_events: self.send_slot("/events/wallet-balance", &batch.wallet_balance_events),
+            refer_friend_events: self.send_slot("/events/refer-friend", &batch.refer_friend_events),
+            system_events: self.send_slot("/events/system-events", &batch.system_events),
+            extended_attributes: self.send_slot("/extattributes", &batch.extended_attributes),
         }
     }
 }
