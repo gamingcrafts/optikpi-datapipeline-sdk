@@ -46,6 +46,8 @@ fn main() {
         "dep_001",
         "2026-01-15T10:30:00Z",
         100.0,
+        "credit_card",
+        "txn_abc123",
     );
 
     let validation = event.validate();

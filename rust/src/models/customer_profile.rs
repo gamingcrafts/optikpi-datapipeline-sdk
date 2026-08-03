@@ -9,10 +9,10 @@ pub struct CustomerProfile {
     pub account_id: String,
     pub workspace_id: String,
     pub user_id: String,
+    pub username: String,
+    pub email: String,
     pub creation_timestamp: String,
 
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub username: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub full_name: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -21,8 +21,6 @@ pub struct CustomerProfile {
     pub last_name: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub date_of_birth: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub email: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub phone_number: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -126,19 +124,21 @@ impl CustomerProfile {
         account_id: impl Into<String>,
         workspace_id: impl Into<String>,
         user_id: impl Into<String>,
+        username: impl Into<String>,
+        email: impl Into<String>,
         creation_timestamp: impl Into<String>,
     ) -> Self {
         Self {
             account_id: account_id.into(),
             workspace_id: workspace_id.into(),
             user_id: user_id.into(),
+            username: username.into(),
+            email: email.into(),
             creation_timestamp: creation_timestamp.into(),
-            username: None,
             full_name: None,
             first_name: None,
             last_name: None,
             date_of_birth: None,
-            email: None,
             phone_number: None,
             gender: None,
             country: None,
@@ -202,15 +202,18 @@ impl CustomerProfile {
         if self.user_id.is_empty() {
             errors.push("user_id is required".to_string());
         }
+        if self.username.is_empty() {
+            errors.push("username is required".to_string());
+        }
+        if self.email.is_empty() {
+            errors.push("email is required".to_string());
+        } else if !is_valid_email(&self.email) {
+            errors.push("email must be a valid email address".to_string());
+        }
         if self.creation_timestamp.is_empty() {
             errors.push("creation_timestamp is required".to_string());
         } else if !is_valid_datetime(&self.creation_timestamp) {
             errors.push("creation_timestamp must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)".to_string());
-        }
-        if let Some(email) = &self.email {
-            if !is_valid_email(email) {
-                errors.push("email must be a valid email address".to_string());
-            }
         }
         if let Some(dob) = &self.date_of_birth {
             if !is_valid_date(dob) {

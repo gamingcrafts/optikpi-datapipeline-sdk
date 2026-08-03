@@ -14,6 +14,7 @@
 //! let event = DepositEvent::new(
 //!     "account-1", "workspace-1", "player_001",
 //!     "Successful Deposit", "dep_001", "2026-01-15T10:30:00Z", 100.0,
+//!     "credit_card", "txn_abc123",
 //! );
 //!
 //! let result = client.send_deposit_event(&event);

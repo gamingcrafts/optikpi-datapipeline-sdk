@@ -11,6 +11,8 @@ fn deposit_event_requires_positive_amount() {
         "evt-1",
         "2026-01-15T10:30:00Z",
         -10.0,
+        "credit_card",
+        "txn-1",
     );
     let result = event.validate();
     assert!(!result.is_valid());
@@ -27,6 +29,8 @@ fn deposit_event_valid_passes() {
         "evt-1",
         "2026-01-15T10:30:00Z",
         100.0,
+        "credit_card",
+        "txn-1",
     );
     assert!(event.validate().is_valid());
 }

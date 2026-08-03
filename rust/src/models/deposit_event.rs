@@ -24,10 +24,8 @@ pub struct DepositEvent {
     pub event_id: String,
     pub event_time: String,
     pub amount: f64,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub payment_method: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub transaction_id: Option<String>,
+    pub payment_method: String,
+    pub transaction_id: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub payment_provider_id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -52,6 +50,8 @@ impl DepositEvent {
         event_id: impl Into<String>,
         event_time: impl Into<String>,
         amount: f64,
+        payment_method: impl Into<String>,
+        transaction_id: impl Into<String>,
     ) -> Self {
         Self {
             account_id: account_id.into(),
@@ -62,8 +62,8 @@ impl DepositEvent {
             event_id: event_id.into(),
             event_time: event_time.into(),
             amount,
-            payment_method: None,
-            transaction_id: None,
+            payment_method: payment_method.into(),
+            transaction_id: transaction_id.into(),
             payment_provider_id: None,
             payment_provider_name: None,
             failure_reason: None,
@@ -100,13 +100,16 @@ impl DepositEvent {
         if self.amount <= 0.0 {
             errors.push("amount must be a positive number".to_string());
         }
-        if let Some(method) = &self.payment_method {
-            if !VALID_PAYMENT_METHODS.contains(&method.as_str()) {
-                errors.push(format!(
-                    "payment_method must be one of: {}",
-                    VALID_PAYMENT_METHODS.join(", ")
-                ));
-            }
+        if self.payment_method.is_empty() {
+            errors.push("payment_method is required".to_string());
+        } else if !VALID_PAYMENT_METHODS.contains(&self.payment_method.as_str()) {
+            errors.push(format!(
+                "payment_method must be one of: {}",
+                VALID_PAYMENT_METHODS.join(", ")
+            ));
+        }
+        if self.transaction_id.is_empty() {
+            errors.push("transaction_id is required".to_string());
         }
         if !self.event_time.is_empty() && !is_valid_datetime(&self.event_time) {
             errors.push("event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)".to_string());

@@ -26,6 +26,8 @@ fn main() {
         format!("dep_{now}"),
         "2026-01-15T10:30:00Z",
         100.00,
+        "credit_card",
+        "txn_abc123",
     );
     let validation = deposit.validate();
     if !validation.is_valid() {
@@ -40,9 +42,10 @@ fn main() {
         std::env::var("ACCOUNT_ID").unwrap(),
         std::env::var("WORKSPACE_ID").unwrap(),
         "player_001",
+        "player_001",
+        "player@example.com",
         "2026-01-15T10:00:00Z",
     );
-    profile.email = Some("player@example.com".to_string());
     profile.first_name = Some("Alex".to_string());
     profile.last_name = Some("Smith".to_string());
     profile.country = Some("FI".to_string());
@@ -64,6 +67,8 @@ fn main() {
         format!("dep_{}", now + 1),
         "2026-01-15T11:00:00Z",
         50.0,
+        "bank",
+        "txn_def456",
     );
     let batch = BatchRequest::default().deposit_events(&vec![deposit, another_deposit]);
     let batch_result = client.send_batch(&batch);

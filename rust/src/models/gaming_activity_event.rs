@@ -13,6 +13,8 @@ pub struct GamingActivityEvent {
     pub event_name: String,
     pub event_id: String,
     pub event_time: String,
+    pub game_id: String,
+    pub game_title: String,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub wager_amount: Option<f64>,
@@ -20,10 +22,6 @@ pub struct GamingActivityEvent {
     pub win_amount: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub loss_amount: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub game_id: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub game_title: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub provider: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -145,6 +143,7 @@ pub struct GamingActivityEvent {
 }
 
 impl GamingActivityEvent {
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         account_id: impl Into<String>,
         workspace_id: impl Into<String>,
@@ -152,6 +151,8 @@ impl GamingActivityEvent {
         event_name: impl Into<String>,
         event_id: impl Into<String>,
         event_time: impl Into<String>,
+        game_id: impl Into<String>,
+        game_title: impl Into<String>,
     ) -> Self {
         Self {
             account_id: account_id.into(),
@@ -161,11 +162,11 @@ impl GamingActivityEvent {
             event_name: event_name.into(),
             event_id: event_id.into(),
             event_time: event_time.into(),
+            game_id: game_id.into(),
+            game_title: game_title.into(),
             wager_amount: None,
             win_amount: None,
             loss_amount: None,
-            game_id: None,
-            game_title: None,
             provider: None,
             bonus_id: None,
             free_spin_id: None,
@@ -248,6 +249,12 @@ impl GamingActivityEvent {
         }
         if self.event_time.is_empty() {
             errors.push("event_time is required".to_string());
+        }
+        if self.game_id.is_empty() {
+            errors.push("game_id is required".to_string());
+        }
+        if self.game_title.is_empty() {
+            errors.push("game_title is required".to_string());
         }
         if self.event_category != "Gaming Activity" {
             errors.push(r#"event_category must be "Gaming Activity" for gaming events"#.to_string());
