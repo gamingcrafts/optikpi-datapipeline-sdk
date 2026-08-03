@@ -5,11 +5,11 @@
 [![PyPI version](https://badge.fury.io/py/optikpi-datapipeline-sdk.svg)](https://badge.fury.io/py/optikpi-datapipeline-sdk)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-Official SDKs for the Optikpi Data Pipeline API. This repository contains JavaScript, Java, Python, and PHP implementations, providing comprehensive, type-safe ways to integrate with Optikpi's data pipeline services for gaming and financial data processing.
+Official SDKs for the Optikpi Data Pipeline API. This repository contains JavaScript, Java, Python, PHP, and Rust implementations, providing comprehensive, type-safe ways to integrate with Optikpi's data pipeline services for gaming and financial data processing.
 
 ## 🚀 Features
 
-- **Multi-Language Support**: JavaScript (Node.js/Browser), Java, Python, and PHP implementations
+- **Multi-Language Support**: JavaScript (Node.js/Browser), Java, Python, PHP, and Rust implementations
 - **Easy Integration**: Simple, intuitive API design across all languages
 - **Secure Authentication**: HMAC-based authentication with HKDF key derivation
 - **Data Validation**: Built-in validation for all data models
@@ -53,6 +53,12 @@ Choose the SDK based on your preferred programming language and navigate to the 
 - **Directory**: [`php/`](php/)
 - **Navigate** :Run `cd php` to navigate to the PHP SDK.
 - **Documentation**: [PHP SDK README](php/README.md)
+
+### Rust SDK
+- **Platform**: Rust 1.74+
+- **Directory**: [`rust/`](rust/)
+- **Navigate** :Run `cd rust` to navigate to the Rust SDK.
+- **Documentation**: [Rust SDK README](rust/README.md)
 
 
 ## 📊 Supported Data Types
@@ -100,6 +106,11 @@ optikpi-datapipeline-sdk/
 │   ├── src/              # Source code
 │   ├── examples/         # Example applications
 │   └── README.md         # PHP documentation
+├── rust/                 # Rust SDK
+│   ├── src/              # Source code (client, crypto, models)
+│   ├── examples/         # Example applications
+│   ├── tests/            # Integration tests
+│   └── README.md         # Rust documentation
 ├── package.json          # Root package configuration
 └── README.md             # This file
 ```
