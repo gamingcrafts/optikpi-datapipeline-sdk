@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use super::{is_valid_date, is_valid_datetime, is_valid_email, ok, ValidationResult};
+use super::{is_valid_date, is_valid_email, ok, ValidationResult};
 
 /// Customer profile: full user account information and preferences.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -212,8 +212,6 @@ impl CustomerProfile {
         }
         if self.creation_timestamp.is_empty() {
             errors.push("creation_timestamp is required".to_string());
-        } else if !is_valid_datetime(&self.creation_timestamp) {
-            errors.push("creation_timestamp must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)".to_string());
         }
         if let Some(dob) = &self.date_of_birth {
             if !is_valid_date(dob) {
