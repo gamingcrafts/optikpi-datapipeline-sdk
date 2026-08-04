@@ -13,7 +13,13 @@
           (empty? (:transaction_id m))  (conj "transaction_id is required")
           (nil? (:amount m))            (conj "amount is required")
           (and (some? (:amount m))
-               (not (pos? (:amount m)))) (conj "amount must be positive"))]
+               (not (pos? (:amount m)))) (conj "amount must be positive")
+          (and (some? (:event_category m))
+               (not= (:event_category m) "Deposit"))
+          (conj "event_category must be \"Deposit\" for deposit events")
+          (and (some? (:event_time m))
+               (not (try (java.time.Instant/parse (:event_time m)) true (catch Exception _ false))))
+          (conj "event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)"))]
     {:valid? (empty? errors) :errors errors}))
 
 (defn build [data]

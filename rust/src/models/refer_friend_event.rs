@@ -2,8 +2,6 @@ use serde::{Deserialize, Serialize};
 
 use super::{is_valid_datetime, ok, ValidationResult};
 
-const VALID_REWARD_TYPES: [&str; 5] = ["bonus", "cash", "points", "free_spins", "other"];
-const VALID_CLAIM_STATUSES: [&str; 4] = ["pending", "claimed", "expired", "cancelled"];
 
 /// Refer friend event: a referral program activity or reward.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -88,19 +86,6 @@ impl ReferFriendEvent {
         if let Some(date) = &self.referee_registration_date {
             if !is_valid_datetime(date) {
                 errors.push("referee_registration_date must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)".to_string());
-            }
-        }
-        if let Some(reward_type) = &self.reward_type {
-            if !VALID_REWARD_TYPES.contains(&reward_type.as_str()) {
-                errors.push(format!("reward_type must be one of: {}", VALID_REWARD_TYPES.join(", ")));
-            }
-        }
-        if let Some(status) = &self.reward_claimed_status {
-            if !VALID_CLAIM_STATUSES.contains(&status.as_str()) {
-                errors.push(format!(
-                    "reward_claimed_status must be one of: {}",
-                    VALID_CLAIM_STATUSES.join(", ")
-                ));
             }
         }
         if let Some(deposit) = self.referee_first_deposit {

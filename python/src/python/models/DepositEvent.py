@@ -51,13 +51,6 @@ class DepositEvent:
         if self.amount is not None and self.amount <= 0:
             errors.append("amount must be a positive number")
 
-        valid_payment_methods = [
-            "bank", "credit_card", "debit_card", "e_wallet",
-            "crypto", "paypal", "skrill", "neteller"
-        ]
-        if self.payment_method and self.payment_method not in valid_payment_methods:
-            errors.append(f"payment_method must be one of: {', '.join(valid_payment_methods)}")
-
         if self.event_time and not self.is_valid_datetime(self.event_time):
             errors.append("event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)")
 

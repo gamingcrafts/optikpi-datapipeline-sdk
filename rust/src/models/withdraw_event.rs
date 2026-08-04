@@ -2,16 +2,6 @@ use serde::{Deserialize, Serialize};
 
 use super::{is_valid_datetime, ok, ValidationResult};
 
-const VALID_PAYMENT_METHODS: [&str; 8] = [
-    "bank",
-    "credit_card",
-    "debit_card",
-    "e_wallet",
-    "crypto",
-    "paypal",
-    "skrill",
-    "neteller",
-];
 
 /// Withdraw event: a financial withdrawal transaction.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -87,11 +77,6 @@ impl WithdrawEvent {
         }
         if self.payment_method.is_empty() {
             errors.push("payment_method is required".to_string());
-        } else if !VALID_PAYMENT_METHODS.contains(&self.payment_method.as_str()) {
-            errors.push(format!(
-                "payment_method must be one of: {}",
-                VALID_PAYMENT_METHODS.join(", ")
-            ));
         }
         if self.transaction_id.is_empty() {
             errors.push("transaction_id is required".to_string());

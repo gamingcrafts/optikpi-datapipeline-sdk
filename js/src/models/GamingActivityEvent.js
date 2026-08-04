@@ -108,42 +108,6 @@ class GamingActivityEvent {
       errors.push('win_amount must be a non-negative number');
     }
 
-    // Game type validation
-    const validGameTypes = [
-      'slots',
-      'table_games',
-      'card_games',
-      'live_casino',
-      'bingo',
-      'scratch_cards',
-      'lottery',
-      'sports_betting',
-      'virtual_sports'
-    ];
-
-    if (this.game_type && !validGameTypes.includes(this.game_type)) {
-      errors.push(`game_type must be one of: ${validGameTypes.join(', ')}`);
-    }
-
-    // Device validation
-    if (this.device && !['desktop', 'mobile', 'tablet', 'app'].includes(this.device)) {
-      errors.push('device must be one of: desktop, mobile, tablet, app');
-    }
-
-    // Platform validation
-    const validPlatforms = [
-      'web',
-      'ios',
-      'android',
-      'windows',
-      'mac',
-      'linux'
-    ];
-
-    if (this.platform && !validPlatforms.includes(this.platform)) {
-      errors.push(`platform must be one of: ${validPlatforms.join(', ')}`);
-    }
-
     // Currency validation
     if (this.currency && !this.isValidCurrency(this.currency)) {
       errors.push('currency must be a valid 3-letter ISO currency code');

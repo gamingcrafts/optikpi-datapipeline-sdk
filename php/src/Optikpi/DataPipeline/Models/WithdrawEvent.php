@@ -83,22 +83,6 @@ class WithdrawEvent
             $errors[] = 'amount must be a positive number';
         }
 
-        // Payment method validation
-        $validPaymentMethods = [
-            'bank',
-            'credit_card',
-            'debit_card',
-            'e_wallet',
-            'crypto',
-            'paypal',
-            'skrill',
-            'neteller'
-        ];
-
-        if (!empty($this->payment_method) && !in_array($this->payment_method, $validPaymentMethods)) {
-            $errors[] = 'payment_method must be one of: ' . implode(', ', $validPaymentMethods);
-        }
-
         // Date format validation
         if (!empty($this->event_time) && !$this->isValidDateTime($this->event_time)) {
             $errors[] = 'event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)';

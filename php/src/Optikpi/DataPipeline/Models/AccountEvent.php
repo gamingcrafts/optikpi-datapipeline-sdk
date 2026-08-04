@@ -74,11 +74,6 @@ class AccountEvent
             $errors[] = 'event_category must be "Account" for account events';
         }
 
-        // Status validation
-        if (!empty($this->status) && !in_array($this->status, ['verified', 'pending', 'failed', 'completed'])) {
-            $errors[] = 'status must be one of: verified, pending, failed, completed';
-        }
-
         // Device validation
         if (!empty($this->device) && !in_array($this->device, ['desktop', 'mobile', 'tablet', 'app'])) {
             $errors[] = 'device must be one of: desktop, mobile, tablet, app';

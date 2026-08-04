@@ -271,10 +271,29 @@ public class GamingActivityEvent {
         if (eventTime == null || eventTime.trim().isEmpty()) {
             errors.add("event_time is required");
         }
+        if (gameId == null || gameId.trim().isEmpty()) {
+            errors.add("game_id is required");
+        }
+        if (gameTitle == null || gameTitle.trim().isEmpty()) {
+            errors.add("game_title is required");
+        }
         
-        // Event category validation - CORRECTED
+        // Event category validation
         if (eventCategory != null && !"Gaming Activity".equals(eventCategory)) {
             errors.add("event_category must be \"Gaming Activity\" for gaming activity events");
+        }
+        
+        // Amount validations
+        if (wagerAmount != null && wagerAmount.compareTo(java.math.BigDecimal.ZERO) < 0) {
+            errors.add("wager_amount must be a non-negative number");
+        }
+        if (winAmount != null && winAmount.compareTo(java.math.BigDecimal.ZERO) < 0) {
+            errors.add("win_amount must be a non-negative number");
+        }
+        
+        // Currency validation
+        if (currency != null && !isValidCurrency(currency)) {
+            errors.add("currency must be a valid 3-letter ISO currency code");
         }
         
         // Date format validation
@@ -285,11 +304,10 @@ public class GamingActivityEvent {
         return new ValidationResult(errors.isEmpty(), errors);
     }
     
-    private boolean isValidDevice(String device) {
-        return "desktop".equals(device) || "mobile".equals(device) || 
-               "tablet".equals(device) || "app".equals(device);
+    private boolean isValidCurrency(String currency) {
+        return currency != null && currency.matches("^[A-Z]{3}$");
     }
-    
+
     private boolean isValidDateTime(String dateTime) {
         try {
             Instant.parse(dateTime);

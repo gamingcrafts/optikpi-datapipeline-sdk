@@ -45,7 +45,6 @@ public class AccountEvent {
     @JsonProperty("device")
     private String device;
     
-    @Pattern(regexp = "verified|pending|failed|completed", message = "status must be one of: verified, pending, failed, completed")
     @JsonProperty("status")
     private String status;
     
@@ -113,11 +112,6 @@ public class AccountEvent {
             errors.add("event_category must be \"Account\" for account events");
         }
         
-        // Status validation
-        if (status != null && !isValidStatus(status)) {
-            errors.add("status must be one of: verified, pending, failed, completed");
-        }
-        
         // Device validation
         if (device != null && !isValidDevice(device)) {
             errors.add("device must be one of: desktop, mobile, tablet, app");
@@ -129,11 +123,6 @@ public class AccountEvent {
         }
         
         return new ValidationResult(errors.isEmpty(), errors);
-    }
-    
-    private boolean isValidStatus(String status) {
-        return "verified".equals(status) || "pending".equals(status) || 
-               "failed".equals(status) || "completed".equals(status);
     }
     
     private boolean isValidDevice(String device) {

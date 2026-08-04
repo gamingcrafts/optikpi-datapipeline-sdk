@@ -19,10 +19,11 @@
           (empty? (:list_name m))    (conj "list_name is required")
           (and (some? (:list_name m))
                (not (valid-list-name? (:list_name m))))
-          (conj "list_name must contain only alphanumeric characters, underscores, or hyphens")
+          (conj "list_name must contain only alphanumeric characters, underscores, and hyphens")
+          (nil? (:ext_data m))       (conj "ext_data is required")
           (and (some? (:ext_data m))
                (not (valid-ext-data? (:ext_data m))))
-          (conj "ext_data must be a map or valid JSON string"))]
+          (conj "ext_data must be a valid JSON string or object"))]
     {:valid? (empty? errors) :errors errors}))
 
 (defn build [data]

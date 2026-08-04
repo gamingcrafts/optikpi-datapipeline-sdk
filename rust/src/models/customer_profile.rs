@@ -225,17 +225,6 @@ impl CustomerProfile {
                 errors.push("gender must be one of: Male, Female, Other".to_string());
             }
         }
-        if let Some(status) = &self.account_status {
-            if !["Active", "Inactive", "Suspended", "Closed"].contains(&status.as_str()) {
-                errors.push("account_status must be one of: Active, Inactive, Suspended, Closed".to_string());
-            }
-        }
-        if let Some(subscription) = &self.subscription {
-            if !["Subscribed", "Unsubscribed"].contains(&subscription.as_str()) {
-                errors.push("subscription must be one of: Subscribed, Unsubscribed".to_string());
-            }
-        }
-
         ok(errors)
     }
 }

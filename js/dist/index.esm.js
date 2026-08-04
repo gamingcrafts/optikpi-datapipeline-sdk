@@ -21118,23 +21118,6 @@ let GamingActivityEvent$2 = class GamingActivityEvent {
       errors.push('win_amount must be a non-negative number');
     }
 
-    // Game type validation
-    const validGameTypes = ['slots', 'table_games', 'card_games', 'live_casino', 'bingo', 'scratch_cards', 'lottery', 'sports_betting', 'virtual_sports'];
-    if (this.game_type && !validGameTypes.includes(this.game_type)) {
-      errors.push(`game_type must be one of: ${validGameTypes.join(', ')}`);
-    }
-
-    // Device validation
-    if (this.device && !['desktop', 'mobile', 'tablet', 'app'].includes(this.device)) {
-      errors.push('device must be one of: desktop, mobile, tablet, app');
-    }
-
-    // Platform validation
-    const validPlatforms = ['web', 'ios', 'android', 'windows', 'mac', 'linux'];
-    if (this.platform && !validPlatforms.includes(this.platform)) {
-      errors.push(`platform must be one of: ${validPlatforms.join(', ')}`);
-    }
-
     // Currency validation
     if (this.currency && !this.isValidCurrency(this.currency)) {
       errors.push('currency must be a valid 3-letter ISO currency code');
@@ -21373,18 +21356,6 @@ let ReferFriendEvent$2 = class ReferFriendEvent {
       if (typeof this.successful_referral_confirmation !== 'boolean') {
         errors.push('successful_referral_confirmation must be a boolean');
       }
-    }
-
-    // Reward type validation
-    const validRewardTypes = ['bonus', 'cash', 'points', 'free_spins', 'other'];
-    if (this.reward_type && !validRewardTypes.includes(this.reward_type)) {
-      errors.push(`reward_type must be one of: ${validRewardTypes.join(', ')}`);
-    }
-
-    // Reward claimed status validation
-    const validClaimedStatuses = ['pending', 'claimed', 'expired', 'cancelled'];
-    if (this.reward_claimed_status && !validClaimedStatuses.includes(this.reward_claimed_status)) {
-      errors.push(`reward_claimed_status must be one of: ${validClaimedStatuses.join(', ')}`);
     }
 
     // First deposit validation (must be non-negative if provided)

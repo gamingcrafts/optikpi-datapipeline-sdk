@@ -97,12 +97,6 @@ class CustomerProfile:
         if self.gender and self.gender not in ["Male", "Female", "Other"]:
             errors.append("gender must be one of: Male, Female, Other")
 
-        if self.account_status and self.account_status not in ["Active", "Inactive", "Suspended", "Closed"]:
-            errors.append("account_status must be one of: Active, Inactive, Suspended, Closed")
-
-        if self.vip_status and self.vip_status not in ["Regular", "Silver", "Gold", "Platinum", "Diamond"]:
-            errors.append("vip_status must be one of: Regular, Silver, Gold, Platinum, Diamond")
-
         return {
             "isValid": len(errors) == 0,
             "errors": errors

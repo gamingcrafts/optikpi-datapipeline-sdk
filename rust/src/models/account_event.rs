@@ -2,7 +2,6 @@ use serde::{Deserialize, Serialize};
 
 use super::{is_valid_datetime, ok, ValidationResult};
 
-const VALID_STATUSES: [&str; 4] = ["verified", "pending", "failed", "completed"];
 const VALID_DEVICES: [&str; 4] = ["desktop", "mobile", "tablet", "app"];
 
 /// Account event: registration, verification, and account changes.
@@ -87,11 +86,6 @@ impl AccountEvent {
         }
         if self.event_category != "Account" {
             errors.push(r#"event_category must be "Account" for account events"#.to_string());
-        }
-        if let Some(status) = &self.status {
-            if !VALID_STATUSES.contains(&status.as_str()) {
-                errors.push(format!("status must be one of: {}", VALID_STATUSES.join(", ")));
-            }
         }
         if let Some(device) = &self.device {
             if !VALID_DEVICES.contains(&device.as_str()) {
