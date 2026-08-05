@@ -16,7 +16,9 @@
                (not= (:event_category m) "Withdraw"))
           (conj "event_category must be \"Withdraw\" for withdraw events")
           (and (some? (:amount m))
-               (not (pos? (:amount m)))) (conj "amount must be a positive number")
+               (or (not (number? (:amount m)))
+                   (not (pos? (:amount m)))))
+          (conj "amount must be a positive number")
           (and (some? (:event_time m))
                (not (try (java.time.Instant/parse (:event_time m)) true (catch Exception _ false))))
           (conj "event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)"))]

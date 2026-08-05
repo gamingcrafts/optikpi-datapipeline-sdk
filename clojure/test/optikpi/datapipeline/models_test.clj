@@ -18,6 +18,8 @@
 ;; CustomerProfile
 (deftest customer-profile-valid
   (is (:valid? (cp/validate {:account_id "a" :workspace_id "w" :user_id "u"
+                              :username "player1"
+                              :email "player1@example.com"
                               :creation_timestamp "2024-01-15T10:30:00Z"}))))
 
 (deftest customer-profile-missing-required
@@ -72,7 +74,7 @@
 ;; WalletBalanceEvent
 (deftest wallet-balance-invalid-currency
   (let [r (wb/validate (assoc base :currency "usd"))]
-    (is (some #{"currency must be a 3-letter ISO code (e.g. EUR, USD)"} (:errors r)))))
+    (is (some #{"currency must be a valid 3-letter ISO currency code"} (:errors r)))))
 
 (deftest wallet-balance-valid-currency
   (is (:valid? (wb/validate (assoc base :currency "EUR")))))
@@ -89,4 +91,5 @@
 
 (deftest customer-ext-valid-list-name
   (is (:valid? (ce/validate {:account_id "a" :workspace_id "w" :user_id "u"
-                              :list_name "my_list-1"}))))
+                              :list_name "my_list-1"
+                              :ext_data {"pref" "bingo"}}))))

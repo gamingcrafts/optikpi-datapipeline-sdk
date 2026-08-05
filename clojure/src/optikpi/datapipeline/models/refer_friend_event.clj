@@ -25,7 +25,8 @@
                (not (instance? Boolean (:successful_referral_confirmation m))))
           (conj "successful_referral_confirmation must be a boolean")
           (and (some? (:referee_first_deposit m))
-               (neg? (:referee_first_deposit m)))
+               (or (not (number? (:referee_first_deposit m)))
+                   (neg? (:referee_first_deposit m))))
           (conj "referee_first_deposit must be a non-negative number"))]
     {:valid? (empty? errors) :errors errors}))
 
