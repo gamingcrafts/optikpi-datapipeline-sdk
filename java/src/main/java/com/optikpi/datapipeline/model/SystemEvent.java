@@ -74,6 +74,14 @@ public class SystemEvent {
         }
         if (eventData == null) {
             errors.add("event_data is required");
+        } else if (!(eventData instanceof String)
+                && (eventData instanceof List
+                    || eventData.getClass().isArray()
+                    || eventData instanceof Number
+                    || eventData instanceof Boolean
+                    || eventData instanceof Character)) {
+            // Match JS: event_data must be a string or a non-array object
+            errors.add("event_data must be a string or an object");
         }
         
         // Date format validation
