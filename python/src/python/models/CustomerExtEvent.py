@@ -30,8 +30,11 @@ class CustomerExtEvent:
             errors.append("user_id must be a string")
 
         # Validate list_name format (alphanumeric, underscores, hyphens)
-        if self.list_name and not re.match(r'^[A-Za-z0-9_-]+$', self.list_name):
-            errors.append("list_name must contain only alphanumeric characters, underscores, and hyphens")
+        if self.list_name:
+            if not isinstance(self.list_name, str):
+                errors.append("list_name must be a string")
+            elif not re.match(r'^[A-Za-z0-9_-]+$', self.list_name):
+                errors.append("list_name must contain only alphanumeric characters, underscores, and hyphens")
 
         # Validate ext_data type
         if self.ext_data:
