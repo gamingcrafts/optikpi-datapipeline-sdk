@@ -236,13 +236,15 @@ public class GamingActivityEvent {
     
     public GamingActivityEvent() {}
     
-    public GamingActivityEvent(String accountId, String workspaceId, String userId, String eventName, String eventId, String eventTime) {
+    public GamingActivityEvent(String accountId, String workspaceId, String userId, String eventName, String eventId, String eventTime, String gameId, String gameTitle) {
         this.accountId = accountId;
         this.workspaceId = workspaceId;
         this.userId = userId;
         this.eventName = eventName;
         this.eventId = eventId;
         this.eventTime = eventTime;
+        this.gameId = gameId;
+        this.gameTitle = gameTitle;
     }
     
     /**
