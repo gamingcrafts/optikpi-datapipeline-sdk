@@ -45,7 +45,7 @@ class DepositEvent:
         if not self.transaction_id:
             errors.append("transaction_id is required")
 
-        if self.event_category != "Deposit":
+        if self.event_category and self.event_category != "Deposit":
             errors.append('event_category must be "Deposit" for deposit events')
 
         if self.amount is not None and self.amount <= 0:

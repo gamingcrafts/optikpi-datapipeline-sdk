@@ -107,7 +107,7 @@ public class WithdrawEvent {
         }
         
         // Event category validation
-        if (eventCategory != null && !"Withdraw".equals(eventCategory)) {
+        if (eventCategory != null && !eventCategory.isEmpty() && !"Withdraw".equals(eventCategory)) {
             errors.add("event_category must be \"Withdraw\" for withdrawal events");
         }
         

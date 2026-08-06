@@ -84,7 +84,7 @@ impl AccountEvent {
         if self.event_time.is_empty() {
             errors.push("event_time is required".to_string());
         }
-        if self.event_category != "Account" {
+        if !self.event_category.is_empty() && self.event_category != "Account" {
             errors.push(r#"event_category must be "Account" for account events"#.to_string());
         }
         if let Some(device) = &self.device {

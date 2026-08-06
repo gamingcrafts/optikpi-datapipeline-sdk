@@ -84,7 +84,7 @@ impl DepositEvent {
         if self.event_time.is_empty() {
             errors.push("event_time is required".to_string());
         }
-        if self.event_category != "Deposit" {
+        if !self.event_category.is_empty() && self.event_category != "Deposit" {
             errors.push(r#"event_category must be "Deposit" for deposit events"#.to_string());
         }
         if self.amount <= 0.0 {

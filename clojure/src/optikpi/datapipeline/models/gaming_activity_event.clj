@@ -11,7 +11,7 @@
           (empty? (:event_time m))      (conj "event_time is required")
           (empty? (:game_id m))         (conj "game_id is required")
           (empty? (:game_title m))      (conj "game_title is required")
-          (and (some? (:event_category m))
+          (and (seq (:event_category m))
                (not= (:event_category m) "Gaming Activity"))
           (conj "event_category must be \"Gaming Activity\" for gaming events")
           (and (some? (:wager_amount m))

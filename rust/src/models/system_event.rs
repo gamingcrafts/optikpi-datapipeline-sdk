@@ -19,8 +19,7 @@ pub struct SystemEvent {
 }
 
 impl SystemEvent {
-    /// `event_category` defaults to `"SystemEvent"`; set it directly on the
-    /// returned instance for a caller-defined category (e.g. `"BackOffice"`).
+    /// `event_category` defaults to `"SystemEvent"`.
     pub fn new(
         account_id: impl Into<String>,
         workspace_id: impl Into<String>,
@@ -49,8 +48,8 @@ impl SystemEvent {
         if self.workspace_id.is_empty() {
             errors.push("workspace_id is required".to_string());
         }
-        if self.event_category.is_empty() {
-            errors.push("event_category is required".to_string());
+        if !self.event_category.is_empty() && self.event_category != "SystemEvent" {
+            errors.push(r#"event_category must be "SystemEvent" for system events"#.to_string());
         }
         if self.event_name.is_empty() {
             errors.push("event_name is required".to_string());

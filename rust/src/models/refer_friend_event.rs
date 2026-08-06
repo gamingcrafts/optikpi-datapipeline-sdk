@@ -77,7 +77,7 @@ impl ReferFriendEvent {
         if self.event_time.is_empty() {
             errors.push("event_time is required".to_string());
         }
-        if self.event_category != "Refer Friend" {
+        if !self.event_category.is_empty() && self.event_category != "Refer Friend" {
             errors.push(r#"event_category must be "Refer Friend" for refer friend events"#.to_string());
         }
         if !self.event_time.is_empty() && !is_valid_datetime(&self.event_time) {

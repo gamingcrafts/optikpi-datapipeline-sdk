@@ -48,9 +48,6 @@ class SystemEvent
         if (empty($this->workspace_id)) {
             $errors[] = 'workspace_id is required';
         }
-        if (empty($this->event_category)) {
-            $errors[] = 'event_category is required';
-        }
         if (empty($this->event_name)) {
             $errors[] = 'event_name is required';
         }
@@ -62,11 +59,12 @@ class SystemEvent
         }
         if ($this->event_data === null) {
             $errors[] = 'event_data is required';
-        } elseif (!is_string($this->event_data) && !is_array($this->event_data)) {
+        } elseif ($this->isIndexedArray($this->event_data)
+            || (!is_string($this->event_data) && !is_array($this->event_data) && !is_object($this->event_data))) {
             $errors[] = 'event_data must be a string or an object';
         }
 
-        // Event category validation
+        // Event category validation (JS-style: only when present/non-empty)
         if (!empty($this->event_category) && $this->event_category !== 'SystemEvent') {
             $errors[] = 'event_category must be "SystemEvent" for system events';
         }
@@ -80,6 +78,17 @@ class SystemEvent
             'isValid' => empty($errors),
             'errors' => $errors
         ];
+    }
+
+    /**
+     * True for non-empty sequential/list arrays (JSON arrays). Associative arrays and [] are objects.
+     */
+    private function isIndexedArray($value): bool
+    {
+        if (!is_array($value) || $value === []) {
+            return false;
+        }
+        return array_keys($value) === range(0, count($value) - 1);
     }
 
     /**

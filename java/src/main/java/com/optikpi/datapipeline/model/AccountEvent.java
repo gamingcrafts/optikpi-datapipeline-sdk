@@ -108,7 +108,7 @@ public class AccountEvent {
         }
         
         // Event category validation
-        if (eventCategory != null && !"Account".equals(eventCategory)) {
+        if (eventCategory != null && !eventCategory.isEmpty() && !"Account".equals(eventCategory)) {
             errors.add("event_category must be \"Account\" for account events");
         }
         

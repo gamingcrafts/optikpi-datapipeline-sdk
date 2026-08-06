@@ -16,7 +16,7 @@
                (or (not (number? (:amount m)))
                    (not (pos? (:amount m)))))
           (conj "amount must be positive")
-          (and (some? (:event_category m))
+          (and (seq (:event_category m))
                (not= (:event_category m) "Deposit"))
           (conj "event_category must be \"Deposit\" for deposit events")
           (and (some? (:event_time m))

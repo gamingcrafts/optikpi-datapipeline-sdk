@@ -73,7 +73,7 @@ impl WalletBalanceEvent {
         if self.event_time.is_empty() {
             errors.push("event_time is required".to_string());
         }
-        if self.event_category != "Wallet Balance" {
+        if !self.event_category.is_empty() && self.event_category != "Wallet Balance" {
             errors.push(r#"event_category must be "Wallet Balance" for wallet events"#.to_string());
         }
         if let Some(currency) = &self.currency {

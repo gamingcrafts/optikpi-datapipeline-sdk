@@ -256,7 +256,7 @@ impl GamingActivityEvent {
         if self.game_title.is_empty() {
             errors.push("game_title is required".to_string());
         }
-        if self.event_category != "Gaming Activity" {
+        if !self.event_category.is_empty() && self.event_category != "Gaming Activity" {
             errors.push(r#"event_category must be "Gaming Activity" for gaming events"#.to_string());
         }
         if let Some(v) = self.wager_amount {

@@ -19,11 +19,22 @@ class CustomerExtEvent:
     def validate(self):
         errors = []
 
-        required = ["account_id","workspace_id", "user_id", "list_name", "ext_data"]
-
-        for field in required:
+        for field in ["account_id", "workspace_id", "user_id", "list_name"]:
             if not getattr(self, field, None):
                 errors.append(f"{field} is required")
+
+        # ext_data required: None/"" only (empty dict {} is valid, matches JS)
+        if self.ext_data is None or self.ext_data == "":
+            errors.append("ext_data is required")
+        elif isinstance(self.ext_data, str):
+            try:
+                json.loads(self.ext_data)
+            except Exception:
+                errors.append("ext_data must be a valid JSON string or object")
+        elif isinstance(self.ext_data, list):
+            errors.append("ext_data must be an object or JSON string")
+        elif not isinstance(self.ext_data, dict):
+            errors.append("ext_data must be an object or JSON string")
 
         # Validate user_id format
         if self.user_id and not isinstance(self.user_id, str):
@@ -35,19 +46,6 @@ class CustomerExtEvent:
                 errors.append("list_name must be a string")
             elif not re.match(r'^[A-Za-z0-9_-]+$', self.list_name):
                 errors.append("list_name must contain only alphanumeric characters, underscores, and hyphens")
-
-        # Validate ext_data type
-        if self.ext_data:
-            # JSON string allowed
-            if isinstance(self.ext_data, str):
-                try:
-                    json.loads(self.ext_data)
-                except Exception:
-                    errors.append("ext_data must be a valid JSON string or object")
-
-            # Object allowed
-            elif not isinstance(self.ext_data, dict):
-                errors.append("ext_data must be an object or JSON string")
 
         return {
             "isValid": len(errors) == 0,

@@ -54,13 +54,15 @@ class CustomerExtEvent
             $errors[] = 'ext_data is required';
         }
 
-        // Validate ext_data format
-        if ($this->ext_data !== null) {
+        // Validate ext_data format (reject JSON arrays / indexed lists, match JS)
+        if ($this->ext_data !== null && $this->ext_data !== '') {
             if (is_string($this->ext_data)) {
-                $decoded = json_decode($this->ext_data, true);
+                json_decode($this->ext_data, true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
                     $errors[] = 'ext_data must be a valid JSON string or object';
                 }
+            } elseif ($this->isIndexedArray($this->ext_data)) {
+                $errors[] = 'ext_data must be an object or JSON string';
             } elseif (!is_array($this->ext_data) && !is_object($this->ext_data)) {
                 $errors[] = 'ext_data must be an object or JSON string';
             }
@@ -98,6 +100,17 @@ class CustomerExtEvent
         }
 
         return $formatted;
+    }
+
+    /**
+     * True for non-empty sequential/list arrays (JSON arrays). Associative arrays and [] are objects.
+     */
+    private function isIndexedArray($value): bool
+    {
+        if (!is_array($value) || $value === []) {
+            return false;
+        }
+        return array_keys($value) === range(0, count($value) - 1);
     }
 
     /**

@@ -18,7 +18,7 @@
                (not (string? event-data))
                (not (map? event-data)))
           (conj "event_data must be a string or an object")
-          (and (some? (:event_category m))
+          (and (seq (:event_category m))
                (not= (:event_category m) "SystemEvent"))
           (conj "event_category must be \"SystemEvent\" for system events")
           (and (some? (:event_time m))

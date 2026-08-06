@@ -120,7 +120,7 @@ public class DepositEvent {
         }
         
         // Event category validation
-        if (eventCategory != null && !"Deposit".equals(eventCategory)) {
+        if (eventCategory != null && !eventCategory.isEmpty() && !"Deposit".equals(eventCategory)) {
             errors.add("event_category must be \"Deposit\" for deposit events");
         }
         

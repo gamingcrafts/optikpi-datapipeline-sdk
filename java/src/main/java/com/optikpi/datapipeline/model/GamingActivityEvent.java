@@ -281,7 +281,7 @@ public class GamingActivityEvent {
         }
         
         // Event category validation
-        if (eventCategory != null && !"Gaming Activity".equals(eventCategory)) {
+        if (eventCategory != null && !eventCategory.isEmpty() && !"Gaming Activity".equals(eventCategory)) {
             errors.add("event_category must be \"Gaming Activity\" for gaming activity events");
         }
         

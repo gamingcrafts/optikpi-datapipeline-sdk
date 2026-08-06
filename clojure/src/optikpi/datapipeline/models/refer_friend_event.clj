@@ -12,7 +12,7 @@
           (empty? (:event_name m))   (conj "event_name is required")
           (empty? (:event_id m))     (conj "event_id is required")
           (empty? (:event_time m))   (conj "event_time is required")
-          (and (some? (:event_category m))
+          (and (seq (:event_category m))
                (not= (:event_category m) "Refer Friend"))
           (conj "event_category must be \"Refer Friend\" for refer friend events")
           (and (some? (:event_time m))

@@ -101,7 +101,7 @@ public class ReferFriendEvent {
         }
         
         // Event category validation
-        if (eventCategory != null && !"Refer Friend".equals(eventCategory)) {
+        if (eventCategory != null && !eventCategory.isEmpty() && !"Refer Friend".equals(eventCategory)) {
             errors.add("event_category must be \"Refer Friend\" for refer friend events");
         }
         
