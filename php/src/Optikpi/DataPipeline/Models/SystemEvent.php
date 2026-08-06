@@ -81,12 +81,15 @@ class SystemEvent
     }
 
     /**
-     * True for non-empty sequential/list arrays (JSON arrays). Associative arrays and [] are objects.
+     * True for sequential/list arrays (JSON arrays), including []. Associative arrays are objects.
      */
     private function isIndexedArray($value): bool
     {
-        if (!is_array($value) || $value === []) {
+        if (!is_array($value)) {
             return false;
+        }
+        if ($value === []) {
+            return true;
         }
         return array_keys($value) === range(0, count($value) - 1);
     }
