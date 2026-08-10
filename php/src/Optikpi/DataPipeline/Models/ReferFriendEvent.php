@@ -86,18 +86,6 @@ class ReferFriendEvent
             $errors[] = 'successful_referral_confirmation must be a boolean';
         }
 
-        // Reward type validation
-        $validRewardTypes = ['bonus', 'cash', 'points', 'free_spins', 'other'];
-        if (!empty($this->reward_type) && !in_array($this->reward_type, $validRewardTypes)) {
-            $errors[] = 'reward_type must be one of: ' . implode(', ', $validRewardTypes);
-        }
-
-        // Reward claimed status validation
-        $validClaimedStatuses = ['pending', 'claimed', 'expired', 'cancelled'];
-        if (!empty($this->reward_claimed_status) && !in_array($this->reward_claimed_status, $validClaimedStatuses)) {
-            $errors[] = 'reward_claimed_status must be one of: ' . implode(', ', $validClaimedStatuses);
-        }
-
         // First deposit validation (must be non-negative if provided)
         if ($this->referee_first_deposit !== null && (!is_numeric($this->referee_first_deposit) || $this->referee_first_deposit < 0)) {
             $errors[] = 'referee_first_deposit must be a non-negative number';

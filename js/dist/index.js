@@ -20863,7 +20863,6 @@ let DepositEvent$2 = class DepositEvent {
     if (!this.event_id) errors.push('event_id is required');
     if (!this.event_time) errors.push('event_time is required');
     if (!this.amount) errors.push('amount is required');
-    if (!this.payment_method) errors.push('payment_method is required');
     if (!this.transaction_id) errors.push('transaction_id is required');
 
     // Event category validation
@@ -20955,7 +20954,6 @@ let WithdrawEvent$2 = class WithdrawEvent {
     if (!this.event_id) errors.push('event_id is required');
     if (!this.event_time) errors.push('event_time is required');
     if (!this.amount) errors.push('amount is required');
-    if (!this.payment_method) errors.push('payment_method is required');
     if (!this.transaction_id) errors.push('transaction_id is required');
 
     // Event category validation
@@ -21120,23 +21118,6 @@ let GamingActivityEvent$2 = class GamingActivityEvent {
     }
     if (this.win_amount && (typeof this.win_amount !== 'number' || this.win_amount < 0)) {
       errors.push('win_amount must be a non-negative number');
-    }
-
-    // Game type validation
-    const validGameTypes = ['slots', 'table_games', 'card_games', 'live_casino', 'bingo', 'scratch_cards', 'lottery', 'sports_betting', 'virtual_sports'];
-    if (this.game_type && !validGameTypes.includes(this.game_type)) {
-      errors.push(`game_type must be one of: ${validGameTypes.join(', ')}`);
-    }
-
-    // Device validation
-    if (this.device && !['desktop', 'mobile', 'tablet', 'app'].includes(this.device)) {
-      errors.push('device must be one of: desktop, mobile, tablet, app');
-    }
-
-    // Platform validation
-    const validPlatforms = ['web', 'ios', 'android', 'windows', 'mac', 'linux'];
-    if (this.platform && !validPlatforms.includes(this.platform)) {
-      errors.push(`platform must be one of: ${validPlatforms.join(', ')}`);
     }
 
     // Currency validation
@@ -21377,18 +21358,6 @@ let ReferFriendEvent$2 = class ReferFriendEvent {
       if (typeof this.successful_referral_confirmation !== 'boolean') {
         errors.push('successful_referral_confirmation must be a boolean');
       }
-    }
-
-    // Reward type validation
-    const validRewardTypes = ['bonus', 'cash', 'points', 'free_spins', 'other'];
-    if (this.reward_type && !validRewardTypes.includes(this.reward_type)) {
-      errors.push(`reward_type must be one of: ${validRewardTypes.join(', ')}`);
-    }
-
-    // Reward claimed status validation
-    const validClaimedStatuses = ['pending', 'claimed', 'expired', 'cancelled'];
-    if (this.reward_claimed_status && !validClaimedStatuses.includes(this.reward_claimed_status)) {
-      errors.push(`reward_claimed_status must be one of: ${validClaimedStatuses.join(', ')}`);
     }
 
     // First deposit validation (must be non-negative if provided)

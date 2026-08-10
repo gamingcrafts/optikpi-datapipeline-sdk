@@ -56,18 +56,6 @@ class ReferFriendEvent {
       }
     }
 
-    // Reward type validation
-    const validRewardTypes = ['bonus', 'cash', 'points', 'free_spins', 'other'];
-    if (this.reward_type && !validRewardTypes.includes(this.reward_type)) {
-      errors.push(`reward_type must be one of: ${validRewardTypes.join(', ')}`);
-    }
-
-    // Reward claimed status validation
-    const validClaimedStatuses = ['pending', 'claimed', 'expired', 'cancelled'];
-    if (this.reward_claimed_status && !validClaimedStatuses.includes(this.reward_claimed_status)) {
-      errors.push(`reward_claimed_status must be one of: ${validClaimedStatuses.join(', ')}`);
-    }
-
     // First deposit validation (must be non-negative if provided)
     if (this.referee_first_deposit !== null && this.referee_first_deposit !== undefined) {
       if (typeof this.referee_first_deposit !== 'number' || this.referee_first_deposit < 0) {

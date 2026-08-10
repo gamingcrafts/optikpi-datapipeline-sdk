@@ -101,7 +101,7 @@ public class ReferFriendEvent {
         }
         
         // Event category validation
-        if (eventCategory != null && !"Refer Friend".equals(eventCategory)) {
+        if (eventCategory != null && !eventCategory.isEmpty() && !"Refer Friend".equals(eventCategory)) {
             errors.add("event_category must be \"Refer Friend\" for refer friend events");
         }
         
@@ -112,16 +112,6 @@ public class ReferFriendEvent {
         
         if (refereeRegistrationDate != null && !isValidDateTime(refereeRegistrationDate)) {
             errors.add("referee_registration_date must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)");
-        }
-        
-        // Reward type validation
-        if (rewardType != null && !isValidRewardType(rewardType)) {
-            errors.add("reward_type must be one of: bonus, cash, points, free_spins, other");
-        }
-        
-        // Reward claimed status validation
-        if (rewardClaimedStatus != null && !isValidClaimedStatus(rewardClaimedStatus)) {
-            errors.add("reward_claimed_status must be one of: pending, claimed, expired, cancelled");
         }
         
         // First deposit validation
@@ -139,17 +129,6 @@ public class ReferFriendEvent {
         } catch (Exception e) {
             return false;
         }
-    }
-    
-    private boolean isValidRewardType(String rewardType) {
-        return "bonus".equals(rewardType) || "cash".equals(rewardType) || 
-               "points".equals(rewardType) || "free_spins".equals(rewardType) || 
-               "other".equals(rewardType);
-    }
-    
-    private boolean isValidClaimedStatus(String status) {
-        return "pending".equals(status) || "claimed".equals(status) || 
-               "expired".equals(status) || "cancelled".equals(status);
     }
     
     // Getters and Setters

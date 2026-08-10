@@ -58,9 +58,8 @@ public class SystemEvent {
         if (workspaceId == null || workspaceId.trim().isEmpty()) {
             errors.add("workspace_id is required");
         }
-        if (eventCategory == null || eventCategory.trim().isEmpty()) {
-            errors.add("event_category is required");
-        } else if (!"SystemEvent".equals(eventCategory)) {
+        if (eventCategory != null && !eventCategory.isEmpty()
+                && !"SystemEvent".equals(eventCategory)) {
             errors.add("event_category must be \"SystemEvent\" for system events");
         }
         if (eventName == null || eventName.trim().isEmpty()) {
@@ -74,6 +73,13 @@ public class SystemEvent {
         }
         if (eventData == null) {
             errors.add("event_data is required");
+        } else if (!(eventData instanceof String)
+                && (eventData instanceof List
+                    || eventData.getClass().isArray()
+                    || eventData instanceof Number
+                    || eventData instanceof Boolean
+                    || eventData instanceof Character)) {
+            errors.add("event_data must be a string or an object");
         }
         
         // Date format validation

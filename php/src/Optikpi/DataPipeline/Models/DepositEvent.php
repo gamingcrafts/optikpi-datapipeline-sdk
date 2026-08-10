@@ -71,9 +71,6 @@ class DepositEvent
         if ($this->amount === null || $this->amount === '') {
             $errors[] = 'amount is required';
         }
-        if (empty($this->payment_method)) {
-            $errors[] = 'payment_method is required';
-        }
         if (empty($this->transaction_id)) {
             $errors[] = 'transaction_id is required';
         }
@@ -86,22 +83,6 @@ class DepositEvent
         // Amount validation
         if ($this->amount !== null && (!is_numeric($this->amount) || $this->amount <= 0)) {
             $errors[] = 'amount must be a positive number';
-        }
-
-        // Payment method validation
-        $validPaymentMethods = [
-            'bank',
-            'credit_card',
-            'debit_card',
-            'e_wallet',
-            'crypto',
-            'paypal',
-            'skrill',
-            'neteller'
-        ];
-
-        if (!empty($this->payment_method) && !in_array($this->payment_method, $validPaymentMethods)) {
-            $errors[] = 'payment_method must be one of: ' . implode(', ', $validPaymentMethods);
         }
 
         // Date format validation

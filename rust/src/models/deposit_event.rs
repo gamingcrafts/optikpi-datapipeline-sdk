@@ -2,16 +2,6 @@ use serde::{Deserialize, Serialize};
 
 use super::{is_valid_datetime, ok, ValidationResult};
 
-const VALID_PAYMENT_METHODS: [&str; 8] = [
-    "bank",
-    "credit_card",
-    "debit_card",
-    "e_wallet",
-    "crypto",
-    "paypal",
-    "skrill",
-    "neteller",
-];
 
 /// Deposit event: a financial deposit transaction.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -94,19 +84,11 @@ impl DepositEvent {
         if self.event_time.is_empty() {
             errors.push("event_time is required".to_string());
         }
-        if self.event_category != "Deposit" {
+        if !self.event_category.is_empty() && self.event_category != "Deposit" {
             errors.push(r#"event_category must be "Deposit" for deposit events"#.to_string());
         }
         if self.amount <= 0.0 {
             errors.push("amount must be a positive number".to_string());
-        }
-        if self.payment_method.is_empty() {
-            errors.push("payment_method is required".to_string());
-        } else if !VALID_PAYMENT_METHODS.contains(&self.payment_method.as_str()) {
-            errors.push(format!(
-                "payment_method must be one of: {}",
-                VALID_PAYMENT_METHODS.join(", ")
-            ));
         }
         if self.transaction_id.is_empty() {
             errors.push("transaction_id is required".to_string());

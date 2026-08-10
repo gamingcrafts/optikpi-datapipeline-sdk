@@ -48,6 +48,8 @@ impl CustomerExtEvent {
         }
         if self.list_name.is_empty() {
             errors.push("list_name is required".to_string());
+        } else if !self.list_name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-') {
+            errors.push("list_name must contain only alphanumeric characters, underscores, and hyphens".to_string());
         }
         match &self.ext_data {
             Value::Object(_) => {}

@@ -49,10 +49,18 @@ public class ExtendedAttributesEvent {
         
         if (listName == null || listName.trim().isEmpty()) {
             errors.add("list_name is required");
+        } else if (!listName.matches("^[A-Za-z0-9_-]+$")) {
+            errors.add("list_name must contain only alphanumeric characters, underscores, and hyphens");
         }
         
         if (extData == null || extData.trim().isEmpty()) {
             errors.add("ext_data is required");
+        } else {
+            try {
+                objectMapper.readTree(extData);
+            } catch (JsonProcessingException e) {
+                errors.add("ext_data must be a valid JSON string or object");
+            }
         }
         
         return new ValidationResult(errors.isEmpty(), errors);

@@ -125,14 +125,6 @@ class CustomerProfile
             $errors[] = 'gender must be one of: Male, Female, Other';
         }
 
-        if (!empty($this->account_status) && !in_array($this->account_status, ['Active', 'Inactive', 'Suspended', 'Closed'])) {
-            $errors[] = 'account_status must be one of: Active, Inactive, Suspended, Closed';
-        }
-
-        if (!empty($this->vip_status) && !in_array($this->vip_status, ['Regular', 'Silver', 'Gold', 'Platinum', 'Diamond'])) {
-            $errors[] = 'vip_status must be one of: Regular, Silver, Gold, Platinum, Diamond';
-        }
-
         return [
             'isValid' => empty($errors),
             'errors' => $errors

@@ -107,11 +107,9 @@ public class CustomerProfile {
     @JsonProperty("reality_checks_notification")
     private String realityChecksNotification;
     
-    @Pattern(regexp = "Active|Inactive|Suspended|Closed", message = "account_status must be one of: Active, Inactive, Suspended, Closed")
     @JsonProperty("account_status")
     private String accountStatus;
     
-    @Pattern(regexp = "Regular|Silver|Gold|Platinum|Diamond", message = "vip_status must be one of: Regular, Silver, Gold, Platinum, Diamond")
     @JsonProperty("vip_status")
     private String vipStatus;
     
@@ -275,14 +273,6 @@ public class CustomerProfile {
             errors.add("gender must be one of: Male, Female, Other");
         }
         
-        if (accountStatus != null && !isValidAccountStatus(accountStatus)) {
-            errors.add("account_status must be one of: Active, Inactive, Suspended, Closed");
-        }
-        
-        if (vipStatus != null && !isValidVipStatus(vipStatus)) {
-            errors.add("vip_status must be one of: Regular, Silver, Gold, Platinum, Diamond");
-        }
-        
         return new ValidationResult(errors.isEmpty(), errors);
     }
     
@@ -301,16 +291,6 @@ public class CustomerProfile {
     
     private boolean isValidGender(String gender) {
         return "Male".equals(gender) || "Female".equals(gender) || "Other".equals(gender);
-    }
-    
-    private boolean isValidAccountStatus(String status) {
-        return "Active".equals(status) || "Inactive".equals(status) || 
-               "Suspended".equals(status) || "Closed".equals(status);
-    }
-    
-    private boolean isValidVipStatus(String status) {
-        return "Regular".equals(status) || "Silver".equals(status) || "Gold".equals(status) || 
-               "Platinum".equals(status) || "Diamond".equals(status);
     }
     
     // Getters and Setters

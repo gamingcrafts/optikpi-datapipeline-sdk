@@ -47,7 +47,6 @@ class AccountEvent:
     reason: Optional[str] = None
     
     # Valid values
-    VALID_STATUSES = ['verified', 'pending', 'failed', 'completed']
     VALID_DEVICES = ['desktop', 'mobile', 'tablet', 'app']
     
     def validate(self) -> Dict[str, Any]:
@@ -76,10 +75,6 @@ class AccountEvent:
         # Event category validation
         if self.event_category and self.event_category != 'Account':
             errors.append('event_category must be "Account" for account events')
-        
-        # Status validation
-        if self.status and self.status not in self.VALID_STATUSES:
-            errors.append(f'status must be one of: {", ".join(self.VALID_STATUSES)}')
         
         # Device validation
         if self.device and self.device not in self.VALID_DEVICES:

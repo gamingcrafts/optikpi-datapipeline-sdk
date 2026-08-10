@@ -112,21 +112,13 @@ public class DepositEvent {
         if (amount == null) {
             errors.add("amount is required");
         }
-        if (paymentMethod == null || paymentMethod.trim().isEmpty()) {
-            errors.add("payment_method is required");
-        }
         if (transactionId == null || transactionId.trim().isEmpty()) {
             errors.add("transaction_id is required");
         }
         
         // Event category validation
-        if (eventCategory != null && !"Deposit".equals(eventCategory)) {
+        if (eventCategory != null && !eventCategory.isEmpty() && !"Deposit".equals(eventCategory)) {
             errors.add("event_category must be \"Deposit\" for deposit events");
-        }
-        
-        // Payment method validation
-        if (paymentMethod != null && !isValidPaymentMethod(paymentMethod)) {
-            errors.add("payment_method must be one of: bank, credit_card, debit_card, e_wallet, crypto, paypal, skrill, neteller");
         }
         
         // Date format validation
@@ -140,23 +132,6 @@ public class DepositEvent {
         }
         
         return new ValidationResult(errors.isEmpty(), errors);
-    }
-    
-    private boolean isValidStatus(String status) {
-        return "success".equals(status) || "pending".equals(status) || 
-               "failed".equals(status) || "cancelled".equals(status) || "refunded".equals(status);
-    }
-    
-    private boolean isValidDevice(String device) {
-        return "desktop".equals(device) || "mobile".equals(device) || 
-               "tablet".equals(device) || "app".equals(device);
-    }
-    
-    private boolean isValidPaymentMethod(String method) {
-        return "bank".equals(method) || "credit_card".equals(method) || 
-               "debit_card".equals(method) || "e_wallet".equals(method) ||
-               "crypto".equals(method) || "paypal".equals(method) ||
-               "skrill".equals(method) || "neteller".equals(method);
     }
     
     private boolean isValidDateTime(String dateTime) {

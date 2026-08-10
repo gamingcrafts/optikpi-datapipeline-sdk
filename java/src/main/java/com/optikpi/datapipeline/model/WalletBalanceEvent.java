@@ -99,7 +99,7 @@ public class WalletBalanceEvent {
         }
         
         // Event category validation
-        if (eventCategory != null && !"Wallet Balance".equals(eventCategory)) {
+        if (eventCategory != null && !eventCategory.isEmpty() && !"Wallet Balance".equals(eventCategory)) {
             errors.add("event_category must be \"Wallet Balance\" for wallet balance events");
         }
         

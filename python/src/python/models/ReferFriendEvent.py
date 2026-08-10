@@ -60,24 +60,6 @@ class ReferFriendEvent:
         ):
             errors.append("successful_referral_confirmation must be boolean")
 
-        # Reward type validation
-        valid_reward_types = ["bonus", "cash", "points", "free_spins", "other"]
-        if self.reward_type and self.reward_type not in valid_reward_types:
-            errors.append(
-                "reward_type must be one of: " + ", ".join(valid_reward_types)
-            )
-
-        # Reward claimed status validation
-        valid_claimed_status = ["pending", "claimed", "expired", "cancelled"]
-        if (
-            self.reward_claimed_status
-            and self.reward_claimed_status not in valid_claimed_status
-        ):
-            errors.append(
-                "reward_claimed_status must be one of: "
-                + ", ".join(valid_claimed_status)
-            )
-
         # Non-negative first deposit validation
         if self.referee_first_deposit is not None:
             if not isinstance(self.referee_first_deposit, (int, float)) or self.referee_first_deposit < 0:
