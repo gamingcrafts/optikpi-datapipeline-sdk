@@ -75,9 +75,6 @@ impl WithdrawEvent {
         if self.amount <= 0.0 {
             errors.push("amount must be a positive number".to_string());
         }
-        if self.payment_method.is_empty() {
-            errors.push("payment_method is required".to_string());
-        }
         if self.transaction_id.is_empty() {
             errors.push("transaction_id is required".to_string());
         }

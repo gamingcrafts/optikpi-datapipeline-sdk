@@ -20863,7 +20863,6 @@ let DepositEvent$2 = class DepositEvent {
     if (!this.event_id) errors.push('event_id is required');
     if (!this.event_time) errors.push('event_time is required');
     if (!this.amount) errors.push('amount is required');
-    if (!this.payment_method) errors.push('payment_method is required');
     if (!this.transaction_id) errors.push('transaction_id is required');
 
     // Event category validation
@@ -20955,7 +20954,6 @@ let WithdrawEvent$2 = class WithdrawEvent {
     if (!this.event_id) errors.push('event_id is required');
     if (!this.event_time) errors.push('event_time is required');
     if (!this.amount) errors.push('amount is required');
-    if (!this.payment_method) errors.push('payment_method is required');
     if (!this.transaction_id) errors.push('transaction_id is required');
 
     // Event category validation

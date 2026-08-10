@@ -39,8 +39,6 @@ class WithdrawEvent:
             errors.append("event_time is required")
         if self.amount is None:
             errors.append("amount is required")
-        if not self.payment_method:
-            errors.append("payment_method is required")
         if not self.transaction_id:
             errors.append("transaction_id is required")
 

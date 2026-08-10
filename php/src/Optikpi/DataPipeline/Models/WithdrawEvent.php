@@ -66,9 +66,6 @@ class WithdrawEvent
         if ($this->amount === null || $this->amount === '') {
             $errors[] = 'amount is required';
         }
-        if (empty($this->payment_method)) {
-            $errors[] = 'payment_method is required';
-        }
         if (empty($this->transaction_id)) {
             $errors[] = 'transaction_id is required';
         }

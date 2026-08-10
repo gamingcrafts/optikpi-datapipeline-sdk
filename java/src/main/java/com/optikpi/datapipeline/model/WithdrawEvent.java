@@ -47,7 +47,6 @@ public class WithdrawEvent {
     @JsonProperty("amount")
     private BigDecimal amount;
     
-    @NotBlank(message = "payment_method is required")
     @JsonProperty("payment_method")
     private String paymentMethod;
     
@@ -98,9 +97,6 @@ public class WithdrawEvent {
         }
         if (amount == null) {
             errors.add("amount is required");
-        }
-        if (paymentMethod == null || paymentMethod.trim().isEmpty()) {
-            errors.add("payment_method is required");
         }
         if (transactionId == null || transactionId.trim().isEmpty()) {
             errors.add("transaction_id is required");

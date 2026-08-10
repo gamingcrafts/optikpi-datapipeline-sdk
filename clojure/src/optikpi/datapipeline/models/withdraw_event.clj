@@ -10,7 +10,6 @@
           (empty? (:event_id m))        (conj "event_id is required")
           (empty? (:event_time m))      (conj "event_time is required")
           (nil? (:amount m))            (conj "amount is required")
-          (empty? (:payment_method m))  (conj "payment_method is required")
           (empty? (:transaction_id m))  (conj "transaction_id is required")
           (and (seq (:event_category m))
                (not= (:event_category m) "Withdraw"))
