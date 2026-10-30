@@ -29,7 +29,7 @@ public class DepositEvent {
     private String userId;
     
     @JsonProperty("event_category")
-    private String eventCategory = "Deposit";
+    private String eventCategory;
     
     @NotBlank(message = "event_name is required")
     @JsonProperty("event_name")
@@ -120,7 +120,9 @@ public class DepositEvent {
         }
         
         // Event category validation
-        if (eventCategory != null && !"Deposit".equals(eventCategory)) {
+        if (eventCategory == null || eventCategory.trim().isEmpty()) {
+            errors.add("event_category is required");
+        } else if (!"Deposit".equals(eventCategory)) {
             errors.add("event_category must be \"Deposit\" for deposit events");
         }
         

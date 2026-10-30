@@ -35,6 +35,7 @@ Official Clojure client for the OptikPI Data Pipeline API.
 
 (let [event (deposit/build
               {:user_id        "player_001"
+               :event_category "Deposit"
                :event_name     "Successful Deposit"
                :event_id       "dep_001"
                :event_time     "2026-01-15T10:30:00Z"
@@ -61,7 +62,7 @@ Official Clojure client for the OptikPI Data Pipeline API.
 
 ## Event Types & Namespaces
 
-| Namespace | `build` sets `event_category` | Send method |
+| Namespace | `event_category` to send | Send method |
 |-----------|-------------------------------|-------------|
 | `models.customer-profile` | N/A | `send-customer-profile` |
 | `models.account-event` | `"Account"` | `send-account-event` |
@@ -83,7 +84,7 @@ Each model namespace exposes a `validate` function returning `{:valid? bool :err
     (println "Errors:" errors)))
 ```
 
-`build` sets `event_category` automatically — do not pass it manually.
+`event_category` is required: pass it in the data (e.g. `"Deposit"`, `"Gaming Activity"`). `validate` reports `event_category is required` when it is missing.
 
 ## Batch Send
 

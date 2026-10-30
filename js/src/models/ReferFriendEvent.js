@@ -7,7 +7,7 @@ class ReferFriendEvent {
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
-    this.event_category = data.event_category || 'Refer Friend';
+    this.event_category = data.event_category;
     this.event_name = data.event_name;
     this.event_id = data.event_id;
     this.event_time = data.event_time;
@@ -36,6 +36,7 @@ class ReferFriendEvent {
     if (!this.event_time) errors.push('event_time is required');
 
     // Event category validation
+    if (!this.event_category) errors.push('event_category is required');
     if (this.event_category && this.event_category !== 'Refer Friend') {
       errors.push('event_category must be "Refer Friend" for refer friend events');
     }

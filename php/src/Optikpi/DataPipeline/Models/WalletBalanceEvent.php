@@ -29,7 +29,7 @@ class WalletBalanceEvent
      */
     public function __construct(array $data = [])
     {
-        $this->event_category = $data['event_category'] ?? 'Wallet Balance';
+        $this->event_category = $data['event_category'] ?? null;
         foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
                 $this->$key = $value;
@@ -67,6 +67,9 @@ class WalletBalanceEvent
         }
 
         // Event category validation
+        if (empty($this->event_category)) {
+            $errors[] = 'event_category is required';
+        }
         if (!empty($this->event_category) && $this->event_category !== 'Wallet Balance') {
             $errors[] = 'event_category must be "Wallet Balance" for wallet balance events';
         }

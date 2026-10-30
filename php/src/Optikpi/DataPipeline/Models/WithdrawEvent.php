@@ -27,7 +27,7 @@ class WithdrawEvent
      */
     public function __construct(array $data = [])
     {
-        $this->event_category = $data['event_category'] ?? 'Withdraw';
+        $this->event_category = $data['event_category'] ?? null;
         foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
                 $this->$key = $value;
@@ -74,6 +74,9 @@ class WithdrawEvent
         }
 
         // Event category validation
+        if (empty($this->event_category)) {
+            $errors[] = 'event_category is required';
+        }
         if (!empty($this->event_category) && $this->event_category !== 'Withdraw') {
             $errors[] = 'event_category must be "Withdraw" for withdraw events';
         }

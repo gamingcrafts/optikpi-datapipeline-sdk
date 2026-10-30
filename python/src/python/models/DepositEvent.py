@@ -8,7 +8,7 @@ class DepositEvent:
     account_id: Optional[str] = None
     workspace_id: Optional[str] = None
     user_id: Optional[str] = None
-    event_category: str = "Deposit"
+    event_category: Optional[str] = None
     event_name: Optional[str] = None
     event_id: Optional[str] = None
     event_time: Optional[str] = None
@@ -45,7 +45,9 @@ class DepositEvent:
         if not self.transaction_id:
             errors.append("transaction_id is required")
 
-        if self.event_category != "Deposit":
+        if not self.event_category:
+            errors.append('event_category is required')
+        elif self.event_category != 'Deposit':
             errors.append('event_category must be "Deposit" for deposit events')
 
         if self.amount is not None and self.amount <= 0:

@@ -9,7 +9,7 @@ class GamingActivityEvent:
     account_id: Optional[str] = None
     workspace_id: Optional[str] = None
     user_id: Optional[str] = None
-    event_category: str = "Gaming Activity"
+    event_category: Optional[str] = None
     event_name: Optional[str] = None
     event_id: Optional[str] = None
     event_time: Optional[str] = None
@@ -103,7 +103,9 @@ class GamingActivityEvent:
             errors.append("game_title is required")
 
         # Event category validation
-        if self.event_category and self.event_category != "Gaming Activity":
+        if not self.event_category:
+            errors.append('event_category is required')
+        elif self.event_category != 'Gaming Activity':
             errors.append('event_category must be "Gaming Activity" for gaming events')
 
         # Amount validations

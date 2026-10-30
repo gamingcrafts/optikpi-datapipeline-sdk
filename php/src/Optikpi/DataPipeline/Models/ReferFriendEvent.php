@@ -30,7 +30,7 @@ class ReferFriendEvent
      */
     public function __construct(array $data = [])
     {
-        $this->event_category = $data['event_category'] ?? 'Refer Friend';
+        $this->event_category = $data['event_category'] ?? null;
         foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
                 $this->$key = $value;
@@ -68,6 +68,9 @@ class ReferFriendEvent
         }
 
         // Event category validation
+        if (empty($this->event_category)) {
+            $errors[] = 'event_category is required';
+        }
         if (!empty($this->event_category) && $this->event_category !== 'Refer Friend') {
             $errors[] = 'event_category must be "Refer Friend" for refer friend events';
         }

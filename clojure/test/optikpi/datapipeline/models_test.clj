@@ -42,8 +42,10 @@
     (is (some #{"gender must be Male, Female, or Other"} (:errors r)))))
 
 ;; AccountEvent
-(deftest account-event-sets-category
-  (is (= "Account" (:event_category (ae/build base)))))
+(deftest account-event-requires-category
+  (is (nil? (:event_category (ae/build base))))
+  (is (some #{"event_category is required"} (:errors (ae/validate base))))
+  (is (not-any? #{"event_category is required"} (:errors (ae/validate (assoc base :event_category "Account"))))))
 
 (deftest account-event-invalid-device
   (let [r (ae/validate (assoc base :device "smartwatch"))]
@@ -58,24 +60,33 @@
   (let [r (de/validate (assoc base :amount -10 :payment_method "credit_card" :transaction_id "t1"))]
     (is (some #{"amount must be positive"} (:errors r)))))
 
-(deftest deposit-event-sets-category
-  (is (= "Deposit" (:event_category (de/build base)))))
+(deftest deposit-event-requires-category
+  (is (nil? (:event_category (de/build base))))
+  (is (some #{"event_category is required"} (:errors (de/validate base))))
+  (is (not-any? #{"event_category is required"} (:errors (de/validate (assoc base :event_category "Deposit"))))))
 
 ;; WithdrawEvent
-(deftest withdraw-event-sets-category
-  (is (= "Withdraw" (:event_category (we/build base)))))
+(deftest withdraw-event-requires-category
+  (is (nil? (:event_category (we/build base))))
+  (is (some #{"event_category is required"} (:errors (we/validate base))))
+  (is (not-any? #{"event_category is required"} (:errors (we/validate (assoc base :event_category "Withdraw"))))))
 
 ;; GamingActivityEvent
-(deftest gaming-activity-sets-category
-  (is (= "Gaming Activity" (:event_category (ga/build base)))))
+(deftest gaming-activity-requires-category
+  (is (nil? (:event_category (ga/build base))))
+  (is (some #{"event_category is required"} (:errors (ga/validate base))))
+  (is (not-any? #{"event_category is required"} (:errors (ga/validate (assoc base :event_category "Gaming Activity"))))))
 
 ;; WalletBalanceEvent
+(deftest wallet-balance-requires-category
+  (is (some #{"event_category is required"} (:errors (wb/validate base)))))
+
 (deftest wallet-balance-invalid-currency
   (let [r (wb/validate (assoc base :currency "usd"))]
     (is (some #{"currency must be a 3-letter ISO code (e.g. EUR, USD)"} (:errors r)))))
 
 (deftest wallet-balance-valid-currency
-  (is (:valid? (wb/validate (assoc base :currency "EUR")))))
+  (is (:valid? (wb/validate (assoc base :currency "EUR" :event_category "Wallet Balance")))))
 
 ;; SystemEvent
 (deftest system-event-sets-category
@@ -90,3 +101,8 @@
 (deftest customer-ext-valid-list-name
   (is (:valid? (ce/validate {:account_id "a" :workspace_id "w" :user_id "u"
                               :list_name "my_list-1"}))))
+
+;; ReferFriendEvent
+(deftest refer-friend-requires-category
+  (is (some #{"event_category is required"} (:errors (rf/validate base))))
+  (is (not-any? #{"event_category is required"} (:errors (rf/validate (assoc base :event_category "Refer Friend"))))))

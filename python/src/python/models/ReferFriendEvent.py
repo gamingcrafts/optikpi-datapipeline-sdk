@@ -9,7 +9,7 @@ class ReferFriendEvent:
     account_id: Optional[str] = None
     workspace_id: Optional[str] = None
     user_id: Optional[str] = None
-    event_category: str = "Refer Friend"
+    event_category: Optional[str] = None
     event_name: Optional[str] = None
     event_id: Optional[str] = None
     event_time: Optional[str] = None
@@ -42,7 +42,9 @@ class ReferFriendEvent:
             errors.append("event_time is required")
 
         # Event category validation
-        if self.event_category and self.event_category != "Refer Friend":
+        if not self.event_category:
+            errors.append('event_category is required')
+        elif self.event_category != 'Refer Friend':
             errors.append('event_category must be "Refer Friend" for refer friend events')
 
         # Date validations

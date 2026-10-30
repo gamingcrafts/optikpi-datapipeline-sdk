@@ -7,7 +7,7 @@ class GamingActivityEvent {
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
-    this.event_category = data.event_category || 'Gaming Activity';
+    this.event_category = data.event_category;
     this.event_name = data.event_name;
     this.event_id = data.event_id;
     this.event_time = data.event_time;
@@ -95,6 +95,7 @@ class GamingActivityEvent {
     if (!this.game_title) errors.push('game_title is required');
 
     // Event category validation
+    if (!this.event_category) errors.push('event_category is required');
     if (this.event_category && this.event_category !== 'Gaming Activity') {
       errors.push('event_category must be "Gaming Activity" for gaming events');
     }

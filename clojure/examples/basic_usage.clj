@@ -13,6 +13,7 @@
 ;; Send a deposit event
 (let [event (deposit/build
               {:user_id        "player_001"
+               :event_category "Deposit"
                :event_name     "Successful Deposit"
                :event_id       (str "dep_" (System/currentTimeMillis))
                :event_time     "2026-01-15T10:30:00Z"
@@ -44,7 +45,7 @@
 (let [result (sdk/send-batch client
                {:deposit-events
                 (deposit/build
-                  {:user_id "player_002" :event_name "Deposit"
+                  {:user_id "player_002" :event_category "Deposit" :event_name "Deposit"
                    :event_id "e2" :event_time "2026-01-15T11:00:00Z"
                    :amount 50.0 :payment_method "bank" :transaction_id "t2"})})]
   (println "Batch result:" result))

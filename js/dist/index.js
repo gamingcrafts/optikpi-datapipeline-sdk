@@ -20739,7 +20739,7 @@ let AccountEvent$2 = class AccountEvent {
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
-    this.event_category = data.event_category || 'Account';
+    this.event_category = data.event_category;
     this.event_name = data.event_name;
     this.event_id = data.event_id;
     this.event_time = data.event_time;
@@ -20770,6 +20770,7 @@ let AccountEvent$2 = class AccountEvent {
     if (!this.event_time) errors.push('event_time is required');
 
     // Event category validation
+    if (!this.event_category) errors.push('event_category is required');
     if (this.event_category && this.event_category !== 'Account') {
       errors.push('event_category must be "Account" for account events');
     }
@@ -20833,7 +20834,7 @@ let DepositEvent$2 = class DepositEvent {
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
-    this.event_category = data.event_category || 'Deposit';
+    this.event_category = data.event_category;
     this.event_name = data.event_name;
     this.event_id = data.event_id;
     this.event_time = data.event_time;
@@ -20867,6 +20868,7 @@ let DepositEvent$2 = class DepositEvent {
     if (!this.transaction_id) errors.push('transaction_id is required');
 
     // Event category validation
+    if (!this.event_category) errors.push('event_category is required');
     if (this.event_category && this.event_category !== 'Deposit') {
       errors.push('event_category must be "Deposit" for deposit events');
     }
@@ -20930,7 +20932,7 @@ let WithdrawEvent$2 = class WithdrawEvent {
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
-    this.event_category = data.event_category || 'Withdraw';
+    this.event_category = data.event_category;
     this.event_name = data.event_name;
     this.event_id = data.event_id;
     this.event_time = data.event_time;
@@ -20959,6 +20961,7 @@ let WithdrawEvent$2 = class WithdrawEvent {
     if (!this.transaction_id) errors.push('transaction_id is required');
 
     // Event category validation
+    if (!this.event_category) errors.push('event_category is required');
     if (this.event_category && this.event_category !== 'Withdraw') {
       errors.push('event_category must be "Withdraw" for withdraw events');
     }
@@ -21022,7 +21025,7 @@ let GamingActivityEvent$2 = class GamingActivityEvent {
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
-    this.event_category = data.event_category || 'Gaming Activity';
+    this.event_category = data.event_category;
     this.event_name = data.event_name;
     this.event_id = data.event_id;
     this.event_time = data.event_time;
@@ -21110,6 +21113,7 @@ let GamingActivityEvent$2 = class GamingActivityEvent {
     if (!this.game_title) errors.push('game_title is required');
 
     // Event category validation
+    if (!this.event_category) errors.push('event_category is required');
     if (this.event_category && this.event_category !== 'Gaming Activity') {
       errors.push('event_category must be "Gaming Activity" for gaming events');
     }
@@ -21208,7 +21212,7 @@ let WalletBalanceEvent$2 = class WalletBalanceEvent {
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
-    this.event_category = data.event_category || 'Wallet Balance';
+    this.event_category = data.event_category;
     this.event_name = data.event_name;
     this.event_id = data.event_id;
     this.event_time = data.event_time;
@@ -21236,6 +21240,7 @@ let WalletBalanceEvent$2 = class WalletBalanceEvent {
     if (!this.event_time) errors.push('event_time is required');
 
     // Event category validation
+    if (!this.event_category) errors.push('event_category is required');
     if (this.event_category && this.event_category !== 'Wallet Balance') {
       errors.push('event_category must be "Wallet Balance" for wallet balance events');
     }
@@ -21331,7 +21336,7 @@ let ReferFriendEvent$2 = class ReferFriendEvent {
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
-    this.event_category = data.event_category || 'Refer Friend';
+    this.event_category = data.event_category;
     this.event_name = data.event_name;
     this.event_id = data.event_id;
     this.event_time = data.event_time;
@@ -21360,6 +21365,7 @@ let ReferFriendEvent$2 = class ReferFriendEvent {
     if (!this.event_time) errors.push('event_time is required');
 
     // Event category validation
+    if (!this.event_category) errors.push('event_category is required');
     if (this.event_category && this.event_category !== 'Refer Friend') {
       errors.push('event_category must be "Refer Friend" for refer friend events');
     }
