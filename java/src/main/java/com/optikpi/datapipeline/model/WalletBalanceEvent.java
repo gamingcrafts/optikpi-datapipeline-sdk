@@ -28,7 +28,7 @@ public class WalletBalanceEvent {
     private String userId;
     
     @JsonProperty("event_category")
-    private String eventCategory = "Wallet Balance";
+    private String eventCategory;
     
     @NotBlank(message = "event_name is required")
     @JsonProperty("event_name")
@@ -99,7 +99,9 @@ public class WalletBalanceEvent {
         }
         
         // Event category validation
-        if (eventCategory != null && !"Wallet Balance".equals(eventCategory)) {
+        if (eventCategory == null || eventCategory.trim().isEmpty()) {
+            errors.add("event_category is required");
+        } else if (!"Wallet Balance".equals(eventCategory)) {
             errors.add("event_category must be \"Wallet Balance\" for wallet balance events");
         }
         

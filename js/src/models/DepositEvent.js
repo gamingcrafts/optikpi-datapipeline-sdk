@@ -7,7 +7,7 @@ class DepositEvent {
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
-    this.event_category = data.event_category || 'Deposit';
+    this.event_category = data.event_category;
     this.event_name = data.event_name;
     this.event_id = data.event_id;
     this.event_time = data.event_time;
@@ -41,6 +41,7 @@ class DepositEvent {
     if (!this.transaction_id) errors.push('transaction_id is required');
 
     // Event category validation
+    if (!this.event_category) errors.push('event_category is required');
     if (this.event_category && this.event_category !== 'Deposit') {
       errors.push('event_category must be "Deposit" for deposit events');
     }

@@ -18,7 +18,7 @@ class AccountEvent:
         account_id: Account identifier
         workspace_id: Workspace identifier
         user_id: User identifier
-        event_category: Event category (default: 'Account')
+        event_category: Event category, required ('Account')
         event_name: Name of the event
         event_id: Unique event identifier
         event_time: Event timestamp in ISO 8601 format
@@ -32,7 +32,7 @@ class AccountEvent:
     account_id: Optional[str] = None
     workspace_id: Optional[str] = None
     user_id: Optional[str] = None
-    event_category: str = 'Account'
+    event_category: Optional[str] = None
     event_name: Optional[str] = None
     event_id: Optional[str] = None
     event_time: Optional[str] = None
@@ -74,7 +74,9 @@ class AccountEvent:
             errors.append('event_time is required')
         
         # Event category validation
-        if self.event_category and self.event_category != 'Account':
+        if not self.event_category:
+            errors.append('event_category is required')
+        elif self.event_category != 'Account':
             errors.append('event_category must be "Account" for account events')
         
         # Status validation

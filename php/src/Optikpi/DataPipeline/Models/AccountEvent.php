@@ -32,7 +32,7 @@ class AccountEvent
      */
     public function __construct(array $data = [])
     {
-        $this->event_category = $data['event_category'] ?? 'Account';
+        $this->event_category = $data['event_category'] ?? null;
         foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
                 $this->$key = $value;
@@ -70,6 +70,9 @@ class AccountEvent
         }
 
         // Event category validation
+        if (empty($this->event_category)) {
+            $errors[] = 'event_category is required';
+        }
         if (!empty($this->event_category) && $this->event_category !== 'Account') {
             $errors[] = 'event_category must be "Account" for account events';
         }

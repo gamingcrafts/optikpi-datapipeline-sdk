@@ -29,7 +29,7 @@ public class WithdrawEvent {
     private String userId;
     
     @JsonProperty("event_category")
-    private String eventCategory = "Withdraw";
+    private String eventCategory;
     
     @NotBlank(message = "event_name is required")
     @JsonProperty("event_name")
@@ -107,7 +107,9 @@ public class WithdrawEvent {
         }
         
         // Event category validation
-        if (eventCategory != null && !"Withdraw".equals(eventCategory)) {
+        if (eventCategory == null || eventCategory.trim().isEmpty()) {
+            errors.add("event_category is required");
+        } else if (!"Withdraw".equals(eventCategory)) {
             errors.add("event_category must be \"Withdraw\" for withdrawal events");
         }
         

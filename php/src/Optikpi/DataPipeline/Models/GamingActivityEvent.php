@@ -87,7 +87,7 @@ class GamingActivityEvent
      */
     public function __construct(array $data = [])
     {
-        $this->event_category = $data['event_category'] ?? 'Gaming Activity';
+        $this->event_category = $data['event_category'] ?? null;
         foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
                 $this->$key = $value;
@@ -131,6 +131,9 @@ class GamingActivityEvent
         }
 
         // Event category validation
+        if (empty($this->event_category)) {
+            $errors[] = 'event_category is required';
+        }
         if (!empty($this->event_category) && $this->event_category !== 'Gaming Activity') {
             $errors[] = 'event_category must be "Gaming Activity" for gaming events';
         }

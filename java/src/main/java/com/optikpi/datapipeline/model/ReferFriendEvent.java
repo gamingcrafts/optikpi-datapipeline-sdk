@@ -27,7 +27,7 @@ public class ReferFriendEvent {
     private String userId;
     
     @JsonProperty("event_category")
-    private String eventCategory = "Refer Friend";
+    private String eventCategory;
     
     @NotBlank(message = "event_name is required")
     @JsonProperty("event_name")
@@ -101,7 +101,9 @@ public class ReferFriendEvent {
         }
         
         // Event category validation
-        if (eventCategory != null && !"Refer Friend".equals(eventCategory)) {
+        if (eventCategory == null || eventCategory.trim().isEmpty()) {
+            errors.add("event_category is required");
+        } else if (!"Refer Friend".equals(eventCategory)) {
             errors.add("event_category must be \"Refer Friend\" for refer friend events");
         }
         

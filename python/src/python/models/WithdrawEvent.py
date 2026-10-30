@@ -9,7 +9,7 @@ class WithdrawEvent:
     account_id: Optional[str] = None
     workspace_id: Optional[str] = None
     user_id: Optional[str] = None
-    event_category: str = "Withdraw"
+    event_category: Optional[str] = None
     event_name: Optional[str] = None
     event_id: Optional[str] = None
     event_time: Optional[str] = None
@@ -45,7 +45,9 @@ class WithdrawEvent:
             errors.append("transaction_id is required")
 
         # Event category validation
-        if self.event_category and self.event_category != "Withdraw":
+        if not self.event_category:
+            errors.append('event_category is required')
+        elif self.event_category != 'Withdraw':
             errors.append('event_category must be "Withdraw" for withdraw events')
 
         # Amount validation
