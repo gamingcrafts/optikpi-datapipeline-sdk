@@ -7,6 +7,7 @@ fn deposit_event_requires_positive_amount() {
         "acc-1",
         "ws-1",
         "user-1",
+        "Deposit",
         "Successful Deposit",
         "evt-1",
         "2026-01-15T10:30:00Z",
@@ -25,6 +26,7 @@ fn deposit_event_valid_passes() {
         "acc-1",
         "ws-1",
         "user-1",
+        "Deposit",
         "Successful Deposit",
         "evt-1",
         "2026-01-15T10:30:00Z",
@@ -37,7 +39,7 @@ fn deposit_event_valid_passes() {
 
 #[test]
 fn account_event_rejects_malformed_timestamp() {
-    let event = AccountEvent::new("acc-1", "ws-1", "user-1", "Login", "evt-1", "not-a-date");
+    let event = AccountEvent::new("acc-1", "ws-1", "user-1", "Account", "Login", "evt-1", "not-a-date");
     let result = event.validate();
     assert!(!result.is_valid());
     assert!(result.errors.iter().any(|e| e.contains("event_time")));
@@ -45,7 +47,7 @@ fn account_event_rejects_malformed_timestamp() {
 
 #[test]
 fn account_event_serializes_without_none_fields() {
-    let event = AccountEvent::new("acc-1", "ws-1", "user-1", "Login", "evt-1", "2026-01-15T10:30:00Z");
+    let event = AccountEvent::new("acc-1", "ws-1", "user-1", "Account", "Login", "evt-1", "2026-01-15T10:30:00Z");
     let value = serde_json::to_value(&event).unwrap();
     assert!(value.get("device").is_none());
     assert_eq!(value.get("event_category").unwrap(), "Account");

@@ -3,8 +3,24 @@ Customer Extended Attributes Event Model
 Represents customer extended attributes event data for the Data Pipeline API
 """
 
+from .bigquery_validation import merge_storage_errors
+
+# Fields and types the warehouse accepts for this record; anything else is rejected there.
+STORAGE_RULES = {
+    "required": ["workspace_id", "user_id"],
+    "types": {
+        "workspace_id": "STRING",
+        "user_id": "STRING",
+        "list_name": "STRING",
+        "ext_data": "JSON"
+    }
+}
+
+
 class CustomerExtEvent:
     def __init__(self, **data):
+        # The record as sent, so validation also covers fields this model does not declare.
+        self._input = data
         self.account_id = data.get("account_id")
         self.workspace_id = data.get("workspace_id")
         self.user_id = data.get("user_id")
@@ -40,6 +56,9 @@ class CustomerExtEvent:
             # Object allowed
             elif not isinstance(self.ext_data, dict):
                 errors.append("ext_data must be object or JSON string")
+
+        # The record as sent, so validation also covers fields this model does not declare.
+        merge_storage_errors(errors, self, STORAGE_RULES)
 
         return {
             "isValid": len(errors) == 0,

@@ -8,6 +8,70 @@ namespace Optikpi\DataPipeline\Models;
  */
 class CustomerProfile
 {
+    // Fields and types the warehouse accepts for this record; anything else is rejected there.
+    public const STORAGE_RULES = [
+        'required' => ['workspace_id', 'user_id', 'creation_timestamp'],
+        'types' => [
+            'workspace_id' => 'STRING',
+            'user_id' => 'STRING',
+            'username' => 'STRING',
+            'full_name' => 'STRING',
+            'first_name' => 'STRING',
+            'last_name' => 'STRING',
+            'date_of_birth' => 'DATE',
+            'email' => 'STRING',
+            'phone_number' => 'STRING',
+            'gender' => 'STRING',
+            'country' => 'STRING',
+            'city' => 'STRING',
+            'language' => 'STRING',
+            'currency' => 'STRING',
+            'phone_verification' => 'STRING',
+            'email_verification' => 'STRING',
+            'bank_verification' => 'STRING',
+            'iddoc_verification' => 'STRING',
+            'marketing_email_preference' => 'STRING',
+            'notifications_preference' => 'STRING',
+            'subscription' => 'STRING',
+            'privacy_settings' => 'STRING',
+            'deposit_limits' => 'NUMERIC',
+            'loss_limits' => 'NUMERIC',
+            'wagering_limits' => 'NUMERIC',
+            'session_time_limits' => 'NUMERIC',
+            'cooling_off_expiry_date' => 'TIMESTAMP',
+            'self_exclusion_expiry_date' => 'TIMESTAMP',
+            'reality_checks_notification' => 'STRING',
+            'vip_status' => 'STRING',
+            'loyalty_program_tiers' => 'STRING',
+            'account_status' => 'STRING',
+            'bonus_abuser' => 'STRING',
+            'financial_risk_level' => 'NUMERIC',
+            'acquisition_source' => 'STRING',
+            'partner_id' => 'STRING',
+            'affiliate_id' => 'STRING',
+            'utm_source' => 'STRING',
+            'utm_campaign' => 'STRING',
+            'utm_medium' => 'STRING',
+            'referral_link_code' => 'STRING',
+            'referral_limit_reached' => 'STRING',
+            'creation_timestamp' => 'TIMESTAMP',
+            'risk_score_level' => 'STRING',
+            'marketing_sms_preference' => 'STRING',
+            'custom_data' => 'JSON',
+            'self_exclusion_by' => 'STRING',
+            'self_exclusion_by_type' => 'STRING',
+            'self_exclusion_check_time' => 'TIMESTAMP',
+            'self_exclusion_created_time' => 'TIMESTAMP',
+            'closed_time' => 'TIMESTAMP',
+            'real_money_enabled' => 'STRING',
+            'push_token' => 'STRING'
+        ],
+        'partition' => 'creation_timestamp'
+    ];
+
+    /** @var array The record as sent, so validation also covers fields this model does not declare. */
+    private $rawInput = [];
+
     public $account_id;
     public $workspace_id;
     public $user_id;
@@ -74,8 +138,9 @@ class CustomerProfile
      */
     public function __construct(array $data = [])
     {
+        $this->rawInput = $data;
         foreach ($data as $key => $value) {
-            if (property_exists($this, $key)) {
+            if ($key !== 'rawInput' && property_exists($this, $key)) {
                 $this->$key = $value;
             }
         }
@@ -133,6 +198,13 @@ class CustomerProfile
             $errors[] = 'vip_status must be one of: Regular, Silver, Gold, Platinum, Diamond';
         }
 
+        $record = BigQueryValidation::storageRecord($this, $this->rawInput);
+        foreach (BigQueryValidation::validateStorage($record, self::STORAGE_RULES) as $error) {
+            if (!in_array($error, $errors, true)) {
+                $errors[] = $error;
+            }
+        }
+
         return [
             'isValid' => empty($errors),
             'errors' => $errors
@@ -178,7 +250,7 @@ class CustomerProfile
             // Match JavaScript toJSON() behavior: exclude undefined properties
             // In PHP, unset properties are null, so excluding null approximates JavaScript's undefined exclusion
             // Note: This means explicitly null values are also excluded, which differs slightly from JavaScript
-            if ($value !== null) {
+            if ($key !== 'rawInput' && $value !== null) {
                 $arr[$key] = $value;
             }
         }

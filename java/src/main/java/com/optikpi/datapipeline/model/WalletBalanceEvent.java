@@ -1,5 +1,7 @@
 package com.optikpi.datapipeline.model;
 
+import com.optikpi.datapipeline.model.BigQueryValidation.ColumnType;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -14,7 +16,18 @@ import jakarta.validation.constraints.NotBlank;
  * Represents wallet balance events for the Data Pipeline API
  */
 public class WalletBalanceEvent {
-    
+
+    // Fields and types the warehouse accepts for this record; anything else is rejected there.
+    private static final BigQueryValidation.Rules STORAGE_RULES = BigQueryValidation.Rules
+        .required("workspace_id", "user_id", "event_id", "event_time", "event_category", "event_name")
+        .columns(ColumnType.STRING,
+            "workspace_id", "user_id", "event_category", "event_name", "event_id", "wallet_type",
+            "currency")
+        .columns(ColumnType.NUMERIC,
+            "current_cash_balance", "current_bonus_balance", "current_total_balance", "blocked_amount")
+        .columns(ColumnType.TIMESTAMP, "event_time")
+        .partition("event_time");
+
     @NotBlank(message = "account_id is required")
     @JsonProperty("account_id")
     private String accountId;
@@ -28,7 +41,7 @@ public class WalletBalanceEvent {
     private String userId;
     
     @JsonProperty("event_category")
-    private String eventCategory = "Wallet Balance";
+    private String eventCategory;
     
     @NotBlank(message = "event_name is required")
     @JsonProperty("event_name")
@@ -62,6 +75,9 @@ public class WalletBalanceEvent {
     
     public WalletBalanceEvent() {}
     
+    /**
+     * event_category is not filled in: set it with {@code setEventCategory("Wallet Balance")}, or validation fails.
+     */
     public WalletBalanceEvent(String accountId, String workspaceId, String userId, String eventName, String eventId, String eventTime) {
         this.accountId = accountId;
         this.workspaceId = workspaceId;
@@ -130,6 +146,8 @@ public class WalletBalanceEvent {
             errors.add("blocked_amount must be a non-negative number");
         }
         
+        BigQueryValidation.addStorageErrors(errors, this, STORAGE_RULES);
+
         return new ValidationResult(errors.isEmpty(), errors);
     }
     

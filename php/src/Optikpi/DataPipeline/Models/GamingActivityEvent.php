@@ -8,6 +8,86 @@ namespace Optikpi\DataPipeline\Models;
  */
 class GamingActivityEvent
 {
+    // Fields and types the warehouse accepts for this record; anything else is rejected there.
+    public const STORAGE_RULES = [
+        'required' => ['workspace_id', 'user_id', 'event_id', 'event_time', 'event_category', 'event_name'],
+        'types' => [
+            'workspace_id' => 'STRING',
+            'user_id' => 'STRING',
+            'event_id' => 'STRING',
+            'event_time' => 'TIMESTAMP',
+            'event_category' => 'STRING',
+            'event_name' => 'STRING',
+            'free_spin_id' => 'STRING',
+            'num_spins_played' => 'INTEGER',
+            'game_id' => 'STRING',
+            'game_title' => 'STRING',
+            'game_theme' => 'STRING',
+            'provider' => 'STRING',
+            'win_amount' => 'NUMERIC',
+            'remaining_spins' => 'INTEGER',
+            'bet_value_per_spin' => 'NUMERIC',
+            'wagering_requirements_met' => 'BOOLEAN',
+            'free_spin_expiry_date' => 'TIMESTAMP',
+            'campaign_id' => 'STRING',
+            'campaign_name' => 'STRING',
+            'rtp' => 'NUMERIC',
+            'jackpot_amount' => 'NUMERIC',
+            'game_category' => 'STRING',
+            'winning_bet_amount' => 'NUMERIC',
+            'jackpot_type' => 'STRING',
+            'wager_amount' => 'NUMERIC',
+            'loss_amount' => 'NUMERIC',
+            'volatility' => 'STRING',
+            'min_bet' => 'NUMERIC',
+            'max_bet' => 'NUMERIC',
+            'number_of_reels' => 'INTEGER',
+            'number_of_paylines' => 'INTEGER',
+            'feature_types' => 'STRING',
+            'game_release_date' => 'TIMESTAMP',
+            'live_dealer_availability' => 'BOOLEAN',
+            'side_bets_availability' => 'BOOLEAN',
+            'multiplayer_option' => 'BOOLEAN',
+            'auto_play' => 'BOOLEAN',
+            'poker_variant' => 'STRING',
+            'tournament_name' => 'STRING',
+            'buy_in_amount' => 'NUMERIC',
+            'table_type' => 'STRING',
+            'stakes_level' => 'STRING',
+            'number_of_players' => 'INTEGER',
+            'game_duration' => 'INTEGER',
+            'hand_volume' => 'INTEGER',
+            'player_position' => 'STRING',
+            'final_hand' => 'STRING',
+            'rake_contribution' => 'NUMERIC',
+            'multi_tabling_indicator' => 'BOOLEAN',
+            'session_result' => 'STRING',
+            'vip_status' => 'STRING',
+            'blind_level' => 'STRING',
+            'rebuy_and_addon_info' => 'STRING',
+            'sport_type' => 'STRING',
+            'betting_market' => 'STRING',
+            'odds' => 'NUMERIC',
+            'live_betting_availability' => 'BOOLEAN',
+            'result' => 'STRING',
+            'bet_status' => 'STRING',
+            'betting_channel' => 'STRING',
+            'bonus_type' => 'STRING',
+            'bonus_amount' => 'NUMERIC',
+            'bonus_code' => 'STRING',
+            'free_spin_start_date' => 'TIMESTAMP',
+            'num_spins_awarded' => 'INTEGER',
+            'parent_game_category' => 'STRING',
+            'currency' => 'STRING',
+            'money_type' => 'STRING',
+            'transaction_type' => 'STRING'
+        ],
+        'partition' => 'event_time'
+    ];
+
+    /** @var array The record as sent, so validation also covers fields this model does not declare. */
+    private $rawInput = [];
+
     public $account_id;
     public $workspace_id;
     public $user_id;
@@ -87,9 +167,9 @@ class GamingActivityEvent
      */
     public function __construct(array $data = [])
     {
-        $this->event_category = $data['event_category'] ?? 'Gaming Activity';
+        $this->rawInput = $data;
         foreach ($data as $key => $value) {
-            if (property_exists($this, $key)) {
+            if ($key !== 'rawInput' && property_exists($this, $key)) {
                 $this->$key = $value;
             }
         }
@@ -190,6 +270,13 @@ class GamingActivityEvent
             $errors[] = 'event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)';
         }
 
+        $record = BigQueryValidation::storageRecord($this, $this->rawInput);
+        foreach (BigQueryValidation::validateStorage($record, self::STORAGE_RULES) as $error) {
+            if (!in_array($error, $errors, true)) {
+                $errors[] = $error;
+            }
+        }
+
         return [
             'isValid' => empty($errors),
             'errors' => $errors
@@ -235,7 +322,7 @@ class GamingActivityEvent
             // Match JavaScript toJSON() behavior: exclude undefined properties
             // In PHP, unset properties are null, so excluding null approximates JavaScript's undefined exclusion
             // Note: This means explicitly null values are also excluded, which differs slightly from JavaScript
-            if ($value !== null) {
+            if ($key !== 'rawInput' && $value !== null) {
                 $arr[$key] = $value;
             }
         }

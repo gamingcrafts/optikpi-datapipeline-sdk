@@ -35,6 +35,7 @@ Official Clojure client for the OptikPI Data Pipeline API.
 
 (let [event (deposit/build
               {:user_id        "player_001"
+               :event_category "Deposit"
                :event_name     "Successful Deposit"
                :event_id       "dep_001"
                :event_time     "2026-01-15T10:30:00Z"
@@ -61,8 +62,8 @@ Official Clojure client for the OptikPI Data Pipeline API.
 
 ## Event Types & Namespaces
 
-| Namespace | `build` sets `event_category` | Send method |
-|-----------|-------------------------------|-------------|
+| Namespace | Required `event_category` | Send method |
+|-----------|---------------------------|-------------|
 | `models.customer-profile` | N/A | `send-customer-profile` |
 | `models.account-event` | `"Account"` | `send-account-event` |
 | `models.deposit-event` | `"Deposit"` | `send-deposit-event` |
@@ -83,7 +84,9 @@ Each model namespace exposes a `validate` function returning `{:valid? bool :err
     (println "Errors:" errors)))
 ```
 
-`build` sets `event_category` automatically — do not pass it manually.
+`event_category` is required on every event and must be passed by the caller with the value in the table above (e.g. `"Gaming Activity"` for gaming activity events). `build` does not fill it in: a missing value fails validation with `event_category is required`, a wrong one with `event_category must be "..."`.
+
+`validate` also rejects anything the warehouse would reject, so an event that passes meets every rule BigQuery was measured to enforce: required columns must be present and not empty, every known column must have a storable type (e.g. `game_id` must be a string, not a number; timestamps must be `YYYY-MM-DD HH:MM[:SS[.F]]` with `T` or a space and an optional `Z`, `±HH:MM` or ` UTC`, or a number; JSON columns take a map, a vector or a JSON string), and `event_time` (`creation_timestamp` for customer profiles) must be within the last 10 years and no more than 1 year in the future.
 
 ## Batch Send
 

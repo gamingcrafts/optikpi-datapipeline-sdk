@@ -1,5 +1,7 @@
 package com.optikpi.datapipeline.model;
 
+import com.optikpi.datapipeline.model.BigQueryValidation.ColumnType;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -13,7 +15,17 @@ import java.util.List;
  * Represents account-related events for the Data Pipeline API
  */
 public class AccountEvent {
-    
+
+    // Fields and types the warehouse accepts for this record; anything else is rejected there.
+    private static final BigQueryValidation.Rules STORAGE_RULES = BigQueryValidation.Rules
+        .required("workspace_id", "user_id", "event_id", "event_time", "event_category", "event_name")
+        .columns(ColumnType.STRING,
+            "workspace_id", "user_id", "event_category", "event_name", "event_id", "device", "status",
+            "affiliate_id", "partner_id", "campaign_code", "utm_source", "utm_campaign", "utm_medium",
+            "reason")
+        .columns(ColumnType.TIMESTAMP, "event_time")
+        .partition("event_time");
+
     @NotBlank(message = "account_id is required")
     @JsonProperty("account_id")
     private String accountId;
@@ -27,7 +39,7 @@ public class AccountEvent {
     private String userId;
     
     @JsonProperty("event_category")
-    private String eventCategory = "Account";
+    private String eventCategory;
     
     @NotBlank(message = "event_name is required")
     @JsonProperty("event_name")
@@ -72,6 +84,9 @@ public class AccountEvent {
     
     public AccountEvent() {}
     
+    /**
+     * event_category is not filled in: set it with {@code setEventCategory("Account")}, or validation fails.
+     */
     public AccountEvent(String accountId, String workspaceId, String userId, String eventName, String eventId, String eventTime) {
         this.accountId = accountId;
         this.workspaceId = workspaceId;
@@ -128,6 +143,8 @@ public class AccountEvent {
             errors.add("event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)");
         }
         
+        BigQueryValidation.addStorageErrors(errors, this, STORAGE_RULES);
+
         return new ValidationResult(errors.isEmpty(), errors);
     }
     

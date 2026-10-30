@@ -1,5 +1,7 @@
 package com.optikpi.datapipeline.model;
 
+import com.optikpi.datapipeline.model.BigQueryValidation.ColumnType;
+
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +15,18 @@ import jakarta.validation.constraints.NotBlank;
  * Represents refer friend events for the Data Pipeline API
  */
 public class ReferFriendEvent {
-    
+
+    // Fields and types the warehouse accepts for this record; anything else is rejected there.
+    private static final BigQueryValidation.Rules STORAGE_RULES = BigQueryValidation.Rules
+        .required("workspace_id", "user_id", "event_id", "event_time", "event_category", "event_name")
+        .columns(ColumnType.STRING,
+            "workspace_id", "user_id", "event_category", "event_name", "event_id",
+            "referral_code_used", "reward_type", "reward_claimed_status", "referee_user_id")
+        .columns(ColumnType.NUMERIC, "referee_first_deposit")
+        .columns(ColumnType.BOOLEAN, "successful_referral_confirmation")
+        .columns(ColumnType.TIMESTAMP, "event_time", "referee_registration_date")
+        .partition("event_time");
+
     @NotBlank(message = "account_id is required")
     @JsonProperty("account_id")
     private String accountId;
@@ -27,7 +40,7 @@ public class ReferFriendEvent {
     private String userId;
     
     @JsonProperty("event_category")
-    private String eventCategory = "Refer Friend";
+    private String eventCategory;
     
     @NotBlank(message = "event_name is required")
     @JsonProperty("event_name")
@@ -64,6 +77,9 @@ public class ReferFriendEvent {
     
     public ReferFriendEvent() {}
     
+    /**
+     * event_category is not filled in: set it with {@code setEventCategory("Refer Friend")}, or validation fails.
+     */
     public ReferFriendEvent(String accountId, String workspaceId, String userId, String eventName, String eventId, String eventTime) {
         this.accountId = accountId;
         this.workspaceId = workspaceId;
@@ -129,6 +145,8 @@ public class ReferFriendEvent {
             errors.add("referee_first_deposit must be a non-negative number");
         }
         
+        BigQueryValidation.addStorageErrors(errors, this, STORAGE_RULES);
+
         return new ValidationResult(errors.isEmpty(), errors);
     }
     

@@ -2,12 +2,93 @@
  * Gaming Activity Event Model
  * Represents gaming activity events for the Data Pipeline API
  */
+const { validateStorage, storageRecord } = require('./bigQueryValidation');
+
+// Fields and types the warehouse accepts for this record; anything else is rejected there.
+const STORAGE_RULES = {
+  required: ['workspace_id', 'user_id', 'event_id', 'event_time', 'event_category', 'event_name'],
+  types: {
+    workspace_id: 'STRING',
+    user_id: 'STRING',
+    event_id: 'STRING',
+    event_time: 'TIMESTAMP',
+    event_category: 'STRING',
+    event_name: 'STRING',
+    free_spin_id: 'STRING',
+    num_spins_played: 'INTEGER',
+    game_id: 'STRING',
+    game_title: 'STRING',
+    game_theme: 'STRING',
+    provider: 'STRING',
+    win_amount: 'NUMERIC',
+    remaining_spins: 'INTEGER',
+    bet_value_per_spin: 'NUMERIC',
+    wagering_requirements_met: 'BOOLEAN',
+    free_spin_expiry_date: 'TIMESTAMP',
+    campaign_id: 'STRING',
+    campaign_name: 'STRING',
+    rtp: 'NUMERIC',
+    jackpot_amount: 'NUMERIC',
+    game_category: 'STRING',
+    winning_bet_amount: 'NUMERIC',
+    jackpot_type: 'STRING',
+    wager_amount: 'NUMERIC',
+    loss_amount: 'NUMERIC',
+    volatility: 'STRING',
+    min_bet: 'NUMERIC',
+    max_bet: 'NUMERIC',
+    number_of_reels: 'INTEGER',
+    number_of_paylines: 'INTEGER',
+    feature_types: 'STRING',
+    game_release_date: 'TIMESTAMP',
+    live_dealer_availability: 'BOOLEAN',
+    side_bets_availability: 'BOOLEAN',
+    multiplayer_option: 'BOOLEAN',
+    auto_play: 'BOOLEAN',
+    poker_variant: 'STRING',
+    tournament_name: 'STRING',
+    buy_in_amount: 'NUMERIC',
+    table_type: 'STRING',
+    stakes_level: 'STRING',
+    number_of_players: 'INTEGER',
+    game_duration: 'INTEGER',
+    hand_volume: 'INTEGER',
+    player_position: 'STRING',
+    final_hand: 'STRING',
+    rake_contribution: 'NUMERIC',
+    multi_tabling_indicator: 'BOOLEAN',
+    session_result: 'STRING',
+    vip_status: 'STRING',
+    blind_level: 'STRING',
+    rebuy_and_addon_info: 'STRING',
+    sport_type: 'STRING',
+    betting_market: 'STRING',
+    odds: 'NUMERIC',
+    live_betting_availability: 'BOOLEAN',
+    result: 'STRING',
+    bet_status: 'STRING',
+    betting_channel: 'STRING',
+    bonus_type: 'STRING',
+    bonus_amount: 'NUMERIC',
+    bonus_code: 'STRING',
+    free_spin_start_date: 'TIMESTAMP',
+    num_spins_awarded: 'INTEGER',
+    parent_game_category: 'STRING',
+    currency: 'STRING',
+    money_type: 'STRING',
+    transaction_type: 'STRING'
+  },
+  partition: 'event_time'
+};
+
 class GamingActivityEvent {
   constructor(data = {}) {
+    // The record as sent, so validation also covers fields this model does not declare.
+    Object.defineProperty(this, '_input', { value: data, enumerable: false });
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
-    this.event_category = data.event_category || 'Gaming Activity';
+    this.event_category = data.event_category;
     this.event_name = data.event_name;
     this.event_id = data.event_id;
     this.event_time = data.event_time;
@@ -152,6 +233,10 @@ class GamingActivityEvent {
     // Date format validation
     if (this.event_time && !this.isValidDateTime(this.event_time)) {
       errors.push('event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)');
+    }
+
+    for (const error of validateStorage(storageRecord(this, this._input), STORAGE_RULES)) {
+      if (!errors.includes(error)) errors.push(error);
     }
 
     return {

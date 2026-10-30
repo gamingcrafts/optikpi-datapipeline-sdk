@@ -2,12 +2,36 @@
  * Wallet Balance Event Model
  * Represents wallet balance events for the Data Pipeline API
  */
+const { validateStorage, storageRecord } = require('./bigQueryValidation');
+
+// Fields and types the warehouse accepts for this record; anything else is rejected there.
+const STORAGE_RULES = {
+  required: ['workspace_id', 'user_id', 'event_id', 'event_time', 'event_category', 'event_name'],
+  types: {
+    workspace_id: 'STRING',
+    user_id: 'STRING',
+    event_id: 'STRING',
+    event_time: 'TIMESTAMP',
+    event_category: 'STRING',
+    event_name: 'STRING',
+    wallet_type: 'STRING',
+    currency: 'STRING',
+    current_cash_balance: 'NUMERIC',
+    current_bonus_balance: 'NUMERIC',
+    current_total_balance: 'NUMERIC',
+    blocked_amount: 'NUMERIC'
+  },
+  partition: 'event_time'
+};
+
 class WalletBalanceEvent {
   constructor(data = {}) {
+    // The record as sent, so validation also covers fields this model does not declare.
+    Object.defineProperty(this, '_input', { value: data, enumerable: false });
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
-    this.event_category = data.event_category || 'Wallet Balance';
+    this.event_category = data.event_category;
     this.event_name = data.event_name;
     this.event_id = data.event_id;
     this.event_time = data.event_time;
@@ -72,6 +96,10 @@ class WalletBalanceEvent {
       if (typeof this.blocked_amount !== 'number' || this.blocked_amount < 0) {
         errors.push('blocked_amount must be a non-negative number');
       }
+    }
+
+    for (const error of validateStorage(storageRecord(this, this._input), STORAGE_RULES)) {
+      if (!errors.includes(error)) errors.push(error);
     }
 
     return {

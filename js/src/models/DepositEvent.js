@@ -2,12 +2,39 @@
  * Deposit Event Model
  * Represents deposit-related events for the Data Pipeline API
  */
+const { validateStorage, storageRecord } = require('./bigQueryValidation');
+
+// Fields and types the warehouse accepts for this record; anything else is rejected there.
+const STORAGE_RULES = {
+  required: ['workspace_id', 'user_id', 'event_id', 'event_time', 'event_category', 'event_name', 'amount'],
+  types: {
+    workspace_id: 'STRING',
+    user_id: 'STRING',
+    event_id: 'STRING',
+    event_time: 'TIMESTAMP',
+    event_category: 'STRING',
+    event_name: 'STRING',
+    amount: 'NUMERIC',
+    payment_method: 'STRING',
+    transaction_id: 'STRING',
+    payment_provider_id: 'STRING',
+    payment_provider_name: 'STRING',
+    failure_reason: 'STRING',
+    utm_source: 'STRING',
+    utm_campaign: 'STRING',
+    utm_medium: 'STRING'
+  },
+  partition: 'event_time'
+};
+
 class DepositEvent {
   constructor(data = {}) {
+    // The record as sent, so validation also covers fields this model does not declare.
+    Object.defineProperty(this, '_input', { value: data, enumerable: false });
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
-    this.event_category = data.event_category || 'Deposit';
+    this.event_category = data.event_category;
     this.event_name = data.event_name;
     this.event_id = data.event_id;
     this.event_time = data.event_time;
@@ -55,6 +82,10 @@ class DepositEvent {
     // Date format validation
     if (this.event_time && !this.isValidDateTime(this.event_time)) {
       errors.push('event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)');
+    }
+
+    for (const error of validateStorage(storageRecord(this, this._input), STORAGE_RULES)) {
+      if (!errors.includes(error)) errors.push(error);
     }
 
     return {

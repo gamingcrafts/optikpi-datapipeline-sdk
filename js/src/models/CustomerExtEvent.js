@@ -2,8 +2,23 @@
  * Customer Extension Event Model
  * Represents customer extended attributes events for the Data Pipeline API
  */
+const { validateStorage, storageRecord } = require('./bigQueryValidation');
+
+// Fields and types the warehouse accepts for this record; anything else is rejected there.
+const STORAGE_RULES = {
+  required: ['workspace_id', 'user_id'],
+  types: {
+    workspace_id: 'STRING',
+    user_id: 'STRING',
+    list_name: 'STRING',
+    ext_data: 'JSON'
+  }
+};
+
 class CustomerExtEvent {
   constructor(data = {}) {
+    // The record as sent, so validation also covers fields this model does not declare.
+    Object.defineProperty(this, '_input', { value: data, enumerable: false });
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
@@ -47,6 +62,10 @@ class CustomerExtEvent {
     // Validate user_id format
     if (this.user_id && typeof this.user_id !== 'string') {
       errors.push('user_id must be a string');
+    }
+
+    for (const error of validateStorage(storageRecord(this, this._input), STORAGE_RULES)) {
+      if (!errors.includes(error)) errors.push(error);
     }
 
     return {

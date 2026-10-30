@@ -20583,11 +20583,226 @@ let DataPipelineClient$1 = class DataPipelineClient {
 var DataPipelineClient_1$1 = DataPipelineClient$1;
 
 /**
+ * Validation that mirrors what the warehouse stores for each column type.
+ *
+ * A record the API accepts but the warehouse cannot store is lost without an error reaching the caller, so
+ * every model checks its fields against these rules before anything is sent. The rules follow what the
+ * warehouse was measured to accept. Two deliberate exceptions: a NUMERIC string that is not a number and a
+ * BOOLEAN string other than true/false/0/1 are rejected, because the warehouse would store a wrong value.
+ */
+const TEN_YEARS_MS = 10 * 365.25 * 24 * 60 * 60 * 1000;
+const ONE_YEAR_MS = 365.25 * 24 * 60 * 60 * 1000;
+const NUMERIC_STRING = /^[ \t\n\r\f\v]*[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?[ \t\n\r\f\v]*$/;
+const INTEGER_STRING = /^[+-]?\d+$/;
+const DIGITS = /^\d+$/;
+const DATE_STRING = /^(\d{4})-(\d{1,2})-(\d{1,2})$/;
+const TIMESTAMP_STRING = /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})(?::(\d{2})(\.\d+)?)?(Z|[+-]\d{2}:\d{2}| UTC)?$/;
+
+/** Years 0001-9999 only. setUTCFullYear is used because Date.UTC maps years below 100 to 19xx. */
+function isRealDate(y, m, d) {
+  if (y < 1 || y > 9999) return false;
+  const date = new Date(0);
+  date.setUTCFullYear(y, m - 1, d);
+  return date.getUTCFullYear() === y && date.getUTCMonth() === m - 1 && date.getUTCDate() === d;
+}
+
+/**
+ * Milliseconds since the epoch for a date-time string the warehouse accepts, or NaN when it does not.
+ * Numeric timestamps are accepted elsewhere and never reach this function.
+ */
+function parseTimestampString(value) {
+  const match = TIMESTAMP_STRING.exec(value);
+  if (!match) return NaN;
+  const [y, mo, d, h, mi, s] = match.slice(1, 7).map(part => Number(part || 0));
+  if (!isRealDate(y, mo, d) || h > 23 || mi > 59 || s > 59) return NaN;
+  const date = new Date(0);
+  date.setUTCFullYear(y, mo - 1, d);
+  date.setUTCHours(h, mi, s, 0);
+  let time = date.getTime();
+  const zone = match[8];
+  if (zone && zone !== 'Z' && zone !== ' UTC') {
+    const offsetHours = Number(zone.slice(1, 3));
+    const offsetMinutes = Number(zone.slice(4, 6));
+    if (offsetHours > 18 || offsetMinutes > 59) return NaN;
+    const sign = zone[0] === '-' ? -1 : 1;
+    time -= sign * (offsetHours * 60 + offsetMinutes) * 60 * 1000;
+  }
+  return time;
+}
+function isNumericTimestamp(value) {
+  return typeof value === 'number' && Number.isFinite(value) || typeof value === 'string' && DIGITS.test(value);
+}
+
+/** Returns an error message, or null when the value can be stored in a column of this type. */
+function checkType(field, value, type) {
+  switch (type) {
+    case 'STRING':
+      return typeof value === 'string' ? null : `${field} must be a string`;
+    case 'NUMERIC':
+      if (typeof value === 'number') return Number.isFinite(value) ? null : `${field} must be a finite number`;
+      return typeof value === 'string' && NUMERIC_STRING.test(value) ? null : `${field} must be a number`;
+    case 'INTEGER':
+      if (typeof value === 'number') return Number.isInteger(value) ? null : `${field} must be an integer`;
+      return typeof value === 'string' && INTEGER_STRING.test(value) ? null : `${field} must be an integer`;
+    case 'BOOLEAN':
+      if (typeof value === 'boolean' || value === 0 || value === 1) return null;
+      return typeof value === 'string' && /^(true|false|0|1)$/i.test(value) ? null : `${field} must be true or false`;
+    case 'TIMESTAMP':
+      if (isNumericTimestamp(value)) return null;
+      return typeof value === 'string' && !Number.isNaN(parseTimestampString(value)) ? null : `${field} must be a valid ISO 8601 date-time`;
+    case 'DATE':
+      {
+        if (typeof value === 'number' && Number.isInteger(value) || typeof value === 'string' && DIGITS.test(value)) {
+          return null;
+        }
+        const match = typeof value === 'string' && DATE_STRING.exec(value);
+        return match && isRealDate(...match.slice(1, 4).map(Number)) ? null : `${field} must be a date in YYYY-MM-DD format`;
+      }
+    case 'JSON':
+      // The API serialises objects and arrays to a JSON string before storing them.
+      if (typeof value === 'object' && value !== null) return null;
+      if (typeof value === 'string') {
+        try {
+          JSON.parse(value);
+          return null;
+        } catch (e) {
+          return `${field} must be an object or a valid JSON string`;
+        }
+      }
+      return `${field} must be an object or a valid JSON string`;
+    default:
+      return null;
+  }
+}
+
+/**
+ * @param {Object} record - The values to check, as they will be sent
+ * @param {Object} rules - { required: string[], types: {field: type}, partition?: string }
+ * @param {number} [now] - Current time in ms (for tests)
+ * @returns {string[]} Error messages; empty when the record can be stored
+ */
+function validateStorage$8(record, rules, now = Date.now()) {
+  const errors = [];
+  for (const field of rules.required) {
+    const value = record[field];
+    if (value === undefined || value === null || value === '') errors.push(`${field} is required`);
+  }
+  for (const [field, type] of Object.entries(rules.types)) {
+    const value = record[field];
+    if (value === undefined || value === null) continue;
+    const error = checkType(field, value, type);
+    if (error) errors.push(error);
+  }
+
+  // The table is partitioned on this column and only accepts writes within this window. A numeric timestamp's
+  // unit is ambiguous to the warehouse too, so only date-time strings are checked.
+  const partitionValue = rules.partition && record[rules.partition];
+  if (typeof partitionValue === 'string') {
+    const time = parseTimestampString(partitionValue);
+    if (!Number.isNaN(time) && (time < now - TEN_YEARS_MS || time > now + ONE_YEAR_MS)) {
+      errors.push(`${rules.partition} must be within the last 10 years and no more than 1 year in the future`);
+    }
+  }
+  return errors;
+}
+
+/**
+ * The record as it will be checked: the model's declared fields as they are now (a field cleared after
+ * construction stays cleared), plus any fields from the original input that the model does not declare.
+ */
+function storageRecord$8(model, input) {
+  // Declared fields come from the class, so a field deleted from the instance is missing, not refilled.
+  const declared = new Set(Object.keys(new model.constructor()));
+  const record = {};
+  for (const [key, value] of Object.entries(input || {})) {
+    if (!declared.has(key)) record[key] = value;
+  }
+  for (const key of declared) record[key] = model[key];
+  for (const key of Object.keys(model)) if (!declared.has(key)) record[key] = model[key];
+  return record;
+}
+var bigQueryValidation = {
+  validateStorage: validateStorage$8,
+  checkType,
+  storageRecord: storageRecord$8
+};
+
+/**
  * Customer Profile Model
  * Represents a customer profile for the Data Pipeline API
  */
+const {
+  validateStorage: validateStorage$7,
+  storageRecord: storageRecord$7
+} = bigQueryValidation;
+
+// Fields and types the warehouse accepts for this record; anything else is rejected there.
+const STORAGE_RULES$7 = {
+  required: ['workspace_id', 'user_id', 'creation_timestamp'],
+  types: {
+    workspace_id: 'STRING',
+    user_id: 'STRING',
+    username: 'STRING',
+    full_name: 'STRING',
+    first_name: 'STRING',
+    last_name: 'STRING',
+    date_of_birth: 'DATE',
+    email: 'STRING',
+    phone_number: 'STRING',
+    gender: 'STRING',
+    country: 'STRING',
+    city: 'STRING',
+    language: 'STRING',
+    currency: 'STRING',
+    phone_verification: 'STRING',
+    email_verification: 'STRING',
+    bank_verification: 'STRING',
+    iddoc_verification: 'STRING',
+    marketing_email_preference: 'STRING',
+    notifications_preference: 'STRING',
+    subscription: 'STRING',
+    privacy_settings: 'STRING',
+    deposit_limits: 'NUMERIC',
+    loss_limits: 'NUMERIC',
+    wagering_limits: 'NUMERIC',
+    session_time_limits: 'NUMERIC',
+    cooling_off_expiry_date: 'TIMESTAMP',
+    self_exclusion_expiry_date: 'TIMESTAMP',
+    reality_checks_notification: 'STRING',
+    vip_status: 'STRING',
+    loyalty_program_tiers: 'STRING',
+    account_status: 'STRING',
+    bonus_abuser: 'STRING',
+    financial_risk_level: 'NUMERIC',
+    acquisition_source: 'STRING',
+    partner_id: 'STRING',
+    affiliate_id: 'STRING',
+    utm_source: 'STRING',
+    utm_campaign: 'STRING',
+    utm_medium: 'STRING',
+    referral_link_code: 'STRING',
+    referral_limit_reached: 'STRING',
+    creation_timestamp: 'TIMESTAMP',
+    risk_score_level: 'STRING',
+    marketing_sms_preference: 'STRING',
+    custom_data: 'JSON',
+    self_exclusion_by: 'STRING',
+    self_exclusion_by_type: 'STRING',
+    self_exclusion_check_time: 'TIMESTAMP',
+    self_exclusion_created_time: 'TIMESTAMP',
+    closed_time: 'TIMESTAMP',
+    real_money_enabled: 'STRING',
+    push_token: 'STRING'
+  },
+  partition: 'creation_timestamp'
+};
 let CustomerProfile$2 = class CustomerProfile {
   constructor(data = {}) {
+    // The record as sent, so validation also covers fields this model does not declare.
+    Object.defineProperty(this, '_input', {
+      value: data,
+      enumerable: false
+    });
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
@@ -20677,6 +20892,9 @@ let CustomerProfile$2 = class CustomerProfile {
     if (this.gender && !['Male', 'Female', 'Other'].includes(this.gender)) {
       errors.push('gender must be one of: Male, Female, Other');
     }
+    for (const error of validateStorage$7(storageRecord$7(this, this._input), STORAGE_RULES$7)) {
+      if (!errors.includes(error)) errors.push(error);
+    }
     return {
       isValid: errors.length === 0,
       errors
@@ -20734,12 +20952,44 @@ var CustomerProfile_1$1 = CustomerProfile$2;
  * Account Event Model
  * Represents account-related events for the Data Pipeline API
  */
+const {
+  validateStorage: validateStorage$6,
+  storageRecord: storageRecord$6
+} = bigQueryValidation;
+
+// Fields and types the warehouse accepts for this record; anything else is rejected there.
+const STORAGE_RULES$6 = {
+  required: ['workspace_id', 'user_id', 'event_id', 'event_time', 'event_category', 'event_name'],
+  types: {
+    workspace_id: 'STRING',
+    user_id: 'STRING',
+    event_id: 'STRING',
+    event_time: 'TIMESTAMP',
+    event_category: 'STRING',
+    event_name: 'STRING',
+    device: 'STRING',
+    affiliate_id: 'STRING',
+    partner_id: 'STRING',
+    utm_source: 'STRING',
+    utm_campaign: 'STRING',
+    utm_medium: 'STRING',
+    status: 'STRING',
+    reason: 'STRING',
+    campaign_code: 'STRING'
+  },
+  partition: 'event_time'
+};
 let AccountEvent$2 = class AccountEvent {
   constructor(data = {}) {
+    // The record as sent, so validation also covers fields this model does not declare.
+    Object.defineProperty(this, '_input', {
+      value: data,
+      enumerable: false
+    });
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
-    this.event_category = data.event_category || 'Account';
+    this.event_category = data.event_category;
     this.event_name = data.event_name;
     this.event_id = data.event_id;
     this.event_time = data.event_time;
@@ -20782,6 +21032,9 @@ let AccountEvent$2 = class AccountEvent {
     // Date format validation
     if (this.event_time && !this.isValidDateTime(this.event_time)) {
       errors.push('event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)');
+    }
+    for (const error of validateStorage$6(storageRecord$6(this, this._input), STORAGE_RULES$6)) {
+      if (!errors.includes(error)) errors.push(error);
     }
     return {
       isValid: errors.length === 0,
@@ -20828,12 +21081,44 @@ var AccountEvent_1$1 = AccountEvent$2;
  * Deposit Event Model
  * Represents deposit-related events for the Data Pipeline API
  */
+const {
+  validateStorage: validateStorage$5,
+  storageRecord: storageRecord$5
+} = bigQueryValidation;
+
+// Fields and types the warehouse accepts for this record; anything else is rejected there.
+const STORAGE_RULES$5 = {
+  required: ['workspace_id', 'user_id', 'event_id', 'event_time', 'event_category', 'event_name', 'amount'],
+  types: {
+    workspace_id: 'STRING',
+    user_id: 'STRING',
+    event_id: 'STRING',
+    event_time: 'TIMESTAMP',
+    event_category: 'STRING',
+    event_name: 'STRING',
+    amount: 'NUMERIC',
+    payment_method: 'STRING',
+    transaction_id: 'STRING',
+    payment_provider_id: 'STRING',
+    payment_provider_name: 'STRING',
+    failure_reason: 'STRING',
+    utm_source: 'STRING',
+    utm_campaign: 'STRING',
+    utm_medium: 'STRING'
+  },
+  partition: 'event_time'
+};
 let DepositEvent$2 = class DepositEvent {
   constructor(data = {}) {
+    // The record as sent, so validation also covers fields this model does not declare.
+    Object.defineProperty(this, '_input', {
+      value: data,
+      enumerable: false
+    });
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
-    this.event_category = data.event_category || 'Deposit';
+    this.event_category = data.event_category;
     this.event_name = data.event_name;
     this.event_id = data.event_id;
     this.event_time = data.event_time;
@@ -20880,6 +21165,9 @@ let DepositEvent$2 = class DepositEvent {
     if (this.event_time && !this.isValidDateTime(this.event_time)) {
       errors.push('event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)');
     }
+    for (const error of validateStorage$5(storageRecord$5(this, this._input), STORAGE_RULES$5)) {
+      if (!errors.includes(error)) errors.push(error);
+    }
     return {
       isValid: errors.length === 0,
       errors
@@ -20925,12 +21213,41 @@ var DepositEvent_1$1 = DepositEvent$2;
  * Withdraw Event Model
  * Represents withdrawal-related events for the Data Pipeline API
  */
+const {
+  validateStorage: validateStorage$4,
+  storageRecord: storageRecord$4
+} = bigQueryValidation;
+
+// Fields and types the warehouse accepts for this record; anything else is rejected there.
+const STORAGE_RULES$4 = {
+  required: ['workspace_id', 'user_id', 'event_id', 'event_time', 'event_category', 'event_name', 'amount'],
+  types: {
+    workspace_id: 'STRING',
+    user_id: 'STRING',
+    event_id: 'STRING',
+    event_time: 'TIMESTAMP',
+    event_category: 'STRING',
+    event_name: 'STRING',
+    amount: 'NUMERIC',
+    payment_method: 'STRING',
+    transaction_id: 'STRING',
+    failure_reason: 'STRING',
+    payment_provider_id: 'STRING',
+    payment_provider_name: 'STRING'
+  },
+  partition: 'event_time'
+};
 let WithdrawEvent$2 = class WithdrawEvent {
   constructor(data = {}) {
+    // The record as sent, so validation also covers fields this model does not declare.
+    Object.defineProperty(this, '_input', {
+      value: data,
+      enumerable: false
+    });
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
-    this.event_category = data.event_category || 'Withdraw';
+    this.event_category = data.event_category;
     this.event_name = data.event_name;
     this.event_id = data.event_id;
     this.event_time = data.event_time;
@@ -20971,6 +21288,9 @@ let WithdrawEvent$2 = class WithdrawEvent {
     // Date format validation
     if (this.event_time && !this.isValidDateTime(this.event_time)) {
       errors.push('event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)');
+    }
+    for (const error of validateStorage$4(storageRecord$4(this, this._input), STORAGE_RULES$4)) {
+      if (!errors.includes(error)) errors.push(error);
     }
     return {
       isValid: errors.length === 0,
@@ -21017,12 +21337,98 @@ var WithdrawEvent_1$1 = WithdrawEvent$2;
  * Gaming Activity Event Model
  * Represents gaming activity events for the Data Pipeline API
  */
+const {
+  validateStorage: validateStorage$3,
+  storageRecord: storageRecord$3
+} = bigQueryValidation;
+
+// Fields and types the warehouse accepts for this record; anything else is rejected there.
+const STORAGE_RULES$3 = {
+  required: ['workspace_id', 'user_id', 'event_id', 'event_time', 'event_category', 'event_name'],
+  types: {
+    workspace_id: 'STRING',
+    user_id: 'STRING',
+    event_id: 'STRING',
+    event_time: 'TIMESTAMP',
+    event_category: 'STRING',
+    event_name: 'STRING',
+    free_spin_id: 'STRING',
+    num_spins_played: 'INTEGER',
+    game_id: 'STRING',
+    game_title: 'STRING',
+    game_theme: 'STRING',
+    provider: 'STRING',
+    win_amount: 'NUMERIC',
+    remaining_spins: 'INTEGER',
+    bet_value_per_spin: 'NUMERIC',
+    wagering_requirements_met: 'BOOLEAN',
+    free_spin_expiry_date: 'TIMESTAMP',
+    campaign_id: 'STRING',
+    campaign_name: 'STRING',
+    rtp: 'NUMERIC',
+    jackpot_amount: 'NUMERIC',
+    game_category: 'STRING',
+    winning_bet_amount: 'NUMERIC',
+    jackpot_type: 'STRING',
+    wager_amount: 'NUMERIC',
+    loss_amount: 'NUMERIC',
+    volatility: 'STRING',
+    min_bet: 'NUMERIC',
+    max_bet: 'NUMERIC',
+    number_of_reels: 'INTEGER',
+    number_of_paylines: 'INTEGER',
+    feature_types: 'STRING',
+    game_release_date: 'TIMESTAMP',
+    live_dealer_availability: 'BOOLEAN',
+    side_bets_availability: 'BOOLEAN',
+    multiplayer_option: 'BOOLEAN',
+    auto_play: 'BOOLEAN',
+    poker_variant: 'STRING',
+    tournament_name: 'STRING',
+    buy_in_amount: 'NUMERIC',
+    table_type: 'STRING',
+    stakes_level: 'STRING',
+    number_of_players: 'INTEGER',
+    game_duration: 'INTEGER',
+    hand_volume: 'INTEGER',
+    player_position: 'STRING',
+    final_hand: 'STRING',
+    rake_contribution: 'NUMERIC',
+    multi_tabling_indicator: 'BOOLEAN',
+    session_result: 'STRING',
+    vip_status: 'STRING',
+    blind_level: 'STRING',
+    rebuy_and_addon_info: 'STRING',
+    sport_type: 'STRING',
+    betting_market: 'STRING',
+    odds: 'NUMERIC',
+    live_betting_availability: 'BOOLEAN',
+    result: 'STRING',
+    bet_status: 'STRING',
+    betting_channel: 'STRING',
+    bonus_type: 'STRING',
+    bonus_amount: 'NUMERIC',
+    bonus_code: 'STRING',
+    free_spin_start_date: 'TIMESTAMP',
+    num_spins_awarded: 'INTEGER',
+    parent_game_category: 'STRING',
+    currency: 'STRING',
+    money_type: 'STRING',
+    transaction_type: 'STRING'
+  },
+  partition: 'event_time'
+};
 let GamingActivityEvent$2 = class GamingActivityEvent {
   constructor(data = {}) {
+    // The record as sent, so validation also covers fields this model does not declare.
+    Object.defineProperty(this, '_input', {
+      value: data,
+      enumerable: false
+    });
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
-    this.event_category = data.event_category || 'Gaming Activity';
+    this.event_category = data.event_category;
     this.event_name = data.event_name;
     this.event_id = data.event_id;
     this.event_time = data.event_time;
@@ -21148,6 +21554,9 @@ let GamingActivityEvent$2 = class GamingActivityEvent {
     if (this.event_time && !this.isValidDateTime(this.event_time)) {
       errors.push('event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)');
     }
+    for (const error of validateStorage$3(storageRecord$3(this, this._input), STORAGE_RULES$3)) {
+      if (!errors.includes(error)) errors.push(error);
+    }
     return {
       isValid: errors.length === 0,
       errors
@@ -21203,12 +21612,41 @@ var GamingActivityEvent_1$1 = GamingActivityEvent$2;
  * Wallet Balance Event Model
  * Represents wallet balance events for the Data Pipeline API
  */
+const {
+  validateStorage: validateStorage$2,
+  storageRecord: storageRecord$2
+} = bigQueryValidation;
+
+// Fields and types the warehouse accepts for this record; anything else is rejected there.
+const STORAGE_RULES$2 = {
+  required: ['workspace_id', 'user_id', 'event_id', 'event_time', 'event_category', 'event_name'],
+  types: {
+    workspace_id: 'STRING',
+    user_id: 'STRING',
+    event_id: 'STRING',
+    event_time: 'TIMESTAMP',
+    event_category: 'STRING',
+    event_name: 'STRING',
+    wallet_type: 'STRING',
+    currency: 'STRING',
+    current_cash_balance: 'NUMERIC',
+    current_bonus_balance: 'NUMERIC',
+    current_total_balance: 'NUMERIC',
+    blocked_amount: 'NUMERIC'
+  },
+  partition: 'event_time'
+};
 let WalletBalanceEvent$2 = class WalletBalanceEvent {
   constructor(data = {}) {
+    // The record as sent, so validation also covers fields this model does not declare.
+    Object.defineProperty(this, '_input', {
+      value: data,
+      enumerable: false
+    });
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
-    this.event_category = data.event_category || 'Wallet Balance';
+    this.event_category = data.event_category;
     this.event_name = data.event_name;
     this.event_id = data.event_id;
     this.event_time = data.event_time;
@@ -21271,6 +21709,9 @@ let WalletBalanceEvent$2 = class WalletBalanceEvent {
         errors.push('blocked_amount must be a non-negative number');
       }
     }
+    for (const error of validateStorage$2(storageRecord$2(this, this._input), STORAGE_RULES$2)) {
+      if (!errors.includes(error)) errors.push(error);
+    }
     return {
       isValid: errors.length === 0,
       errors
@@ -21326,12 +21767,42 @@ var WalletBalanceEvent_1$1 = WalletBalanceEvent$2;
  * Refer Friend Event Model
  * Represents refer friend events for the Data Pipeline API
  */
+const {
+  validateStorage: validateStorage$1,
+  storageRecord: storageRecord$1
+} = bigQueryValidation;
+
+// Fields and types the warehouse accepts for this record; anything else is rejected there.
+const STORAGE_RULES$1 = {
+  required: ['workspace_id', 'user_id', 'event_id', 'event_time', 'event_category', 'event_name'],
+  types: {
+    workspace_id: 'STRING',
+    user_id: 'STRING',
+    event_id: 'STRING',
+    event_time: 'TIMESTAMP',
+    event_category: 'STRING',
+    event_name: 'STRING',
+    referral_code_used: 'STRING',
+    successful_referral_confirmation: 'BOOLEAN',
+    reward_type: 'STRING',
+    reward_claimed_status: 'STRING',
+    referee_user_id: 'STRING',
+    referee_registration_date: 'TIMESTAMP',
+    referee_first_deposit: 'NUMERIC'
+  },
+  partition: 'event_time'
+};
 let ReferFriendEvent$2 = class ReferFriendEvent {
   constructor(data = {}) {
+    // The record as sent, so validation also covers fields this model does not declare.
+    Object.defineProperty(this, '_input', {
+      value: data,
+      enumerable: false
+    });
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
-    this.event_category = data.event_category || 'Refer Friend';
+    this.event_category = data.event_category;
     this.event_name = data.event_name;
     this.event_id = data.event_id;
     this.event_time = data.event_time;
@@ -21397,6 +21868,9 @@ let ReferFriendEvent$2 = class ReferFriendEvent {
         errors.push('referee_first_deposit must be a non-negative number');
       }
     }
+    for (const error of validateStorage$1(storageRecord$1(this, this._input), STORAGE_RULES$1)) {
+      if (!errors.includes(error)) errors.push(error);
+    }
     return {
       isValid: errors.length === 0,
       errors
@@ -21438,8 +21912,28 @@ let ReferFriendEvent$2 = class ReferFriendEvent {
 };
 var ReferFriendEvent_1$1 = ReferFriendEvent$2;
 
+const {
+  validateStorage,
+  storageRecord
+} = bigQueryValidation;
+
+// Fields and types the warehouse accepts for this record; anything else is rejected there.
+const STORAGE_RULES = {
+  required: ['workspace_id', 'user_id'],
+  types: {
+    workspace_id: 'STRING',
+    user_id: 'STRING',
+    list_name: 'STRING',
+    ext_data: 'JSON'
+  }
+};
 let CustomerExtEvent$2 = class CustomerExtEvent {
   constructor(data = {}) {
+    // The record as sent, so validation also covers fields this model does not declare.
+    Object.defineProperty(this, '_input', {
+      value: data,
+      enumerable: false
+    });
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
@@ -21483,6 +21977,9 @@ let CustomerExtEvent$2 = class CustomerExtEvent {
     // Validate user_id format
     if (this.user_id && typeof this.user_id !== 'string') {
       errors.push('user_id must be a string');
+    }
+    for (const error of validateStorage(storageRecord(this, this._input), STORAGE_RULES)) {
+      if (!errors.includes(error)) errors.push(error);
     }
     return {
       isValid: errors.length === 0,

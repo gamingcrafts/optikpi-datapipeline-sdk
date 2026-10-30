@@ -3,13 +3,36 @@ from typing import Optional, Dict, Any, List
 from datetime import datetime
 import re
 
+from .bigquery_validation import merge_storage_errors, model_from_raw
+
+# Fields and types the warehouse accepts for this record; anything else is rejected there.
+STORAGE_RULES = {
+    "required": ["workspace_id", "user_id", "event_id", "event_time", "event_category", "event_name"],
+    "types": {
+        "workspace_id": "STRING",
+        "user_id": "STRING",
+        "event_id": "STRING",
+        "event_time": "TIMESTAMP",
+        "event_category": "STRING",
+        "event_name": "STRING",
+        "referral_code_used": "STRING",
+        "successful_referral_confirmation": "BOOLEAN",
+        "reward_type": "STRING",
+        "reward_claimed_status": "STRING",
+        "referee_user_id": "STRING",
+        "referee_registration_date": "TIMESTAMP",
+        "referee_first_deposit": "NUMERIC"
+    },
+    "partition": "event_time"
+}
+
 
 @dataclass
 class ReferFriendEvent:
     account_id: Optional[str] = None
     workspace_id: Optional[str] = None
     user_id: Optional[str] = None
-    event_category: str = "Refer Friend"
+    event_category: Optional[str] = None
     event_name: Optional[str] = None
     event_id: Optional[str] = None
     event_time: Optional[str] = None
@@ -83,6 +106,9 @@ class ReferFriendEvent:
             if not isinstance(self.referee_first_deposit, (int, float)) or self.referee_first_deposit < 0:
                 errors.append("referee_first_deposit must be a non-negative number")
 
+        # The record as sent, so validation also covers fields this model does not declare.
+        merge_storage_errors(errors, self, STORAGE_RULES)
+
         return {"isValid": len(errors) == 0, "errors": errors}
 
     # -------------------------------
@@ -101,7 +127,7 @@ class ReferFriendEvent:
 
     @classmethod
     def from_object(cls, data: Dict[str, Any]) -> "ReferFriendEvent":
-        return cls(**data)
+        return model_from_raw(cls, data)
 
     def __repr__(self) -> str:
         return (

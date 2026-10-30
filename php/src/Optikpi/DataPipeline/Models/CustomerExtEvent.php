@@ -8,6 +8,20 @@ namespace Optikpi\DataPipeline\Models;
  */
 class CustomerExtEvent
 {
+    // Fields and types the warehouse accepts for this record; anything else is rejected there.
+    public const STORAGE_RULES = [
+        'required' => ['workspace_id', 'user_id'],
+        'types' => [
+            'workspace_id' => 'STRING',
+            'user_id' => 'STRING',
+            'list_name' => 'STRING',
+            'ext_data' => 'JSON'
+        ]
+    ];
+
+    /** @var array The record as sent, so validation also covers fields this model does not declare. */
+    private $rawInput = [];
+
     public $account_id;
     public $workspace_id;
     public $user_id;
@@ -21,8 +35,9 @@ class CustomerExtEvent
      */
     public function __construct(array $data = [])
     {
+        $this->rawInput = $data;
         foreach ($data as $key => $value) {
-            if (property_exists($this, $key)) {
+            if ($key !== 'rawInput' && property_exists($this, $key)) {
                 $this->$key = $value;
             }
         }
@@ -76,6 +91,13 @@ class CustomerExtEvent
             $errors[] = 'user_id must be a string';
         }
 
+        $record = BigQueryValidation::storageRecord($this, $this->rawInput);
+        foreach (BigQueryValidation::validateStorage($record, self::STORAGE_RULES) as $error) {
+            if (!in_array($error, $errors, true)) {
+                $errors[] = $error;
+            }
+        }
+
         return [
             'isValid' => empty($errors),
             'errors' => $errors
@@ -112,7 +134,7 @@ class CustomerExtEvent
             // Match JavaScript toJSON() behavior: exclude undefined properties
             // In PHP, unset properties are null, so excluding null approximates JavaScript's undefined exclusion
             // Note: This means explicitly null values are also excluded, which differs slightly from JavaScript
-            if ($value !== null) {
+            if ($key !== 'rawInput' && $value !== null) {
                 $arr[$key] = $value;
             }
         }

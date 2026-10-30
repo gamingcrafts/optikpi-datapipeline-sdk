@@ -1,5 +1,7 @@
 package com.optikpi.datapipeline.model;
 
+import com.optikpi.datapipeline.model.BigQueryValidation.ColumnType;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -15,7 +17,17 @@ import jakarta.validation.constraints.Positive;
  * Represents withdrawal-related events for the Data Pipeline API
  */
 public class WithdrawEvent {
-    
+
+    // Fields and types the warehouse accepts for this record; anything else is rejected there.
+    private static final BigQueryValidation.Rules STORAGE_RULES = BigQueryValidation.Rules
+        .required("workspace_id", "user_id", "event_id", "event_time", "event_category", "event_name", "amount")
+        .columns(ColumnType.STRING,
+            "workspace_id", "user_id", "event_category", "event_name", "event_id", "payment_method",
+            "transaction_id", "failure_reason")
+        .columns(ColumnType.NUMERIC, "amount")
+        .columns(ColumnType.TIMESTAMP, "event_time")
+        .partition("event_time");
+
     @NotBlank(message = "account_id is required")
     @JsonProperty("account_id")
     private String accountId;
@@ -29,7 +41,7 @@ public class WithdrawEvent {
     private String userId;
     
     @JsonProperty("event_category")
-    private String eventCategory = "Withdraw";
+    private String eventCategory;
     
     @NotBlank(message = "event_name is required")
     @JsonProperty("event_name")
@@ -60,6 +72,9 @@ public class WithdrawEvent {
     
     public WithdrawEvent() {}
     
+    /**
+     * event_category is not filled in: set it with {@code setEventCategory("Withdraw")}, or validation fails.
+     */
     public WithdrawEvent(String accountId, String workspaceId, String userId, String eventName, String eventId, String eventTime, BigDecimal amount) {
         this.accountId = accountId;
         this.workspaceId = workspaceId;
@@ -126,6 +141,8 @@ public class WithdrawEvent {
             errors.add("amount must be positive");
         }
         
+        BigQueryValidation.addStorageErrors(errors, this, STORAGE_RULES);
+
         return new ValidationResult(errors.isEmpty(), errors);
     }
     

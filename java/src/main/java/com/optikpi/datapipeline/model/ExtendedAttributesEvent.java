@@ -1,5 +1,7 @@
 package com.optikpi.datapipeline.model;
 
+import com.optikpi.datapipeline.model.BigQueryValidation.ColumnType;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +12,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ExtendedAttributesEvent {
+
+    // Fields and types the warehouse accepts for this record; anything else is rejected there.
+    private static final BigQueryValidation.Rules STORAGE_RULES = BigQueryValidation.Rules
+        .required("workspace_id", "user_id")
+        .columns(ColumnType.STRING, "workspace_id", "user_id", "list_name")
+        .columns(ColumnType.JSON, "ext_data");
 
     @JsonProperty("account_id")
     private String accountId;
@@ -55,6 +63,8 @@ public class ExtendedAttributesEvent {
             errors.add("ext_data is required");
         }
         
+        BigQueryValidation.addStorageErrors(errors, this, STORAGE_RULES);
+
         return new ValidationResult(errors.isEmpty(), errors);
     }
 

@@ -2,12 +2,37 @@
  * Refer Friend Event Model
  * Represents refer friend events for the Data Pipeline API
  */
+const { validateStorage, storageRecord } = require('./bigQueryValidation');
+
+// Fields and types the warehouse accepts for this record; anything else is rejected there.
+const STORAGE_RULES = {
+  required: ['workspace_id', 'user_id', 'event_id', 'event_time', 'event_category', 'event_name'],
+  types: {
+    workspace_id: 'STRING',
+    user_id: 'STRING',
+    event_id: 'STRING',
+    event_time: 'TIMESTAMP',
+    event_category: 'STRING',
+    event_name: 'STRING',
+    referral_code_used: 'STRING',
+    successful_referral_confirmation: 'BOOLEAN',
+    reward_type: 'STRING',
+    reward_claimed_status: 'STRING',
+    referee_user_id: 'STRING',
+    referee_registration_date: 'TIMESTAMP',
+    referee_first_deposit: 'NUMERIC'
+  },
+  partition: 'event_time'
+};
+
 class ReferFriendEvent {
   constructor(data = {}) {
+    // The record as sent, so validation also covers fields this model does not declare.
+    Object.defineProperty(this, '_input', { value: data, enumerable: false });
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
-    this.event_category = data.event_category || 'Refer Friend';
+    this.event_category = data.event_category;
     this.event_name = data.event_name;
     this.event_id = data.event_id;
     this.event_time = data.event_time;
@@ -73,6 +98,10 @@ class ReferFriendEvent {
       if (typeof this.referee_first_deposit !== 'number' || this.referee_first_deposit < 0) {
         errors.push('referee_first_deposit must be a non-negative number');
       }
+    }
+
+    for (const error of validateStorage(storageRecord(this, this._input), STORAGE_RULES)) {
+      if (!errors.includes(error)) errors.push(error);
     }
 
     return {

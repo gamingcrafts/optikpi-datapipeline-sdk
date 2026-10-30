@@ -8,6 +8,32 @@ namespace Optikpi\DataPipeline\Models;
  */
 class AccountEvent
 {
+    // Fields and types the warehouse accepts for this record; anything else is rejected there.
+    public const STORAGE_RULES = [
+        'required' => ['workspace_id', 'user_id', 'event_id', 'event_time', 'event_category', 'event_name'],
+        'types' => [
+            'workspace_id' => 'STRING',
+            'user_id' => 'STRING',
+            'event_id' => 'STRING',
+            'event_time' => 'TIMESTAMP',
+            'event_category' => 'STRING',
+            'event_name' => 'STRING',
+            'device' => 'STRING',
+            'affiliate_id' => 'STRING',
+            'partner_id' => 'STRING',
+            'utm_source' => 'STRING',
+            'utm_campaign' => 'STRING',
+            'utm_medium' => 'STRING',
+            'status' => 'STRING',
+            'reason' => 'STRING',
+            'campaign_code' => 'STRING'
+        ],
+        'partition' => 'event_time'
+    ];
+
+    /** @var array The record as sent, so validation also covers fields this model does not declare. */
+    private $rawInput = [];
+
     public $account_id;
     public $workspace_id;
     public $user_id;
@@ -32,9 +58,9 @@ class AccountEvent
      */
     public function __construct(array $data = [])
     {
-        $this->event_category = $data['event_category'] ?? 'Account';
+        $this->rawInput = $data;
         foreach ($data as $key => $value) {
-            if (property_exists($this, $key)) {
+            if ($key !== 'rawInput' && property_exists($this, $key)) {
                 $this->$key = $value;
             }
         }
@@ -89,6 +115,13 @@ class AccountEvent
             $errors[] = 'event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)';
         }
 
+        $record = BigQueryValidation::storageRecord($this, $this->rawInput);
+        foreach (BigQueryValidation::validateStorage($record, self::STORAGE_RULES) as $error) {
+            if (!in_array($error, $errors, true)) {
+                $errors[] = $error;
+            }
+        }
+
         return [
             'isValid' => empty($errors),
             'errors' => $errors
@@ -123,7 +156,7 @@ class AccountEvent
             // Match JavaScript toJSON() behavior: exclude undefined properties
             // In PHP, unset properties are null, so excluding null approximates JavaScript's undefined exclusion
             // Note: This means explicitly null values are also excluded, which differs slightly from JavaScript
-            if ($value !== null) {
+            if ($key !== 'rawInput' && $value !== null) {
                 $arr[$key] = $value;
             }
         }

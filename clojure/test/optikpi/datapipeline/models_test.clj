@@ -42,8 +42,9 @@
     (is (some #{"gender must be Male, Female, or Other"} (:errors r)))))
 
 ;; AccountEvent
-(deftest account-event-sets-category
-  (is (= "Account" (:event_category (ae/build base)))))
+(deftest account-event-build-does-not-set-category
+  (is (nil? (:event_category (ae/build base))))
+  (is (= "Account" (:event_category (ae/build (assoc base :event_category "Account"))))))
 
 (deftest account-event-invalid-device
   (let [r (ae/validate (assoc base :device "smartwatch"))]
@@ -58,16 +59,17 @@
   (let [r (de/validate (assoc base :amount -10 :payment_method "credit_card" :transaction_id "t1"))]
     (is (some #{"amount must be positive"} (:errors r)))))
 
-(deftest deposit-event-sets-category
-  (is (= "Deposit" (:event_category (de/build base)))))
+(deftest deposit-event-build-does-not-set-category
+  (is (nil? (:event_category (de/build base)))))
 
 ;; WithdrawEvent
-(deftest withdraw-event-sets-category
-  (is (= "Withdraw" (:event_category (we/build base)))))
+(deftest withdraw-event-build-does-not-set-category
+  (is (nil? (:event_category (we/build base)))))
 
 ;; GamingActivityEvent
-(deftest gaming-activity-sets-category
-  (is (= "Gaming Activity" (:event_category (ga/build base)))))
+(deftest gaming-activity-build-does-not-set-category
+  (is (nil? (:event_category (ga/build base))))
+  (is (some #{"event_category is required"} (:errors (ga/validate (ga/build base))))))
 
 ;; WalletBalanceEvent
 (deftest wallet-balance-invalid-currency
@@ -75,7 +77,7 @@
     (is (some #{"currency must be a 3-letter ISO code (e.g. EUR, USD)"} (:errors r)))))
 
 (deftest wallet-balance-valid-currency
-  (is (:valid? (wb/validate (assoc base :currency "EUR")))))
+  (is (:valid? (wb/validate (assoc base :currency "EUR" :event_category "Wallet Balance")))))
 
 ;; SystemEvent
 (deftest system-event-sets-category

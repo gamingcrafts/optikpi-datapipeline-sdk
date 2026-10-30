@@ -1,5 +1,7 @@
 package com.optikpi.datapipeline.model;
 
+import com.optikpi.datapipeline.model.BigQueryValidation.ColumnType;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -19,7 +21,30 @@ import jakarta.validation.constraints.Pattern;
  * Updated to match JavaScript model structure
  */
 public class CustomerProfile {
-    
+
+    // Fields and types the warehouse accepts for this record; anything else is rejected there.
+    private static final BigQueryValidation.Rules STORAGE_RULES = BigQueryValidation.Rules
+        .required("workspace_id", "user_id", "creation_timestamp")
+        .columns(ColumnType.STRING,
+            "workspace_id", "user_id", "username", "full_name", "first_name", "last_name", "email",
+            "phone_number", "gender", "country", "city", "language", "currency",
+            "marketing_email_preference", "notifications_preference", "subscription",
+            "privacy_settings", "reality_checks_notification", "account_status", "vip_status",
+            "loyalty_program_tiers", "bonus_abuser", "acquisition_source", "partner_id",
+            "affiliate_id", "utm_source", "utm_campaign", "utm_medium", "referral_link_code",
+            "referral_limit_reached", "phone_verification", "email_verification", "bank_verification",
+            "iddoc_verification", "risk_score_level", "marketing_sms_preference", "self_exclusion_by",
+            "self_exclusion_by_type", "real_money_enabled", "push_token")
+        .columns(ColumnType.NUMERIC,
+            "deposit_limits", "loss_limits", "wagering_limits", "session_time_limits",
+            "financial_risk_level")
+        .columns(ColumnType.TIMESTAMP,
+            "creation_timestamp", "cooling_off_expiry_date", "self_exclusion_expiry_date",
+            "self_exclusion_check_time", "self_exclusion_created_time", "closed_time")
+        .columns(ColumnType.DATE, "date_of_birth")
+        .columns(ColumnType.JSON, "custom_data")
+        .partition("creation_timestamp");
+
     @NotBlank(message = "account_id is required")
     @JsonProperty("account_id")
     private String accountId;
@@ -283,6 +308,8 @@ public class CustomerProfile {
             errors.add("vip_status must be one of: Regular, Silver, Gold, Platinum, Diamond");
         }
         
+        BigQueryValidation.addStorageErrors(errors, this, STORAGE_RULES);
+
         return new ValidationResult(errors.isEmpty(), errors);
     }
     

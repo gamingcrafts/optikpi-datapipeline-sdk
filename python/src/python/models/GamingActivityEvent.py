@@ -3,13 +3,92 @@ from typing import Optional, Dict, Any, List
 import re
 from datetime import datetime
 
+from .bigquery_validation import merge_storage_errors, model_from_raw
+
+# Fields and types the warehouse accepts for this record; anything else is rejected there.
+STORAGE_RULES = {
+    "required": ["workspace_id", "user_id", "event_id", "event_time", "event_category", "event_name"],
+    "types": {
+        "workspace_id": "STRING",
+        "user_id": "STRING",
+        "event_id": "STRING",
+        "event_time": "TIMESTAMP",
+        "event_category": "STRING",
+        "event_name": "STRING",
+        "free_spin_id": "STRING",
+        "num_spins_played": "INTEGER",
+        "game_id": "STRING",
+        "game_title": "STRING",
+        "game_theme": "STRING",
+        "provider": "STRING",
+        "win_amount": "NUMERIC",
+        "remaining_spins": "INTEGER",
+        "bet_value_per_spin": "NUMERIC",
+        "wagering_requirements_met": "BOOLEAN",
+        "free_spin_expiry_date": "TIMESTAMP",
+        "campaign_id": "STRING",
+        "campaign_name": "STRING",
+        "rtp": "NUMERIC",
+        "jackpot_amount": "NUMERIC",
+        "game_category": "STRING",
+        "winning_bet_amount": "NUMERIC",
+        "jackpot_type": "STRING",
+        "wager_amount": "NUMERIC",
+        "loss_amount": "NUMERIC",
+        "volatility": "STRING",
+        "min_bet": "NUMERIC",
+        "max_bet": "NUMERIC",
+        "number_of_reels": "INTEGER",
+        "number_of_paylines": "INTEGER",
+        "feature_types": "STRING",
+        "game_release_date": "TIMESTAMP",
+        "live_dealer_availability": "BOOLEAN",
+        "side_bets_availability": "BOOLEAN",
+        "multiplayer_option": "BOOLEAN",
+        "auto_play": "BOOLEAN",
+        "poker_variant": "STRING",
+        "tournament_name": "STRING",
+        "buy_in_amount": "NUMERIC",
+        "table_type": "STRING",
+        "stakes_level": "STRING",
+        "number_of_players": "INTEGER",
+        "game_duration": "INTEGER",
+        "hand_volume": "INTEGER",
+        "player_position": "STRING",
+        "final_hand": "STRING",
+        "rake_contribution": "NUMERIC",
+        "multi_tabling_indicator": "BOOLEAN",
+        "session_result": "STRING",
+        "vip_status": "STRING",
+        "blind_level": "STRING",
+        "rebuy_and_addon_info": "STRING",
+        "sport_type": "STRING",
+        "betting_market": "STRING",
+        "odds": "NUMERIC",
+        "live_betting_availability": "BOOLEAN",
+        "result": "STRING",
+        "bet_status": "STRING",
+        "betting_channel": "STRING",
+        "bonus_type": "STRING",
+        "bonus_amount": "NUMERIC",
+        "bonus_code": "STRING",
+        "free_spin_start_date": "TIMESTAMP",
+        "num_spins_awarded": "INTEGER",
+        "parent_game_category": "STRING",
+        "currency": "STRING",
+        "money_type": "STRING",
+        "transaction_type": "STRING"
+    },
+    "partition": "event_time"
+}
+
 
 @dataclass
 class GamingActivityEvent:
     account_id: Optional[str] = None
     workspace_id: Optional[str] = None
     user_id: Optional[str] = None
-    event_category: str = "Gaming Activity"
+    event_category: Optional[str] = None
     event_name: Optional[str] = None
     event_id: Optional[str] = None
     event_time: Optional[str] = None
@@ -120,6 +199,9 @@ class GamingActivityEvent:
         if self.event_time and not self.is_valid_datetime(self.event_time):
             errors.append("event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)")
 
+        # The record as sent, so validation also covers fields this model does not declare.
+        merge_storage_errors(errors, self, STORAGE_RULES)
+
         return {"isValid": len(errors) == 0, "errors": errors}
 
     @staticmethod
@@ -142,7 +224,7 @@ class GamingActivityEvent:
 
     @classmethod
     def from_object(cls, data: Dict[str, Any]) -> "GamingActivityEvent":
-        return cls(**data)
+        return model_from_raw(cls, data)
 
     def __repr__(self) -> str:
         return f"GamingActivityEvent(event_id={self.event_id}, event_name={self.event_name}, user_id={self.user_id})"

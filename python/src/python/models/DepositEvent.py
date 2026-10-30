@@ -3,12 +3,38 @@ from typing import Optional, Dict, Any
 from datetime import datetime
 import re
 
+from .bigquery_validation import merge_storage_errors, model_from_raw
+
+# Fields and types the warehouse accepts for this record; anything else is rejected there.
+STORAGE_RULES = {
+    "required": ["workspace_id", "user_id", "event_id", "event_time", "event_category", "event_name", "amount"],
+    "types": {
+        "workspace_id": "STRING",
+        "user_id": "STRING",
+        "event_id": "STRING",
+        "event_time": "TIMESTAMP",
+        "event_category": "STRING",
+        "event_name": "STRING",
+        "amount": "NUMERIC",
+        "payment_method": "STRING",
+        "transaction_id": "STRING",
+        "payment_provider_id": "STRING",
+        "payment_provider_name": "STRING",
+        "failure_reason": "STRING",
+        "utm_source": "STRING",
+        "utm_campaign": "STRING",
+        "utm_medium": "STRING"
+    },
+    "partition": "event_time"
+}
+
+
 @dataclass
 class DepositEvent:
     account_id: Optional[str] = None
     workspace_id: Optional[str] = None
     user_id: Optional[str] = None
-    event_category: str = "Deposit"
+    event_category: Optional[str] = None
     event_name: Optional[str] = None
     event_id: Optional[str] = None
     event_time: Optional[str] = None
@@ -45,7 +71,7 @@ class DepositEvent:
         if not self.transaction_id:
             errors.append("transaction_id is required")
 
-        if self.event_category != "Deposit":
+        if self.event_category and self.event_category != "Deposit":
             errors.append('event_category must be "Deposit" for deposit events')
 
         if self.amount is not None and self.amount <= 0:
@@ -60,6 +86,9 @@ class DepositEvent:
 
         if self.event_time and not self.is_valid_datetime(self.event_time):
             errors.append("event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)")
+
+        # The record as sent, so validation also covers fields this model does not declare.
+        merge_storage_errors(errors, self, STORAGE_RULES)
 
         return {"isValid": len(errors) == 0, "errors": errors}
 
@@ -76,7 +105,7 @@ class DepositEvent:
 
     @classmethod
     def from_object(cls, data: Dict[str, Any]) -> "DepositEvent":
-        return cls(**data)
+        return model_from_raw(cls, data)
 
     def __repr__(self) -> str:
         return f"DepositEvent(event_id={self.event_id}, event_name={self.event_name}, user_id={self.user_id})"

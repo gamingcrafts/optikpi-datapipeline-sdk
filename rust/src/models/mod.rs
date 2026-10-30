@@ -1,4 +1,5 @@
 mod account_event;
+mod big_query_validation;
 mod customer_ext_event;
 mod customer_profile;
 mod deposit_event;

@@ -2,8 +2,73 @@
  * Customer Profile Model
  * Represents a customer profile for the Data Pipeline API
  */
+const { validateStorage, storageRecord } = require('./bigQueryValidation');
+
+// Fields and types the warehouse accepts for this record; anything else is rejected there.
+const STORAGE_RULES = {
+  required: ['workspace_id', 'user_id', 'creation_timestamp'],
+  types: {
+    workspace_id: 'STRING',
+    user_id: 'STRING',
+    username: 'STRING',
+    full_name: 'STRING',
+    first_name: 'STRING',
+    last_name: 'STRING',
+    date_of_birth: 'DATE',
+    email: 'STRING',
+    phone_number: 'STRING',
+    gender: 'STRING',
+    country: 'STRING',
+    city: 'STRING',
+    language: 'STRING',
+    currency: 'STRING',
+    phone_verification: 'STRING',
+    email_verification: 'STRING',
+    bank_verification: 'STRING',
+    iddoc_verification: 'STRING',
+    marketing_email_preference: 'STRING',
+    notifications_preference: 'STRING',
+    subscription: 'STRING',
+    privacy_settings: 'STRING',
+    deposit_limits: 'NUMERIC',
+    loss_limits: 'NUMERIC',
+    wagering_limits: 'NUMERIC',
+    session_time_limits: 'NUMERIC',
+    cooling_off_expiry_date: 'TIMESTAMP',
+    self_exclusion_expiry_date: 'TIMESTAMP',
+    reality_checks_notification: 'STRING',
+    vip_status: 'STRING',
+    loyalty_program_tiers: 'STRING',
+    account_status: 'STRING',
+    bonus_abuser: 'STRING',
+    financial_risk_level: 'NUMERIC',
+    acquisition_source: 'STRING',
+    partner_id: 'STRING',
+    affiliate_id: 'STRING',
+    utm_source: 'STRING',
+    utm_campaign: 'STRING',
+    utm_medium: 'STRING',
+    referral_link_code: 'STRING',
+    referral_limit_reached: 'STRING',
+    creation_timestamp: 'TIMESTAMP',
+    risk_score_level: 'STRING',
+    marketing_sms_preference: 'STRING',
+    custom_data: 'JSON',
+    self_exclusion_by: 'STRING',
+    self_exclusion_by_type: 'STRING',
+    self_exclusion_check_time: 'TIMESTAMP',
+    self_exclusion_created_time: 'TIMESTAMP',
+    closed_time: 'TIMESTAMP',
+    real_money_enabled: 'STRING',
+    push_token: 'STRING'
+  },
+  partition: 'creation_timestamp'
+};
+
 class CustomerProfile {
   constructor(data = {}) {
+    // The record as sent, so validation also covers fields this model does not declare.
+    Object.defineProperty(this, '_input', { value: data, enumerable: false });
     this.account_id = data.account_id;
     this.workspace_id = data.workspace_id;
     this.user_id = data.user_id;
@@ -92,6 +157,10 @@ class CustomerProfile {
     // Enum validations
     if (this.gender && !['Male', 'Female', 'Other'].includes(this.gender)) {
       errors.push('gender must be one of: Male, Female, Other');
+    }
+
+    for (const error of validateStorage(storageRecord(this, this._input), STORAGE_RULES)) {
+      if (!errors.includes(error)) errors.push(error);
     }
 
     return {

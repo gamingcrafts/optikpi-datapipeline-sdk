@@ -1,5 +1,7 @@
 package com.optikpi.datapipeline.model;
 
+import com.optikpi.datapipeline.model.BigQueryValidation.ColumnType;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -14,7 +16,32 @@ import jakarta.validation.constraints.NotBlank;
  * Represents gaming activity events for the Data Pipeline API
  */
 public class GamingActivityEvent {
-    
+
+    // Fields and types the warehouse accepts for this record; anything else is rejected there.
+    private static final BigQueryValidation.Rules STORAGE_RULES = BigQueryValidation.Rules
+        .required("workspace_id", "user_id", "event_id", "event_time", "event_category", "event_name")
+        .columns(ColumnType.STRING,
+            "workspace_id", "user_id", "event_category", "event_name", "event_id", "game_id",
+            "game_title", "provider", "game_category", "currency", "tournament_name", "free_spin_id",
+            "game_theme", "campaign_id", "campaign_name", "jackpot_type", "volatility",
+            "feature_types", "poker_variant", "table_type", "stakes_level", "player_position",
+            "final_hand", "session_result", "vip_status", "blind_level", "rebuy_and_addon_info",
+            "sport_type", "betting_market", "result", "bet_status", "betting_channel", "bonus_type",
+            "bonus_code", "parent_game_category", "money_type", "transaction_type")
+        .columns(ColumnType.NUMERIC,
+            "wager_amount", "win_amount", "jackpot_amount", "loss_amount", "bet_value_per_spin", "rtp",
+            "winning_bet_amount", "min_bet", "max_bet", "buy_in_amount", "rake_contribution", "odds",
+            "bonus_amount")
+        .columns(ColumnType.INTEGER,
+            "num_spins_played", "remaining_spins", "number_of_reels", "number_of_paylines",
+            "number_of_players", "game_duration", "hand_volume", "num_spins_awarded")
+        .columns(ColumnType.BOOLEAN,
+            "wagering_requirements_met", "live_dealer_availability", "side_bets_availability",
+            "multiplayer_option", "auto_play", "multi_tabling_indicator", "live_betting_availability")
+        .columns(ColumnType.TIMESTAMP,
+            "event_time", "free_spin_expiry_date", "game_release_date", "free_spin_start_date")
+        .partition("event_time");
+
     @NotBlank(message = "account_id is required")
     @JsonProperty("account_id")
     private String accountId;
@@ -28,7 +55,7 @@ public class GamingActivityEvent {
     private String userId;
     
     @JsonProperty("event_category")
-    private String eventCategory = "Gaming Activity";
+    private String eventCategory;
     
     @NotBlank(message = "event_name is required")
     @JsonProperty("event_name")
@@ -236,6 +263,9 @@ public class GamingActivityEvent {
     
     public GamingActivityEvent() {}
     
+    /**
+     * event_category is not filled in: set it with {@code setEventCategory("Gaming Activity")}, or validation fails.
+     */
     public GamingActivityEvent(String accountId, String workspaceId, String userId, String eventName, String eventId, String eventTime) {
         this.accountId = accountId;
         this.workspaceId = workspaceId;
@@ -282,6 +312,8 @@ public class GamingActivityEvent {
             errors.add("event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)");
         }
         
+        BigQueryValidation.addStorageErrors(errors, this, STORAGE_RULES);
+
         return new ValidationResult(errors.isEmpty(), errors);
     }
     

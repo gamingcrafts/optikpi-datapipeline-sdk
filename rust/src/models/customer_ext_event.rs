@@ -2,7 +2,20 @@ use serde::ser::{Serialize, SerializeStruct, Serializer};
 use serde::Deserialize;
 use serde_json::Value;
 
+use super::big_query_validation::{append_storage_errors, Col, StorageRules};
 use super::{ok, ValidationResult};
+
+// Fields and types the warehouse accepts for this record; anything else is rejected there.
+const STORAGE_RULES: StorageRules = StorageRules {
+    required: &["workspace_id", "user_id"],
+    types: &[
+        ("workspace_id", Col::String),
+        ("user_id", Col::String),
+        ("list_name", Col::String),
+        ("ext_data", Col::Json),
+    ],
+    partition: None,
+};
 
 /// Extended attributes: arbitrary custom key-value data attached to a user
 /// under a named list (e.g. `"BINGO_PREFERENCES"`). `ext_data` accepts a
@@ -56,6 +69,8 @@ impl CustomerExtEvent {
             Value::Null => errors.push("ext_data is required".to_string()),
             _ => errors.push("ext_data must be a JSON object or a JSON string".to_string()),
         }
+
+        append_storage_errors(&mut errors, self, &STORAGE_RULES);
 
         ok(errors)
     }

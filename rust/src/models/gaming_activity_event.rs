@@ -1,6 +1,84 @@
 use serde::{Deserialize, Serialize};
 
+use super::big_query_validation::{append_storage_errors, Col, StorageRules};
 use super::{is_valid_datetime, ok, ValidationResult};
+
+// Fields and types the warehouse accepts for this record; anything else is rejected there.
+const STORAGE_RULES: StorageRules = StorageRules {
+    required: &["workspace_id", "user_id", "event_id", "event_time", "event_category", "event_name"],
+    types: &[
+        ("workspace_id", Col::String),
+        ("user_id", Col::String),
+        ("event_id", Col::String),
+        ("event_time", Col::Timestamp),
+        ("event_category", Col::String),
+        ("event_name", Col::String),
+        ("free_spin_id", Col::String),
+        ("num_spins_played", Col::Integer),
+        ("game_id", Col::String),
+        ("game_title", Col::String),
+        ("game_theme", Col::String),
+        ("provider", Col::String),
+        ("win_amount", Col::Numeric),
+        ("remaining_spins", Col::Integer),
+        ("bet_value_per_spin", Col::Numeric),
+        ("wagering_requirements_met", Col::Boolean),
+        ("free_spin_expiry_date", Col::Timestamp),
+        ("campaign_id", Col::String),
+        ("campaign_name", Col::String),
+        ("rtp", Col::Numeric),
+        ("jackpot_amount", Col::Numeric),
+        ("game_category", Col::String),
+        ("winning_bet_amount", Col::Numeric),
+        ("jackpot_type", Col::String),
+        ("wager_amount", Col::Numeric),
+        ("loss_amount", Col::Numeric),
+        ("volatility", Col::String),
+        ("min_bet", Col::Numeric),
+        ("max_bet", Col::Numeric),
+        ("number_of_reels", Col::Integer),
+        ("number_of_paylines", Col::Integer),
+        ("feature_types", Col::String),
+        ("game_release_date", Col::Timestamp),
+        ("live_dealer_availability", Col::Boolean),
+        ("side_bets_availability", Col::Boolean),
+        ("multiplayer_option", Col::Boolean),
+        ("auto_play", Col::Boolean),
+        ("poker_variant", Col::String),
+        ("tournament_name", Col::String),
+        ("buy_in_amount", Col::Numeric),
+        ("table_type", Col::String),
+        ("stakes_level", Col::String),
+        ("number_of_players", Col::Integer),
+        ("game_duration", Col::Integer),
+        ("hand_volume", Col::Integer),
+        ("player_position", Col::String),
+        ("final_hand", Col::String),
+        ("rake_contribution", Col::Numeric),
+        ("multi_tabling_indicator", Col::Boolean),
+        ("session_result", Col::String),
+        ("vip_status", Col::String),
+        ("blind_level", Col::String),
+        ("rebuy_and_addon_info", Col::String),
+        ("sport_type", Col::String),
+        ("betting_market", Col::String),
+        ("odds", Col::Numeric),
+        ("live_betting_availability", Col::Boolean),
+        ("result", Col::String),
+        ("bet_status", Col::String),
+        ("betting_channel", Col::String),
+        ("bonus_type", Col::String),
+        ("bonus_amount", Col::Numeric),
+        ("bonus_code", Col::String),
+        ("free_spin_start_date", Col::Timestamp),
+        ("num_spins_awarded", Col::Integer),
+        ("parent_game_category", Col::String),
+        ("currency", Col::String),
+        ("money_type", Col::String),
+        ("transaction_type", Col::String),
+    ],
+    partition: Some("event_time"),
+};
 
 /// Gaming activity event: game plays, wins, losses, and session data across
 /// slots, sports betting, and poker.
@@ -9,6 +87,8 @@ pub struct GamingActivityEvent {
     pub account_id: String,
     pub workspace_id: String,
     pub user_id: String,
+    /// Required; the SDK never fills it in. Must be `"Gaming Activity"`.
+    #[serde(default)]
     pub event_category: String,
     pub event_name: String,
     pub event_id: String,
@@ -148,6 +228,7 @@ impl GamingActivityEvent {
         account_id: impl Into<String>,
         workspace_id: impl Into<String>,
         user_id: impl Into<String>,
+        event_category: impl Into<String>,
         event_name: impl Into<String>,
         event_id: impl Into<String>,
         event_time: impl Into<String>,
@@ -158,7 +239,7 @@ impl GamingActivityEvent {
             account_id: account_id.into(),
             workspace_id: workspace_id.into(),
             user_id: user_id.into(),
-            event_category: "Gaming Activity".to_string(),
+            event_category: event_category.into(),
             event_name: event_name.into(),
             event_id: event_id.into(),
             event_time: event_time.into(),
@@ -256,7 +337,7 @@ impl GamingActivityEvent {
         if self.game_title.is_empty() {
             errors.push("game_title is required".to_string());
         }
-        if self.event_category != "Gaming Activity" {
+        if !self.event_category.is_empty() && self.event_category != "Gaming Activity" {
             errors.push(r#"event_category must be "Gaming Activity" for gaming events"#.to_string());
         }
         if let Some(v) = self.wager_amount {
@@ -277,6 +358,8 @@ impl GamingActivityEvent {
         if !self.event_time.is_empty() && !is_valid_datetime(&self.event_time) {
             errors.push("event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)".to_string());
         }
+
+        append_storage_errors(&mut errors, self, &STORAGE_RULES);
 
         ok(errors)
     }

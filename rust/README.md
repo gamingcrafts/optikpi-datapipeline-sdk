@@ -42,6 +42,7 @@ fn main() {
         std::env::var("ACCOUNT_ID").unwrap(),
         std::env::var("WORKSPACE_ID").unwrap(),
         "player_001",
+        "Deposit",
         "Successful Deposit",
         "dep_001",
         "2026-01-15T10:30:00Z",
@@ -79,9 +80,9 @@ API_BASE_URL=... AUTH_TOKEN=... ACCOUNT_ID=... WORKSPACE_ID=... cargo run --exam
 
 ## Event Models & Send Methods
 
-Each model exposes a `new(..)` constructor with the API's required fields; optional fields are public and set directly (`event.device = Some("desktop".into())`). `validate()` returns a `ValidationResult { errors: Vec<String> }` — call `.is_valid()` before sending.
+Each model exposes a `new(..)` constructor with the API's required fields — event models take `event_category` right after `user_id`; it is required and the SDK never fills it in; optional fields are public and set directly (`event.device = Some("desktop".into())`). `validate()` returns a `ValidationResult { errors: Vec<String> }` — call `.is_valid()` before sending. Validation also rejects anything the data warehouse would refuse to store: missing or empty required fields, values of the wrong column type (e.g. an unparseable or empty timestamp), and an `event_time` / `creation_timestamp` outside the last 10 years or more than 1 year ahead.
 
-| Model | `event_category` | Send method |
+| Model | `event_category` (required) | Send method |
 |-------|-------------------|-------------|
 | `CustomerProfile` | — | `send_customer_profile` |
 | `AccountEvent` | `"Account"` | `send_account_event` |

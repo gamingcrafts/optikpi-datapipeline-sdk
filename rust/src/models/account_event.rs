@@ -1,9 +1,33 @@
 use serde::{Deserialize, Serialize};
 
+use super::big_query_validation::{append_storage_errors, Col, StorageRules};
 use super::{is_valid_datetime, ok, ValidationResult};
 
 const VALID_STATUSES: [&str; 4] = ["verified", "pending", "failed", "completed"];
 const VALID_DEVICES: [&str; 4] = ["desktop", "mobile", "tablet", "app"];
+
+// Fields and types the warehouse accepts for this record; anything else is rejected there.
+const STORAGE_RULES: StorageRules = StorageRules {
+    required: &["workspace_id", "user_id", "event_id", "event_time", "event_category", "event_name"],
+    types: &[
+        ("workspace_id", Col::String),
+        ("user_id", Col::String),
+        ("event_id", Col::String),
+        ("event_time", Col::Timestamp),
+        ("event_category", Col::String),
+        ("event_name", Col::String),
+        ("device", Col::String),
+        ("affiliate_id", Col::String),
+        ("partner_id", Col::String),
+        ("utm_source", Col::String),
+        ("utm_campaign", Col::String),
+        ("utm_medium", Col::String),
+        ("status", Col::String),
+        ("reason", Col::String),
+        ("campaign_code", Col::String),
+    ],
+    partition: Some("event_time"),
+};
 
 /// Account event: registration, verification, and account changes.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -11,6 +35,8 @@ pub struct AccountEvent {
     pub account_id: String,
     pub workspace_id: String,
     pub user_id: String,
+    /// Required; the SDK never fills it in. Must be `"Account"`.
+    #[serde(default)]
     pub event_category: String,
     pub event_name: String,
     pub event_id: String,
@@ -40,6 +66,7 @@ impl AccountEvent {
         account_id: impl Into<String>,
         workspace_id: impl Into<String>,
         user_id: impl Into<String>,
+        event_category: impl Into<String>,
         event_name: impl Into<String>,
         event_id: impl Into<String>,
         event_time: impl Into<String>,
@@ -48,7 +75,7 @@ impl AccountEvent {
             account_id: account_id.into(),
             workspace_id: workspace_id.into(),
             user_id: user_id.into(),
-            event_category: "Account".to_string(),
+            event_category: event_category.into(),
             event_name: event_name.into(),
             event_id: event_id.into(),
             event_time: event_time.into(),
@@ -85,7 +112,7 @@ impl AccountEvent {
         if self.event_time.is_empty() {
             errors.push("event_time is required".to_string());
         }
-        if self.event_category != "Account" {
+        if !self.event_category.is_empty() && self.event_category != "Account" {
             errors.push(r#"event_category must be "Account" for account events"#.to_string());
         }
         if let Some(status) = &self.status {
@@ -101,6 +128,8 @@ impl AccountEvent {
         if !self.event_time.is_empty() && !is_valid_datetime(&self.event_time) {
             errors.push("event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)".to_string());
         }
+
+        append_storage_errors(&mut errors, self, &STORAGE_RULES);
 
         ok(errors)
     }

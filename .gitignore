@@ -58,3 +58,5 @@ python/venv/
 python/**/*.pyc
 python/**/*.pyo
 python/**/*.pyd
+rust/target/**
+rust/Cargo.lock

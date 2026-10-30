@@ -6,6 +6,31 @@ from typing import Optional, Dict, Any, List
 from datetime import datetime
 from dataclasses import dataclass, field, asdict
 
+from .bigquery_validation import merge_storage_errors, model_from_raw
+
+# Fields and types the warehouse accepts for this record; anything else is rejected there.
+STORAGE_RULES = {
+    "required": ["workspace_id", "user_id", "event_id", "event_time", "event_category", "event_name"],
+    "types": {
+        "workspace_id": "STRING",
+        "user_id": "STRING",
+        "event_id": "STRING",
+        "event_time": "TIMESTAMP",
+        "event_category": "STRING",
+        "event_name": "STRING",
+        "device": "STRING",
+        "affiliate_id": "STRING",
+        "partner_id": "STRING",
+        "utm_source": "STRING",
+        "utm_campaign": "STRING",
+        "utm_medium": "STRING",
+        "status": "STRING",
+        "reason": "STRING",
+        "campaign_code": "STRING"
+    },
+    "partition": "event_time"
+}
+
 
 @dataclass
 class AccountEvent:
@@ -18,7 +43,7 @@ class AccountEvent:
         account_id: Account identifier
         workspace_id: Workspace identifier
         user_id: User identifier
-        event_category: Event category (default: 'Account')
+        event_category: Event category (required, must be 'Account')
         event_name: Name of the event
         event_id: Unique event identifier
         event_time: Event timestamp in ISO 8601 format
@@ -32,7 +57,7 @@ class AccountEvent:
     account_id: Optional[str] = None
     workspace_id: Optional[str] = None
     user_id: Optional[str] = None
-    event_category: str = 'Account'
+    event_category: Optional[str] = None
     event_name: Optional[str] = None
     event_id: Optional[str] = None
     event_time: Optional[str] = None
@@ -88,7 +113,10 @@ class AccountEvent:
         # Date format validation
         if self.event_time and not self.is_valid_datetime(self.event_time):
             errors.append('event_time must be in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ)')
-        
+
+        # The record as sent, so validation also covers fields this model does not declare.
+        merge_storage_errors(errors, self, STORAGE_RULES)
+
         return {
             'isValid': len(errors) == 0,
             'errors': errors
@@ -134,7 +162,7 @@ class AccountEvent:
         Returns:
             New AccountEvent instance
         """
-        return cls(**data)
+        return model_from_raw(cls, data)
     
     def __repr__(self) -> str:
         """String representation"""

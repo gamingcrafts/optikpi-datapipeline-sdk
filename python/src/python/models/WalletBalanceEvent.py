@@ -3,13 +3,35 @@ from typing import Optional, Dict, Any, List
 from datetime import datetime
 import re
 
+from .bigquery_validation import merge_storage_errors, model_from_raw
+
+# Fields and types the warehouse accepts for this record; anything else is rejected there.
+STORAGE_RULES = {
+    "required": ["workspace_id", "user_id", "event_id", "event_time", "event_category", "event_name"],
+    "types": {
+        "workspace_id": "STRING",
+        "user_id": "STRING",
+        "event_id": "STRING",
+        "event_time": "TIMESTAMP",
+        "event_category": "STRING",
+        "event_name": "STRING",
+        "wallet_type": "STRING",
+        "currency": "STRING",
+        "current_cash_balance": "NUMERIC",
+        "current_bonus_balance": "NUMERIC",
+        "current_total_balance": "NUMERIC",
+        "blocked_amount": "NUMERIC"
+    },
+    "partition": "event_time"
+}
+
 
 @dataclass
 class WalletBalanceEvent:
     account_id: Optional[str] = None
     workspace_id: Optional[str] = None
     user_id: Optional[str] = None
-    event_category: str = "Wallet Balance"
+    event_category: Optional[str] = None
     event_name: Optional[str] = None
     event_id: Optional[str] = None
     event_time: Optional[str] = None
@@ -63,6 +85,9 @@ class WalletBalanceEvent:
             if value is not None and (not isinstance(value, (int, float)) or value < 0):
                 errors.append(f"{field} must be a non-negative number")
 
+        # The record as sent, so validation also covers fields this model does not declare.
+        merge_storage_errors(errors, self, STORAGE_RULES)
+
         return {"isValid": len(errors) == 0, "errors": errors}
 
     # -------------------------------
@@ -85,7 +110,7 @@ class WalletBalanceEvent:
 
     @classmethod
     def from_object(cls, data: Dict[str, Any]) -> "WalletBalanceEvent":
-        return cls(**data)
+        return model_from_raw(cls, data)
 
     def __repr__(self) -> str:
         return (

@@ -1,7 +1,69 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
+use super::big_query_validation::{append_storage_errors, Col, StorageRules};
 use super::{is_valid_date, is_valid_datetime, is_valid_email, ok, ValidationResult};
+
+// Fields and types the warehouse accepts for this record; anything else is rejected there.
+const STORAGE_RULES: StorageRules = StorageRules {
+    required: &["workspace_id", "user_id", "creation_timestamp"],
+    types: &[
+        ("workspace_id", Col::String),
+        ("user_id", Col::String),
+        ("username", Col::String),
+        ("full_name", Col::String),
+        ("first_name", Col::String),
+        ("last_name", Col::String),
+        ("date_of_birth", Col::Date),
+        ("email", Col::String),
+        ("phone_number", Col::String),
+        ("gender", Col::String),
+        ("country", Col::String),
+        ("city", Col::String),
+        ("language", Col::String),
+        ("currency", Col::String),
+        ("phone_verification", Col::String),
+        ("email_verification", Col::String),
+        ("bank_verification", Col::String),
+        ("iddoc_verification", Col::String),
+        ("marketing_email_preference", Col::String),
+        ("notifications_preference", Col::String),
+        ("subscription", Col::String),
+        ("privacy_settings", Col::String),
+        ("deposit_limits", Col::Numeric),
+        ("loss_limits", Col::Numeric),
+        ("wagering_limits", Col::Numeric),
+        ("session_time_limits", Col::Numeric),
+        ("cooling_off_expiry_date", Col::Timestamp),
+        ("self_exclusion_expiry_date", Col::Timestamp),
+        ("reality_checks_notification", Col::String),
+        ("vip_status", Col::String),
+        ("loyalty_program_tiers", Col::String),
+        ("account_status", Col::String),
+        ("bonus_abuser", Col::String),
+        ("financial_risk_level", Col::Numeric),
+        ("acquisition_source", Col::String),
+        ("partner_id", Col::String),
+        ("affiliate_id", Col::String),
+        ("utm_source", Col::String),
+        ("utm_campaign", Col::String),
+        ("utm_medium", Col::String),
+        ("referral_link_code", Col::String),
+        ("referral_limit_reached", Col::String),
+        ("creation_timestamp", Col::Timestamp),
+        ("risk_score_level", Col::String),
+        ("marketing_sms_preference", Col::String),
+        ("custom_data", Col::Json),
+        ("self_exclusion_by", Col::String),
+        ("self_exclusion_by_type", Col::String),
+        ("self_exclusion_check_time", Col::Timestamp),
+        ("self_exclusion_created_time", Col::Timestamp),
+        ("closed_time", Col::Timestamp),
+        ("real_money_enabled", Col::String),
+        ("push_token", Col::String),
+    ],
+    partition: Some("creation_timestamp"),
+};
 
 /// Customer profile: full user account information and preferences.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -235,6 +297,8 @@ impl CustomerProfile {
                 errors.push("subscription must be one of: Subscribed, Unsubscribed".to_string());
             }
         }
+
+        append_storage_errors(&mut errors, self, &STORAGE_RULES);
 
         ok(errors)
     }
