@@ -106,3 +106,20 @@
 (deftest refer-friend-requires-category
   (is (some #{"event_category is required"} (:errors (rf/validate base))))
   (is (not-any? #{"event_category is required"} (:errors (rf/validate (assoc base :event_category "Refer Friend"))))))
+
+;; Category check, all six event models
+(deftest wrong-category-is-rejected
+  (doseq [[validate build category message]
+          [[ae/validate ae/build "Account" "event_category must be \"Account\" for account events"]
+           [de/validate de/build "Deposit" "event_category must be \"Deposit\" for deposit events"]
+           [we/validate we/build "Withdraw" "event_category must be \"Withdraw\" for withdraw events"]
+           [ga/validate ga/build "Gaming Activity" "event_category must be \"Gaming Activity\" for gaming events"]
+           [wb/validate wb/build "Wallet Balance" "event_category must be \"Wallet Balance\" for wallet balance events"]
+           [rf/validate rf/build "Refer Friend" "event_category must be \"Refer Friend\" for refer friend events"]]]
+    (testing category
+      (let [errors-for #(:errors (validate (build (assoc base :event_category %))))]
+        (doseq [wrong ["Other" 5]]
+          (is (some #{message} (errors-for wrong))))
+        (is (not-any? #{message "event_category is required"} (errors-for category)))
+        (is (some #{"event_category is required"} (errors-for "")))
+        (is (not-any? #{message} (errors-for "")))))))

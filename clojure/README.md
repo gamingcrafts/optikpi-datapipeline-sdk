@@ -84,7 +84,7 @@ Each model namespace exposes a `validate` function returning `{:valid? bool :err
     (println "Errors:" errors)))
 ```
 
-`event_category` is required: pass it in the data (e.g. `"Deposit"`, `"Gaming Activity"`). `validate` reports `event_category is required` when it is missing.
+`event_category` is required: pass it in the data (e.g. `"Deposit"`, `"Gaming Activity"`). `validate` reports `event_category is required` when it is missing, and a `must be` error when it is wrong for the event.
 
 ## Batch Send
 
