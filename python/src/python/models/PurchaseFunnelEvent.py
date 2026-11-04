@@ -101,7 +101,8 @@ def parse_datetime_ms(value: str) -> Optional[float]:
     zone = match.group(8)
     if zone != "Z":
         offset_hours, offset_minutes = int(zone[1:3]), int(zone[4:6])
-        if offset_hours > 18 or offset_minutes > 59:
+        # A zone offset is at most 18:00 either way.
+        if offset_minutes > 59 or offset_hours * 60 + offset_minutes > 18 * 60:
             return None
         sign = -1 if zone[0] == "-" else 1
         millis -= sign * (offset_hours * 60 + offset_minutes) * 60 * 1000

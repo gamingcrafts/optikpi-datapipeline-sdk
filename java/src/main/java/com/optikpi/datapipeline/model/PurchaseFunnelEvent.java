@@ -557,7 +557,8 @@ public class PurchaseFunnelEvent {
         if (!"Z".equals(zone)) {
             int offsetHours = Integer.parseInt(zone.substring(1, 3));
             int offsetMinutes = Integer.parseInt(zone.substring(4, 6));
-            if (offsetHours > 18 || offsetMinutes > 59) {
+            // A zone offset is at most 18:00 either way.
+            if (offsetMinutes > 59 || offsetHours * 60 + offsetMinutes > 18 * 60) {
                 return null;
             }
             int sign = zone.charAt(0) == '-' ? -1 : 1;

@@ -325,7 +325,8 @@ class PurchaseFunnelEvent
         if ($zone !== 'Z') {
             $offsetHours = (int) substr($zone, 1, 2);
             $offsetMinutes = (int) substr($zone, 4, 2);
-            if ($offsetHours > 18 || $offsetMinutes > 59) {
+            // A zone offset is at most 18:00 either way.
+            if ($offsetMinutes > 59 || $offsetHours * 60 + $offsetMinutes > 18 * 60) {
                 return null;
             }
             $sign = $zone[0] === '-' ? -1 : 1;

@@ -599,7 +599,8 @@ pub(crate) fn parse_datetime_ms(s: &str) -> Option<f64> {
         Some(&sign @ (b'+' | b'-')) if i + 6 == b.len() && at(i + 3, b':') => {
             let hours = digits(i + 1, 2)?;
             let minutes = digits(i + 4, 2)?;
-            if hours > 18 || minutes > 59 {
+            // A zone offset is at most 18:00 either way.
+            if minutes > 59 || hours * 60 + minutes > 18 * 60 {
                 return None;
             }
             offset_minutes = (hours * 60 + minutes) * if sign == b'-' { -1 } else { 1 };

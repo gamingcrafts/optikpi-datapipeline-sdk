@@ -117,7 +117,8 @@
             (let [hours   (Integer/parseInt (subs zone 1 3))
                   minutes (Integer/parseInt (subs zone 4 6))
                   sign    (if (= (first zone) \-) -1 1)]
-              (when (and (<= hours 18) (<= minutes 59))
+              ;; A zone offset is at most 18:00 either way.
+              (when (and (<= minutes 59) (<= (+ (* hours 60) minutes) (* 18 60)))
                 (* (- seconds (* sign (+ (* hours 60) minutes) 60)) 1000)))))))))
 
 (defn- finite? [v]
