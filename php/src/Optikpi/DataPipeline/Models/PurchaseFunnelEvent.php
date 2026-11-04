@@ -106,11 +106,14 @@ class PurchaseFunnelEvent
     private const TEN_YEARS_MS = 10 * 365.25 * 24 * 60 * 60 * 1000;
     private const ONE_YEAR_MS = 365.25 * 24 * 60 * 60 * 1000;
 
+    private const INT32_MIN = -2147483648;
+    private const INT32_MAX = 2147483647;
+
     // Amounts are stored as decimal(15,2): 13 integer digits and 2 decimal places.
     private const MONEY_LIMIT = 1e13;
 
     private const DATETIME_PATTERN =
-        '/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2})(\.\d{1,9})?)?(Z|[+-]\d{2}:\d{2})?$/D';
+        '/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(\.\d{1,9})?(Z|[+-]\d{2}:\d{2})$/D';
 
     public $account_id;
     public $workspace_id;
@@ -286,20 +289,22 @@ class PurchaseFunnelEvent
                     ? null : "$field must fit decimal(15,2): below 10^13 with at most 2 decimal places";
             case self::KIND_COUNT:
                 // json_decode reads 2.0 as a float; it is an integer in JSON, as for the API.
-                return (is_int($value) || (is_float($value) && is_finite($value) && floor($value) === $value))
-                    ? null : "$field must be an integer";
+                // Counts are stored as 32-bit integers.
+                $integer = is_int($value) || (is_float($value) && is_finite($value) && floor($value) === $value);
+                return ($integer && $value >= self::INT32_MIN && $value <= self::INT32_MAX)
+                    ? null : "$field must be an integer between " . self::INT32_MIN . ' and ' . self::INT32_MAX;
             case self::KIND_BOOLEAN:
                 return is_bool($value) ? null : "$field must be true or false";
             case self::KIND_DATETIME:
                 return (is_string($value) && self::parseDateTimeMs($value) !== null)
-                    ? null : "$field must be an ISO 8601 date-time (YYYY-MM-DDTHH:mm[:ss[.fff]][Z|+hh:mm])";
+                    ? null : "$field must be an ISO 8601 date-time with seconds and a zone (YYYY-MM-DDTHH:mm:ss[.fff]Z or +hh:mm)";
         }
         return null;
     }
 
     /**
-     * Milliseconds since the epoch for an ISO 8601 date-time string, or null when it is not one.
-     * A string without a zone is read as UTC.
+     * Milliseconds since the epoch for an ISO 8601 date-time string with seconds and a zone, or null when it is
+     * not one. Seconds and a zone are required: a date-time without them is lost downstream.
      */
     public static function parseDateTimeMs(string $value): ?float
     {
@@ -311,13 +316,13 @@ class PurchaseFunnelEvent
         $day = (int) $m[3];
         $hour = (int) $m[4];
         $minute = (int) $m[5];
-        $second = isset($m[6]) && $m[6] !== '' ? (int) $m[6] : 0;
+        $second = (int) $m[6];
         if ($year < 1 || !checkdate($month, $day, $year) || $hour > 23 || $minute > 59 || $second > 59) {
             return null;
         }
         $seconds = gmmktime($hour, $minute, $second, $month, $day, $year);
-        $zone = $m[8] ?? '';
-        if ($zone !== '' && $zone !== 'Z') {
+        $zone = $m[8];
+        if ($zone !== 'Z') {
             $offsetHours = (int) substr($zone, 1, 2);
             $offsetMinutes = (int) substr($zone, 4, 2);
             if ($offsetHours > 18 || $offsetMinutes > 59) {

@@ -57,7 +57,17 @@ fn validate_json_matches_shared_shapes() {
         let name = case["name"].as_str().unwrap();
         let valid = case["valid"].as_bool().unwrap();
         let result = PurchaseFunnelEvent::validate_json_at(&build_record(&shapes, case), NOW_MS);
-        if result.is_valid() != valid {
+        if result
+            .errors
+            .iter()
+            .any(|e| e.starts_with("record could not be read"))
+        {
+            // Every wrong kind or range is caught before binding, with its own message.
+            failures.push(format!(
+                "{name}: fell through to binding: {:?}",
+                result.errors
+            ));
+        } else if result.is_valid() != valid {
             failures.push(format!(
                 "{name}: expected valid={valid}, errors={:?}",
                 result.errors

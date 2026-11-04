@@ -172,22 +172,22 @@ pub struct PurchaseFunnelEvent {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub selection_method: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub lines_count: Option<i64>,
+    pub lines_count: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub multi_draw_count: Option<i64>,
+    pub multi_draw_count: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub unit_price: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub item_quantity: Option<i64>,
+    pub item_quantity: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub item_amount: Option<f64>,
     // Cart snapshot
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cart_id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub cart_item_count: Option<i64>,
+    pub cart_item_count: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub cart_quantity_total: Option<i64>,
+    pub cart_quantity_total: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cart_items: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -218,7 +218,7 @@ pub struct PurchaseFunnelEvent {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub funds_source: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub payment_attempt_number: Option<i64>,
+    pub payment_attempt_number: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub payment_status: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -269,7 +269,7 @@ pub struct PurchaseFunnelEvent {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub abandoned_at_stage: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub inactivity_sec: Option<i64>,
+    pub inactivity_sec: Option<i32>,
 }
 
 impl PurchaseFunnelEvent {
@@ -430,7 +430,7 @@ impl PurchaseFunnelEvent {
         ] {
             if value.is_some_and(|v| parse_datetime_ms(v).is_none()) {
                 errors.push(format!(
-                    "{name} must be an ISO 8601 date-time (YYYY-MM-DDTHH:mm[:ss[.fff]][Z|+hh:mm])"
+                    "{name} must be an ISO 8601 date-time with seconds and a zone (YYYY-MM-DDTHH:mm:ss[.fff]Z or +hh:mm)"
                 ));
             }
         }
@@ -474,14 +474,17 @@ impl PurchaseFunnelEvent {
                 Kind::String | Kind::DateTime => value.is_string(),
                 Kind::Money => value.is_number(),
                 Kind::Count => {
-                    if value.is_i64() || value.is_u64() {
-                        true
-                    } else if let Some(f) = value
-                        .as_f64()
-                        .filter(|f| f.fract() == 0.0 && f.abs() < 9.0e15)
+                    // Counts are stored as 32-bit integers. A larger value is an error
+                    // here, before binding, rather than a serde overflow.
+                    let in_range =
+                        |f: f64| (f64::from(i32::MIN)..=f64::from(i32::MAX)).contains(&f);
+                    if let Some(i) = value.as_i64() {
+                        i32::try_from(i).is_ok()
+                    } else if let Some(f) =
+                        value.as_f64().filter(|f| f.fract() == 0.0 && in_range(*f))
                     {
                         // 2.0 is an integer in JSON, as for the API.
-                        normalized.insert(name.to_string(), Value::from(f as i64));
+                        normalized.insert(name.to_string(), Value::from(f as i32));
                         true
                     } else {
                         false
@@ -493,7 +496,11 @@ impl PurchaseFunnelEvent {
                 errors.push(match kind {
                     Kind::String => format!("{name} must be a string"),
                     Kind::Money => format!("{name} must be a finite number"),
-                    Kind::Count => format!("{name} must be an integer"),
+                    Kind::Count => format!(
+                        "{name} must be an integer between {} and {}",
+                        i32::MIN,
+                        i32::MAX
+                    ),
                     Kind::Boolean => format!("{name} must be true or false"),
                     Kind::DateTime => format!("{name} must be an ISO 8601 date-time"),
                 });
@@ -550,10 +557,10 @@ fn days_in_month(year: i64, month: i64) -> i64 {
     }
 }
 
-/// Milliseconds since the epoch for an ISO 8601 date-time
-/// (`YYYY-MM-DDTHH:mm[:ss[.f{1,9}]][Z|±hh:mm]`), or `None` when it is not one
-/// or names a date or time that does not exist. A string without a zone is
-/// read as UTC.
+/// Milliseconds since the epoch for an ISO 8601 date-time with seconds and a
+/// zone (`YYYY-MM-DDTHH:mm:ss[.f{1,9}](Z|±hh:mm)`), or `None` when it is not
+/// one or names a date or time that does not exist. Seconds and a zone are
+/// required: a date-time without them is lost downstream.
 pub(crate) fn parse_datetime_ms(s: &str) -> Option<f64> {
     let b = s.as_bytes();
     let digits = |from: usize, len: usize| -> Option<i64> {
@@ -570,29 +577,24 @@ pub(crate) fn parse_datetime_ms(s: &str) -> Option<f64> {
     let day = digits(8, 2)?;
     let hour = digits(11, 2)?;
     let minute = digits(14, 2)?;
-    if !(at(4, b'-') && at(7, b'-') && at(10, b'T') && at(13, b':')) {
+    let second = digits(17, 2)?;
+    if !(at(4, b'-') && at(7, b'-') && at(10, b'T') && at(13, b':') && at(16, b':')) {
         return None;
     }
-    let mut i = 16;
-    let mut second = 0;
-    if at(i, b':') {
-        second = digits(i + 1, 2)?;
-        i += 3;
-        if at(i, b'.') {
-            let start = i + 1;
-            let mut end = start;
-            while b.get(end).is_some_and(u8::is_ascii_digit) {
-                end += 1;
-            }
-            if end == start || end - start > 9 {
-                return None;
-            }
-            i = end;
+    let mut i = 19;
+    if at(i, b'.') {
+        let start = i + 1;
+        let mut end = start;
+        while b.get(end).is_some_and(u8::is_ascii_digit) {
+            end += 1;
         }
+        if end == start || end - start > 9 {
+            return None;
+        }
+        i = end;
     }
     let mut offset_minutes = 0;
     match b.get(i) {
-        None => {}
         Some(b'Z') if i + 1 == b.len() => {}
         Some(&sign @ (b'+' | b'-')) if i + 6 == b.len() && at(i + 3, b':') => {
             let hours = digits(i + 1, 2)?;

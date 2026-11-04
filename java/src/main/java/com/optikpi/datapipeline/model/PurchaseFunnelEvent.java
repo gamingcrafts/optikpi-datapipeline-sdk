@@ -127,7 +127,7 @@ public class PurchaseFunnelEvent {
     private static final double ONE_YEAR_MS = 365.25 * 24 * 60 * 60 * 1000;
 
     private static final Pattern DATETIME_PATTERN = Pattern.compile(
-        "^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2})(?::(\\d{2})(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:\\d{2})?$");
+        "^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})(\\.\\d{1,9})?(Z|[+-]\\d{2}:\\d{2})$");
     // Amounts are stored as decimal(15,2): 13 integer digits and 2 decimal places.
     private static final BigDecimal MONEY_LIMIT = BigDecimal.TEN.pow(13);
 
@@ -195,16 +195,16 @@ public class PurchaseFunnelEvent {
     private String selectionMethod;
 
     @JsonProperty("lines_count")
-    private Long linesCount;
+    private Integer linesCount;
 
     @JsonProperty("multi_draw_count")
-    private Long multiDrawCount;
+    private Integer multiDrawCount;
 
     @JsonProperty("unit_price")
     private BigDecimal unitPrice;
 
     @JsonProperty("item_quantity")
-    private Long itemQuantity;
+    private Integer itemQuantity;
 
     @JsonProperty("item_amount")
     private BigDecimal itemAmount;
@@ -214,10 +214,10 @@ public class PurchaseFunnelEvent {
     private String cartId;
 
     @JsonProperty("cart_item_count")
-    private Long cartItemCount;
+    private Integer cartItemCount;
 
     @JsonProperty("cart_quantity_total")
-    private Long cartQuantityTotal;
+    private Integer cartQuantityTotal;
 
     @JsonProperty("cart_items")
     private String cartItems;
@@ -263,7 +263,7 @@ public class PurchaseFunnelEvent {
     private String fundsSource;
 
     @JsonProperty("payment_attempt_number")
-    private Long paymentAttemptNumber;
+    private Integer paymentAttemptNumber;
 
     @JsonProperty("payment_status")
     private String paymentStatus;
@@ -338,7 +338,7 @@ public class PurchaseFunnelEvent {
     private String abandonedAtStage;
 
     @JsonProperty("inactivity_sec")
-    private Long inactivitySec;
+    private Integer inactivitySec;
 
     public PurchaseFunnelEvent() {}
 
@@ -417,7 +417,7 @@ public class PurchaseFunnelEvent {
             // An empty event_time already has its required error; an empty optional date-time is not a date-time.
             boolean reported = field[1] == null || (field[0].equals("event_time") && field[1].isEmpty());
             if (!reported && parseDateTimeMs(field[1]) == null) {
-                errors.add(field[0] + " must be an ISO 8601 date-time (YYYY-MM-DDTHH:mm[:ss[.fff]][Z|+hh:mm])");
+                errors.add(field[0] + " must be an ISO 8601 date-time with seconds and a zone (YYYY-MM-DDTHH:mm:ss[.fff]Z or +hh:mm)");
             }
         }
 
@@ -514,11 +514,14 @@ public class PurchaseFunnelEvent {
             case MONEY:
                 return value.isNumber() ? null : field + " must be a finite number";
             case COUNT:
-                // 2.0 is an integer in JSON, as for the API.
-                return value.isIntegralNumber()
-                    || (value.isFloatingPointNumber() && value.doubleValue() == Math.rint(value.doubleValue())
-                        && !Double.isInfinite(value.doubleValue()))
-                    ? null : field + " must be an integer";
+                // Counts are stored as 32-bit integers. 2.0 is an integer in JSON, as for the API. A larger value
+                // is an error here, before binding, rather than an overflow.
+                boolean fits = value.isIntegralNumber()
+                    ? value.canConvertToInt()
+                    : value.isFloatingPointNumber() && value.doubleValue() == Math.rint(value.doubleValue())
+                        && value.doubleValue() >= Integer.MIN_VALUE && value.doubleValue() <= Integer.MAX_VALUE;
+                return fits ? null
+                    : field + " must be an integer between " + Integer.MIN_VALUE + " and " + Integer.MAX_VALUE;
             case BOOLEAN:
                 return value.isBoolean() ? null : field + " must be true or false";
             case DATETIME:
@@ -529,8 +532,8 @@ public class PurchaseFunnelEvent {
     }
 
     /**
-     * Milliseconds since the epoch for an ISO 8601 date-time string, or null when it is not one.
-     * A string without a zone is read as UTC.
+     * Milliseconds since the epoch for an ISO 8601 date-time string with seconds and a zone, or null when it is
+     * not one. Seconds and a zone are required: a date-time without them is lost downstream.
      */
     static Long parseDateTimeMs(String value) {
         Matcher m = DATETIME_PATTERN.matcher(value);
@@ -542,7 +545,7 @@ public class PurchaseFunnelEvent {
             LocalDateTime local = LocalDateTime.of(
                 Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)),
                 Integer.parseInt(m.group(4)), Integer.parseInt(m.group(5)),
-                m.group(6) == null ? 0 : Integer.parseInt(m.group(6)));
+                Integer.parseInt(m.group(6)));
             if (local.getYear() < 1) {
                 return null;
             }
@@ -551,7 +554,7 @@ public class PurchaseFunnelEvent {
             return null;
         }
         String zone = m.group(8);
-        if (zone != null && !"Z".equals(zone)) {
+        if (!"Z".equals(zone)) {
             int offsetHours = Integer.parseInt(zone.substring(1, 3));
             int offsetMinutes = Integer.parseInt(zone.substring(4, 6));
             if (offsetHours > 18 || offsetMinutes > 59) {
@@ -621,17 +624,17 @@ public class PurchaseFunnelEvent {
     public String getSelectionMethod() { return selectionMethod; }
     public void setSelectionMethod(String selectionMethod) { this.selectionMethod = selectionMethod; }
 
-    public Long getLinesCount() { return linesCount; }
-    public void setLinesCount(Long linesCount) { this.linesCount = linesCount; }
+    public Integer getLinesCount() { return linesCount; }
+    public void setLinesCount(Integer linesCount) { this.linesCount = linesCount; }
 
-    public Long getMultiDrawCount() { return multiDrawCount; }
-    public void setMultiDrawCount(Long multiDrawCount) { this.multiDrawCount = multiDrawCount; }
+    public Integer getMultiDrawCount() { return multiDrawCount; }
+    public void setMultiDrawCount(Integer multiDrawCount) { this.multiDrawCount = multiDrawCount; }
 
     public BigDecimal getUnitPrice() { return unitPrice; }
     public void setUnitPrice(BigDecimal unitPrice) { this.unitPrice = unitPrice; }
 
-    public Long getItemQuantity() { return itemQuantity; }
-    public void setItemQuantity(Long itemQuantity) { this.itemQuantity = itemQuantity; }
+    public Integer getItemQuantity() { return itemQuantity; }
+    public void setItemQuantity(Integer itemQuantity) { this.itemQuantity = itemQuantity; }
 
     public BigDecimal getItemAmount() { return itemAmount; }
     public void setItemAmount(BigDecimal itemAmount) { this.itemAmount = itemAmount; }
@@ -639,11 +642,11 @@ public class PurchaseFunnelEvent {
     public String getCartId() { return cartId; }
     public void setCartId(String cartId) { this.cartId = cartId; }
 
-    public Long getCartItemCount() { return cartItemCount; }
-    public void setCartItemCount(Long cartItemCount) { this.cartItemCount = cartItemCount; }
+    public Integer getCartItemCount() { return cartItemCount; }
+    public void setCartItemCount(Integer cartItemCount) { this.cartItemCount = cartItemCount; }
 
-    public Long getCartQuantityTotal() { return cartQuantityTotal; }
-    public void setCartQuantityTotal(Long cartQuantityTotal) { this.cartQuantityTotal = cartQuantityTotal; }
+    public Integer getCartQuantityTotal() { return cartQuantityTotal; }
+    public void setCartQuantityTotal(Integer cartQuantityTotal) { this.cartQuantityTotal = cartQuantityTotal; }
 
     public String getCartItems() { return cartItems; }
     public void setCartItems(String cartItems) { this.cartItems = cartItems; }
@@ -687,8 +690,8 @@ public class PurchaseFunnelEvent {
     public String getFundsSource() { return fundsSource; }
     public void setFundsSource(String fundsSource) { this.fundsSource = fundsSource; }
 
-    public Long getPaymentAttemptNumber() { return paymentAttemptNumber; }
-    public void setPaymentAttemptNumber(Long paymentAttemptNumber) { this.paymentAttemptNumber = paymentAttemptNumber; }
+    public Integer getPaymentAttemptNumber() { return paymentAttemptNumber; }
+    public void setPaymentAttemptNumber(Integer paymentAttemptNumber) { this.paymentAttemptNumber = paymentAttemptNumber; }
 
     public String getPaymentStatus() { return paymentStatus; }
     public void setPaymentStatus(String paymentStatus) { this.paymentStatus = paymentStatus; }
@@ -759,6 +762,6 @@ public class PurchaseFunnelEvent {
     public String getAbandonedAtStage() { return abandonedAtStage; }
     public void setAbandonedAtStage(String abandonedAtStage) { this.abandonedAtStage = abandonedAtStage; }
 
-    public Long getInactivitySec() { return inactivitySec; }
-    public void setInactivitySec(Long inactivitySec) { this.inactivitySec = inactivitySec; }
+    public Integer getInactivitySec() { return inactivitySec; }
+    public void setInactivitySec(Integer inactivitySec) { this.inactivitySec = inactivitySec; }
 }

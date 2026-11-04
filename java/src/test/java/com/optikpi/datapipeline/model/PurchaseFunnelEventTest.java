@@ -59,6 +59,9 @@ class PurchaseFunnelEventTest {
             tests.add(dynamicTest(testCase.get("name").asText(), () -> {
                 ValidationResult result = PurchaseFunnelEvent.validateJson(buildRecord(shapes, testCase), NOW_MS);
                 assertEquals(testCase.get("valid").asBoolean(), result.isValid(), result.getErrors().toString());
+                // Every wrong kind or range is caught before binding, with its own message.
+                assertTrue(result.getErrors().stream().noneMatch(e -> e.startsWith("record could not be read")),
+                    result.getErrors().toString());
                 if (!testCase.get("valid").asBoolean()) {
                     String field = testCase.get("errorField").asText();
                     assertTrue(result.getErrors().stream().anyMatch(e -> e.contains(field)), result.getErrors().toString());

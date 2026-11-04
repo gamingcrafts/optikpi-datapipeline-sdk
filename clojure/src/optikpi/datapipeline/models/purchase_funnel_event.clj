@@ -95,11 +95,12 @@
 (def ^:private one-year-ms (* 365.25 24 60 60 1000))
 
 (def ^:private datetime-pattern
-  #"(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2})(\.\d{1,9})?)?(Z|[+-]\d{2}:\d{2})?")
+  #"(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(\.\d{1,9})?(Z|[+-]\d{2}:\d{2})")
 
 (defn parse-datetime-ms
-  "Milliseconds since the epoch for an ISO 8601 date-time string, or nil when it is
-  not one. A string without a zone is read as UTC."
+  "Milliseconds since the epoch for an ISO 8601 date-time string with seconds and a
+  zone, or nil when it is not one. Seconds and a zone are required: a date-time
+  without them is lost downstream."
   [s]
   (when-let [[_ y mo d h mi sec _ zone] (re-matches datetime-pattern s)]
     (let [year (Long/parseLong y)]
@@ -108,10 +109,10 @@
                              (.toEpochSecond
                               (LocalDateTime/of (int year) (Integer/parseInt mo) (Integer/parseInt d)
                                                 (Integer/parseInt h) (Integer/parseInt mi)
-                                                (if sec (Integer/parseInt sec) 0))
+                                                (Integer/parseInt sec))
                               ZoneOffset/UTC)
                              (catch DateTimeException _ nil))]
-          (if (or (nil? zone) (= zone "Z"))
+          (if (= zone "Z")
             (* seconds 1000)
             (let [hours   (Integer/parseInt (subs zone 1 3))
                   minutes (Integer/parseInt (subs zone 4 6))
@@ -147,12 +148,14 @@
                   (not (fits-money? v))
                   (str n " must fit decimal(15,2): below 10^13 with at most 2 decimal places"))
       ;; 2.0 is an integer in JSON, as for the API.
-      :count    (when-not (or (integer? v)
-                              (and (float? v) (finite? v) (== v (Math/floor (double v)))))
-                  (str n " must be an integer"))
+      ;; Counts are stored as 32-bit integers.
+      :count    (when-not (and (or (integer? v)
+                                   (and (float? v) (finite? v) (== v (Math/floor (double v)))))
+                               (<= Integer/MIN_VALUE v Integer/MAX_VALUE))
+                  (str n " must be an integer between " Integer/MIN_VALUE " and " Integer/MAX_VALUE))
       :boolean  (when-not (boolean? v) (str n " must be true or false"))
       :datetime (when-not (and (string? v) (parse-datetime-ms v))
-                  (str n " must be an ISO 8601 date-time (YYYY-MM-DDTHH:mm[:ss[.fff]][Z|+hh:mm])")))))
+                  (str n " must be an ISO 8601 date-time with seconds and a zone (YYYY-MM-DDTHH:mm:ss[.fff]Z or +hh:mm)")))))
 
 (defn validate
   "Validates a purchase funnel event map (keyword keys, e.g. :funnel_stage).

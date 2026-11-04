@@ -73,9 +73,12 @@ _TEN_YEARS_MS = 10 * 365.25 * 24 * 60 * 60 * 1000
 _ONE_YEAR_MS = 365.25 * 24 * 60 * 60 * 1000
 
 _DATETIME_PATTERN = re.compile(
-    r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2})(\.\d{1,9})?)?(Z|[+-]\d{2}:\d{2})?$"
+    r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(\.\d{1,9})?(Z|[+-]\d{2}:\d{2})$"
 )
 _CURRENCY_PATTERN = re.compile(r"^[A-Z]{3}$")
+
+_INT32_MIN = -2147483648
+_INT32_MAX = 2147483647
 
 # Amounts are stored as decimal(15,2): 13 integer digits and 2 decimal places.
 _MONEY_LIMIT = 10 ** 13
@@ -83,20 +86,20 @@ _CENTS = Decimal("0.01")
 
 
 def parse_datetime_ms(value: str) -> Optional[float]:
-    """Milliseconds since the epoch for an ISO 8601 date-time string, or None when it is not one.
-    A string without a zone is read as UTC."""
+    """Milliseconds since the epoch for an ISO 8601 date-time string with seconds and a zone, or None when it
+    is not one. Seconds and a zone are required: a date-time without them is lost downstream."""
     match = _DATETIME_PATTERN.fullmatch(value)
     if not match:
         return None
     year, month, day, hour, minute = (int(part) for part in match.group(1, 2, 3, 4, 5))
-    second = int(match.group(6) or 0)
+    second = int(match.group(6))
     try:
         moment = datetime(year, month, day, hour, minute, second, tzinfo=timezone.utc)
     except ValueError:
         return None
     millis = moment.timestamp() * 1000
     zone = match.group(8)
-    if zone and zone != "Z":
+    if zone != "Z":
         offset_hours, offset_minutes = int(zone[1:3]), int(zone[4:6])
         if offset_hours > 18 or offset_minutes > 59:
             return None
@@ -130,13 +133,15 @@ def _kind_error(field: str, value: Any) -> Optional[str]:
         ok = (isinstance(value, int) and not isinstance(value, bool)) or (
             isinstance(value, float) and value.is_integer()
         )
-        return None if ok else f"{field} must be an integer"
+        # Counts are stored as 32-bit integers.
+        ok = ok and _INT32_MIN <= value <= _INT32_MAX
+        return None if ok else f"{field} must be an integer between {_INT32_MIN} and {_INT32_MAX}"
     if field in _BOOLEAN_FIELDS:
         return None if isinstance(value, bool) else f"{field} must be true or false"
     if field in _DATETIME_FIELDS:
         ok = isinstance(value, str) and parse_datetime_ms(value) is not None
         return None if ok else (
-            f"{field} must be an ISO 8601 date-time (YYYY-MM-DDTHH:mm[:ss[.fff]][Z|+hh:mm])"
+            f"{field} must be an ISO 8601 date-time with seconds and a zone (YYYY-MM-DDTHH:mm:ss[.fff]Z or +hh:mm)"
         )
     return None if isinstance(value, str) else f"{field} must be a string"
 
