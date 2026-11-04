@@ -641,6 +641,21 @@
       }
     },
     {
+      "name": "offset at the 18:00 limit",
+      "valid": true,
+      "set": {
+        "draw_close_time": "2026-11-07T19:00:00+18:00"
+      }
+    },
+    {
+      "name": "offset beyond 18:00",
+      "valid": false,
+      "set": {
+        "draw_close_time": "2026-11-07T19:00:00-18:30"
+      },
+      "errorField": "draw_close_time"
+    },
+    {
       "name": "event_time older than 10 years",
       "valid": false,
       "set": {

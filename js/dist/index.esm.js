@@ -21816,7 +21816,8 @@ function parseDateTime(value) {
   if (zone !== 'Z') {
     const offsetHours = Number(zone.slice(1, 3));
     const offsetMinutes = Number(zone.slice(4, 6));
-    if (offsetHours > 18 || offsetMinutes > 59) return NaN;
+    // A zone offset is at most 18:00 either way.
+    if (offsetMinutes > 59 || offsetHours * 60 + offsetMinutes > 18 * 60) return NaN;
     const sign = zone[0] === '-' ? -1 : 1;
     time -= sign * (offsetHours * 60 + offsetMinutes) * 60 * 1000;
   }
