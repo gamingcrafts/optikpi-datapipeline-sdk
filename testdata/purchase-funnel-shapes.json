@@ -1,5 +1,5 @@
 {
-  "_comment": "Shared purchase_funnel validation shapes. Master copy: coordinator's shapes/purchase-funnel-shapes.json (see CONTRACT.md section 5). Copy byte for byte; do not edit.",
+  "_comment": "Shared validation cases for PurchaseFunnelEvent. Every SDK language and the API test against this same table. Do not edit a copy; changes are made to the shared master and copied byte for byte.",
   "base": {
     "account_id": "acc_example_001",
     "workspace_id": "ws_example_001",
@@ -690,7 +690,7 @@
       "name": "extra unknown field",
       "valid": true,
       "set": {
-        "unknown_extra_field": "kept by API, dropped by BigQuery"
+        "unknown_extra_field": "accepted and ignored"
       }
     }
   ]
