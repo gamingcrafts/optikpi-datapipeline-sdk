@@ -36,6 +36,9 @@ public class BatchResponse {
 
     @JsonProperty("systemEvents")
     private ApiResponse<Object> systemEvents;
+
+    @JsonProperty("purchaseFunnelEvents")
+    private ApiResponse<Object> purchaseFunnelEvents;
     
     @JsonProperty("timestamp")
     private Instant timestamp;
@@ -121,6 +124,14 @@ public class BatchResponse {
 
     public void setSystemEvents(ApiResponse<Object> systemEvents) {
         this.systemEvents = systemEvents;
+    }
+
+    public ApiResponse<Object> getPurchaseFunnelEvents() {
+        return purchaseFunnelEvents;
+    }
+
+    public void setPurchaseFunnelEvents(ApiResponse<Object> purchaseFunnelEvents) {
+        this.purchaseFunnelEvents = purchaseFunnelEvents;
     }
 
     public Instant getTimestamp() {

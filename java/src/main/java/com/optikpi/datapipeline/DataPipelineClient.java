@@ -210,6 +210,10 @@ public class DataPipelineClient {
         return sendData("/events/system-events", data);
     }
 
+    public ApiResponse<Object> sendPurchaseFunnelEvent(Object data) {
+        return sendData("/events/purchase-funnel", data);
+    }
+
     public BatchResponse sendBatch(BatchData batchData) {
         BatchResponse results = new BatchResponse();
         results.setSuccess(true);
@@ -247,6 +251,10 @@ public class DataPipelineClient {
 
         if (batchData.getSystemEvents() != null) {
             results.setSystemEvents(sendSystemEvent(batchData.getSystemEvents()));
+        }
+
+        if (batchData.getPurchaseFunnelEvents() != null) {
+            results.setPurchaseFunnelEvents(sendPurchaseFunnelEvent(batchData.getPurchaseFunnelEvents()));
         }
         
         return results;
