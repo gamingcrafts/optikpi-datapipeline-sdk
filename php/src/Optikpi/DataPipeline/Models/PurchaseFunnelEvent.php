@@ -106,6 +106,9 @@ class PurchaseFunnelEvent
     private const TEN_YEARS_MS = 10 * 365.25 * 24 * 60 * 60 * 1000;
     private const ONE_YEAR_MS = 365.25 * 24 * 60 * 60 * 1000;
 
+    // Amounts are stored as decimal(15,2): 13 integer digits and 2 decimal places.
+    private const MONEY_LIMIT = 1e13;
+
     private const DATETIME_PATTERN =
         '/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2})(\.\d{1,9})?)?(Z|[+-]\d{2}:\d{2})?$/D';
 
@@ -251,6 +254,22 @@ class PurchaseFunnelEvent
     }
 
     /**
+     * True when a finite number fits decimal(15,2): its absolute value is below 10^13 and its shortest round-trip
+     * decimal form has at most 2 decimal places. That form has at most 2 decimal places exactly when rounding the
+     * number to 2 places (sprintf rounds the exact binary value) gives the same number back (2.995 and 1e-7 do not
+     * fit).
+     *
+     * @param int|float $value
+     */
+    private static function fitsMoney($value): bool
+    {
+        if (abs($value) >= self::MONEY_LIMIT) {
+            return false;
+        }
+        return is_int($value) || (float) sprintf('%.2F', $value) === $value;
+    }
+
+    /**
      * Returns an error message, or null when the value has the field's kind.
      */
     private static function kindError(string $field, $value, string $kind): ?string
@@ -260,8 +279,11 @@ class PurchaseFunnelEvent
                 return is_string($value) ? null : "$field must be a string";
             case self::KIND_MONEY:
                 // is_int(true) is false, so a boolean is not a number here.
-                return ((is_int($value) || is_float($value)) && is_finite((float) $value))
-                    ? null : "$field must be a finite number";
+                if (!(is_int($value) || is_float($value)) || !is_finite((float) $value)) {
+                    return "$field must be a finite number";
+                }
+                return self::fitsMoney($value)
+                    ? null : "$field must fit decimal(15,2): below 10^13 with at most 2 decimal places";
             case self::KIND_COUNT:
                 // json_decode reads 2.0 as a float; it is an integer in JSON, as for the API.
                 return (is_int($value) || (is_float($value) && is_finite($value) && floor($value) === $value))
