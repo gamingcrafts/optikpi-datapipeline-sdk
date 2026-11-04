@@ -133,7 +133,8 @@
   holds exactly when rounding its exact value to 2 places gives the same double back
   (2.995 and 1e-7 do not fit)."
   [v]
-  (let [exact (if (float? v) (BigDecimal. (double v)) (bigdec v))]
+  (let [v     (if (ratio? v) (double v) v) ; a code-built 1/4; bigdec throws on 1/3
+        exact (if (float? v) (BigDecimal. (double v)) (bigdec v))]
     (and (neg? (compare (.abs exact) money-limit))
          (if (float? v)
            (== (double v) (.doubleValue (.setScale exact 2 RoundingMode/HALF_EVEN)))

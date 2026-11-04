@@ -472,6 +472,30 @@
       "errorField": "fees_amount"
     },
     {
+      "name": "huge integer amount",
+      "valid": false,
+      "set": {
+        "cart_total": 10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+      },
+      "errorField": "cart_total"
+    },
+    {
+      "name": "empty amount",
+      "valid": false,
+      "set": {
+        "jackpot_amount": ""
+      },
+      "errorField": "jackpot_amount"
+    },
+    {
+      "name": "empty boolean",
+      "valid": false,
+      "set": {
+        "is_resumed": ""
+      },
+      "errorField": "is_resumed"
+    },
+    {
       "name": "number funnel_session_id",
       "valid": false,
       "set": {
@@ -525,6 +549,37 @@
         "inactivity_sec": 2147483648
       },
       "errorField": "inactivity_sec"
+    },
+    {
+      "name": "count at the int32 minimum",
+      "valid": true,
+      "set": {
+        "inactivity_sec": -2147483648
+      }
+    },
+    {
+      "name": "count under the int32 minimum",
+      "valid": false,
+      "set": {
+        "inactivity_sec": -2147483649
+      },
+      "errorField": "inactivity_sec"
+    },
+    {
+      "name": "boolean count",
+      "valid": false,
+      "set": {
+        "lines_count": true
+      },
+      "errorField": "lines_count"
+    },
+    {
+      "name": "empty count",
+      "valid": false,
+      "set": {
+        "lines_count": ""
+      },
+      "errorField": "lines_count"
     },
     {
       "name": "string boolean",
@@ -654,6 +709,84 @@
         "draw_close_time": "2026-11-07T19:00:00-18:30"
       },
       "errorField": "draw_close_time"
+    },
+    {
+      "name": "non-ASCII digits in draw_date",
+      "valid": false,
+      "set": {
+        "draw_date": "\u0662\u0660\u0662\u0666-01-01T00:00:00Z"
+      },
+      "errorField": "draw_date"
+    },
+    {
+      "name": "non-ASCII digits in event_time offset",
+      "valid": false,
+      "set": {
+        "event_time": "2026-11-04T10:00:00+\uff10\uff15:00"
+      },
+      "errorField": "event_time"
+    },
+    {
+      "name": "leap second",
+      "valid": false,
+      "set": {
+        "draw_date": "2026-11-07T23:59:60Z"
+      },
+      "errorField": "draw_date"
+    },
+    {
+      "name": "hour 24",
+      "valid": false,
+      "set": {
+        "draw_date": "2026-11-07T24:00:00Z"
+      },
+      "errorField": "draw_date"
+    },
+    {
+      "name": "offset minutes 60",
+      "valid": false,
+      "set": {
+        "draw_close_time": "2026-11-07T19:00:00+05:60"
+      },
+      "errorField": "draw_close_time"
+    },
+    {
+      "name": "10 fractional digits",
+      "valid": false,
+      "set": {
+        "draw_date": "2026-11-07T20:00:00.1234567891Z"
+      },
+      "errorField": "draw_date"
+    },
+    {
+      "name": "year 0000",
+      "valid": false,
+      "set": {
+        "draw_date": "0000-01-01T00:00:00Z"
+      },
+      "errorField": "draw_date"
+    },
+    {
+      "name": "empty draw_date",
+      "valid": false,
+      "set": {
+        "draw_date": ""
+      },
+      "errorField": "draw_date"
+    },
+    {
+      "name": "9 fractional digits and +00:00",
+      "valid": true,
+      "set": {
+        "event_time": "2026-11-04T10:00:00.123456789+00:00"
+      }
+    },
+    {
+      "name": "offset -00:00",
+      "valid": true,
+      "set": {
+        "draw_date": "2026-11-07T20:00:00-00:00"
+      }
     },
     {
       "name": "event_time older than 10 years",

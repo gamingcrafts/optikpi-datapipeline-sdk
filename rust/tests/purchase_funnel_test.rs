@@ -12,13 +12,30 @@ use serde_json::{Map, Value};
 const NOW_MS: f64 = 1_793_786_400_000.0;
 
 /// Shared with the API's tests: the client and the server must agree on every shape.
+///
+/// serde_json cannot parse a number beyond f64 range (the "huge integer amount"
+/// case is 10^400), so a Rust caller can never hold that record: the JSON is
+/// rejected before validation. The loader asserts that, then puts 1e300 in its
+/// place so the case still runs through `validate_json` (also an invalid amount).
 fn shapes() -> Value {
     let path = concat!(
         env!("CARGO_MANIFEST_DIR"),
         "/../testdata/purchase-funnel-shapes.json"
     );
-    serde_json::from_str(&std::fs::read_to_string(path).expect("read shapes"))
-        .expect("parse shapes")
+    let mut text = std::fs::read_to_string(path).expect("read shapes");
+    let huge: Vec<String> = text
+        .split(|c: char| !c.is_ascii_digit())
+        .filter(|run| run.len() > 308)
+        .map(str::to_string)
+        .collect();
+    for literal in huge {
+        assert!(
+            serde_json::from_str::<Value>(&literal).is_err(),
+            "serde_json parsed {literal}"
+        );
+        text = text.replace(&literal, "1e300");
+    }
+    serde_json::from_str(&text).expect("parse shapes")
 }
 
 fn build_record(shapes: &Value, case: &Value) -> Value {

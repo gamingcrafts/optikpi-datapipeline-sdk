@@ -72,10 +72,11 @@ _DATETIME_FIELDS = ("event_time", "draw_date", "draw_close_time")
 _TEN_YEARS_MS = 10 * 365.25 * 24 * 60 * 60 * 1000
 _ONE_YEAR_MS = 365.25 * 24 * 60 * 60 * 1000
 
+# re.ASCII: \d would otherwise also match non-ASCII digits (Arabic-Indic, fullwidth), which the API rejects.
 _DATETIME_PATTERN = re.compile(
-    r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(\.\d{1,9})?(Z|[+-]\d{2}:\d{2})$"
+    r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(\.\d{1,9})?(Z|[+-]\d{2}:\d{2})$", re.ASCII
 )
-_CURRENCY_PATTERN = re.compile(r"^[A-Z]{3}$")
+_CURRENCY_PATTERN = re.compile(r"^[A-Z]{3}$", re.ASCII)
 
 _INT32_MIN = -2147483648
 _INT32_MAX = 2147483647
@@ -124,8 +125,10 @@ def _kind_error(field: str, value: Any) -> Optional[str]:
     """An error message, or None when the value has the field's kind."""
     if field in _MONEY_FIELDS:
         # bool is an int in Python; JSON true is not a number.
-        ok = isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
-        if not ok:
+        if not isinstance(value, (int, float)) or isinstance(value, bool):
+            return f"{field} must be a finite number"
+        # An int can be too large for math.isfinite (OverflowError); the 10^13 limit in fits_money covers it.
+        if isinstance(value, float) and not math.isfinite(value):
             return f"{field} must be a finite number"
         return None if fits_money(value) else (
             f"{field} must fit decimal(15,2): below 10^13 with at most 2 decimal places"
