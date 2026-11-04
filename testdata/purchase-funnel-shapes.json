@@ -512,6 +512,21 @@
       "errorField": "item_quantity"
     },
     {
+      "name": "count at the int32 maximum",
+      "valid": true,
+      "set": {
+        "inactivity_sec": 2147483647
+      }
+    },
+    {
+      "name": "count over the int32 maximum",
+      "valid": false,
+      "set": {
+        "inactivity_sec": 2147483648
+      },
+      "errorField": "inactivity_sec"
+    },
+    {
       "name": "string boolean",
       "valid": false,
       "set": {

@@ -168,6 +168,9 @@ function parseDateTime(value) {
   return time;
 }
 
+const INT32_MIN = -2147483648;
+const INT32_MAX = 2147483647;
+
 // Amounts are stored as decimal(15,2): 13 integer digits and 2 decimal places.
 const MONEY_LIMIT = 1e13;
 
@@ -191,7 +194,10 @@ function checkKind(field, value, kind) {
     if (typeof value !== 'number' || !Number.isFinite(value)) return `${field} must be a finite number`;
     return fitsMoney(value) ? null : `${field} must fit decimal(15,2): below 10^13 with at most 2 decimal places`;
   case COUNT:
-    return Number.isInteger(value) ? null : `${field} must be an integer`;
+    // Counts are stored as 32-bit integers.
+    return Number.isInteger(value) && value >= INT32_MIN && value <= INT32_MAX
+      ? null
+      : `${field} must be an integer between ${INT32_MIN} and ${INT32_MAX}`;
   case BOOLEAN:
     return typeof value === 'boolean' ? null : `${field} must be true or false`;
   case DATETIME:
