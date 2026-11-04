@@ -414,8 +414,12 @@ impl PurchaseFunnelEvent {
             ("cart_total", self.cart_total),
             ("order_total", self.order_total),
         ] {
-            if value.is_some_and(|v| !v.is_finite()) {
-                errors.push(format!("{name} must be a finite number"));
+            match value {
+                Some(v) if !v.is_finite() => errors.push(format!("{name} must be a finite number")),
+                Some(v) if !fits_money(v) => errors.push(format!(
+                    "{name} must fit decimal(15,2): below 10^13 with at most 2 decimal places"
+                )),
+                _ => {}
             }
         }
         let event_time = (!self.event_time.is_empty()).then_some(&self.event_time);
@@ -503,6 +507,18 @@ impl PurchaseFunnelEvent {
             Err(err) => ok(vec![format!("record could not be read: {err}")]),
         }
     }
+}
+
+// Amounts are stored as decimal(15,2): 13 integer digits and 2 decimal places.
+const MONEY_LIMIT: f64 = 1e13;
+
+/// True when a finite amount fits decimal(15,2): its absolute value is below
+/// 10^13 and its shortest round-trip decimal form has at most 2 decimal
+/// places. That form has at most 2 decimal places exactly when rounding the
+/// number to 2 places (`{:.2}` rounds the exact binary value) gives the same
+/// number back (2.995 and 1e-7 do not fit).
+fn fits_money(value: f64) -> bool {
+    value.abs() < MONEY_LIMIT && format!("{value:.2}").parse::<f64>() == Ok(value)
 }
 
 fn now_ms() -> f64 {

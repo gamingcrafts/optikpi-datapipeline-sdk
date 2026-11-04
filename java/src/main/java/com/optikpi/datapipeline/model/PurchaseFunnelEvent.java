@@ -1,6 +1,7 @@
 package com.optikpi.datapipeline.model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -17,6 +18,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.DecimalNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Purchase Funnel Event Model.
@@ -125,6 +128,9 @@ public class PurchaseFunnelEvent {
 
     private static final Pattern DATETIME_PATTERN = Pattern.compile(
         "^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2})(?::(\\d{2})(\\.\\d{1,9})?)?(Z|[+-]\\d{2}:\\d{2})?$");
+    // Amounts are stored as decimal(15,2): 13 integer digits and 2 decimal places.
+    private static final BigDecimal MONEY_LIMIT = BigDecimal.TEN.pow(13);
+
     private static final Pattern CURRENCY_PATTERN = Pattern.compile("^[A-Z]{3}$");
 
     private static final ObjectMapper MAPPER = new ObjectMapper()
@@ -394,6 +400,18 @@ public class PurchaseFunnelEvent {
             errors.add("currency must be a valid 3-letter ISO currency code");
         }
 
+        Object[][] amounts = {
+            {"jackpot_amount", jackpotAmount}, {"unit_price", unitPrice}, {"item_amount", itemAmount},
+            {"cart_subtotal", cartSubtotal}, {"discount_amount", discountAmount},
+            {"bonus_used_amount", bonusUsedAmount}, {"fees_amount", feesAmount}, {"tax_amount", taxAmount},
+            {"cart_total", cartTotal}, {"order_total", orderTotal}
+        };
+        for (Object[] amount : amounts) {
+            if (amount[1] != null && !fitsMoney((BigDecimal) amount[1])) {
+                errors.add(amount[0] + MONEY_ERROR);
+            }
+        }
+
         String[][] dateTimes = {{"event_time", eventTime}, {"draw_date", drawDate}, {"draw_close_time", drawCloseTime}};
         for (String[] field : dateTimes) {
             // An empty event_time already has its required error; an empty optional date-time is not a date-time.
@@ -428,12 +446,22 @@ public class PurchaseFunnelEvent {
             errors.add("record must be a JSON object");
             return new ValidationResult(false, errors);
         }
+        ObjectNode normalized = ((ObjectNode) record).deepCopy();
         for (Map.Entry<String, Kind> field : FIELD_KINDS.entrySet()) {
             JsonNode value = record.get(field.getKey());
             if (value == null || value.isNull()) {
                 continue; // a missing required field is reported by validate()
             }
             String error = kindError(field.getKey(), value, field.getValue());
+            if (error == null && field.getValue() == Kind.MONEY) {
+                BigDecimal amount = jsonMoney(value);
+                if (amount == null) {
+                    error = field.getKey() + MONEY_ERROR;
+                } else {
+                    // Bind the decimal the JSON number stands for, not the binary double's expansion.
+                    normalized.set(field.getKey(), DecimalNode.valueOf(amount));
+                }
+            }
             if (error != null) {
                 errors.add(error);
             }
@@ -443,12 +471,40 @@ public class PurchaseFunnelEvent {
         }
         PurchaseFunnelEvent event;
         try {
-            event = MAPPER.treeToValue(record, PurchaseFunnelEvent.class);
+            event = MAPPER.treeToValue(normalized, PurchaseFunnelEvent.class);
         } catch (Exception e) {
             errors.add("record could not be read: " + e.getMessage());
             return new ValidationResult(false, errors);
         }
         return event.validate(nowMs);
+    }
+
+    private static final String MONEY_ERROR =
+        " must fit decimal(15,2): below 10^13 with at most 2 decimal places";
+
+    /** True when the amount fits decimal(15,2): absolute value below 10^13 and at most 2 decimal places. */
+    private static boolean fitsMoney(BigDecimal amount) {
+        return amount.abs().compareTo(MONEY_LIMIT) < 0 && amount.stripTrailingZeros().scale() <= 2;
+    }
+
+    /**
+     * The decimal a JSON number stands for when it fits decimal(15,2), else null. A binary double fits when its
+     * shortest round-trip decimal form has at most 2 decimal places, which is exactly when rounding its exact value
+     * to 2 places gives the same double back (2.995 and 1e-7 do not fit). This avoids Double.toString, which is
+     * not always the shortest form before Java 19.
+     */
+    private static BigDecimal jsonMoney(JsonNode value) {
+        BigDecimal amount;
+        if (value.isDouble() || value.isFloat()) {
+            double d = value.doubleValue();
+            amount = new BigDecimal(d).setScale(2, RoundingMode.HALF_EVEN);
+            if (amount.doubleValue() != d) {
+                return null;
+            }
+        } else {
+            amount = value.decimalValue();
+        }
+        return fitsMoney(amount) ? amount : null;
     }
 
     private static String kindError(String field, JsonNode value, Kind kind) {

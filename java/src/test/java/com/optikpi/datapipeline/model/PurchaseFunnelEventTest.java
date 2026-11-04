@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -84,6 +85,19 @@ class PurchaseFunnelEventTest {
         assertTrue(event.validate(NOW_MS).getErrors().contains("event_category is required"));
         event.setEventCategory(PurchaseFunnelEvent.EVENT_CATEGORY);
         assertTrue(event.validate(NOW_MS).isValid(), event.validate(NOW_MS).getErrors().toString());
+    }
+
+    @Test
+    void typedAmountMustFitTwoDecimalPlaces() {
+        PurchaseFunnelEvent event = new PurchaseFunnelEvent("acc_example_001", "ws_example_001", "user_example_001",
+            PurchaseFunnelEvent.EVENT_CATEGORY, "checkout_started", "evt_example_001", "2026-11-04T10:00:00Z",
+            "fs_example_001", "checkout");
+        event.setUnitPrice(new BigDecimal("2.990"));
+        assertTrue(event.validate(NOW_MS).isValid(), event.validate(NOW_MS).getErrors().toString());
+        event.setUnitPrice(new BigDecimal("2.995"));
+        assertTrue(event.validate(NOW_MS).getErrors().stream().anyMatch(e -> e.startsWith("unit_price")));
+        event.setUnitPrice(new BigDecimal("10000000000000"));
+        assertFalse(event.validate(NOW_MS).isValid());
     }
 
     @Test

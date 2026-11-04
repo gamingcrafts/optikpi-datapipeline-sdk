@@ -8,6 +8,7 @@ operator's own free text.
 from dataclasses import dataclass, asdict, fields
 from typing import Optional, Dict, Any, List
 from datetime import datetime, timezone
+from decimal import ROUND_HALF_EVEN, Decimal
 import math
 import re
 import time
@@ -76,6 +77,10 @@ _DATETIME_PATTERN = re.compile(
 )
 _CURRENCY_PATTERN = re.compile(r"^[A-Z]{3}$")
 
+# Amounts are stored as decimal(15,2): 13 integer digits and 2 decimal places.
+_MONEY_LIMIT = 10 ** 13
+_CENTS = Decimal("0.01")
+
 
 def parse_datetime_ms(value: str) -> Optional[float]:
     """Milliseconds since the epoch for an ISO 8601 date-time string, or None when it is not one.
@@ -100,12 +105,27 @@ def parse_datetime_ms(value: str) -> Optional[float]:
     return millis
 
 
+def fits_money(value) -> bool:
+    """True when a finite number fits decimal(15,2): its absolute value is below 10^13 and its shortest
+    round-trip decimal form has at most 2 decimal places. That form has at most 2 decimal places exactly
+    when rounding the number to 2 places gives the same number back (2.995 and 1e-7 do not fit)."""
+    if abs(value) >= _MONEY_LIMIT:
+        return False
+    if isinstance(value, int):
+        return True
+    return float(Decimal(value).quantize(_CENTS, rounding=ROUND_HALF_EVEN)) == value
+
+
 def _kind_error(field: str, value: Any) -> Optional[str]:
     """An error message, or None when the value has the field's kind."""
     if field in _MONEY_FIELDS:
         # bool is an int in Python; JSON true is not a number.
         ok = isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
-        return None if ok else f"{field} must be a finite number"
+        if not ok:
+            return f"{field} must be a finite number"
+        return None if fits_money(value) else (
+            f"{field} must fit decimal(15,2): below 10^13 with at most 2 decimal places"
+        )
     if field in _COUNT_FIELDS:
         ok = (isinstance(value, int) and not isinstance(value, bool)) or (
             isinstance(value, float) and value.is_integer()
