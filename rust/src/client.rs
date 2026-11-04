@@ -121,6 +121,7 @@ pub struct BatchRequest {
     wallet_balance_events: Option<Result<Value, String>>,
     refer_friend_events: Option<Result<Value, String>>,
     system_events: Option<Result<Value, String>>,
+    purchase_funnel_events: Option<Result<Value, String>>,
     extended_attributes: Option<Result<Value, String>>,
 }
 
@@ -142,6 +143,7 @@ impl BatchRequest {
     batch_setter!(wallet_balance_events);
     batch_setter!(refer_friend_events);
     batch_setter!(system_events);
+    batch_setter!(purchase_funnel_events);
     batch_setter!(extended_attributes);
 }
 
@@ -156,6 +158,7 @@ pub struct BatchResult {
     pub wallet_balance_events: Option<ApiResponse>,
     pub refer_friend_events: Option<ApiResponse>,
     pub system_events: Option<ApiResponse>,
+    pub purchase_funnel_events: Option<ApiResponse>,
     pub extended_attributes: Option<ApiResponse>,
 }
 
@@ -298,6 +301,10 @@ impl Client {
         self.send_request("/events/system-events", data)
     }
 
+    pub fn send_purchase_funnel_event<T: Serialize>(&self, data: &T) -> ApiResponse {
+        self.send_request("/events/purchase-funnel", data)
+    }
+
     pub fn send_extended_attributes<T: Serialize>(&self, data: &T) -> ApiResponse {
         self.send_request("/extattributes", data)
     }
@@ -328,6 +335,7 @@ impl Client {
             wallet_balance_events: self.send_slot("/events/wallet-balance", &batch.wallet_balance_events),
             refer_friend_events: self.send_slot("/events/refer-friend", &batch.refer_friend_events),
             system_events: self.send_slot("/events/system-events", &batch.system_events),
+            purchase_funnel_events: self.send_slot("/events/purchase-funnel", &batch.purchase_funnel_events),
             extended_attributes: self.send_slot("/extattributes", &batch.extended_attributes),
         }
     }
