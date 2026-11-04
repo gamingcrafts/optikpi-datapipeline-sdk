@@ -427,6 +427,51 @@
       }
     },
     {
+      "name": "money with 2 decimals",
+      "valid": true,
+      "set": {
+        "unit_price": 2.99
+      }
+    },
+    {
+      "name": "negative money",
+      "valid": true,
+      "set": {
+        "discount_amount": -5.25
+      }
+    },
+    {
+      "name": "money with 3 decimals",
+      "valid": false,
+      "set": {
+        "unit_price": 2.995
+      },
+      "errorField": "unit_price"
+    },
+    {
+      "name": "money at the 13-digit limit",
+      "valid": false,
+      "set": {
+        "cart_total": 10000000000000
+      },
+      "errorField": "cart_total"
+    },
+    {
+      "name": "money just under the limit",
+      "valid": true,
+      "set": {
+        "cart_total": 9999999999999.99
+      }
+    },
+    {
+      "name": "tiny money in exponent form",
+      "valid": false,
+      "set": {
+        "fees_amount": 1e-07
+      },
+      "errorField": "fees_amount"
+    },
+    {
       "name": "number funnel_session_id",
       "valid": false,
       "set": {

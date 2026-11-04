@@ -21826,13 +21826,28 @@ function parseDateTime(value) {
   return time;
 }
 
+// Amounts are stored as decimal(15,2): 13 integer digits and 2 decimal places.
+const MONEY_LIMIT = 1e13;
+
+/**
+ * True when a finite number fits decimal(15,2): its absolute value is below 10^13 and its shortest round-trip
+ * decimal form has at most 2 decimal places. That form has at most 2 decimal places exactly when rounding the
+ * number to 2 places gives the same number back, which is what this checks (2.995 and 1e-7 do not fit).
+ * @param {number} value
+ * @returns {boolean}
+ */
+function fitsMoney(value) {
+  return Math.abs(value) < MONEY_LIMIT && Number(value.toFixed(2)) === value;
+}
+
 /** Returns an error message, or null when the value has the field's kind. */
 function checkKind(field, value, kind) {
   switch (kind) {
     case STRING:
       return typeof value === 'string' ? null : `${field} must be a string`;
     case MONEY:
-      return typeof value === 'number' && Number.isFinite(value) ? null : `${field} must be a finite number`;
+      if (typeof value !== 'number' || !Number.isFinite(value)) return `${field} must be a finite number`;
+      return fitsMoney(value) ? null : `${field} must fit decimal(15,2): below 10^13 with at most 2 decimal places`;
     case COUNT:
       return Number.isInteger(value) ? null : `${field} must be an integer`;
     case BOOLEAN:
