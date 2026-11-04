@@ -84,12 +84,13 @@
 (defn send-wallet-balance-event  [client data] (send-request client "/events/wallet-balance"  data))
 (defn send-refer-friend-event    [client data] (send-request client "/events/refer-friend"    data))
 (defn send-system-event          [client data] (send-request client "/events/system-events"   data))
+(defn send-purchase-funnel-event [client data] (send-request client "/events/purchase-funnel" data))
 
 (defn send-batch
   "Sends all non-nil event types in batch-data in parallel.
    batch-data keys: :customers :extended-attributes :account-events
    :deposit-events :withdraw-events :gaming-events :wallet-balance-events
-   :refer-friend-events :system-events"
+   :refer-friend-events :system-events :purchase-funnel-events"
   [client batch-data]
   (let [tasks
         (cond-> {}
@@ -119,5 +120,8 @@
                  (future (send-refer-friend-event client (:refer-friend-events batch-data))))
           (:system-events batch-data)
           (assoc :system-events
-                 (future (send-system-event client (:system-events batch-data)))))]
+                 (future (send-system-event client (:system-events batch-data))))
+          (:purchase-funnel-events batch-data)
+          (assoc :purchase-funnel-events
+                 (future (send-purchase-funnel-event client (:purchase-funnel-events batch-data)))))]
     (reduce-kv (fn [acc k fut] (assoc acc k (deref fut))) {} tasks)))
