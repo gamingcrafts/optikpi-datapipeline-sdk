@@ -73,6 +73,7 @@ Official Clojure client for the OptikPI Data Pipeline API.
 | `models.refer-friend-event` | `"Refer Friend"` | `send-refer-friend-event` |
 | `models.customer-ext-event` | N/A | `send-extended-attributes` |
 | `models.system-event` | `"SystemEvent"` | `send-system-event` |
+| `models.purchase-funnel-event` | `"Purchase Funnel"` | `send-purchase-funnel-event` |
 
 ## Validation
 

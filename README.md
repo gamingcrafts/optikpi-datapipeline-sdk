@@ -73,6 +73,7 @@ All SDKs support the following data models:
 - **ReferFriend Events**: User referral activities and referral rewards
 - **WalletBalance Events**: Wallet balance snapshots and balance update notifications
 - **System Events**: Operator-related activities and system events
+- **Purchase Funnel Events**: Each step of a purchase attempt (start, cart, checkout, payment, complete) sharing a `funnel_session_id`
 
 ## 🔒 Security
 

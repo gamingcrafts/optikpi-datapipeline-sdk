@@ -19,6 +19,7 @@ This guide provides comprehensive instructions for third-party developers to int
 - **Wallet Balance**: Wallet balance updates and tracking
 - **Refer Friend**: Referral program events and rewards
 - **System Events**: Back-office, operator, and system-level events (e.g. campaign triggers)
+- **Purchase Funnel**: Each step of a purchase attempt, from start to completion or failure
 
 ## Table of Contents
 
@@ -71,6 +72,7 @@ https://your-api-gateway-url/apigw/ingest
 | `/events/wallet-balance` | POST | Push wallet balance events | 250 req/sec |
 | `/events/refer-friend` | POST | Push refer friend events | 250 req/sec |
 | `/events/system-events` | POST | Push system event data | 250 req/sec |
+| `/events/purchase-funnel` | POST | Push purchase funnel events | 250 req/sec |
 | `/extattributes` | POST | Push extended attributes data | 50 req/sec |
 | 
 
@@ -353,6 +355,38 @@ System events capture back-office, operator, and system-level actions such as ca
 "{\"action\":\"notify\",\"target\":\"user_list_1\",\"payload\":{}}"
 ```
 
+### Purchase Funnel Event
+
+A purchase funnel event records one step of a purchase attempt. Every event of one attempt (a **funnel session**)
+carries the same `funnel_session_id`, created when the funnel starts. The step's meaning comes from `funnel_stage`, a
+fixed list; `event_name` is your own name for the event. Send `complete`, `payment_failed` and `failed` from your
+server, not the browser. Never send `abandoned` (OptikPI creates it); send `stalled` only from your own idle timer.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| account_id | String | Yes | Account identifier - one account can have multiple workspaces |
+| workspace_id | String | Yes | Workspace identifier - belongs to an account |
+| user_id | String | Yes | Unique user identifier |
+| event_category | String | Yes | Must be exactly `Purchase Funnel` |
+| event_name | String | Yes | Your own event name, e.g. `checkout_started`. Case-sensitive in audience filters |
+| event_id | String | Yes | Unique event identifier |
+| event_time | String | Yes | When the event happened: ISO 8601 with seconds and a zone, e.g. "2026-11-04T10:00:00Z" or "2026-11-04T11:00:00+01:00". Within the last 10 years and at most 1 year ahead |
+| funnel_session_id | String | Yes | One per purchase attempt, the same on every event of that attempt |
+| funnel_stage | String | Yes | One of `start`, `browse`, `configure`, `cart`, `checkout`, `payment`, `payment_failed`, `complete`, `failed`, `cancelled`, `exit`, `stalled`, `abandoned` (exported as `FUNNEL_STAGES`) |
+| failure_reason | String | No | One of `payment_declined`, `insufficient_funds`, `provider_timeout`, `limit_reached`, `kyc_required`, `geo_blocked`, `draw_closed`, `technical_error`, `user_cancelled` (exported as `FAILURE_REASONS`) |
+
+Optional attribute groups (all optional; send the groups that apply to the stage):
+- **Item**: `item_id`, `item_name`, `item_category`, `draw_id`, `draw_number`, `draw_date`, `draw_close_time`, `jackpot_amount`, `selection` (JSON text), `selection_method`, `lines_count`, `multi_draw_count`, `unit_price`, `item_quantity`, `item_amount`
+- **Cart**: `cart_id`, `cart_item_count`, `cart_quantity_total`, `cart_items` (JSON text), `cart_subtotal`, `discount_amount`, `bonus_used_amount`, `fees_amount`, `tax_amount`, `cart_total`, `coupon_code`, `currency`
+- **Payment**: `payment_method`, `payment_provider_id`, `payment_provider_name`, `is_saved_method`, `funds_source`, `payment_attempt_number`, `payment_status`, `transaction_id`, `failure_reason`, `failure_code`, `failure_message`
+- **Order**: `order_id`, `ticket_ids` (JSON text), `order_total`, `order_status`, `is_first_purchase`
+- **Context**: `device`, `platform`, `app_version`, `page_url`, `referrer`, `utm_source`, `utm_medium`, `utm_campaign`, `campaign_id`, `affiliate_id`, `entry_point`, `is_resumed`
+
+Types are checked strictly: amounts are JSON numbers (not strings) with at most 2 decimal places and below 10^13
+(round computed totals to 2 decimals before sending); counts are integers between -2147483648 and 2147483647;
+`is_*` fields are booleans; `event_time`, `draw_date` and `draw_close_time` are ISO 8601 date-times with seconds and a
+zone (`Z` or `+hh:mm`); `currency` is a 3-letter uppercase code.
+
 ### Extended Attributes
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
@@ -544,6 +578,29 @@ const systemEventString = {
   event_data: '{"action":"notify","target":"user_list_1","payload":{}}'
 };
 const systemStringResult = await sdk.sendSystemEvent(systemEventString);
+
+// Purchase Funnel Event - one per step; all steps of an attempt share funnel_session_id
+const { PurchaseFunnelEvent } = require('@optikpi/datapipeline-sdk');
+const unitPrice = 2.5;
+const itemQuantity = 3;
+const cartTotal = Math.round(unitPrice * itemQuantity * 100) / 100; // amounts take at most 2 decimals
+const funnelEvent = new PurchaseFunnelEvent({
+  account_id: 'your-account-id',
+  workspace_id: 'your-workspace-id',
+  user_id: 'user123',
+  event_category: 'Purchase Funnel',
+  event_name: 'checkout_started',
+  event_id: 'evt_' + Date.now(),
+  event_time: new Date().toISOString(),
+  funnel_session_id: 'fs_abc123',
+  funnel_stage: 'checkout',
+  cart_id: 'cart_001',
+  cart_total: cartTotal,
+  currency: 'EUR'
+});
+const { isValid, errors } = funnelEvent.validate();
+if (!isValid) throw new Error(errors.join(', '));
+const funnelResult = await sdk.sendPurchaseFunnelEvent(funnelEvent);
 ```
 
 ### 3. Customer Extension Attributes
@@ -582,6 +639,7 @@ const batchData = {
   walletBalanceEvents: [walletBalance1, walletBalance2],
   referFriendEvents: [referFriend1, referFriend2],
   systemEvents: [systemEvent1, systemEvent2],
+  purchaseFunnelEvents: [funnelEvent1, funnelEvent2],
   extendedAttributes: [extAttr1, extAttr2]
 };
 const batchResult = await sdk.sendBatch(batchData);
