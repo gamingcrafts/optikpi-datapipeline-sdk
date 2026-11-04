@@ -20,7 +20,10 @@ const {
   CustomerExtEvent,
   WalletBalanceEvent,
   ReferFriendEvent,
-  SystemEvent
+  SystemEvent,
+  PurchaseFunnelEvent,
+  FUNNEL_STAGES,
+  FAILURE_REASONS
 } = require('./models');
 const {
   deriveKey,
@@ -72,6 +75,10 @@ class OptikpiDataPipelineSDK {
     return this.client.sendSystemEvent(data);
   }
 
+  async sendPurchaseFunnelEvent(data) {
+    return this.client.sendPurchaseFunnelEvent(data);
+  }
+
   async sendBatch(batchData) {
     return this.client.sendBatch(batchData);
   }
@@ -99,6 +106,9 @@ module.exports.CustomerExtEvent = CustomerExtEvent;
 module.exports.WalletBalanceEvent = WalletBalanceEvent;
 module.exports.ReferFriendEvent = ReferFriendEvent;
 module.exports.SystemEvent = SystemEvent;
+module.exports.PurchaseFunnelEvent = PurchaseFunnelEvent;
+module.exports.FUNNEL_STAGES = FUNNEL_STAGES;
+module.exports.FAILURE_REASONS = FAILURE_REASONS;
 module.exports.crypto = {
   deriveKey,
   generateHmacSignature,

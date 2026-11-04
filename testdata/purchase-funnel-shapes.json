@@ -1,0 +1,590 @@
+{
+  "_comment": "Shared purchase_funnel validation shapes. Master copy: coordinator's shapes/purchase-funnel-shapes.json (see CONTRACT.md section 5). Copy byte for byte; do not edit.",
+  "base": {
+    "account_id": "acc_example_001",
+    "workspace_id": "ws_example_001",
+    "user_id": "user_example_001",
+    "event_category": "Purchase Funnel",
+    "event_name": "checkout_started",
+    "event_id": "evt_example_001",
+    "event_time": "2026-11-04T10:00:00Z",
+    "funnel_session_id": "fs_example_001",
+    "funnel_stage": "checkout"
+  },
+  "full": {
+    "account_id": "acc_example_001",
+    "workspace_id": "ws_example_001",
+    "user_id": "user_example_001",
+    "event_category": "Purchase Funnel",
+    "event_name": "purchase_completed",
+    "event_id": "evt_example_001",
+    "event_time": "2026-11-04T10:00:00Z",
+    "funnel_session_id": "fs_example_001",
+    "funnel_stage": "complete",
+    "item_id": "item_001",
+    "item_name": "Example Lotto",
+    "item_category": "lotto",
+    "draw_id": "draw_001",
+    "draw_number": "1234",
+    "draw_date": "2026-11-07T20:00:00Z",
+    "draw_close_time": "2026-11-07T19:00:00+01:00",
+    "jackpot_amount": 5000000.0,
+    "selection": "[[1,2,3,4,5,6]]",
+    "selection_method": "quick_pick",
+    "lines_count": 2,
+    "multi_draw_count": 1,
+    "unit_price": 2.5,
+    "item_quantity": 2,
+    "item_amount": 5.0,
+    "cart_id": "cart_001",
+    "cart_item_count": 1,
+    "cart_quantity_total": 2,
+    "cart_items": "[{\"item_id\":\"item_001\",\"quantity\":2}]",
+    "cart_subtotal": 5.0,
+    "discount_amount": 0.5,
+    "bonus_used_amount": 1.0,
+    "fees_amount": 0.25,
+    "tax_amount": 0.0,
+    "cart_total": 3.75,
+    "coupon_code": "WELCOME",
+    "currency": "EUR",
+    "payment_method": "card",
+    "payment_provider_id": "prov_001",
+    "payment_provider_name": "Example Pay",
+    "is_saved_method": true,
+    "funds_source": "external",
+    "payment_attempt_number": 2,
+    "payment_status": "authorised",
+    "transaction_id": "txn_001",
+    "failure_reason": null,
+    "failure_code": null,
+    "failure_message": null,
+    "order_id": "order_001",
+    "ticket_ids": "[\"t1\",\"t2\"]",
+    "order_total": 3.75,
+    "order_status": "confirmed",
+    "is_first_purchase": true,
+    "device": "mobile",
+    "platform": "ios",
+    "app_version": "5.2.0",
+    "page_url": "https://example.com/checkout",
+    "referrer": "https://example.com/",
+    "utm_source": "newsletter",
+    "utm_medium": "email",
+    "utm_campaign": "autumn",
+    "campaign_id": "camp_001",
+    "affiliate_id": "aff_001",
+    "entry_point": "home_banner",
+    "is_resumed": false,
+    "abandoned_at_stage": null,
+    "inactivity_sec": null
+  },
+  "cases": [
+    {
+      "name": "valid minimal",
+      "valid": true
+    },
+    {
+      "name": "valid full",
+      "valid": true,
+      "from": "full"
+    },
+    {
+      "name": "missing account_id",
+      "valid": false,
+      "unset": [
+        "account_id"
+      ],
+      "errorField": "account_id"
+    },
+    {
+      "name": "missing workspace_id",
+      "valid": false,
+      "unset": [
+        "workspace_id"
+      ],
+      "errorField": "workspace_id"
+    },
+    {
+      "name": "missing user_id",
+      "valid": false,
+      "unset": [
+        "user_id"
+      ],
+      "errorField": "user_id"
+    },
+    {
+      "name": "missing event_category",
+      "valid": false,
+      "unset": [
+        "event_category"
+      ],
+      "errorField": "event_category"
+    },
+    {
+      "name": "missing event_name",
+      "valid": false,
+      "unset": [
+        "event_name"
+      ],
+      "errorField": "event_name"
+    },
+    {
+      "name": "missing event_id",
+      "valid": false,
+      "unset": [
+        "event_id"
+      ],
+      "errorField": "event_id"
+    },
+    {
+      "name": "missing event_time",
+      "valid": false,
+      "unset": [
+        "event_time"
+      ],
+      "errorField": "event_time"
+    },
+    {
+      "name": "missing funnel_session_id",
+      "valid": false,
+      "unset": [
+        "funnel_session_id"
+      ],
+      "errorField": "funnel_session_id"
+    },
+    {
+      "name": "missing funnel_stage",
+      "valid": false,
+      "unset": [
+        "funnel_stage"
+      ],
+      "errorField": "funnel_stage"
+    },
+    {
+      "name": "empty funnel_session_id",
+      "valid": false,
+      "set": {
+        "funnel_session_id": ""
+      },
+      "errorField": "funnel_session_id"
+    },
+    {
+      "name": "null funnel_stage",
+      "valid": false,
+      "set": {
+        "funnel_stage": null
+      },
+      "errorField": "funnel_stage"
+    },
+    {
+      "name": "wrong event_category",
+      "valid": false,
+      "set": {
+        "event_category": "Deposit"
+      },
+      "errorField": "event_category"
+    },
+    {
+      "name": "event_category wrong case",
+      "valid": false,
+      "set": {
+        "event_category": "purchase funnel"
+      },
+      "errorField": "event_category"
+    },
+    {
+      "name": "funnel_stage start",
+      "valid": true,
+      "set": {
+        "funnel_stage": "start"
+      }
+    },
+    {
+      "name": "funnel_stage browse",
+      "valid": true,
+      "set": {
+        "funnel_stage": "browse"
+      }
+    },
+    {
+      "name": "funnel_stage configure",
+      "valid": true,
+      "set": {
+        "funnel_stage": "configure"
+      }
+    },
+    {
+      "name": "funnel_stage cart",
+      "valid": true,
+      "set": {
+        "funnel_stage": "cart"
+      }
+    },
+    {
+      "name": "funnel_stage checkout",
+      "valid": true,
+      "set": {
+        "funnel_stage": "checkout"
+      }
+    },
+    {
+      "name": "funnel_stage payment",
+      "valid": true,
+      "set": {
+        "funnel_stage": "payment"
+      }
+    },
+    {
+      "name": "funnel_stage payment_failed",
+      "valid": true,
+      "set": {
+        "funnel_stage": "payment_failed"
+      }
+    },
+    {
+      "name": "funnel_stage complete",
+      "valid": true,
+      "set": {
+        "funnel_stage": "complete"
+      }
+    },
+    {
+      "name": "funnel_stage failed",
+      "valid": true,
+      "set": {
+        "funnel_stage": "failed"
+      }
+    },
+    {
+      "name": "funnel_stage cancelled",
+      "valid": true,
+      "set": {
+        "funnel_stage": "cancelled"
+      }
+    },
+    {
+      "name": "funnel_stage exit",
+      "valid": true,
+      "set": {
+        "funnel_stage": "exit"
+      }
+    },
+    {
+      "name": "funnel_stage stalled",
+      "valid": true,
+      "set": {
+        "funnel_stage": "stalled"
+      }
+    },
+    {
+      "name": "funnel_stage abandoned",
+      "valid": true,
+      "set": {
+        "funnel_stage": "abandoned"
+      }
+    },
+    {
+      "name": "unknown funnel_stage",
+      "valid": false,
+      "set": {
+        "funnel_stage": "paid"
+      },
+      "errorField": "funnel_stage"
+    },
+    {
+      "name": "funnel_stage wrong case",
+      "valid": false,
+      "set": {
+        "funnel_stage": "Complete"
+      },
+      "errorField": "funnel_stage"
+    },
+    {
+      "name": "failure_reason payment_declined",
+      "valid": true,
+      "set": {
+        "funnel_stage": "payment_failed",
+        "failure_reason": "payment_declined"
+      }
+    },
+    {
+      "name": "failure_reason insufficient_funds",
+      "valid": true,
+      "set": {
+        "funnel_stage": "payment_failed",
+        "failure_reason": "insufficient_funds"
+      }
+    },
+    {
+      "name": "failure_reason provider_timeout",
+      "valid": true,
+      "set": {
+        "funnel_stage": "payment_failed",
+        "failure_reason": "provider_timeout"
+      }
+    },
+    {
+      "name": "failure_reason limit_reached",
+      "valid": true,
+      "set": {
+        "funnel_stage": "payment_failed",
+        "failure_reason": "limit_reached"
+      }
+    },
+    {
+      "name": "failure_reason kyc_required",
+      "valid": true,
+      "set": {
+        "funnel_stage": "payment_failed",
+        "failure_reason": "kyc_required"
+      }
+    },
+    {
+      "name": "failure_reason geo_blocked",
+      "valid": true,
+      "set": {
+        "funnel_stage": "payment_failed",
+        "failure_reason": "geo_blocked"
+      }
+    },
+    {
+      "name": "failure_reason draw_closed",
+      "valid": true,
+      "set": {
+        "funnel_stage": "payment_failed",
+        "failure_reason": "draw_closed"
+      }
+    },
+    {
+      "name": "failure_reason technical_error",
+      "valid": true,
+      "set": {
+        "funnel_stage": "payment_failed",
+        "failure_reason": "technical_error"
+      }
+    },
+    {
+      "name": "failure_reason user_cancelled",
+      "valid": true,
+      "set": {
+        "funnel_stage": "payment_failed",
+        "failure_reason": "user_cancelled"
+      }
+    },
+    {
+      "name": "failure_reason null",
+      "valid": true,
+      "set": {
+        "failure_reason": null
+      }
+    },
+    {
+      "name": "unknown failure_reason",
+      "valid": false,
+      "set": {
+        "funnel_stage": "payment_failed",
+        "failure_reason": "card_expired"
+      },
+      "errorField": "failure_reason"
+    },
+    {
+      "name": "string amount (numeric text)",
+      "valid": false,
+      "set": {
+        "cart_total": "12.50"
+      },
+      "errorField": "cart_total"
+    },
+    {
+      "name": "string amount (not a number)",
+      "valid": false,
+      "set": {
+        "cart_total": "abc"
+      },
+      "errorField": "cart_total"
+    },
+    {
+      "name": "boolean amount",
+      "valid": false,
+      "set": {
+        "order_total": true
+      },
+      "errorField": "order_total"
+    },
+    {
+      "name": "zero amount",
+      "valid": true,
+      "set": {
+        "cart_total": 0
+      }
+    },
+    {
+      "name": "null optional amount",
+      "valid": true,
+      "set": {
+        "cart_total": null
+      }
+    },
+    {
+      "name": "number funnel_session_id",
+      "valid": false,
+      "set": {
+        "funnel_session_id": 12345
+      },
+      "errorField": "funnel_session_id"
+    },
+    {
+      "name": "number item_id",
+      "valid": false,
+      "set": {
+        "item_id": 42
+      },
+      "errorField": "item_id"
+    },
+    {
+      "name": "number event_name",
+      "valid": false,
+      "set": {
+        "event_name": 7
+      },
+      "errorField": "event_name"
+    },
+    {
+      "name": "fractional count",
+      "valid": false,
+      "set": {
+        "lines_count": 2.5
+      },
+      "errorField": "lines_count"
+    },
+    {
+      "name": "string count",
+      "valid": false,
+      "set": {
+        "item_quantity": "3"
+      },
+      "errorField": "item_quantity"
+    },
+    {
+      "name": "string boolean",
+      "valid": false,
+      "set": {
+        "is_first_purchase": "true"
+      },
+      "errorField": "is_first_purchase"
+    },
+    {
+      "name": "numeric boolean",
+      "valid": false,
+      "set": {
+        "is_resumed": 1
+      },
+      "errorField": "is_resumed"
+    },
+    {
+      "name": "selection as array",
+      "valid": false,
+      "set": {
+        "selection": [
+          1,
+          2,
+          3
+        ]
+      },
+      "errorField": "selection"
+    },
+    {
+      "name": "invalid draw_close_time",
+      "valid": false,
+      "set": {
+        "draw_close_time": "not-a-date"
+      },
+      "errorField": "draw_close_time"
+    },
+    {
+      "name": "date-only draw_date",
+      "valid": false,
+      "set": {
+        "draw_date": "2026-11-07"
+      },
+      "errorField": "draw_date"
+    },
+    {
+      "name": "space-separated draw_date",
+      "valid": false,
+      "set": {
+        "draw_date": "2026-11-07 20:00:00"
+      },
+      "errorField": "draw_date"
+    },
+    {
+      "name": "impossible calendar date",
+      "valid": false,
+      "set": {
+        "draw_date": "2026-02-30T10:00:00Z"
+      },
+      "errorField": "draw_date"
+    },
+    {
+      "name": "draw_date with offset and millis",
+      "valid": true,
+      "set": {
+        "draw_date": "2026-11-07T20:00:00.123+05:30"
+      }
+    },
+    {
+      "name": "invalid event_time",
+      "valid": false,
+      "set": {
+        "event_time": "yesterday"
+      },
+      "errorField": "event_time"
+    },
+    {
+      "name": "event_time without zone",
+      "valid": true,
+      "set": {
+        "event_time": "2026-11-04T10:00:00"
+      }
+    },
+    {
+      "name": "event_time older than 10 years",
+      "valid": false,
+      "set": {
+        "event_time": "2010-01-01T00:00:00Z"
+      },
+      "errorField": "event_time"
+    },
+    {
+      "name": "event_time over 1 year ahead",
+      "valid": false,
+      "set": {
+        "event_time": "2099-01-01T00:00:00Z"
+      },
+      "errorField": "event_time"
+    },
+    {
+      "name": "lowercase currency",
+      "valid": false,
+      "set": {
+        "currency": "eur"
+      },
+      "errorField": "currency"
+    },
+    {
+      "name": "uppercase currency",
+      "valid": true,
+      "set": {
+        "currency": "USD"
+      }
+    },
+    {
+      "name": "extra unknown field",
+      "valid": true,
+      "set": {
+        "unknown_extra_field": "kept by API, dropped by BigQuery"
+      }
+    }
+  ]
+}

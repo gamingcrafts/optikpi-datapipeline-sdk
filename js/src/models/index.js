@@ -7,6 +7,7 @@ const WalletBalanceEvent = require('./WalletBalanceEvent');
 const ReferFriendEvent = require('./ReferFriendEvent');
 const CustomerExtEvent = require('./CustomerExtEvent');
 const SystemEvent = require('./SystemEvent');
+const PurchaseFunnelEvent = require('./PurchaseFunnelEvent');
 
 module.exports = {
   CustomerProfile,
@@ -17,5 +18,8 @@ module.exports = {
   WalletBalanceEvent,
   ReferFriendEvent,
   CustomerExtEvent,
-  SystemEvent
+  SystemEvent,
+  PurchaseFunnelEvent,
+  FUNNEL_STAGES: PurchaseFunnelEvent.FUNNEL_STAGES,
+  FAILURE_REASONS: PurchaseFunnelEvent.FAILURE_REASONS
 };
