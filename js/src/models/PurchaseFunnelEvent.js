@@ -137,19 +137,19 @@ const EVENT_CATEGORY = 'Purchase Funnel';
 const TEN_YEARS_MS = 10 * 365.25 * 24 * 60 * 60 * 1000;
 const ONE_YEAR_MS = 365.25 * 24 * 60 * 60 * 1000;
 
-const DATETIME_PATTERN = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2})(\.\d{1,9})?)?(Z|[+-]\d{2}:\d{2})?$/;
+// Seconds and a zone are required: a date-time without them is lost downstream.
+const DATETIME_PATTERN = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(\.\d{1,9})?(Z|[+-]\d{2}:\d{2})$/;
 const CURRENCY_PATTERN = /^[A-Z]{3}$/;
 
 /**
  * Milliseconds since the epoch for an ISO 8601 date-time string, or NaN when it is not one.
- * A string without a zone is read as UTC.
  * @param {string} value
  * @returns {number}
  */
 function parseDateTime(value) {
   const match = DATETIME_PATTERN.exec(value);
   if (!match) return NaN;
-  const [year, month, day, hour, minute, second] = match.slice(1, 7).map(part => Number(part || 0));
+  const [year, month, day, hour, minute, second] = match.slice(1, 7).map(Number);
   if (year < 1 || month < 1 || month > 12 || hour > 23 || minute > 59 || second > 59) return NaN;
   const date = new Date(0);
   // setUTCFullYear, because Date.UTC maps years below 100 to 19xx.
@@ -158,7 +158,7 @@ function parseDateTime(value) {
   date.setUTCHours(hour, minute, second, 0);
   let time = date.getTime();
   const zone = match[8];
-  if (zone && zone !== 'Z') {
+  if (zone !== 'Z') {
     const offsetHours = Number(zone.slice(1, 3));
     const offsetMinutes = Number(zone.slice(4, 6));
     if (offsetHours > 18 || offsetMinutes > 59) return NaN;
@@ -203,7 +203,7 @@ function checkKind(field, value, kind) {
   case DATETIME:
     return typeof value === 'string' && !Number.isNaN(parseDateTime(value))
       ? null
-      : `${field} must be an ISO 8601 date-time (YYYY-MM-DDTHH:mm[:ss[.fff]][Z|+hh:mm])`;
+      : `${field} must be an ISO 8601 date-time with seconds and a zone (YYYY-MM-DDTHH:mm:ss[.fff]Z or +hh:mm)`;
   default:
     return null;
   }

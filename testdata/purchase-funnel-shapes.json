@@ -603,9 +603,41 @@
     },
     {
       "name": "event_time without zone",
-      "valid": true,
+      "valid": false,
       "set": {
         "event_time": "2026-11-04T10:00:00"
+      },
+      "errorField": "event_time"
+    },
+    {
+      "name": "event_time without seconds",
+      "valid": false,
+      "set": {
+        "event_time": "2026-11-04T10:00Z"
+      },
+      "errorField": "event_time"
+    },
+    {
+      "name": "draw_date without zone",
+      "valid": false,
+      "set": {
+        "draw_date": "2026-11-07T20:00:00"
+      },
+      "errorField": "draw_date"
+    },
+    {
+      "name": "draw_close_time without seconds",
+      "valid": false,
+      "set": {
+        "draw_close_time": "2026-11-07T19:00+01:00"
+      },
+      "errorField": "draw_close_time"
+    },
+    {
+      "name": "event_time with offset",
+      "valid": true,
+      "set": {
+        "event_time": "2026-11-04T12:00:00+02:00"
       }
     },
     {
