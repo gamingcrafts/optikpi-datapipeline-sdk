@@ -13,6 +13,7 @@ from .WalletBalanceEvent import WalletBalanceEvent
 from .ReferFriendEvent import ReferFriendEvent
 from .CustomerExtEvent import CustomerExtEvent
 from .SystemEvent import SystemEvent
+from .PurchaseFunnelEvent import PurchaseFunnelEvent, FUNNEL_STAGES, FAILURE_REASONS
 
 # Define public API for the models package
 __all__ = [
@@ -24,5 +25,8 @@ __all__ = [
     "WalletBalanceEvent",
     "ReferFriendEvent",
     "CustomerExtEvent",
-    "SystemEvent"
+    "SystemEvent",
+    "PurchaseFunnelEvent",
+    "FUNNEL_STAGES",
+    "FAILURE_REASONS"
 ]
