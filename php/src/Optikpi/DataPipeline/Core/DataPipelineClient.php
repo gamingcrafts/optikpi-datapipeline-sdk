@@ -365,6 +365,27 @@ class DataPipelineClient
     }
 
     /**
+     * Sends purchase funnel event data
+     *
+     * @param array|object $data Purchase funnel event data or array of events
+     * @return array API response
+     */
+    public function sendPurchaseFunnelEvent($data): array
+    {
+        try {
+            return $this->makeRequest('POST', '/events/purchase-funnel', $data);
+        } catch (\Exception $error) {
+            return [
+                'success' => false,
+                'error' => $error->getMessage(),
+                'status' => null,
+                'data' => null,
+                'timestamp' => date('c')
+            ];
+        }
+    }
+
+    /**
      * Sends multiple events in batch
      *
      * @param array $batchData Object containing different event types
@@ -409,6 +430,10 @@ class DataPipelineClient
 
         if (isset($batchData['systemEvents'])) {
             $results['systemEvents'] = $this->sendSystemEvent($batchData['systemEvents']);
+        }
+
+        if (isset($batchData['purchaseFunnelEvents'])) {
+            $results['purchaseFunnelEvents'] = $this->sendPurchaseFunnelEvent($batchData['purchaseFunnelEvents']);
         }
 
         return [

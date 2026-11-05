@@ -19,6 +19,7 @@ from models.GamingActivityEvent import GamingActivityEvent
 from models.WalletBalanceEvent import WalletBalanceEvent
 from models.ReferFriendEvent import ReferFriendEvent
 from models.SystemEvent import SystemEvent
+from models.PurchaseFunnelEvent import PurchaseFunnelEvent, FUNNEL_STAGES, FAILURE_REASONS
 from utils import crypto
 
 __version__ = "1.0.0"
@@ -159,6 +160,18 @@ class OptikpiDataPipelineSDK:
             Response dictionary with success status and data
         """
         return self.client.send_system_event(data)
+
+    def send_purchase_funnel_event(self, data):
+        """
+        Send purchase funnel event data
+
+        Args:
+            data: Purchase funnel event data (dict or list of dicts)
+
+        Returns:
+            Response dictionary with success status and data
+        """
+        return self.client.send_purchase_funnel_event(data)
     
     def send_batch(self, batch_data):
         """
@@ -219,6 +232,9 @@ __all__ = [
     'WalletBalanceEvent',
     'ReferFriendEvent',
     'SystemEvent',
+    'PurchaseFunnelEvent',
+    'FUNNEL_STAGES',
+    'FAILURE_REASONS',
     'crypto',
     'create_client',
 ]

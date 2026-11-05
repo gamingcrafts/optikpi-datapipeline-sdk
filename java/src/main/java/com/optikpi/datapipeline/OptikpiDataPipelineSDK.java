@@ -101,6 +101,15 @@ public class OptikpiDataPipelineSDK {
     }
 
     /**
+     * Sends purchase funnel event data
+     * @param data Purchase funnel event data or list of events
+     * @return API response
+     */
+    public ApiResponse<Object> sendPurchaseFunnelEvent(Object data) {
+        return client.sendPurchaseFunnelEvent(data);
+    }
+
+    /**
      * Sends multiple events in batch
      * @param batchData Object containing different event types
      * @return Batch response results

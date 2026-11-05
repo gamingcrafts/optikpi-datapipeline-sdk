@@ -337,6 +337,31 @@ class DataPipelineClient {
   }
 
   /**
+   * Sends purchase funnel event data
+   * @param {Object|Array} data - Purchase funnel event data or array of events
+   * @returns {Promise<Object>} API response
+   */
+  async sendPurchaseFunnelEvent(data) {
+    try {
+      const response = await this.axios.post('/events/purchase-funnel', data);
+      return {
+        success: true,
+        status: response.status,
+        data: response.data,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
+
+  /**
    * Sends multiple events in batch
    * @param {Object} batchData - Object containing different event types
    * @returns {Promise<Object>} Batch response results
@@ -405,6 +430,13 @@ class DataPipelineClient {
       promises.push(
         this.sendSystemEvent(batchData.systemEvents)
           .then(result => { results.systemEvents = result; })
+      );
+    }
+
+    if (batchData.purchaseFunnelEvents) {
+      promises.push(
+        this.sendPurchaseFunnelEvent(batchData.purchaseFunnelEvents)
+          .then(result => { results.purchaseFunnelEvents = result; })
       );
     }
 

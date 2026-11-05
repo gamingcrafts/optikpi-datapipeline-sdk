@@ -12,6 +12,7 @@ use Optikpi\DataPipeline\Models\WalletBalanceEvent;
 use Optikpi\DataPipeline\Models\ReferFriendEvent;
 use Optikpi\DataPipeline\Models\CustomerExtEvent;
 use Optikpi\DataPipeline\Models\SystemEvent;
+use Optikpi\DataPipeline\Models\PurchaseFunnelEvent;
 use Optikpi\DataPipeline\Utils\Crypto;
 
 /**
@@ -158,6 +159,20 @@ class OptikpiDataPipelineSDK
             $data = $data->toArray();
         }
         return $this->client->sendSystemEvent($data);
+    }
+
+    /**
+     * Sends purchase funnel event data
+     *
+     * @param array|PurchaseFunnelEvent $data Purchase funnel event data
+     * @return array API response
+     */
+    public function sendPurchaseFunnelEvent($data): array
+    {
+        if ($data instanceof PurchaseFunnelEvent) {
+            $data = $data->toArray();
+        }
+        return $this->client->sendPurchaseFunnelEvent($data);
     }
 
     /**

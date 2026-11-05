@@ -308,6 +308,18 @@ class DataPipelineClient:
         """
         return self._make_request('POST', '/events/system-events', data)
 
+    def send_purchase_funnel_event(self, data: Union[Dict[str, Any], List[Dict[str, Any]]]) -> Dict[str, Any]:
+        """
+        Sends purchase funnel event data
+
+        Args:
+            data: Purchase funnel event data or list of events
+
+        Returns:
+            API response dictionary
+        """
+        return self._make_request('POST', '/events/purchase-funnel', data)
+
     
     def send_batch(self, batch_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -324,6 +336,7 @@ class DataPipelineClient:
                 - referFriendEvents: List of refer friend events
                 - extendedAttributes: List of customer extended attributes events
                 - systemEvents: List of system events
+                - purchaseFunnelEvents: List of purchase funnel events
             
         Returns:
             Batch response results dictionary
@@ -357,6 +370,9 @@ class DataPipelineClient:
 
         if 'systemEvents' in batch_data:
             results['systemEvents'] = self.send_system_event(batch_data['systemEvents'])
+
+        if 'purchaseFunnelEvents' in batch_data:
+            results['purchaseFunnelEvents'] = self.send_purchase_funnel_event(batch_data['purchaseFunnelEvents'])
     
         
 

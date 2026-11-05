@@ -91,6 +91,7 @@ Each model exposes a `new(..)` constructor with the API's required fields; optio
 | `WalletBalanceEvent` | `"Wallet Balance"` | `send_wallet_balance_event` |
 | `ReferFriendEvent` | `"Refer Friend"` | `send_refer_friend_event` |
 | `SystemEvent` | `"SystemEvent"` | `send_system_event` |
+| `PurchaseFunnelEvent` | `"Purchase Funnel"` | `send_purchase_funnel_event` |
 | `CustomerExtEvent` | — (extended attributes) | `send_extended_attributes` |
 
 Every `send_*` method is generic over `T: Serialize`, so passing a `Vec<T>` sends a batch in one request — no separate bulk type is needed.

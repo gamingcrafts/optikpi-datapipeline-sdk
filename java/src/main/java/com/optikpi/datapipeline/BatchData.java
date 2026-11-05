@@ -33,6 +33,9 @@ public class BatchData {
     
     @JsonProperty("systemEvents")
     private List<Object> systemEvents;
+
+    @JsonProperty("purchaseFunnelEvents")
+    private List<Object> purchaseFunnelEvents;
     
     public BatchData() {}
     
@@ -106,5 +109,13 @@ public class BatchData {
     
     public void setSystemEvents(List<Object> systemEvents) {
         this.systemEvents = systemEvents;
+    }
+
+    public List<Object> getPurchaseFunnelEvents() {
+        return purchaseFunnelEvents;
+    }
+
+    public void setPurchaseFunnelEvents(List<Object> purchaseFunnelEvents) {
+        this.purchaseFunnelEvents = purchaseFunnelEvents;
     }
 }
