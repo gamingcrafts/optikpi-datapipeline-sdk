@@ -6,7 +6,8 @@
           (empty? (:account_id m))   (conj "account_id is required")
           (empty? (:workspace_id m)) (conj "workspace_id is required")
           (empty? (:user_id m))      (conj "user_id is required")
-          (empty? (:event_category m)) (conj "event_category is required")
+          (contains? #{nil ""} (:event_category m)) (conj "event_category is required")
+          (not (contains? #{nil "" "Gaming Activity"} (:event_category m))) (conj "event_category must be \"Gaming Activity\" for gaming events")
           (empty? (:event_name m))   (conj "event_name is required")
           (empty? (:event_id m))     (conj "event_id is required")
           (empty? (:event_time m))   (conj "event_time is required"))]
